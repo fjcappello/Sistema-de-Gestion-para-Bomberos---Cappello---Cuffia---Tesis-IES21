@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
-function Navbar() {
+function Navbar({ onLogout }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate(); // Hook para redirigir
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  const handleLogout = () => {
+    onLogout(); // Llama a la función de logout
+    navigate('/'); // Redirige a la página de login
   };
 
   return (
@@ -23,7 +29,7 @@ function Navbar() {
         <li><Link to="#">Reportes</Link></li>
         <li><Link to="/personal">Personal</Link></li>
         <li><Link to="#">Configuración</Link></li>
-        <li><Link to="#" className="logout-btn">Salir</Link></li>
+        <li><button className="logout-btn" onClick={handleLogout}>Salir</button></li>
       </ul>
 
       {/* Botón de menú hamburguesa visible en pantallas pequeñas */}

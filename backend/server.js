@@ -235,6 +235,23 @@ app.delete('/personal/:legajo', (req, res) => {
 });
 
 
+app.post('/login', (req, res) => {
+  const { legajo, password } = req.body;
+  const query = 'SELECT * FROM login WHERE legajo = ? AND contraseña = ?';
+  
+  db.query(query, [legajo, password], (err, results) => {
+    if (err) {
+      console.error('Error en el servidor al intentar iniciar sesión:', err);
+      res.status(500).json({ success: false, error: 'Error en el servidor' });
+    } else if (results.length > 0) {
+      res.json({ success: true });
+    } else {
+      res.json({ success: false, error: 'Legajo o contraseña incorrectos' });
+    }
+  });
+});
+
+
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Servidor API en http://localhost:${PORT}`);

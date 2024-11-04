@@ -88,13 +88,13 @@ function EmergenciesTable() {
       setDeleteError("Por favor, ingrese un ID válido.");
       return;
     }
-  
+
     try {
       const response = await axios.delete(`http://localhost:3001/partesemergencias/${deleteParteId}`);
       if (response.data.success) {
         alert("Reporte eliminado correctamente");
         setIsDeleteModalOpen(false);
-        setDeleteParteId(''); 
+        setDeleteParteId('');
         setDeleteError('');
         fetchEmergencies();
       } else {
@@ -167,7 +167,7 @@ function EmergenciesTable() {
             ))
           ) : (
             <tr>
-              <td colSpan="9" style={{ textAlign: 'center', padding: '1rem', color: '#555' }}>
+              <td colSpan="10" style={{ textAlign: 'center', padding: '1rem', color: '#555' }}>
                 No hay emergencias cargadas
               </td>
             </tr>
@@ -196,7 +196,79 @@ function EmergenciesTable() {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            {/* Contenido del modal de agregar reporte */}
+            <h3>Agregar Nuevo Reporte</h3>
+            <form onSubmit={handleSubmit} className="form-container">
+              <input
+                type="text"
+                name="nombre_denunciante"
+                placeholder="Nombre del denunciante"
+                value={formData.nombre_denunciante}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="text"
+                name="apellido_denunciante"
+                placeholder="Apellido del denunciante"
+                value={formData.apellido_denunciante}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="number"
+                name="documento_denunciante"
+                placeholder="Documento del denunciante"
+                value={formData.documento_denunciante}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="text"
+                name="direccion"
+                placeholder="Dirección"
+                value={formData.direccion}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="text"
+                name="tipo_asistencia"
+                placeholder="Tipo de Asistencia"
+                value={formData.tipo_asistencia}
+                onChange={handleInputChange}
+                required
+              />
+              <select
+                name="jefe_dotacion"
+                value={formData.jefe_dotacion}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="">Seleccione Jefe de Dotación</option>
+                {jefesDotacion.map((jefe) => (
+                  <option key={jefe.id} value={jefe.id}>
+                    {jefe.nombre_completo}
+                  </option>
+                ))}
+              </select>
+              <textarea
+                name="parte_escrito"
+                placeholder="Información adicional"
+                value={formData.parte_escrito}
+                onChange={handleInputChange}
+                required
+              />
+              <label htmlFor="fecha">Fecha de intervención:</label>
+              <input
+                type="date"
+                name="fecha"
+                value={formData.fecha}
+                onChange={handleInputChange}
+                required
+              />
+              <button type="submit" className="submit-btn">Agregar Reporte</button>
+            </form>
+            <button className="close-modal-btn" onClick={() => setIsModalOpen(false)}>Cerrar</button>
           </div>
         </div>
       )}

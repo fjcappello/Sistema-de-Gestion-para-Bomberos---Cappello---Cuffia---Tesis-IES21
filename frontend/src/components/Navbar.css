@@ -1,40 +1,48 @@
 /* Estilos del Navbar */
 .navbar {
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Espacio entre logo y enlaces */
   align-items: center;
-  padding: 1rem;
+  padding: 0.5rem 1rem; /* Espacio en la parte superior e inferior, y a los lados */
   background-color: #e60000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%; /* Asegura que ocupe todo el ancho de la pantalla */
 }
 
+.navbar-logo {
+  display: flex;
+  align-items: center;
+}
+
+
 .navbar-logo img {
-  height: 60px;
+  height: 60px; /* Ajusta el tamaño del logo */
+  width: auto;
+  margin-right: 10px; /* Espacio entre el logo y el título */
 }
 
 .navbar-title {
   font-weight: bold;
   color: #fff;
-  margin-right: 60px;
-  font-size: 1.5rem;
-  padding: 1rem;
+  font-size: 1.2rem; /* Ajusta el tamaño del texto */
+  margin-right: 20px; /* Espacio a la derecha del título */
 }
 
 .navbar-links {
   list-style: none;
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem; /* Espacio entre los enlaces */
 }
 
 .navbar-links li {
   display: inline;
+  position: relative; /* Necesario para el efecto de línea */
 }
 
 .navbar-links a {
   text-decoration: none;
   color: #fff;
   font-weight: bold;
-  position: relative;
   padding: 0.5rem;
   transition: color 0.3s ease;
 }
@@ -44,46 +52,51 @@
   position: absolute;
   width: 0;
   height: 2px;
-  background-color: white;
+  background-color: white; /* Color de la línea */
   bottom: 0;
   left: 0;
   transition: width 0.3s ease;
 }
 
 .navbar-links a:hover::after {
-  width: 100%;
+  width: 100%; /* Línea se expande al pasar el mouse */
 }
 
+/* Botón Salir */
 .logout-btn {
-  background-color: #e60000;
+  background-color: transparent;
   color: #fff;
-  border: 2px solid #fff;
-  padding: 0.5rem 1rem;
+  border: 1px solid #fff;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.9rem; /* Ajusta el tamaño del texto */
   border-radius: 5px;
   transition: background-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+  font-weight: bold;
 }
 
 .logout-btn:hover {
-  background-color: #ff0000;
+  background-color: #fff;
   color: #e60000;
 }
 
-/* Estilos para el menú hamburguesa */
+/* Menú hamburguesa para pantallas pequeñas */
 .hamburger {
   display: none;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.2rem;
   background: none;
   border: none;
+  cursor: pointer;
 }
 
 .hamburger .line {
-  width: 25px;
-  height: 3px;
+  width: 20px;
+  height: 2px;
   background-color: #fff;
 }
 
-/* Mostrar el menú hamburguesa solo en pantallas pequeñas */
+/* Ajustes en pantallas pequeñas */
 @media (max-width: 768px) {
   .navbar-links {
     display: none;
@@ -102,5 +115,11 @@
     background-color: #e60000;
     width: 100%;
     padding: 1rem;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .navbar-links.active a {
+    padding: 0.75rem;
+    text-align: center;
   }
 }
