@@ -4,15 +4,15 @@ import './Navbar.css';
 
 function Navbar({ onLogout }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const navigate = useNavigate(); // Hook para redirigir
+  const navigate = useNavigate(); 
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
   const handleLogout = () => {
-    onLogout(); // Llama a la función de logout
-    navigate('/'); // Redirige a la página de login
+    onLogout(); 
+    navigate('/'); 
   };
 
   return (
@@ -32,7 +32,7 @@ function Navbar({ onLogout }) {
         <li><button className="logout-btn" onClick={handleLogout}>Salir</button></li>
       </ul>
 
-      {/* Botón de menú hamburguesa visible en pantallas pequeñas */}
+      {/* Menu hamburguesa  */}
       <button className="hamburger" onClick={toggleMobileMenu}>
         <span className="line"></span>
         <span className="line"></span>

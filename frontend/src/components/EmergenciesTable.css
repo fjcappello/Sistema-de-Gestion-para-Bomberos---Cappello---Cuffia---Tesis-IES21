@@ -1,4 +1,4 @@
-/* Estilos para la tabla de emergencias */
+/* DataGrid */
 .table-container {
   padding: 1rem;
 }
@@ -42,10 +42,10 @@
   cursor: not-allowed;
 }
 
-/* Estilos para el botón de agregar reporte */
+/* Boton de agregar reporte */
 .add-report-btn {
   margin-top: 1rem;
-  margin-right: 0.5rem; /* Añade espacio a la derecha */
+  margin-right: 0.5rem; 
   padding: 0.75rem 1.5rem;
   background-color: green;
   color: white;
@@ -60,7 +60,7 @@
   background-color: #cc0000;
 }
 
-/* Modal */
+/* Modal de agregar */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -136,7 +136,7 @@
 .delete-report-btn:hover {
   background-color: #cc0000;
 }
-/* Estilos para el modal de eliminación y sus botones */
+/* Modal para eliminar*/
 .modal-content input[type="number"] {
   display: block;
   width: 100%;
@@ -173,7 +173,7 @@
   background-color: #333;
 }
 
-/* Estilos para el overlay de confirmación */
+/* Confirmaciones */
 .confirm-overlay {
   position: fixed;
   top: 0;
@@ -206,7 +206,7 @@
   padding: 0.5rem 1.5rem;
 }
 
-/* Estilo para el mensaje de error en el modal de eliminación */
+/* Mensaje de error en la eliminacion */
 .error-message {
   color: red;
   font-size: 0.9rem;

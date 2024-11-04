@@ -10,7 +10,7 @@ function EmergenciesTable() {
   const [jefesDotacion, setJefesDotacion] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [deleteParteId, setDeleteParteId] = useState(''); // ID del parte a eliminar
+  const [deleteParteId, setDeleteParteId] = useState(''); 
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleteError, setDeleteError] = useState('');
 
@@ -192,7 +192,6 @@ function EmergenciesTable() {
         Eliminar Reporte
       </button>
 
-      {/* Modal de agregar reporte */}
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -273,7 +272,6 @@ function EmergenciesTable() {
         </div>
       )}
 
-      {/* Modal de eliminación de reporte */}
       {isDeleteModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">

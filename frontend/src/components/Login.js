@@ -14,7 +14,7 @@ function Login({ setIsAuthenticated }) {
       const response = await axios.post('http://localhost:3001/login', { legajo, password });
       if (response.data.success) {
         setIsAuthenticated(true);
-        localStorage.setItem('isAuthenticated', 'true'); // Guardar estado en localStorage
+        localStorage.setItem('isAuthenticated', 'true'); 
       } else {
         setError('Legajo o contraseña incorrectos.');
       }

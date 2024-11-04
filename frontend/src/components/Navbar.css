@@ -1,12 +1,12 @@
 /* Estilos del Navbar */
 .navbar {
   display: flex;
-  justify-content: space-between; /* Espacio entre logo y enlaces */
+  justify-content: space-between; 
   align-items: center;
-  padding: 0.5rem 1rem; /* Espacio en la parte superior e inferior, y a los lados */
+  padding: 0.5rem 1rem; 
   background-color: #e60000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%; /* Asegura que ocupe todo el ancho de la pantalla */
+  width: 100%; 
 }
 
 .navbar-logo {
@@ -16,27 +16,27 @@
 
 
 .navbar-logo img {
-  height: 60px; /* Ajusta el tamaño del logo */
+  height: 60px; 
   width: auto;
-  margin-right: 10px; /* Espacio entre el logo y el título */
+  margin-right: 10px; 
 }
 
 .navbar-title {
   font-weight: bold;
   color: #fff;
-  font-size: 1.2rem; /* Ajusta el tamaño del texto */
-  margin-right: 20px; /* Espacio a la derecha del título */
+  font-size: 1.2rem; 
+  margin-right: 20px; 
 }
 
 .navbar-links {
   list-style: none;
   display: flex;
-  gap: 0.5rem; /* Espacio entre los enlaces */
+  gap: 0.5rem; 
 }
 
 .navbar-links li {
   display: inline;
-  position: relative; /* Necesario para el efecto de línea */
+  position: relative; 
 }
 
 .navbar-links a {
@@ -52,14 +52,14 @@
   position: absolute;
   width: 0;
   height: 2px;
-  background-color: white; /* Color de la línea */
+  background-color: white; 
   bottom: 0;
   left: 0;
   transition: width 0.3s ease;
 }
 
 .navbar-links a:hover::after {
-  width: 100%; /* Línea se expande al pasar el mouse */
+  width: 100%; 
 }
 
 /* Botón Salir */
@@ -68,7 +68,7 @@
   color: #fff;
   border: 1px solid #fff;
   padding: 0.3rem 0.8rem;
-  font-size: 0.9rem; /* Ajusta el tamaño del texto */
+  font-size: 0.9rem; 
   border-radius: 5px;
   transition: background-color 0.3s ease, color 0.3s ease;
   cursor: pointer;

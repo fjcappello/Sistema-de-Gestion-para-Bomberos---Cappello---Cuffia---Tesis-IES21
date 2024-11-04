@@ -1,4 +1,4 @@
-/* Contenedor principal */
+
 .login-container {
     display: flex;
     flex-direction: column;
@@ -7,13 +7,13 @@
     height: 100vh;
   }
   
-  /* Estilo del logo */
+  /* Logo */
   .logo {
     width: 150px;
     margin-bottom: 20px;
   }
   
-  /* Estilos del formulario */
+  /* Formulario */
   .login-form {
     display: flex;
     flex-direction: column;
@@ -31,7 +31,7 @@
     font-size: 1rem;
   }
   
-  /* Contenedor del campo de contraseña y el botón de visibilidad */
+  /* Contraseña y emojis  */
   .password-container {
     display: flex;
     align-items: center;
@@ -43,10 +43,10 @@
   /* Input de contraseña */
   .password-container input {
     flex: 1;
-    padding-right: 2.5rem; /* Espacio para el botón */
+    padding-right: 2.5rem; 
   }
   
-  /* Botón de visibilidad de la contraseña */
+  /* Boton visibilidad*/
   .toggle-password-btn {
     background: none;
     border: none;
@@ -62,11 +62,11 @@
     outline: none;
   }
   
-  /* Botón de enviar (Ingresar al Sistema) */
+  /* Botón de  ingreso */
   .submit-btn {
     padding: 0.75rem 1.5rem;
-    background-color: #4CAF50; /* Color de fondo verde */
-    color: white; /* Color de texto blanco */
+    background-color: #4CAF50; 
+    color: white; 
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -78,20 +78,20 @@
   }
   
   .submit-btn:hover {
-    background-color: #45a049; /* Cambio de color en hover */
-    transform: scale(1.02); /* Efecto de crecimiento leve */
+    background-color: #45a049;
+    transform: scale(1.02);
   }
   
   .submit-btn:active {
-    transform: scale(0.98); /* Efecto al presionar */
+    transform: scale(0.98); 
   }
   
   .submit-btn:focus {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(72, 180, 97, 0.5); /* Resalte de enfoque */
+    box-shadow: 0 0 0 3px rgba(72, 180, 97, 0.5); 
   }
+
   
-  /* Mensaje de error */
   .error-message {
     color: red;
     margin-top: 10px;
