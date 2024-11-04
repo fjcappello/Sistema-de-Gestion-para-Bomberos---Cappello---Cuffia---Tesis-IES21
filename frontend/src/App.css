@@ -21,13 +21,13 @@ main {
 
 /* Encabezados principales */
 h1 {
-  color: #e60000; /* Rojo para destacar */
+  color: #e60000; 
   font-size: 1.8rem;
   margin: 20px 0;
   text-align: center;
 }
 
-/* Estilo del contenedor global de la aplicación */
+/* global de la aplicación */
 .App {
   text-align: center;
   display: flex;

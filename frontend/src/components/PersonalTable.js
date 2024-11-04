@@ -54,14 +54,13 @@ function PersonalTable() {
   const handleAddSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación del campo Legajo
+
     const legajoVal = parseInt(formData.legajo, 10);
     if (isNaN(legajoVal) || legajoVal <= 0) {
       alert("El legajo debe ser un número positivo mayor a 0.");
       return;
     }
 
-    // Validación del campo Documento
     const documentoVal = parseInt(formData.documento, 10);
     if (isNaN(documentoVal) || documentoVal < 1 || documentoVal > 99999999) {
       alert("El documento debe ser un número entre 1 y 99,999,999.");
@@ -73,8 +72,8 @@ function PersonalTable() {
       if (response.data.success) {
         alert("Personal agregado correctamente");
         setIsAddModalOpen(false);
-        clearFormData(); // Limpiar formulario después de agregar
-        fetchPersonal(); // Actualizar la lista de personal
+        clearFormData(); 
+        fetchPersonal(); 
       } else {
         alert("Error al agregar personal: " + (response.data.error || "Operación fallida"));
       }
@@ -97,7 +96,7 @@ function PersonalTable() {
         setIsDeleteModalOpen(false);
         setDeleteLegajo('');
         setDeleteError('');
-        fetchPersonal(); // Actualizar la lista de personal
+        fetchPersonal(); 
       } else {
         setDeleteError("Error al eliminar personal: " + (response.data.error || "Operación fallida"));
       }
@@ -120,7 +119,7 @@ function PersonalTable() {
   };
 
   const openAddModal = () => {
-    clearFormData(); // Limpiar datos al abrir el modal
+    clearFormData(); 
     setIsAddModalOpen(true);
   };
 
@@ -180,7 +179,6 @@ function PersonalTable() {
         Eliminar Personal
       </button>
 
-      {/* Modal para agregar personal */}
       {isAddModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -258,7 +256,7 @@ function PersonalTable() {
         </div>
       )}
 
-      {/* Modal para eliminar personal */}
+      
       {isDeleteModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
