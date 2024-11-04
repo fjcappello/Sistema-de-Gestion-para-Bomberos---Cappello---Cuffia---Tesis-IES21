@@ -1,0 +1,141 @@
+const express = require('express');
+const mysql = require('mysql2');
+const cors = require('cors');
+
+const app = express();
+app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(express.json());
+
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'bd_sigb',
+  port: 3004
+});
+
+db.connect(err => {
+  if (err) console.error('Error de conexión a MySQL:', err);
+  else console.log('Conectado a MySQL');
+});
+
+app.get('/partesemergencias', (req, res) => {
+  const query = `
+    SELECT 
+      p.id AS parte_id,
+      p.numero_parte,
+      p.nombre_denunciante,
+      p.apellido_denunciante,
+      p.documento_denunciante,
+      p.direccion,
+      p.tipo_asistencia,
+      DATE_FORMAT(p.fecha, '%d-%m-%Y') AS fecha,  -- Formato DD-MM-AAAA
+      CONCAT(per.nombre, ' ', per.apellido) AS jefe_dotacion,
+      p.parte_escrito
+    FROM partes p
+    LEFT JOIN personal per ON p.jefe_dotacion = per.legajo
+    ORDER BY p.fecha DESC
+  `;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener datos:', err);
+      res.status(500).json({ error: 'Error en el servidor' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint para obtener la lista de nombres de personal (jefes de dotación)
+app.get('/personal_nombres', (req, res) => {
+  const query = 'SELECT legajo AS id, CONCAT(nombre, " ", apellido) AS nombre_completo FROM personal';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener nombres de personal:', err);
+      res.status(500).json({ error: 'Error en el servidor' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint para agregar un nuevo reporte de emergencia con formato numero_parte
+app.post('/partesemergencias', async (req, res) => {
+  const {
+    nombre_denunciante,
+    apellido_denunciante,
+    documento_denunciante,
+    direccion,
+    tipo_asistencia,
+    jefe_dotacion,
+    parte_escrito,
+    fecha
+  } = req.body;
+
+  try {
+    // Obtener el siguiente numero para numero_parte con el formato numero/AñoActual
+    const [rows] = await db.promise().query(`
+      SELECT IFNULL(MAX(CAST(SUBSTRING_INDEX(numero_parte, '/', 1) AS UNSIGNED)), 0) + 1 AS next_parte 
+      FROM partes
+      WHERE numero_parte LIKE CONCAT('%/', YEAR(CURDATE()))
+    `);
+
+    const nextParte = rows[0]?.next_parte || 1;
+    const numeroParte = `${nextParte}/${new Date().getFullYear()}`; // Formato numero/AñoActual
+
+    // Insertar el nuevo reporte con numero_parte en formato especificado
+    const [result] = await db.promise().query(`
+      INSERT INTO partes (
+        nombre_denunciante,
+        apellido_denunciante,
+        documento_denunciante,
+        direccion,
+        tipo_asistencia,
+        jefe_dotacion,
+        parte_escrito,
+        fecha,
+        numero_parte
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      nombre_denunciante,
+      apellido_denunciante,
+      documento_denunciante,
+      direccion,
+      tipo_asistencia,
+      jefe_dotacion,
+      parte_escrito,
+      fecha,
+      numeroParte
+    ]);
+
+    res.json({ success: 'Reporte agregado correctamente', reportId: result.insertId, numeroParte });
+  } catch (error) {
+    console.error('Error al agregar el reporte:', error);
+    res.status(500).json({ error: 'Error en el servidor al agregar el reporte' });
+  }
+});
+
+// Endpoint para eliminar un reporte de emergencia usando numero_parte
+app.delete('/partesemergencias/:numero_parte', (req, res) => {
+  const { numero_parte } = req.params;
+  const query = 'DELETE FROM partes WHERE numero_parte = ?';
+  
+  db.query(query, [numero_parte], (err, result) => {
+    if (err) {
+      console.error('Error al eliminar el reporte:', err);
+      res.status(500).json({ error: 'Error en el servidor al eliminar el reporte' });
+    } else if (result.affectedRows === 0) {
+      res.status(404).json({ error: 'Reporte no encontrado' });
+    } else {
+      res.json({ success: 'Reporte eliminado correctamente' });
+    }
+  });
+});
+
+
+
+
+const PORT = 3001;
+app.listen(PORT, () => {
+  console.log(`Servidor API en http://localhost:${PORT}`);
+});
