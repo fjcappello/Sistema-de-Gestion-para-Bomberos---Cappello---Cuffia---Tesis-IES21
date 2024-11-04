@@ -116,23 +116,123 @@ app.post('/partesemergencias', async (req, res) => {
 });
 
 // Endpoint para eliminar un reporte de emergencia usando numero_parte
-app.delete('/partesemergencias/:numero_parte', (req, res) => {
-  const { numero_parte } = req.params;
-  const query = 'DELETE FROM partes WHERE numero_parte = ?';
+app.delete('/partesemergencias/:id', (req, res) => {
+  const { id } = req.params;
+  console.log("ID recibido para eliminar:", id); // Log para verificar el ID recibido
+  const query = 'DELETE FROM partes WHERE id = ?';
   
-  db.query(query, [numero_parte], (err, result) => {
+  db.query(query, [id], (err, result) => {
     if (err) {
-      console.error('Error al eliminar el reporte:', err);
+      console.error('Error al eliminar el reporte en la base de datos:', err);
       res.status(500).json({ error: 'Error en el servidor al eliminar el reporte' });
     } else if (result.affectedRows === 0) {
+      console.warn("No se encontró ningún reporte con ese ID.");
       res.status(404).json({ error: 'Reporte no encontrado' });
     } else {
+      console.log("Reporte eliminado correctamente.");
       res.json({ success: 'Reporte eliminado correctamente' });
     }
   });
 });
 
 
+// Endpoint para obtener la lista de personal con el nombre de la jerarquía
+app.get('/personal', (req, res) => {
+  const query = `
+    SELECT 
+      p.legajo,
+      CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo,
+      p.documento,
+      DATE_FORMAT(p.nacimiento, '%d-%m-%Y') AS nacimiento,  -- Formato de fecha DD-MM-AAAA
+      DATE_FORMAT(p.fecha_ingreso, '%d-%m-%Y') AS fecha_ingreso,  -- Formato de fecha DD-MM-AAAA
+      j.jerarquia AS jerarquia
+    FROM personal p
+    LEFT JOIN jerarquias j ON p.jerarquia_id = j.id
+    ORDER BY p.legajo ASC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener datos de personal:', err);
+      res.status(500).json({ error: 'Error en el servidor al obtener datos de personal' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Endpoint para obtener la lista de jerarquías
+app.get('/jerarquias', (req, res) => {
+  const query = `
+    SELECT id, jerarquia
+    FROM jerarquias
+    ORDER BY jerarquia ASC
+  `;
+  
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener jerarquías:', err);
+      res.status(500).json({ error: 'Error en el servidor al obtener jerarquías' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+
+
+// Endpoint para agregar un nuevo personal y crear su login
+app.post('/personal', (req, res) => {
+  const { legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id } = req.body;
+
+  // Query para insertar en la tabla `personal`
+  const personalQuery = `
+    INSERT INTO personal (legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(personalQuery, [legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id], (err, result) => {
+    if (err) {
+      console.error('Error al agregar personal:', err);
+      res.status(500).json({ error: 'Error en el servidor al agregar personal' });
+      return;
+    }
+
+    // Query para insertar en la tabla `login` usando el `legajo` y `documento` como contraseña
+    const loginQuery = `
+      INSERT INTO login (legajo, contraseña)
+      VALUES (?, ?)
+    `;
+
+    db.query(loginQuery, [legajo, documento], (err) => {
+      if (err) {
+        console.error('Error al crear login:', err);
+        res.status(500).json({ error: 'Error en el servidor al crear login' });
+        return;
+      }
+
+      res.json({ success: 'Personal y login creados correctamente' });
+    });
+  });
+});
+
+// Endpoint para eliminar personal por legajo
+app.delete('/personal/:legajo', (req, res) => {
+  const { legajo } = req.params;
+
+  const query = `DELETE FROM personal WHERE legajo = ?`;
+
+  db.query(query, [legajo], (err, result) => {
+    if (err) {
+      console.error('Error al eliminar personal:', err);
+      res.status(500).json({ error: 'Error en el servidor al eliminar personal' });
+    } else if (result.affectedRows === 0) {
+      res.status(404).json({ error: 'Personal no encontrado' });
+    } else {
+      res.json({ success: 'Personal eliminado correctamente' });
+    }
+  });
+});
 
 
 const PORT = 3001;

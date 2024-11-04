@@ -8,11 +8,11 @@ function EmergenciesTable() {
   const [emergencies, setEmergencies] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [jefesDotacion, setJefesDotacion] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false); 
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); 
-  const [deleteNumeroParte, setDeleteNumeroParte] = useState(''); // Para ingresar el numero de parte a eliminar
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteParteId, setDeleteParteId] = useState(''); // ID del parte a eliminar
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [deleteError, setDeleteError] = useState(''); // Para mostrar el error en el mensaje de confirmación
+  const [deleteError, setDeleteError] = useState('');
 
   const [formData, setFormData] = useState({
     nombre_denunciante: '',
@@ -71,7 +71,7 @@ function EmergenciesTable() {
           parte_escrito: '',
           fecha: ''
         });
-        setIsModalOpen(false); // Cierra el modal después de agregar
+        setIsModalOpen(false);
         fetchEmergencies();
       } else {
         console.error("Error al agregar el reporte:", response.data.error);
@@ -84,27 +84,27 @@ function EmergenciesTable() {
   };
 
   const handleDelete = async () => {
-    if (!deleteNumeroParte) {
-      setDeleteError("Por favor, ingrese un número de parte válido.");
+    if (!deleteParteId) {
+      setDeleteError("Por favor, ingrese un ID válido.");
       return;
     }
-
+  
     try {
-      const response = await axios.delete(`http://localhost:3001/partesemergencias/${deleteNumeroParte}`);
+      const response = await axios.delete(`http://localhost:3001/partesemergencias/${deleteParteId}`);
       if (response.data.success) {
         alert("Reporte eliminado correctamente");
         setIsDeleteModalOpen(false);
-        setDeleteNumeroParte(''); // Limpia el campo de número de parte
+        setDeleteParteId(''); 
         setDeleteError('');
         fetchEmergencies();
       } else {
         setDeleteError("Error al eliminar el reporte: " + (response.data.error || "Operación fallida"));
       }
     } catch (error) {
-      console.error("Error al intentar eliminar el reporte:", error);
-      setDeleteError("Error al intentar eliminar el reporte. Verifique que el número de parte sea correcto.");
+      console.error("Error al intentar eliminar el reporte:", error.response || error.message || error);
+      setDeleteError("Error al intentar eliminar el reporte. Verifique que el ID sea correcto.");
     }
-  };
+  }
 
   const openAddReportModal = () => {
     setFormData({
@@ -121,8 +121,8 @@ function EmergenciesTable() {
   };
 
   const openDeleteReportModal = () => {
-    setDeleteNumeroParte(''); // Limpia el campo de número de parte en el modal de eliminación
-    setDeleteError(''); // Limpia el mensaje de error previo
+    setDeleteParteId('');
+    setDeleteError('');
     setIsDeleteModalOpen(true);
   };
 
@@ -137,6 +137,7 @@ function EmergenciesTable() {
       <table className="emergencies-table">
         <thead>
           <tr>
+            <th>Parte ID</th>
             <th>Número de Parte</th>
             <th>Fecha</th>
             <th>Nombre</th>
@@ -152,6 +153,7 @@ function EmergenciesTable() {
           {currentEmergencies.length > 0 ? (
             currentEmergencies.map((emergencia) => (
               <tr key={emergencia.parte_id}>
+                <td>{emergencia.parte_id}</td>
                 <td>{emergencia.numero_parte}</td>
                 <td>{emergencia.fecha}</td>
                 <td>{emergencia.nombre_denunciante}</td>
@@ -194,126 +196,54 @@ function EmergenciesTable() {
       {isModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3>Agregar Nuevo Reporte</h3>
-            <form onSubmit={handleSubmit} className="form-container">
-              <input
-                type="text"
-                name="nombre_denunciante"
-                placeholder="Nombre del denunciante"
-                value={formData.nombre_denunciante}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="apellido_denunciante"
-                placeholder="Apellido del denunciante"
-                value={formData.apellido_denunciante}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="number"
-                name="documento_denunciante"
-                placeholder="Documento del denunciante"
-                value={formData.documento_denunciante}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="direccion"
-                placeholder="Dirección"
-                value={formData.direccion}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="text"
-                name="tipo_asistencia"
-                placeholder="Tipo de Asistencia"
-                value={formData.tipo_asistencia}
-                onChange={handleInputChange}
-                required
-              />
-              <select
-                name="jefe_dotacion"
-                value={formData.jefe_dotacion}
-                onChange={handleInputChange}
-                required
-              >
-                <option value="">Seleccione Jefe de Dotación</option>
-                {jefesDotacion.map((jefe) => (
-                  <option key={jefe.id} value={jefe.id}>
-                    {jefe.nombre_completo}
-                  </option>
-                ))}
-              </select>
-              <textarea
-                name="parte_escrito"
-                placeholder="Información adicional"
-                value={formData.parte_escrito}
-                onChange={handleInputChange}
-                required
-              />
-              <input
-                type="date"
-                name="fecha"
-                value={formData.fecha}
-                onChange={handleInputChange}
-                required
-              />
-              <button type="submit" className="submit-btn">Agregar Reporte</button>
-            </form>
-            <button className="close-modal-btn" onClick={() => setIsModalOpen(false)}>Cerrar</button>
+            {/* Contenido del modal de agregar reporte */}
           </div>
         </div>
       )}
 
-     {/* Modal de eliminación de reporte */}
-{isDeleteModalOpen && (
-  <div className="modal-overlay">
-    <div className="modal-content">
-      <h3>Eliminar Reporte</h3>
-      <input
-        type="text"
-        placeholder="Ingrese el número de parte"
-        value={deleteNumeroParte}
-        onChange={(e) => {
-          setDeleteNumeroParte(e.target.value);
-          setDeleteError(''); // Limpiar mensaje de error previo
-        }}
-        required
-      />
-      <button
-        className="confirm-delete-btn"
-        onClick={() => setConfirmDelete(true)}
-      >
-        Eliminar
-      </button>
-      <button className="close-modal-btn" onClick={() => {
-        setIsDeleteModalOpen(false);
-        setConfirmDelete(false); // Asegúrate de limpiar el estado de confirmación
-      }}>
-        Cancelar
-      </button>
-    </div>
+      {/* Modal de eliminación de reporte */}
+      {isDeleteModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Eliminar Reporte</h3>
+            <input
+              type="number"
+              placeholder="Ingrese el ID del parte"
+              value={deleteParteId}
+              onChange={(e) => {
+                setDeleteParteId(e.target.value);
+                setDeleteError('');
+              }}
+              required
+            />
+            <button
+              className="confirm-delete-btn"
+              onClick={() => setConfirmDelete(true)}
+            >
+              Eliminar
+            </button>
+            <button className="close-modal-btn" onClick={() => {
+              setIsDeleteModalOpen(false);
+              setConfirmDelete(false);
+            }}>
+              Cancelar
+            </button>
+          </div>
 
-    {/* Confirmación de eliminación con mensaje de error (si lo hay) */}
-    {confirmDelete && (
-      <div className="confirm-overlay">
-        <div className="confirm-content">
-          <p>¿Está seguro? Esta acción no se puede deshacer.</p>
-          {deleteError && <p className="error-message">{deleteError}</p>} {/* Muestra el error aquí */}
-          <button className="confirm-delete-btn" onClick={handleDelete}>Confirmar</button>
-          <button className="close-modal-btn" onClick={() => setConfirmDelete(false)}>
-            Cancelar
-          </button>
+          {confirmDelete && (
+            <div className="confirm-overlay">
+              <div className="confirm-content">
+                <p>¿Está seguro? Esta acción no se puede deshacer.</p>
+                {deleteError && <p className="error-message">{deleteError}</p>}
+                <button className="confirm-delete-btn" onClick={handleDelete}>Confirmar</button>
+                <button className="close-modal-btn" onClick={() => setConfirmDelete(false)}>
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-    )}
-  </div>
-)}
+      )}
     </div>
   );
 }
