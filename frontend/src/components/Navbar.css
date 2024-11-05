@@ -14,7 +14,6 @@
   align-items: center;
 }
 
-
 .navbar-logo img {
   height: 60px; 
   width: auto;
@@ -80,6 +79,53 @@
   color: #e60000;
 }
 
+/* Menú desplegable para Reportes */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-btn {
+  color: #fff;
+  font-weight: bold;
+  padding: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #b30000;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 0;
+  display: none;
+  flex-direction: column; /* Organiza las opciones en columna */
+  min-width: 150px;
+}
+
+.dropdown:hover .dropdown-menu,
+.dropdown-menu.active {
+  display: flex; /* Cambia a flex para mostrar el submenú */
+}
+
+.dropdown-menu li {
+  padding: 0.5rem 1rem;
+}
+
+.dropdown-menu li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  display: block; /* Muestra las opciones en bloques individuales */
+}
+
+.dropdown-menu li a:hover {
+  color: #e6e6e6;
+}
+
 /* Menú hamburguesa para pantallas pequeñas */
 .hamburger {
   display: none;
@@ -121,5 +167,13 @@
   .navbar-links.active a {
     padding: 0.75rem;
     text-align: center;
+  }
+
+  .dropdown-menu {
+    position: relative;
+    top: 0;
+    background-color: #e60000;
+    width: 100%;
+    box-shadow: none;
   }
 }

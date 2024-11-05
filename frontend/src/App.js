@@ -45,7 +45,7 @@ function App() {
                 {}
                 <Route path="/personal" element={<PersonalTable />} />
                 {}
-                <Route path="/reportes" element={<ReportsPage />} />
+                <Route path="/reportes/estadisticas" element={<ReportsPage />} />
               </>
             )}
           </Routes>

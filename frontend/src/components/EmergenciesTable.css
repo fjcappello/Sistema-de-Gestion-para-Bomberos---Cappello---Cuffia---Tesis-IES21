@@ -1,12 +1,65 @@
-/* DataGrid */
+/* Contenedor general */
 .table-container {
   padding: 1rem;
 }
 
+/* Filtros */
+.filter-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: #fafafa;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-select, .filter-input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  width: 180px;
+}
+
+/* Botones de filtro */
+.filter-btn, .reset-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.filter-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.filter-btn:hover {
+  background-color: #45a049;
+}
+
+.reset-btn {
+  background-color: #ff3333;
+  color: white;
+}
+
+.reset-btn:hover {
+  background-color: #cc0000;
+}
+
+/* DataGrid */
 .emergencies-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1rem;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .emergencies-table th, .emergencies-table td {
@@ -18,8 +71,22 @@
 .emergencies-table th {
   background-color: #ff3333;
   color: white;
+  font-weight: bold;
 }
 
+.emergencies-table td {
+  color: #333;
+}
+
+/* Mensaje de no hay emergencias */
+.emergencies-table tbody tr td[colspan="10"] {
+  text-align: center;
+  padding: 1rem;
+  color: #555;
+  font-style: italic;
+}
+
+/* Paginación */
 .pagination {
   display: flex;
   justify-content: center;
@@ -35,6 +102,8 @@
   color: white;
   border: none;
   border-radius: 4px;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 .pagination button:disabled {
@@ -42,7 +111,7 @@
   cursor: not-allowed;
 }
 
-/* Boton de agregar reporte */
+/* Botón de agregar reporte */
 .add-report-btn {
   margin-top: 1rem;
   margin-right: 0.5rem; 
@@ -57,7 +126,24 @@
 }
 
 .add-report-btn:hover {
-  background-color: #cc0000;
+  background-color: #228B22;
+}
+
+/* Botón de eliminar reporte */
+.delete-report-btn {
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.delete-report-btn:hover {
+  background-color: #b30000;
 }
 
 /* Modal de agregar */
@@ -91,6 +177,7 @@
   margin-bottom: 1rem;
   border: 1px solid #ccc;
   border-radius: 4px;
+  font-size: 0.9rem;
 }
 
 .submit-btn {
@@ -100,6 +187,8 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
 }
 
 .submit-btn:hover {
@@ -121,59 +210,7 @@
   background-color: #cc0000;
 }
 
-.delete-report-btn {
-  margin-top: 1rem;
-  padding: 0.75rem 1.5rem;
-  background-color: red;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.delete-report-btn:hover {
-  background-color: #cc0000;
-}
-/* Modal para eliminar*/
-.modal-content input[type="number"] {
-  display: block;
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.confirm-delete-btn, .close-modal-btn {
-  display: inline-block;
-  margin: 0.5rem;
-  padding: 0.5rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.confirm-delete-btn {
-  background-color: red;
-  color: white;
-}
-
-.confirm-delete-btn:hover {
-  background-color: #cc0000;
-}
-
-.close-modal-btn {
-  background-color: #555;
-  color: white;
-}
-
-.close-modal-btn:hover {
-  background-color: #333;
-}
-
-/* Confirmaciones */
+/* Confirmación de eliminación */
 .confirm-overlay {
   position: fixed;
   top: 0;
@@ -199,14 +236,6 @@
   margin-bottom: 1rem;
 }
 
-.confirm-content .confirm-delete-btn,
-.confirm-content .close-modal-btn {
-  display: inline-block;
-  margin: 0.5rem;
-  padding: 0.5rem 1.5rem;
-}
-
-/* Mensaje de error en la eliminacion */
 .error-message {
   color: red;
   font-size: 0.9rem;

@@ -20,9 +20,12 @@ db.connect((err) => {
   else console.log('Conectado a MySQL');
 });
 
-// Obtener lista de partes de emergencias
+
+//Region Endpoint get emergencias con filtros
 app.get('/partesemergencias', (req, res) => {
-  const query = `
+  const { jefeDotacion, tipoAsistencia, startDate, endDate } = req.query;
+
+  let query = `
     SELECT 
       p.id AS parte_id,
       p.numero_parte,
@@ -31,14 +34,39 @@ app.get('/partesemergencias', (req, res) => {
       p.documento_denunciante,
       p.direccion,
       p.tipo_asistencia,
-      DATE_FORMAT(p.fecha, '%d-%m-%Y') AS fecha,  -- Formato DD-MM-AAAA
+      DATE_FORMAT(p.fecha, '%d-%m-%Y') AS fecha,
       CONCAT(per.nombre, ' ', per.apellido) AS jefe_dotacion,
       p.parte_escrito
     FROM partes p
     LEFT JOIN personal per ON p.jefe_dotacion = per.legajo
-    ORDER BY p.fecha DESC
+    WHERE 1=1
   `;
-  db.query(query, (err, results) => {
+
+  const params = [];
+  
+  if (jefeDotacion) {
+    query += ` AND p.jefe_dotacion = ?`;
+    params.push(jefeDotacion);
+  }
+  
+  if (tipoAsistencia) {
+    query += ` AND p.tipo_asistencia = ?`;
+    params.push(tipoAsistencia);
+  }
+
+  if (startDate) {
+    query += ` AND p.fecha >= ?`;
+    params.push(startDate);
+  }
+
+  if (endDate) {
+    query += ` AND p.fecha <= ?`;
+    params.push(endDate);
+  }
+
+  query += ` ORDER BY p.fecha DESC`;
+
+  db.query(query, params, (err, results) => {
     if (err) {
       console.error('Error al obtener datos:', err);
       res.status(500).json({ error: 'Error en el servidor' });
@@ -47,6 +75,27 @@ app.get('/partesemergencias', (req, res) => {
     }
   });
 });
+
+// Obtener lista de tipos de asistencia
+app.get('/tipos_asistencia', (req, res) => {
+  const query = `
+    SELECT DISTINCT tipo_asistencia
+    FROM partes
+    ORDER BY tipo_asistencia ASC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener tipos de asistencia:', err);
+      res.status(500).json({ error: 'Error en el servidor' });
+    } else {
+      // Extraer solo los valores de tipo_asistencia en un array
+      const tiposAsistencia = results.map(row => row.tipo_asistencia);
+      res.json(tiposAsistencia);
+    }
+  });
+});
+
 
 // Obtener lista de jefes de dotación
 app.get('/personal_nombres', (req, res) => {
@@ -321,6 +370,8 @@ app.get('/reportes', (req, res) => {
     }
   });
 });
+
+//endregion 
 
 // Iniciar el servidor en el puerto 3001
 const PORT = 3001;

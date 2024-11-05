@@ -1,15 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
-import PDFGenerator from './PDFGenerator';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
 import './ReportsPage.css';
 
 function ReportsPage() {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [searchResult, setSearchResult] = useState(null);
-  const [error, setError] = useState('');
-  const [showPDF, setShowPDF] = useState(false);
   const [filters, setFilters] = useState({
     jefeDotacion: '',
     tipoAsistencia: '',
@@ -21,18 +18,34 @@ function ReportsPage() {
     labels: [],
     datasets: [{ data: [], backgroundColor: [] }],
   });
+  const [logoDataURI, setLogoDataURI] = useState('');
+  const chartRef = useRef(null);
 
   useEffect(() => {
-    const fetchJefes = async () => {
-      try {
-        const response = await axios.get('http://localhost:3001/personal_nombres');
-        setJefesDotacion(response.data);
-      } catch (err) {
-        console.error("Error al cargar jefes:", err);
-      }
-    };
-    fetchJefes();
+    fetchJefesDotacion();
+    loadLogo();
   }, []);
+
+  const fetchJefesDotacion = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/personal_nombres');
+      setJefesDotacion(response.data);
+    } catch (err) {
+      console.error("Error al cargar jefes:", err);
+    }
+  };
+
+  const loadLogo = async () => {
+    try {
+      const response = await fetch('/images/logo.png');
+      const blob = await response.blob();
+      const reader = new FileReader();
+      reader.onloadend = () => setLogoDataURI(reader.result);
+      reader.readAsDataURL(blob);
+    } catch (error) {
+      console.error('Error al cargar el logo:', error);
+    }
+  };
 
   const fetchReports = async () => {
     try {
@@ -52,38 +65,68 @@ function ReportsPage() {
     }
   };
 
-  const handleSearch = async () => {
-    setError('');
-    setSearchResult(null);
-    if (!searchTerm) {
-      setError('Debe ingresar un ID o número de parte para buscar.');
-      return;
-    }
-    try {
-      const response = await axios.get(`http://localhost:3001/partesemergencias/${searchTerm}`);
-      if (response.data) {
-        setSearchResult(response.data);
-      } else {
-        setError('No se encontró el parte con el ID o número especificado.');
-      }
-    } catch (err) {
-      console.error("Error al buscar el parte:", err);
-      setError('Error en el servidor. Inténtelo más tarde.');
-    }
-  };
-
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters({ ...filters, [name]: value });
   };
 
-  const handlePrintPDF = () => {
-    setShowPDF(true);
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Agregar logo si está disponible
+    if (logoDataURI) {
+      const logoWidth = 30;
+      const logoHeight = 30;
+      doc.addImage(logoDataURI, 'PNG', 10, 10, logoWidth, logoHeight);
+    }
+
+    // Título principal
+    doc.setFontSize(18);
+    const title = 'Bomberos Santa Maria de Punilla';
+    doc.text(title, pageWidth / 2, 20, { align: 'center' });
+
+    // Subtítulo
+    doc.setFontSize(14);
+    const subtitle = 'Estadistica de Emergencias';
+    doc.text(subtitle, pageWidth / 2, 30, { align: 'center' });
+
+    // Filtros aplicados
+    doc.setFontSize(12);
+    doc.text("Filtros Aplicados:", 10, 45);
+    doc.text(`Jefe de Dotación: ${filters.jefeDotacion || "Todos"}`, 10, 55);
+    doc.text(`Tipo de Asistencia: ${filters.tipoAsistencia || "Todos"}`, 10, 65);
+    doc.text(`Fecha Desde: ${filters.startDate || "Sin especificar"}`, 10, 75);
+    doc.text(`Fecha Hasta: ${filters.endDate || "Sin especificar"}`, 10, 85);
+
+    // Incluir el gráfico
+    if (chartRef.current) {
+      const chartCanvas = chartRef.current.canvas;
+      const chartImage = chartCanvas.toDataURL('image/png');
+      doc.addImage(chartImage, 'PNG', 10, 90, 180, 80);
+    }
+
+    // Análisis de Datos
+    doc.setFontSize(14);
+    doc.text("Análisis de Datos:", 10, 180);
+    doc.setFontSize(12);
+    chartData.labels.forEach((label, index) => {
+      const cantidad = chartData.datasets[0].data[index];
+      doc.text(`- ${label}: ${cantidad} intervenciones`, 10, 190 + index * 10);
+    });
+
+    // Fecha y hora de impresión
+    const printDate = new Date().toLocaleString();
+    doc.setFontSize(10);
+    doc.text(`Impreso el: ${printDate}`, 10, doc.internal.pageSize.getHeight() - 10);
+
+    // Guardar PDF
+    doc.save("Reporte_Emergencias.pdf");
   };
 
   return (
     <div className="reports-page">
-      <h2>Reportes de Emergencias</h2>
+      <h2>Estadistica de Emergencias</h2>
 
       <div className="filter-section">
         <label>
@@ -122,44 +165,13 @@ function ReportsPage() {
       <div className="chart-container">
         <h3>Intervenciones por Tipo</h3>
         {chartData.labels.length > 0 ? (
-          <Bar data={chartData} options={{ responsive: true }} />
+          <Bar ref={chartRef} data={chartData} options={{ responsive: true }} />
         ) : (
           <p>No hay datos disponibles para mostrar.</p>
         )}
       </div>
 
-      <div className="search-container">
-        <h3>Buscar e imprimir parte de emergencia</h3>
-        <input
-          type="text"
-          placeholder="Buscar por ID o Número de Parte"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input"
-          required
-        />
-        <button onClick={handleSearch} className="search-btn">Buscar Parte</button>
-      </div>
-
-      {error && <p className="error-message">{error}</p>}
-
-      {searchResult && (
-        <div className="report-result">
-          <h3>Resultado del Parte</h3>
-          <p><strong>ID Parte:</strong> {searchResult.parte_id}</p>
-          <p><strong>Número de Parte:</strong> {searchResult.numero_parte}</p>
-          <p><strong>Fecha:</strong> {searchResult.fecha}</p>
-          <p><strong>Denunciante:</strong> {searchResult.nombre_denunciante} {searchResult.apellido_denunciante}</p>
-          <p><strong>Documento:</strong> {searchResult.documento_denunciante}</p>
-          <p><strong>Dirección:</strong> {searchResult.direccion}</p>
-          <p><strong>Tipo de Asistencia:</strong> {searchResult.tipo_asistencia}</p>
-          <p><strong>Jefe de Dotación:</strong> {searchResult.jefe_dotacion}</p>
-          <p><strong>Información Adicional:</strong> {searchResult.parte_escrito}</p>
-          <button onClick={handlePrintPDF} className="print-btn">Generar PDF</button>
-        </div>
-      )}
-
-      {showPDF && <PDFGenerator partData={searchResult} onClose={() => setShowPDF(false)} />}
+      <button onClick={generatePDF} className="generate-pdf-btn">Generar PDF del Reporte</button>
     </div>
   );
 }
