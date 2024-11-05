@@ -5,6 +5,7 @@ import PersonalTable from './components/PersonalTable';
 import EmergenciesTable from './components/EmergenciesTable';
 import Login from './components/Login';
 import './App.css';
+import ReportsPage from './components/ReportsPage';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -43,6 +44,8 @@ function App() {
 
                 {}
                 <Route path="/personal" element={<PersonalTable />} />
+                {}
+                <Route path="/reportes" element={<ReportsPage />} />
               </>
             )}
           </Routes>

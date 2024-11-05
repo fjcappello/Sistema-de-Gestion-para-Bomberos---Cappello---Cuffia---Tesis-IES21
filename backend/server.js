@@ -6,19 +6,21 @@ const app = express();
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 
+// Configuración de la conexión a MySQL
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: '',
   database: 'bd_sigb',
-  port: 3004
+  port: 3004,
 });
 
-db.connect(err => {
+db.connect((err) => {
   if (err) console.error('Error de conexión a MySQL:', err);
   else console.log('Conectado a MySQL');
 });
 
+// Obtener lista de partes de emergencias
 app.get('/partesemergencias', (req, res) => {
   const query = `
     SELECT 
@@ -46,7 +48,7 @@ app.get('/partesemergencias', (req, res) => {
   });
 });
 
-// Endpoint para obtener la lista de nombres de personal (jefes de dotación)
+// Obtener lista de jefes de dotación
 app.get('/personal_nombres', (req, res) => {
   const query = 'SELECT legajo AS id, CONCAT(nombre, " ", apellido) AS nombre_completo FROM personal';
   db.query(query, (err, results) => {
@@ -59,7 +61,7 @@ app.get('/personal_nombres', (req, res) => {
   });
 });
 
-// Endpoint para agregar un nuevo reporte de emergencia con formato numero_parte
+// Agregar un nuevo reporte de emergencia con formato numero_parte
 app.post('/partesemergencias', async (req, res) => {
   const {
     nombre_denunciante,
@@ -69,11 +71,10 @@ app.post('/partesemergencias', async (req, res) => {
     tipo_asistencia,
     jefe_dotacion,
     parte_escrito,
-    fecha
+    fecha,
   } = req.body;
 
   try {
-    // Obtener el siguiente numero para numero_parte con el formato numero/AñoActual
     const [rows] = await db.promise().query(`
       SELECT IFNULL(MAX(CAST(SUBSTRING_INDEX(numero_parte, '/', 1) AS UNSIGNED)), 0) + 1 AS next_parte 
       FROM partes
@@ -81,10 +82,10 @@ app.post('/partesemergencias', async (req, res) => {
     `);
 
     const nextParte = rows[0]?.next_parte || 1;
-    const numeroParte = `${nextParte}/${new Date().getFullYear()}`; // Formato numero/AñoActual
+    const numeroParte = `${nextParte}/${new Date().getFullYear()}`;
 
-    // Insertar el nuevo reporte con numero_parte en formato especificado
-    const [result] = await db.promise().query(`
+    const [result] = await db.promise().query(
+      `
       INSERT INTO partes (
         nombre_denunciante,
         apellido_denunciante,
@@ -96,17 +97,19 @@ app.post('/partesemergencias', async (req, res) => {
         fecha,
         numero_parte
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, [
-      nombre_denunciante,
-      apellido_denunciante,
-      documento_denunciante,
-      direccion,
-      tipo_asistencia,
-      jefe_dotacion,
-      parte_escrito,
-      fecha,
-      numeroParte
-    ]);
+    `,
+      [
+        nombre_denunciante,
+        apellido_denunciante,
+        documento_denunciante,
+        direccion,
+        tipo_asistencia,
+        jefe_dotacion,
+        parte_escrito,
+        fecha,
+        numeroParte,
+      ]
+    );
 
     res.json({ success: 'Reporte agregado correctamente', reportId: result.insertId, numeroParte });
   } catch (error) {
@@ -115,36 +118,32 @@ app.post('/partesemergencias', async (req, res) => {
   }
 });
 
-// Endpoint para eliminar un reporte de emergencia usando numero_parte
+// Eliminar un reporte de emergencia usando id
 app.delete('/partesemergencias/:id', (req, res) => {
   const { id } = req.params;
-  console.log("ID recibido para eliminar:", id); // Log para verificar el ID recibido
   const query = 'DELETE FROM partes WHERE id = ?';
-  
+
   db.query(query, [id], (err, result) => {
     if (err) {
       console.error('Error al eliminar el reporte en la base de datos:', err);
       res.status(500).json({ error: 'Error en el servidor al eliminar el reporte' });
     } else if (result.affectedRows === 0) {
-      console.warn("No se encontró ningún reporte con ese ID.");
       res.status(404).json({ error: 'Reporte no encontrado' });
     } else {
-      console.log("Reporte eliminado correctamente.");
       res.json({ success: 'Reporte eliminado correctamente' });
     }
   });
 });
 
-
-// Endpoint para obtener la lista de personal con el nombre de la jerarquía
+// Obtener lista de personal completo con jerarquía
 app.get('/personal', (req, res) => {
   const query = `
     SELECT 
       p.legajo,
       CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo,
       p.documento,
-      DATE_FORMAT(p.nacimiento, '%d-%m-%Y') AS nacimiento,  -- Formato de fecha DD-MM-AAAA
-      DATE_FORMAT(p.fecha_ingreso, '%d-%m-%Y') AS fecha_ingreso,  -- Formato de fecha DD-MM-AAAA
+      DATE_FORMAT(p.nacimiento, '%d-%m-%Y') AS nacimiento,
+      DATE_FORMAT(p.fecha_ingreso, '%d-%m-%Y') AS fecha_ingreso,
       j.jerarquia AS jerarquia
     FROM personal p
     LEFT JOIN jerarquias j ON p.jerarquia_id = j.id
@@ -161,14 +160,14 @@ app.get('/personal', (req, res) => {
   });
 });
 
-// Endpoint para obtener la lista de jerarquías
+// Obtener lista de jerarquías
 app.get('/jerarquias', (req, res) => {
   const query = `
     SELECT id, jerarquia
     FROM jerarquias
     ORDER BY jerarquia ASC
   `;
-  
+
   db.query(query, (err, results) => {
     if (err) {
       console.error('Error al obtener jerarquías:', err);
@@ -179,13 +178,10 @@ app.get('/jerarquias', (req, res) => {
   });
 });
 
-
-
-// Endpoint para agregar un nuevo personal y crear su login
+// Agregar nuevo personal y crear login
 app.post('/personal', (req, res) => {
   const { legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id } = req.body;
 
-  // Query para insertar en la tabla `personal`
   const personalQuery = `
     INSERT INTO personal (legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id)
     VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -198,7 +194,6 @@ app.post('/personal', (req, res) => {
       return;
     }
 
-    // Query para insertar en la tabla `login` usando el `legajo` y `documento` como contraseña
     const loginQuery = `
       INSERT INTO login (legajo, contraseña)
       VALUES (?, ?)
@@ -216,10 +211,9 @@ app.post('/personal', (req, res) => {
   });
 });
 
-// Endpoint para eliminar personal por legajo
+// Eliminar personal por legajo
 app.delete('/personal/:legajo', (req, res) => {
   const { legajo } = req.params;
-
   const query = `DELETE FROM personal WHERE legajo = ?`;
 
   db.query(query, [legajo], (err, result) => {
@@ -234,24 +228,101 @@ app.delete('/personal/:legajo', (req, res) => {
   });
 });
 
-
+// Endpoint de login básico
 app.post('/login', (req, res) => {
   const { legajo, password } = req.body;
-  const query = 'SELECT * FROM login WHERE legajo = ? AND contraseña = ?';
+  const query = `
+    SELECT CONCAT(nombre, ' ', apellido) AS nombre_completo 
+    FROM personal 
+    WHERE legajo = ? 
+    AND EXISTS (SELECT 1 FROM login WHERE legajo = ? AND contraseña = ?)
+  `;
   
-  db.query(query, [legajo, password], (err, results) => {
+  db.query(query, [legajo, legajo, password], (err, results) => {
     if (err) {
       console.error('Error en el servidor al intentar iniciar sesión:', err);
       res.status(500).json({ success: false, error: 'Error en el servidor' });
     } else if (results.length > 0) {
-      res.json({ success: true });
+      const nombreCompleto = results[0].nombre_completo;
+      res.json({ success: true, nombreCompleto });
     } else {
       res.json({ success: false, error: 'Legajo o contraseña incorrectos' });
     }
   });
 });
 
+// Endpoint para obtener un parte de emergencia por ID o número de parte
+app.get('/partesemergencias/:id', (req, res) => {
+  const { id } = req.params;
+  const query = `
+    SELECT 
+      p.id AS parte_id,
+      p.numero_parte,
+      p.nombre_denunciante,
+      p.apellido_denunciante,
+      p.documento_denunciante,
+      p.direccion,
+      p.tipo_asistencia,
+      DATE_FORMAT(p.fecha, '%d-%m-%Y') AS fecha,
+      CONCAT(per.nombre, ' ', per.apellido) AS jefe_dotacion,
+      p.parte_escrito
+    FROM partes p
+    LEFT JOIN personal per ON p.jefe_dotacion = per.legajo
+    WHERE p.id = ? OR p.numero_parte = ?
+  `;
+  
+  db.query(query, [id, id], (err, results) => {
+    if (err) {
+      console.error('Error al obtener el parte:', err);
+      res.status(500).json({ error: 'Error en el servidor' });
+    } else if (results.length === 0) {
+      res.status(404).json(null); // Enviar null si no se encuentra
+    } else {
+      res.json(results[0]);
+    }
+  });
+});
 
+// Endpoint para obtener reportes filtrados
+app.get('/reportes', (req, res) => {
+  const { jefeDotacion, tipoAsistencia, startDate, endDate } = req.query;
+
+  let query = `
+    SELECT tipo_asistencia, COUNT(*) AS cantidad 
+    FROM partes 
+    WHERE 1=1
+  `;
+
+  const params = [];
+  if (jefeDotacion) {
+    query += ` AND jefe_dotacion = ?`;
+    params.push(jefeDotacion);
+  }
+  if (tipoAsistencia) {
+    query += ` AND tipo_asistencia = ?`;
+    params.push(tipoAsistencia);
+  }
+  if (startDate) {
+    query += ` AND fecha >= ?`;
+    params.push(startDate);
+  }
+  if (endDate) {
+    query += ` AND fecha <= ?`;
+    params.push(endDate);
+  }
+  query += ` GROUP BY tipo_asistencia`;
+
+  db.query(query, params, (err, results) => {
+    if (err) {
+      console.error('Error al obtener reportes:', err);
+      res.status(500).json({ error: 'Error en el servidor' });
+    } else {
+      res.json(results);
+    }
+  });
+});
+
+// Iniciar el servidor en el puerto 3001
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Servidor API en http://localhost:${PORT}`);

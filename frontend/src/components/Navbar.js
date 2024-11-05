@@ -26,7 +26,7 @@ function Navbar({ onLogout }) {
         <li><Link to="/">Principal</Link></li>
         <li><Link to="#">Novedades</Link></li>
         <li><Link to="/emergencias">Emergencias</Link></li>
-        <li><Link to="#">Reportes</Link></li>
+        <li><Link to="/reportes">Reportes</Link></li>
         <li><Link to="/personal">Personal</Link></li>
         <li><Link to="#">Configuración</Link></li>
         <li><button className="logout-btn" onClick={handleLogout}>Salir</button></li>
