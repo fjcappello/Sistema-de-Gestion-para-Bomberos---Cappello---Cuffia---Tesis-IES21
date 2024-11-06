@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './EmergenciesTable.css';
+import './Styles/EmergenciesTable.css';
 import PDFGenerator from './PDFGenerator';
 
 const ITEMS_PER_PAGE = 5;

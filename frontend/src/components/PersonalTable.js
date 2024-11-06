@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './PersonalTable.css';
+import './Styles/PersonalTable.css';
 
 const ITEMS_PER_PAGE = 5;
 

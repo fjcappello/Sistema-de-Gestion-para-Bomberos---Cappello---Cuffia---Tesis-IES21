@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './Login.css';
+import './Styles/Login.css';
 
 function Login({ setIsAuthenticated }) {
   const [legajo, setLegajo] = useState('');

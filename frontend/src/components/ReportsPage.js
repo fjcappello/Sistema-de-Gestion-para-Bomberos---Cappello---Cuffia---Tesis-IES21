@@ -4,7 +4,7 @@ import { Bar } from 'react-chartjs-2';
 import 'chart.js/auto';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
-import './ReportsPage.css';
+import './Styles/ReportsPage.css';
 
 function ReportsPage() {
   const [filters, setFilters] = useState({

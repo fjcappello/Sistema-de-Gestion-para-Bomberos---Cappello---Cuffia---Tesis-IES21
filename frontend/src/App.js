@@ -4,7 +4,7 @@ import Navbar from './components/Navbar';
 import PersonalTable from './components/PersonalTable';
 import EmergenciesTable from './components/EmergenciesTable';
 import Login from './components/Login';
-import './App.css';
+import './components/Styles/App.css';
 import ReportsPage from './components/ReportsPage';
 
 function App() {
