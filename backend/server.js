@@ -6,7 +6,7 @@ const app = express();
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 
-// Configuración de la conexión a MySQL
+
 const db = mysql.createConnection({
   host: 'localhost',
   user: 'root',
@@ -21,7 +21,7 @@ db.connect((err) => {
 });
 
 
-//Region Endpoint get emergencias con filtros
+
 app.get('/partesemergencias', (req, res) => {
   const { jefeDotacion, tipoAsistencia, startDate, endDate } = req.query;
 
@@ -76,7 +76,7 @@ app.get('/partesemergencias', (req, res) => {
   });
 });
 
-// Obtener lista de tipos de asistencia
+
 app.get('/tipos_asistencia', (req, res) => {
   const query = `
     SELECT DISTINCT tipo_asistencia
@@ -89,7 +89,7 @@ app.get('/tipos_asistencia', (req, res) => {
       console.error('Error al obtener tipos de asistencia:', err);
       res.status(500).json({ error: 'Error en el servidor' });
     } else {
-      // Extraer solo los valores de tipo_asistencia en un array
+
       const tiposAsistencia = results.map(row => row.tipo_asistencia);
       res.json(tiposAsistencia);
     }
@@ -97,7 +97,6 @@ app.get('/tipos_asistencia', (req, res) => {
 });
 
 
-// Obtener lista de jefes de dotación
 app.get('/personal_nombres', (req, res) => {
   const query = 'SELECT legajo AS id, CONCAT(nombre, " ", apellido) AS nombre_completo FROM personal';
   db.query(query, (err, results) => {
@@ -110,7 +109,7 @@ app.get('/personal_nombres', (req, res) => {
   });
 });
 
-// Agregar un nuevo reporte de emergencia con formato numero_parte
+
 app.post('/partesemergencias', async (req, res) => {
   const {
     nombre_denunciante,
@@ -167,7 +166,7 @@ app.post('/partesemergencias', async (req, res) => {
   }
 });
 
-// Eliminar un reporte de emergencia usando id
+
 app.delete('/partesemergencias/:id', (req, res) => {
   const { id } = req.params;
   const query = 'DELETE FROM partes WHERE id = ?';
@@ -184,7 +183,7 @@ app.delete('/partesemergencias/:id', (req, res) => {
   });
 });
 
-// Obtener lista de personal completo con jerarquía
+
 app.get('/personal', (req, res) => {
   const query = `
     SELECT 
@@ -209,7 +208,6 @@ app.get('/personal', (req, res) => {
   });
 });
 
-// Obtener lista de jerarquías
 app.get('/jerarquias', (req, res) => {
   const query = `
     SELECT id, jerarquia
@@ -227,7 +225,6 @@ app.get('/jerarquias', (req, res) => {
   });
 });
 
-// Agregar nuevo personal y crear login
 app.post('/personal', (req, res) => {
   const { legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id } = req.body;
 
@@ -260,7 +257,6 @@ app.post('/personal', (req, res) => {
   });
 });
 
-// Eliminar personal por legajo
 app.delete('/personal/:legajo', (req, res) => {
   const { legajo } = req.params;
   const query = `DELETE FROM personal WHERE legajo = ?`;
@@ -277,7 +273,6 @@ app.delete('/personal/:legajo', (req, res) => {
   });
 });
 
-// Endpoint de login básico
 app.post('/login', (req, res) => {
   const { legajo, password } = req.body;
   const query = `
@@ -300,7 +295,6 @@ app.post('/login', (req, res) => {
   });
 });
 
-// Endpoint para obtener un parte de emergencia por ID o número de parte
 app.get('/partesemergencias/:id', (req, res) => {
   const { id } = req.params;
   const query = `
@@ -325,14 +319,14 @@ app.get('/partesemergencias/:id', (req, res) => {
       console.error('Error al obtener el parte:', err);
       res.status(500).json({ error: 'Error en el servidor' });
     } else if (results.length === 0) {
-      res.status(404).json(null); // Enviar null si no se encuentra
+      res.status(404).json(null); 
     } else {
       res.json(results[0]);
     }
   });
 });
 
-// Endpoint para obtener reportes filtrados
+
 app.get('/reportes', (req, res) => {
   const { jefeDotacion, tipoAsistencia, startDate, endDate } = req.query;
 
@@ -371,9 +365,7 @@ app.get('/reportes', (req, res) => {
   });
 });
 
-//endregion 
 
-// Iniciar el servidor en el puerto 3001
 const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Servidor API en http://localhost:${PORT}`);

@@ -16,7 +16,7 @@ function EmergenciesTable() {
   const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
   const [selectedPart, setSelectedPart] = useState(null);
 
-  // Estados adicionales para modales de agregar y eliminar
+  // Estados modales
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteParteId, setDeleteParteId] = useState('');
@@ -94,7 +94,7 @@ function EmergenciesTable() {
     setSelectedPart(null);
   };
 
-  // Funciones para agregar y eliminar reportes
+  // Agregar y eliminar reportes
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -185,7 +185,7 @@ function EmergenciesTable() {
         <button onClick={handleSearch} className="search-btn">Buscar</button>
       </div>
 
-      {/* Tabla de Emergencias */}
+      {/* Tabla */}
       <table className="emergencies-table">
         <thead>
           <tr>
@@ -238,7 +238,7 @@ function EmergenciesTable() {
       <button className="add-report-btn" onClick={() => setIsAddModalOpen(true)}>Agregar Nuevo Reporte</button>
       <button className="delete-report-btn" onClick={() => setIsDeleteModalOpen(true)}>Eliminar Reporte</button>
 
-      {/* Modal para Agregar Reporte */}
+      {/* Modal para agregar reporte */}
       {isAddModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -265,7 +265,7 @@ function EmergenciesTable() {
         </div>
       )}
 
-      {/* Modal para Eliminar Reporte */}
+      {/* Modal para eliminar reporte */}
       {isDeleteModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">

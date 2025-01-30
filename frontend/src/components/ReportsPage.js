@@ -74,24 +74,22 @@ function ReportsPage() {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // Agregar logo si está disponible
+    // Agregar logo 
     if (logoDataURI) {
       const logoWidth = 30;
       const logoHeight = 30;
       doc.addImage(logoDataURI, 'PNG', 10, 10, logoWidth, logoHeight);
     }
 
-    // Título principal
     doc.setFontSize(18);
     const title = 'Bomberos Santa Maria de Punilla';
     doc.text(title, pageWidth / 2, 20, { align: 'center' });
 
-    // Subtítulo
     doc.setFontSize(14);
     const subtitle = 'Estadistica de Emergencias';
     doc.text(subtitle, pageWidth / 2, 30, { align: 'center' });
 
-    // Filtros aplicados
+    // Filtros 
     doc.setFontSize(12);
     doc.text("Filtros Aplicados:", 10, 45);
     doc.text(`Jefe de Dotación: ${filters.jefeDotacion || "Todos"}`, 10, 55);
@@ -99,14 +97,13 @@ function ReportsPage() {
     doc.text(`Fecha Desde: ${filters.startDate || "Sin especificar"}`, 10, 75);
     doc.text(`Fecha Hasta: ${filters.endDate || "Sin especificar"}`, 10, 85);
 
-    // Incluir el gráfico
     if (chartRef.current) {
       const chartCanvas = chartRef.current.canvas;
       const chartImage = chartCanvas.toDataURL('image/png');
       doc.addImage(chartImage, 'PNG', 10, 90, 180, 80);
     }
 
-    // Análisis de Datos
+    // Análisis 
     doc.setFontSize(14);
     doc.text("Análisis de Datos:", 10, 180);
     doc.setFontSize(12);
@@ -115,12 +112,12 @@ function ReportsPage() {
       doc.text(`- ${label}: ${cantidad} intervenciones`, 10, 190 + index * 10);
     });
 
-    // Fecha y hora de impresión
+
     const printDate = new Date().toLocaleString();
     doc.setFontSize(10);
     doc.text(`Impreso el: ${printDate}`, 10, doc.internal.pageSize.getHeight() - 10);
 
-    // Guardar PDF
+
     doc.save("Reporte_Emergencias.pdf");
   };
 

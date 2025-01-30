@@ -28,7 +28,7 @@ function Navbar({ onLogout }) {
         <li><Link to="#">Novedades</Link></li>
         <li><Link to="/emergencias">Emergencias</Link></li>
 
-        {/* Menú desplegable para Reportes */}
+        {/* Menú */}
         <li
           className="dropdown"
           onMouseEnter={() => setReportsDropdownOpen(true)}
@@ -42,7 +42,6 @@ function Navbar({ onLogout }) {
               <li><Link to="/reportes/estadisticas">Estadísticas emergencias</Link></li>
               <li><Link to="#">Reportes ingresos/salidas</Link></li>
               <li><Link to="#">Reportes movimientos moviles</Link></li>
-              {/* Puedes añadir más enlaces aquí */}
             </ul>
           )}
         </li>
@@ -52,7 +51,6 @@ function Navbar({ onLogout }) {
         <li><button className="logout-btn" onClick={handleLogout}>Salir</button></li>
       </ul>
 
-      {/* Menú hamburguesa para versión móvil */}
       <button className="hamburger" onClick={toggleMobileMenu}>
         <span className="line"></span>
         <span className="line"></span>

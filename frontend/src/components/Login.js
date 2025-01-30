@@ -15,7 +15,7 @@ function Login({ setIsAuthenticated }) {
       if (response.data.success) {
         setIsAuthenticated(true);
         localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('nombreUsuario', response.data.nombreCompleto); // Almacena el nombre
+        localStorage.setItem('nombreUsuario', response.data.nombreCompleto); 
       } else {
         setError('Legajo o contraseña incorrectos.');
       }

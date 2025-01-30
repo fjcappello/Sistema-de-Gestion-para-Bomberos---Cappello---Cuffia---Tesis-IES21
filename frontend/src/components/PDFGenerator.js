@@ -26,7 +26,7 @@ function PDFGenerator({ partData, onClose, loggedUser }) {
       doc.addImage(logoDataURI, 'PNG', 10, 10, logoWidth, logoHeight);
     }
 
-    // Texto centrado
+
     doc.setFontSize(18);
     const title = 'Bomberos Santa Maria de Punilla';
     doc.text(title, pageWidth / 2, 20, { align: 'center' });
@@ -34,7 +34,7 @@ function PDFGenerator({ partData, onClose, loggedUser }) {
     const subtitle = 'Reporte de Emergencia';
     doc.text(subtitle, pageWidth / 2, 30, { align: 'center' });
 
-    // Grilla con los datos del parte
+    // Grilla
     doc.autoTable({
       startY: 40,
       margin: { left: 10, right: 10 },
@@ -51,9 +51,9 @@ function PDFGenerator({ partData, onClose, loggedUser }) {
       ],
     });
 
- // Firma del jefe de dotación
+ // Firma del jefe
  const signaturePosY = doc.previousAutoTable.finalY + 20;
- doc.line(pageWidth - 80, signaturePosY + 5, pageWidth - 10, signaturePosY + 5); // Línea para la firma
+ doc.line(pageWidth - 80, signaturePosY + 5, pageWidth - 10, signaturePosY + 5); 
  doc.setFontSize(12);
  doc.text(partData.jefe_dotacion, pageWidth - 45, signaturePosY + 15, { align: 'center' });
  doc.text('Jefe de Dotación', pageWidth - 45, signaturePosY + 25, { align: 'center' });
