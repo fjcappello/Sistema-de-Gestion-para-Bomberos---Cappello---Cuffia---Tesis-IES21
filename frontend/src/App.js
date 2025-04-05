@@ -1,27 +1,57 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import PersonalTable from './components/PersonalTable';
 import EmergenciesTable from './components/EmergenciesTable';
-import './App.css';
+import Login from './components/Login';
+import './components/Styles/App.css';
+import ReportsPage from './components/ReportsPage';
+import EnviarMensaje from './components/EnviarMensaje';
+import BandejaEntrada from './components/BandejaEntrada';
+import EnviarMensajeModal from './components/EnviarMensajeModal';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const storedAuth = localStorage.getItem('isAuthenticated');
+    if (storedAuth === 'true') {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem('isAuthenticated');
+  };
+
   return (
     <Router>
       <div className="App">
-        {/* Barra de navegación */}
-        <Navbar />
+        {}
+        {isAuthenticated && <Navbar onLogout={handleLogout} />}
 
         <main>
           <Routes>
-            {/* Página de inicio o bienvenida */}
-            <Route path="/" element={<h1>Bienvenido al Sistema de Gestión de Bomberos</h1>} />
+            {}
+            {!isAuthenticated ? (
+              <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+            ) : (
+              <>
+                {}
+                <Route path="/" element={<h1>Bienvenido al Sistema de Gestión de Bomberos</h1>} />
 
-            {/* Ruta de Emergencias */}
-            <Route path="/emergencias" element={<EmergenciesTable />} />
+                {}
+                <Route path="/emergencias" element={<EmergenciesTable />} />
 
-            {/* Ruta de Personal */}
-            <Route path="/personal" element={<PersonalTable />} />
+                {}
+                <Route path="/personal" element={<PersonalTable />} />
+                {}
+                <Route path="/reportes/estadisticas" element={<ReportsPage />} />
+                {}
+                <Route path="/bandeja-entrada" element={<BandejaEntrada />} />
+              </>
+            )}
           </Routes>
         </main>
       </div>

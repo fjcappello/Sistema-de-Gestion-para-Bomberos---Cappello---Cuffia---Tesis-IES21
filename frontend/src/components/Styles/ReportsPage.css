@@ -1,0 +1,121 @@
+/* Estilos de ReportsPage */
+
+.reports-page {
+  padding: 2rem;
+}
+
+.reports-page h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.filter-section {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.filter-section label {
+  display: flex;
+  flex-direction: column;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.filter-section select,
+.filter-section input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 0.5rem;
+}
+
+.filter-btn {
+  align-self: flex-start;
+  padding: 0.5rem 1rem;
+  background-color: #e60000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-top: 1rem;
+}
+
+.filter-btn:hover {
+  background-color: #c50000;
+  transform: scale(1.05);
+}
+
+.filter-btn:active {
+  background-color: #a80000;
+  transform: scale(0.98);
+}
+
+.chart-container {
+  margin-top: 2rem;
+}
+
+.search-container {
+  margin-top: 2rem;
+}
+
+.search-container h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.search-input {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-btn,
+.print-btn,
+.generate-pdf-btn {
+  padding: 0.5rem 1rem;
+  background-color: #e60000;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.search-btn:hover,
+.print-btn:hover,
+.generate-pdf-btn:hover {
+  background-color: #c50000;
+  transform: scale(1.05);
+}
+
+.search-btn:active,
+.print-btn:active,
+.generate-pdf-btn:active {
+  background-color: #a80000;
+  transform: scale(0.98);
+}
+
+.report-result {
+  margin-top: 2rem;
+  background-color: #f9f9f9;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  color: #e60000;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+}
