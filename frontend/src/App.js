@@ -6,10 +6,12 @@ import EmergenciesTable from './components/EmergenciesTable';
 import Login from './components/Login';
 import './components/Styles/App.css';
 import ReportsPage from './components/ReportsPage';
+import EnviarMensaje from './components/EnviarMensaje';
+import BandejaEntrada from './components/BandejaEntrada';
+import EnviarMensajeModal from './components/EnviarMensajeModal';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
 
   useEffect(() => {
     const storedAuth = localStorage.getItem('isAuthenticated');
@@ -20,8 +22,8 @@ function App() {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-      localStorage.removeItem('isAuthenticated');
-    };
+    localStorage.removeItem('isAuthenticated');
+  };
 
   return (
     <Router>
@@ -46,6 +48,8 @@ function App() {
                 <Route path="/personal" element={<PersonalTable />} />
                 {}
                 <Route path="/reportes/estadisticas" element={<ReportsPage />} />
+                {}
+                <Route path="/bandeja-entrada" element={<BandejaEntrada />} />
               </>
             )}
           </Routes>

@@ -25,7 +25,7 @@ function Navbar({ onLogout }) {
 
       <ul className={`navbar-links ${isMobileMenuOpen ? 'active' : ''}`}>
         <li><Link to="/">Principal</Link></li>
-        <li><Link to="#">Novedades</Link></li>
+        <li><Link to="/bandeja-entrada">Mensajes</Link></li>
         <li><Link to="/emergencias">Emergencias</Link></li>
 
         {/* Menú */}
