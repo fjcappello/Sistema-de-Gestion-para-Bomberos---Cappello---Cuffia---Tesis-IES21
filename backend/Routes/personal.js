@@ -109,28 +109,4 @@ router.delete('/personal/:legajo', (req, res) => {
 });
 
 
-//Verifica si el legajo y la contraseña son correctos
-
-router.post('/login', (req, res) => {
-  const { legajo, password } = req.body;
-  const query = `
-    SELECT CONCAT(nombre, ' ', apellido) AS nombre_completo 
-    FROM personal 
-    WHERE legajo = ? 
-    AND EXISTS (SELECT 1 FROM login WHERE legajo = ? AND contraseña = ?)
-  `;
-
-  db.query(query, [legajo, legajo, password], (err, results) => {
-    if (err) {
-      console.error('Error en el servidor al intentar iniciar sesión:', err);
-      res.status(500).json({ success: false, error: 'Error en el servidor' });
-    } else if (results.length > 0) {
-      const nombreCompleto = results[0].nombre_completo;
-      res.json({ success: true, nombreCompleto });
-    } else {
-      res.json({ success: false, error: 'Legajo o contraseña incorrectos' });
-    }
-  });
-});
-
 module.exports = router;

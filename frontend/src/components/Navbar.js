@@ -47,7 +47,7 @@ function Navbar({ onLogout }) {
         </li>
 
         <li><Link to="/personal">Personal</Link></li>
-        <li><Link to="#">Configuración</Link></li>
+        <li><Link to="/configuracion">Configuración</Link></li>
         <li><button className="logout-btn" onClick={handleLogout}>Salir</button></li>
       </ul>
 
