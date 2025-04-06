@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
+import { useUsuario } from '../context/UserContext';
 
-function PDFGenerator({ partData, onClose, loggedUser }) {
+function PDFGenerator({ partData, onClose }) {
+  const { usuario } = useUsuario();
   const [logoDataURI, setLogoDataURI] = useState('');
 
   useEffect(() => {
@@ -25,7 +27,6 @@ function PDFGenerator({ partData, onClose, loggedUser }) {
       const logoHeight = 30;
       doc.addImage(logoDataURI, 'PNG', 10, 10, logoWidth, logoHeight);
     }
-
 
     doc.setFontSize(18);
     const title = 'Bomberos Santa Maria de Punilla';
@@ -51,16 +52,15 @@ function PDFGenerator({ partData, onClose, loggedUser }) {
       ],
     });
 
- // Firma del jefe
- const signaturePosY = doc.previousAutoTable.finalY + 20;
- doc.line(pageWidth - 80, signaturePosY + 5, pageWidth - 10, signaturePosY + 5); 
- doc.setFontSize(12);
- doc.text(partData.jefe_dotacion, pageWidth - 45, signaturePosY + 15, { align: 'center' });
- doc.text('Jefe de Dotación', pageWidth - 45, signaturePosY + 25, { align: 'center' });
-
+    // Firma del jefe
+    const signaturePosY = doc.previousAutoTable.finalY + 20;
+    doc.line(pageWidth - 80, signaturePosY + 5, pageWidth - 10, signaturePosY + 5); 
+    doc.setFontSize(12);
+    doc.text(partData.jefe_dotacion, pageWidth - 45, signaturePosY + 15, { align: 'center' });
+    doc.text('Jefe de Dotación', pageWidth - 45, signaturePosY + 25, { align: 'center' });
 
     const printDate = new Date().toLocaleString();
-    const footerText = `Impreso el: ${printDate}`;
+    const footerText = `Impresso por: ${usuario?.nombreCompleto || 'Usuario desconocido'} el ${printDate}`;
     doc.setFontSize(10);
     doc.text(footerText, 10, doc.internal.pageSize.getHeight() - 10);
 

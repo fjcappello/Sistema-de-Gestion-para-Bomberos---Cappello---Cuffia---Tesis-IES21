@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './Styles/Login.css';
+import { useUsuario } from '../context/UserContext';
 
-function Login({ setIsAuthenticated, setUsuario }) {
+function Login({ setIsAuthenticated }) {
+  const { setUsuario } = useUsuario();
   const [legajo, setLegajo] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
