@@ -9,33 +9,50 @@ import ReportsPage from './components/ReportsPage';
 import EnviarMensaje from './components/EnviarMensaje';
 import BandejaEntrada from './components/BandejaEntrada';
 import EnviarMensajeModal from './components/EnviarMensajeModal';
+import ModalCambioPassword from './components/ModalCambioPassword';
+import Configuracion from './components/Configuracion';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [usuario, setUsuario] = useState(null);
 
   useEffect(() => {
     const storedAuth = localStorage.getItem('isAuthenticated');
-    if (storedAuth === 'true') {
+    const storedUsuario = localStorage.getItem('usuario');
+    if (storedAuth === 'true' && storedUsuario) {
       setIsAuthenticated(true);
+      setUsuario(JSON.parse(storedUsuario));
     }
   }, []);
 
   const handleLogout = () => {
     setIsAuthenticated(false);
+    setUsuario(null);
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('usuario');
   };
 
   return (
     <Router>
       <div className="App">
         {}
+        {usuario?.primerIngreso && (
+          <ModalCambioPassword
+            legajo={usuario.legajo}
+            onPasswordChanged={() => {
+              const usuarioActualizado = { ...usuario, primerIngreso: false };
+              setUsuario(usuarioActualizado);
+              localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+            }}
+          />
+        )}
         {isAuthenticated && <Navbar onLogout={handleLogout} />}
 
         <main>
           <Routes>
             {}
             {!isAuthenticated ? (
-              <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+              <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} setUsuario={setUsuario} />} />
             ) : (
               <>
                 {}
@@ -50,6 +67,7 @@ function App() {
                 <Route path="/reportes/estadisticas" element={<ReportsPage />} />
                 {}
                 <Route path="/bandeja-entrada" element={<BandejaEntrada />} />
+                <Route path="/configuracion" element={<Configuracion />} />
               </>
             )}
           </Routes>
