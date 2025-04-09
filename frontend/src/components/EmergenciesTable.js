@@ -74,7 +74,7 @@ function EmergenciesTable() {
   const handleFilterApply = () => {
     fetchEmergencies();
   };
-
+  //ACA VA EL HANDLER DEL EX BOTON DE BUSCAR POR NOMBRE
   const handleSearch = () => {
     const filtered = emergencies.filter(emergencia =>
       emergencia.nombre_denunciante.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -199,6 +199,8 @@ function EmergenciesTable() {
             <th>Tipo de Asistencia</th>
             <th>Jefe de Dotación</th>
             <th>Información adicional</th>
+            <th>Estado</th>
+            <th>Reporte escrito</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -216,6 +218,10 @@ function EmergenciesTable() {
                 <td>{emergencia.tipo_asistencia}</td>
                 <td>{emergencia.jefe_dotacion}</td>
                 <td>{emergencia.parte_escrito}</td>
+                <td>{" "}</td>
+                <td>
+                  <button className="generate-pdf-btn">Generar reporte</button>
+                </td>
                 <td>
                   <button onClick={() => handleGeneratePDF(emergencia)} className="generate-pdf-btn">Generar PDF</button>
                 </td>
