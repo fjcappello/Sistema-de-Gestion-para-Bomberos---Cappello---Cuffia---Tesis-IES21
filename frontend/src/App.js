@@ -61,28 +61,35 @@ function App() {
         {isAuthenticated && <Navbar onLogout={handleLogout} />}
 
         <main>
-          {isAuthenticated && usuario && (
-            <div style={{
-              textAlign: 'right',
-              fontSize: '0.9rem',
-              color: '#333',
-              marginTop: '1rem',
-              marginRight: '2rem'
-            }}>
-              Bienvenido {usuario.nombreCompleto}. {horaActual.toLocaleDateString('es-AR', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric'
-              })} - {horaActual.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}
-            </div>
-          )}
           <Routes>
             {!isAuthenticated ? (
               <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
             ) : (
               <>
-                <Route path="/" element={<h1>Bienvenido al Sistema de Gestión de Bomberos</h1>} />
+                <Route
+                  path="/"
+                  element={
+                    usuario ? (
+                      <>
+                        <div style={{
+                          textAlign: 'right',
+                          fontSize: '0.9rem',
+                          color: '#333',
+                          marginTop: '1rem',
+                          marginRight: '2rem'
+                        }}>
+                          Bienvenido {usuario.nombreCompleto}. {horaActual.toLocaleDateString('es-AR', {
+                            weekday: 'long',
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                          })} - {horaActual.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}
+                        </div>
+                        <h1 style={{ textAlign: 'center', marginTop: '2rem' }}>Bienvenido al Sistema de Gestión de Bomberos</h1>
+                      </>
+                    ) : null
+                  }
+                />
                 <Route path="/emergencias" element={<EmergenciesTable />} />
                 <Route path="/personal" element={<PersonalTable />} />
                 <Route path="/reportes/estadisticas" element={<ReportsPage />} />
