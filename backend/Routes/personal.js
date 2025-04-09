@@ -48,7 +48,11 @@ router.get('/jerarquias', (req, res) => {
 
 // Obtener nombres completos de personal
 router.get('/personal_nombres', (req, res) => {
-  const query = 'SELECT legajo AS id, CONCAT(nombre, " ", apellido) AS nombre_completo FROM personal';
+  const query = `
+    SELECT legajo AS id, nombre, apellido, CONCAT(nombre, " ", apellido) AS nombre_completo
+    FROM personal
+    ORDER BY nombre ASC
+  `;
 
   db.query(query, (err, results) => {
     if (err) {
