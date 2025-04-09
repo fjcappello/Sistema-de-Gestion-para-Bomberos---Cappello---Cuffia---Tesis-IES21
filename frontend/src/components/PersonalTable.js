@@ -7,8 +7,10 @@ const ITEMS_PER_PAGE = 5;
 function PersonalTable() {
   const [personal, setPersonal] = useState([]);
   const [jerarquias, setJerarquias] = useState([]);
+  const [situaciones, setSituaciones] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     legajo: '',
@@ -17,7 +19,9 @@ function PersonalTable() {
     documento: '',
     nacimiento: '',
     fecha_ingreso: '',
-    jerarquia_id: ''
+    jerarquia_id: '',
+    situacion_id: '',
+    fecha_revision_medica: ''
   });
   const [deleteLegajo, setDeleteLegajo] = useState('');
   const [deleteError, setDeleteError] = useState('');
@@ -41,9 +45,19 @@ function PersonalTable() {
     }
   };
 
+  const fetchSituaciones = async () => {
+    try {
+      const response = await axios.get('http://localhost:3001/situaciones');
+      setSituaciones(response.data);
+    } catch (error) {
+      console.error("Error al obtener situaciones:", error);
+    }
+  };
+
   useEffect(() => {
     fetchPersonal();
     fetchJerarquias();
+    fetchSituaciones();
   }, []);
 
   const handleInputChange = (e) => {
@@ -53,7 +67,6 @@ function PersonalTable() {
 
   const handleAddSubmit = async (e) => {
     e.preventDefault();
-
 
     const legajoVal = parseInt(formData.legajo, 10);
     if (isNaN(legajoVal) || legajoVal <= 0) {
@@ -66,6 +79,8 @@ function PersonalTable() {
       alert("El documento debe ser un número entre 1 y 99,999,999.");
       return;
     }
+
+    formData.situacion_id = 1; // Establecer valor fijo de 'Activo'
 
     try {
       const response = await axios.post('http://localhost:3001/personal', formData);
@@ -80,6 +95,40 @@ function PersonalTable() {
     } catch (error) {
       console.error("Error al intentar agregar personal:", error);
       alert("Error en el servidor al intentar agregar personal. Verifique la conexión.");
+    }
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    const dataToUpdate = {};
+    const original = personal.find(p => p.legajo === formData.legajo);
+    if (!original) return;
+
+    if (formData.jerarquia_id && formData.jerarquia_id !== original.jerarquia_id)
+      dataToUpdate.jerarquia_id = formData.jerarquia_id;
+    if (formData.situacion_id && formData.situacion_id !== original.situacion_id)
+      dataToUpdate.situacion_id = formData.situacion_id;
+    if (formData.fecha_revision_medica && formData.fecha_revision_medica !== original.fecha_revision_medica?.split('T')[0])
+      dataToUpdate.fecha_revision_medica = formData.fecha_revision_medica;
+
+    if (Object.keys(dataToUpdate).length === 0) {
+      alert("Debe modificar al menos un campo para guardar los cambios.");
+      return;
+    }
+
+    try {
+      const response = await axios.put(`http://localhost:3001/personal/${formData.legajo}`, dataToUpdate);
+
+      if (response.data.success) {
+        alert("Datos actualizados correctamente");
+        setIsEditModalOpen(false);
+        fetchPersonal();
+      } else {
+        alert("Error al actualizar: " + (response.data.error || "Operación fallida"));
+      }
+    } catch (error) {
+      console.error("Error al intentar actualizar:", error);
+      alert("Error en el servidor al intentar actualizar datos.");
     }
   };
 
@@ -114,7 +163,9 @@ function PersonalTable() {
       documento: '',
       nacimiento: '',
       fecha_ingreso: '',
-      jerarquia_id: ''
+      jerarquia_id: '',
+      situacion_id: '',
+      fecha_revision_medica: ''
     });
   };
 
@@ -123,11 +174,27 @@ function PersonalTable() {
     setIsAddModalOpen(true);
   };
 
+  const openEditModal = (rrhh) => {
+    setFormData({
+      legajo: rrhh.legajo,
+      jerarquia_id: rrhh.jerarquia_id,
+      situacion_id: rrhh.situacion_id,
+      fecha_revision_medica: rrhh.fecha_revision_medica?.split('T')[0] || ''
+    });
+    setIsEditModalOpen(true);
+  };
+
   const totalPages = Math.ceil(personal.length / ITEMS_PER_PAGE);
   const currentPersonal = personal.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
+
+  const isExpired = (date) => {
+    const oneYearAgo = new Date();
+    oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+    return new Date(date) < oneYearAgo;
+  };
 
   return (
     <div className="table-container">
@@ -140,23 +207,34 @@ function PersonalTable() {
             <th>Fecha de nacimiento</th>
             <th>Fecha de ingreso</th>
             <th>Jerarquía</th>
+            <th>Situación</th>
+            <th>Fecha Revisión Médica</th>
+            <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {currentPersonal.length > 0 ? (
             currentPersonal.map((rrhh) => (
-              <tr key={rrhh.legajo}>
+                <tr key={rrhh.legajo} style={{ backgroundColor: isExpired(rrhh.fecha_revision_medica) ? 'red' : 'white', color: isExpired(rrhh.fecha_revision_medica) ? 'white' : 'black' }} title={isExpired(rrhh.fecha_revision_medica) ? 'Ficha médica vencida' : ''}>
                 <td>{rrhh.legajo}</td>
                 <td>{rrhh.nombre_completo}</td>
                 <td>{rrhh.documento}</td>
                 <td>{rrhh.nacimiento}</td>
                 <td>{rrhh.fecha_ingreso}</td>
                 <td>{rrhh.jerarquia}</td>
+                <td>{rrhh.situacion}</td>
+                <td>
+                  {rrhh.fecha_revision_medica ? new Date(rrhh.fecha_revision_medica).toLocaleDateString('es-AR') : ''}
+                  {isExpired(rrhh.fecha_revision_medica) && <span title="Ficha médica vencida" style={{ marginLeft: '4px', color: 'white' }}>⚠️ Ficha Medica Vencida</span>}
+                </td>
+                <td>
+                  <button className="edit-btn" title="Editar esta persona" onClick={() => openEditModal(rrhh)}>Editar</button>
+                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="6">No hay datos de personal disponibles</td>
+              <td colSpan="9">No hay datos de personal disponibles</td>
             </tr>
           )}
         </tbody>
@@ -184,79 +262,132 @@ function PersonalTable() {
           <div className="modal-content">
             <h3>Agregar Nuevo Personal</h3>
             <form onSubmit={handleAddSubmit} className="form-container">
-  <input
-    type="number"
-    name="legajo"
-    placeholder="Legajo"
-    value={formData.legajo}
-    onChange={handleInputChange}
-    required
-    min="1"
-  />
-  <input
-    type="text"
-    name="nombre"
-    placeholder="Nombre"
-    value={formData.nombre}
-    onChange={handleInputChange}
-    required
-  />
-  <input
-    type="text"
-    name="apellido"
-    placeholder="Apellido"
-    value={formData.apellido}
-    onChange={handleInputChange}
-    required
-  />
-  <input
-    type="number"
-    name="documento"
-    placeholder="Documento"
-    value={formData.documento}
-    onChange={handleInputChange}
-    required
-    min="1"
-    max="99999999"
-  />
-  <label>Fecha de Nacimiento:</label>
-  <input
-    type="date"
-    name="nacimiento"
-    value={formData.nacimiento}
-    onChange={handleInputChange}
-    required
-  />
-  <label>Fecha de Ingreso:</label>
-  <input
-    type="date"
-    name="fecha_ingreso"
-    value={formData.fecha_ingreso}
-    onChange={handleInputChange}
-    required
-  />
-  <label>Jerarquía:</label>
-  <select
-    name="jerarquia_id"
-    value={formData.jerarquia_id}
-    onChange={handleInputChange}
-    required
-  >
-    <option value="">Seleccione Jerarquía</option>
-    {jerarquias.map((j) => (
-      <option key={j.id} value={j.id}>
-        {j.jerarquia}
-      </option>
-    ))}
-  </select>
-  <button type="submit" className="submit-btn">Agregar Personal</button>
-</form>
+              <input
+                type="number"
+                name="legajo"
+                placeholder="Legajo"
+                value={formData.legajo}
+                onChange={handleInputChange}
+                required
+                min="1"
+              />
+              <input
+                type="text"
+                name="nombre"
+                placeholder="Nombre"
+                value={formData.nombre}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="text"
+                name="apellido"
+                placeholder="Apellido"
+                value={formData.apellido}
+                onChange={handleInputChange}
+                required
+              />
+              <input
+                type="number"
+                name="documento"
+                placeholder="Documento"
+                value={formData.documento}
+                onChange={handleInputChange}
+                required
+                min="1"
+                max="99999999"
+              />
+              <label>Fecha de Nacimiento:</label>
+              <input
+                type="date"
+                name="nacimiento"
+                value={formData.nacimiento}
+                onChange={handleInputChange}
+                required
+              />
+              <label>Fecha de Ingreso:</label>
+              <input
+                type="date"
+                name="fecha_ingreso"
+                value={formData.fecha_ingreso}
+                onChange={handleInputChange}
+                required
+              />
+              <label>Jerarquía:</label>
+              <select
+                name="jerarquia_id"
+                value={formData.jerarquia_id}
+                onChange={handleInputChange}
+              >
+                <option value="">Seleccione Jerarquía</option>
+                {jerarquias.map((j) => (
+                  <option key={j.id} value={j.id}>
+                    {j.jerarquia}
+                  </option>
+                ))}
+              </select>
+              <label>Fecha Revisión Médica:</label>
+              <input
+                type="date"
+                name="fecha_revision_medica"
+                value={formData.fecha_revision_medica}
+                onChange={handleInputChange}
+                required
+                max={new Date().toISOString().split("T")[0]}
+              />
+              <button type="submit" className="submit-btn">Agregar Personal</button>
+            </form>
             <button className="close-modal-btn" onClick={() => setIsAddModalOpen(false)}>Cerrar</button>
           </div>
         </div>
       )}
 
-      
+      {isEditModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Editar Personal</h3>
+            <form onSubmit={handleEditSubmit} className="form-container">
+              <label>Jerarquía:</label>
+              <select
+                name="jerarquia_id"
+                value={formData.jerarquia_id}
+                onChange={handleInputChange}
+              >
+                <option value="">Seleccione Jerarquía</option>
+                {jerarquias.map((j) => (
+                  <option key={j.id} value={j.id}>
+                    {j.jerarquia}
+                  </option>
+                ))}
+              </select>
+              <label>Situación:</label>
+              <select
+                name="situacion_id"
+                value={formData.situacion_id}
+                onChange={handleInputChange}
+              >
+                <option value="">Seleccione Situación</option>
+                {situaciones.map((s) => (
+                  <option key={s.id} value={s.id}>
+                    {s.nombre}
+                  </option>
+                ))}
+              </select>
+              <label>Fecha Revisión Médica:</label>
+              <input
+                type="date"
+                name="fecha_revision_medica"
+                value={formData.fecha_revision_medica}
+                onChange={handleInputChange}
+                max={new Date().toISOString().split("T")[0]}
+              />
+              <button type="submit" className="submit-btn">Guardar Cambios</button>
+            </form>
+            <button className="close-modal-btn" onClick={() => { clearFormData(); setIsEditModalOpen(false); }}>Cerrar</button>
+          </div>
+        </div>
+      )}
+
       {isDeleteModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
