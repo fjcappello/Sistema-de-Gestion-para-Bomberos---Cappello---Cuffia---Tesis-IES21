@@ -12,6 +12,7 @@ import EnviarMensajeModal from './components/EnviarMensajeModal';
 import ModalCambioPassword from './components/ModalCambioPassword';
 import Configuracion from './components/Configuracion';
 import { useUsuario } from './context/UserContext';
+import MovimientosPersonas from './components/MovimientosPersonas';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -93,6 +94,7 @@ function App() {
                 <Route path="/emergencias" element={<EmergenciesTable />} />
                 <Route path="/personal" element={<PersonalTable />} />
                 <Route path="/reportes/estadisticas" element={<ReportsPage />} />
+                <Route path="/reportes/movimientos-personas" element={<MovimientosPersonas />} />
                 <Route path="/bandeja-entrada" element={<BandejaEntrada />} />
                 <Route path="/configuracion" element={<Configuracion />} />
               </>

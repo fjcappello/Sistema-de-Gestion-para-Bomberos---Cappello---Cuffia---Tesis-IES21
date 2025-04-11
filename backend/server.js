@@ -6,6 +6,7 @@ const partesRoutes = require('./Routes/partes');
 const personalRoutes = require('./Routes/personal');
 const mensajesRoutes = require('./Routes/mensajes');
 const loginRoutes = require('./Routes/login');
+const movimientosRoutes = require('./Routes/movimientos');
 
 const app = express();
 app.use(cors({ origin: 'http://localhost:3000' }));
@@ -16,6 +17,7 @@ app.use(partesRoutes);
 app.use(personalRoutes);
 app.use(mensajesRoutes);
 app.use(loginRoutes);
+app.use(movimientosRoutes);
 
 const PORT = 3001;
 app.listen(PORT, () => {
