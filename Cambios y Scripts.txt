@@ -1,0 +1,5 @@
+-- Script modificacion tabla movimientos_cuartel
+
+ALTER TABLE movimientos_cuartel ADD COLUMN visible BOOLEAN NOT NULL DEFAULT TRUE;
+
+----------------------
