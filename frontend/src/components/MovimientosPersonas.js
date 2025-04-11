@@ -110,8 +110,13 @@ function MovimientosPersonas() {
     }
   };
 
-  const eliminarMovimientoLocal = (id) => {
-    setMovimientos(prev => prev.filter(m => m.id !== id));
+  const eliminarMovimientoLocal = async (id) => {
+    try {
+      await axios.put(`http://localhost:3001/movimientos_cuartel/${id}/ocultar`);
+      fetchMovimientos();
+    } catch (error) {
+      console.error('Error al ocultar movimiento:', error);
+    }
   };
 
   const aplicarFiltros = () => {
