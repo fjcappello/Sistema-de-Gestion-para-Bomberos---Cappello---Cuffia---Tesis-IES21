@@ -10,19 +10,21 @@ router.get('/partesemergencias', (req, res) => {
 
   let query = `
     SELECT 
-      p.id AS parte_id,
-      p.numero_parte,
-      p.nombre_denunciante,
-      p.apellido_denunciante,
-      p.documento_denunciante,
-      p.direccion,
-      p.tipo_asistencia,
-      DATE_FORMAT(p.fecha, '%d-%m-%Y') AS fecha,
-      CONCAT(per.nombre, ' ', per.apellido) AS jefe_dotacion,
-      p.parte_escrito
+        p.id AS parte_id,
+        p.numero_parte,
+        p.nombre_denunciante,
+        p.apellido_denunciante,
+        p.documento_denunciante,
+        p.direccion,
+        p.tipo_asistencia,
+        DATE_FORMAT(p.fecha, '%d-%m-%Y') AS fecha,
+        CONCAT(per.nombre, ' ', per.apellido) AS jefe_dotacion,
+        p.parte_escrito,
+        e.descripcion AS estado
     FROM partes p
     LEFT JOIN personal per ON p.jefe_dotacion = per.legajo
-    WHERE 1=1
+    LEFT JOIN estado e ON p.id_estado = e.id_estado
+    WHERE 1=1;
   `;
 
   const params = [];
