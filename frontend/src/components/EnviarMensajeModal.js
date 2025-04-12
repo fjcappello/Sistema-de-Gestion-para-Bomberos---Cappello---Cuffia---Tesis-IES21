@@ -32,7 +32,11 @@ function EnviarMensajeModal({ onClose, onSent }) {
       const destinatario = usuarios.find(usuario => 
         (usuario.nombre + ' ' + usuario.apellido) === inputDestinatario
       );
-      if (destinatario && !destinatarios.some(d => d.id === destinatario.id)) {
+      if (
+        destinatario &&
+        !destinatarios.some(d => d.id === destinatario.id) &&
+        destinatario.legajo !== formData.remitente_id
+      ) {
         setDestinatarios([...destinatarios, destinatario]);
         setInputDestinatario('');
         setIndiceSeleccionado(-1);
@@ -76,7 +80,8 @@ function EnviarMensajeModal({ onClose, onSent }) {
   };
 
   const filteredUsuarios = usuarios.filter(usuario => 
-    (usuario.nombre + ' ' + usuario.apellido).toLowerCase().includes(inputDestinatario.toLowerCase())
+    (usuario.nombre + ' ' + usuario.apellido).toLowerCase().includes(inputDestinatario.toLowerCase()) &&
+    usuario.legajo !== formData.remitente_id
   );
 
   return (
@@ -103,7 +108,7 @@ function EnviarMensajeModal({ onClose, onSent }) {
             }}
           />
           {inputDestinatario.length > 0 && (
-            <ul>
+            <ul className="lista-sugerencias">
               {filteredUsuarios.map((usuario, index) => (
                 <li key={usuario.id} className={index === indiceSeleccionado ? 'sugerencia-activa' : ''} onClick={() => {
                   if (!destinatarios.some(d => d.id === usuario.id)) {

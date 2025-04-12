@@ -1,4 +1,4 @@
-ul {
+.lista-sugerencias {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -6,37 +6,36 @@ ul {
     overflow-y: auto;
     border: 1px solid #ccc;
     border-radius: 4px;
-    background-color: #fff;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     position: relative;
     z-index: 10;
-  }
-  
-  ul li {
+}
+
+.lista-sugerencias li {
     padding: 0.5rem;
     cursor: pointer;
     transition: background-color 0.2s ease;
-  }
-  
-  ul li:hover {
+}
+
+.lista-sugerencias li:hover {
     background-color: #f2f2f2;
-  }
+}
 
 .sugerencia-activa {
-  background-color: #e60000;
-  color: white;
+    background-color: #e60000;
+    color: white;
 }
 @keyframes fadeIn {
     from {
-      opacity: 0;
-      transform: translateY(-5px);
+        opacity: 0;
+        transform: translateY(-5px);
     }
     to {
-      opacity: 1;
-      transform: translateY(0);
+        opacity: 1;
+        transform: translateY(0);
     }
-  }
-  
-  ul {
+}
+
+.lista-sugerencias {
     animation: fadeIn 0.2s ease-out;
-  }
+}
