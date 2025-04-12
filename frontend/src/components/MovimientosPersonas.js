@@ -78,6 +78,11 @@ function MovimientosPersonas() {
 
   const registrarMovimiento = async (estado_id) => {
     try {
+      if (!formData.nombre || !formData.apellido || !formData.dni) {
+        alert('Por favor complete todos los campos antes de registrar el movimiento.');
+        return;
+      }
+
       const personaKey = selectedId || `${formData.nombre}-${formData.apellido}-${formData.dni}`;
       const movimientosPersona = movimientos.filter(m => {
         if (selectedId) return m.dni === personaKey;
