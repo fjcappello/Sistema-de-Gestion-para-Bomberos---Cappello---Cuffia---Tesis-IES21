@@ -6,10 +6,11 @@ const db = require('../DB/db.js');
 router.get('/mensajes/recibidos/:legajo', (req, res) => {
   const legajo = req.params.legajo;
   const query = `
-    SELECT m.id, CONCAT(p.nombre, ' ', p.apellido) AS remitente, m.asunto, m.cuerpo, m.fecha_envio, m.leido
+    SELECT m.id, CONCAT(p.nombre, ' ', p.apellido) AS remitente, m.asunto, m.cuerpo, m.fecha_envio, md.leido
     FROM mensajes m
     JOIN personal p ON m.remitente_id = p.legajo
-    WHERE m.destinatario_id = ?
+    JOIN mensaje_destinatarios md ON m.id = md.mensaje_id
+    WHERE md.destinatario_id = ?
     ORDER BY m.fecha_envio DESC
   `;
   db.query(query, [legajo], (err, results) => {
@@ -26,10 +27,12 @@ router.get('/mensajes/recibidos/:legajo', (req, res) => {
 router.get('/mensajes/enviados/:legajo', (req, res) => {
   const legajo = req.params.legajo;
   const query = `
-    SELECT m.id, CONCAT(p.nombre, ' ', p.apellido) AS destinatario, m.asunto, m.cuerpo, m.fecha_envio
+    SELECT m.id, CONCAT(p.nombre, ' ', p.apellido) AS destinatarios, m.asunto, m.cuerpo, m.fecha_envio
     FROM mensajes m
-    JOIN personal p ON m.destinatario_id = p.legajo
+    JOIN mensaje_destinatarios md ON m.id = md.mensaje_id
+    JOIN personal p ON md.destinatario_id = p.legajo
     WHERE m.remitente_id = ?
+    GROUP BY m.id
     ORDER BY m.fecha_envio DESC
   `;
   db.query(query, [legajo], (err, results) => {
@@ -44,17 +47,41 @@ router.get('/mensajes/enviados/:legajo', (req, res) => {
 
 // Enviar mensaje
 router.post('/mensajes/enviar', (req, res) => {
-  const { remitente_id, destinatario_id, asunto, cuerpo } = req.body;
+  const { remitente_id, destinatarios, asunto, cuerpo } = req.body;
   const query = `
-    INSERT INTO mensajes (remitente_id, destinatario_id, asunto, cuerpo)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO mensajes (remitente_id, asunto, cuerpo)
+    VALUES (?, ?, ?)
   `;
-  db.query(query, [remitente_id, destinatario_id, asunto, cuerpo], (err) => {
+  db.query(query, [remitente_id, asunto, cuerpo], (err, result) => {
     if (err) {
       console.error('Error al enviar mensaje:', err);
       res.status(500).json({ error: 'Error en el servidor' });
     } else {
-      res.json({ success: true, message: 'Mensaje enviado' });
+      const mensajeId = result.insertId;
+      const destinatarioQueries = destinatarios.map(destinatario_id => {
+        return new Promise((resolve, reject) => {
+          const insertQuery = `
+            INSERT INTO mensaje_destinatarios (mensaje_id, destinatario_id)
+            VALUES (?, ?)
+          `;
+          db.query(insertQuery, [mensajeId, destinatario_id], (err) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve();
+            }
+          });
+        });
+      });
+
+      Promise.all(destinatarioQueries)
+        .then(() => {
+          res.json({ success: true, message: 'Mensaje enviado' });
+        })
+        .catch(err => {
+          console.error('Error al insertar destinatarios:', err);
+          res.status(500).json({ error: 'Error en el servidor' });
+        });
     }
   });
 });
@@ -62,9 +89,9 @@ router.post('/mensajes/enviar', (req, res) => {
 // Marcar como leído
 router.put('/mensajes/marcar-leido/:id', (req, res) => {
   const { id } = req.params;
-  const query = `UPDATE mensajes SET leido = 1 WHERE id = ?`;
+  const query = `UPDATE mensaje_destinatarios SET leido = 1 WHERE mensaje_id = ? AND destinatario_id = ?`;
 
-  db.query(query, [id], (err) => {
+  db.query(query, [id, req.body.destinatario_id], (err) => {
     if (err) {
       console.error('Error al marcar mensaje como leído:', err);
       res.status(500).json({ error: 'Error en el servidor' });

@@ -4,7 +4,8 @@ import './Styles/BandejaEntrada.css';
 
 function BandejaSalida({ onClose }) {
   const [mensajes, setMensajes] = useState([]);
-  const [filtros, setFiltros] = useState({ destinatario: '', asunto: '', fecha: '' });
+  const [filtros, setFiltros] = useState({ destinatarios: '', asunto: '', fecha: '' });
+  const [mensajeActivoId, setMensajeActivoId] = useState(null);
   const legajo = localStorage.getItem('legajo');
 
   useEffect(() => {
@@ -16,21 +17,28 @@ function BandejaSalida({ onClose }) {
   }, [legajo]);
 
   const mensajesFiltrados = mensajes.filter((msg) =>
-    msg.destinatario.toLowerCase().includes(filtros.destinatario.toLowerCase()) &&
+    msg.destinatarios.toLowerCase().includes(filtros.destinatarios.toLowerCase()) &&
     msg.asunto.toLowerCase().includes(filtros.asunto.toLowerCase()) &&
     msg.fecha_envio.includes(filtros.fecha)
   );
 
+  const handleRowClick = (msg) => {
+    setMensajeActivoId(mensajeActivoId === msg.id ? null : msg.id);
+  };
+
   return (
-    <div className="bandeja-container">
+    <div className="bandeja-contenido">
+      <div className="bandeja-selector">
+        {/* botones o navegación futura */}
+      </div>
       <h2>Bandeja de Salida</h2>
 
       <div className="bandeja-filtros">
         <input
           type="text"
-          placeholder="Filtrar por destinatario"
-          value={filtros.destinatario}
-          onChange={(e) => setFiltros({ ...filtros, destinatario: e.target.value })}
+          placeholder="Filtrar por destinatarios"
+          value={filtros.destinatarios}
+          onChange={(e) => setFiltros({ ...filtros, destinatarios: e.target.value })}
         />
         <input
           type="text"
@@ -52,20 +60,31 @@ function BandejaSalida({ onClose }) {
         <table className="bandeja-tabla">
           <thead>
             <tr>
-              <th>Destinatario</th>
+              <th>Destinatarios</th>
               <th>Fecha</th>
               <th>Asunto</th>
-              <th>Mensaje</th>
             </tr>
           </thead>
           <tbody>
             {mensajesFiltrados.map((msg) => (
-              <tr key={msg.id}>
-                <td>{msg.destinatario}</td>
-                <td>{new Date(msg.fecha_envio).toLocaleString()}</td>
-                <td>{msg.asunto}</td>
-                <td>{msg.cuerpo}</td>
-              </tr>
+              <React.Fragment key={msg.id}>
+                <tr
+                  onClick={() => handleRowClick(msg)}
+                  className={mensajeActivoId === msg.id ? 'mensaje-activo' : ''}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <td>{msg.destinatarios}</td>
+                  <td>{new Date(msg.fecha_envio).toLocaleString()}</td>
+                  <td>{msg.asunto}</td>
+                </tr>
+                {mensajeActivoId === msg.id && (
+                  <tr>
+                    <td colSpan="3">
+                      <div className="mensaje-detalle">{msg.cuerpo}</div>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
           </tbody>
         </table>
