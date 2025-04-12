@@ -5,10 +5,10 @@ function EnviarMensaje() {
   const [usuarios, setUsuarios] = useState([]);
   const [formData, setFormData] = useState({
     remitente_id: '', // Esto deberías setearlo desde el login (ej: localStorage)
-    destinatario_id: '',
     asunto: '',
     cuerpo: ''
   });
+  const [destinatarios, setDestinatarios] = useState([]);
 
   useEffect(() => {
     axios.get('http://localhost:3001/personal-nombres')
@@ -25,17 +25,32 @@ function EnviarMensaje() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleAddDestinatario = (e) => {
+    if (e.key === 'Enter' && e.target.value) {
+      setDestinatarios([...destinatarios, e.target.value]);
+      e.target.value = '';
+    }
+  };
+
+  const handleRemoveDestinatario = (destinatario) => {
+    setDestinatarios(destinatarios.filter(d => d !== destinatario));
+  };
+
   const handleEnviar = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3001/mensajes', formData);
+      const finalFormData = {
+        ...formData,
+        destinatarios
+      };
+      await axios.post('http://localhost:3001/mensajes', finalFormData);
       alert('Mensaje enviado');
       setFormData(prev => ({
         ...prev,
-        destinatario_id: '',
         asunto: '',
         cuerpo: ''
       }));
+      setDestinatarios([]);
     } catch (error) {
       console.error('Error al enviar mensaje', error);
     }
@@ -45,19 +60,18 @@ function EnviarMensaje() {
     <div>
       <h2>Enviar Mensaje</h2>
       <form onSubmit={handleEnviar}>
-        <select
-          name="destinatario_id"
-          value={formData.destinatario_id}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Seleccionar destinatario</option>
-          {usuarios.map((u) => (
-            <option key={u.id} value={u.id}>
-              {u.nombre_completo}
-            </option>
+        <input
+          type="text"
+          placeholder="Agregar destinatario y presionar Enter"
+          onKeyDown={handleAddDestinatario}
+        />
+        <div>
+          {destinatarios.map((destinatario, index) => (
+            <span key={index}>
+              {destinatario} <button type="button" onClick={() => handleRemoveDestinatario(destinatario)}>x</button>
+            </span>
           ))}
-        </select>
+        </div>
         <input
           type="text"
           name="asunto"
