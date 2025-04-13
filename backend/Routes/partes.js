@@ -6,7 +6,7 @@ const db = require('../DB/db.js');
 // Obtener todos los partes de emergencias
 // y permitir filtrado por jefe de dotación, tipo de asistencia y rango de fechas
 router.get('/partesemergencias', (req, res) => {
-  const { jefeDotacion, tipoAsistencia, startDate, endDate } = req.query;
+  const { jefeDotacion, tipoAsistencia, startDate, endDate, denunciante} = req.query;
 
   let query = `
     SELECT 
@@ -24,7 +24,7 @@ router.get('/partesemergencias', (req, res) => {
     FROM partes p
     LEFT JOIN personal per ON p.jefe_dotacion = per.legajo
     LEFT JOIN estado e ON p.id_estado = e.id_estado
-    WHERE 1=1;
+    WHERE 1=1
   `;
 
   const params = [];
@@ -45,8 +45,14 @@ router.get('/partesemergencias', (req, res) => {
     query += ` AND p.fecha <= ?`;
     params.push(endDate);
   }
+  if (denunciante) {
+    query += ` AND CONCAT(p.nombre_denunciante, ' ', p.apellido_denunciante) LIKE ?`;
+    const denuncianteParametro = `%${denunciante}%`;
 
-  query += ` ORDER BY p.fecha DESC`;
+    params.push(denuncianteParametro);
+  }
+
+  query += ` AND p.activo = 1 ORDER BY p.fecha DESC`;
 
   db.query(query, params, (err, results) => {
     if (err) {
@@ -57,7 +63,6 @@ router.get('/partesemergencias', (req, res) => {
     }
   });
 });
-
 
 // Obtener un parte de emergencias específico por ID o número de parte
 router.get('/partesemergencias/:id', (req, res) => {
@@ -92,8 +97,7 @@ router.get('/partesemergencias/:id', (req, res) => {
 });
 
 // Agregar un nuevo parte de emergencias
-
-router.post('/partesemergencias', async (req, res) => {
+router.post('/crearEmergencia', async (req, res) => {
   const {
     nombre_denunciante,
     apellido_denunciante,
@@ -151,9 +155,9 @@ router.post('/partesemergencias', async (req, res) => {
 
 
 // Eliminar un parte de emergencias x el ID
-router.delete('/partesemergencias/:id', (req, res) => {
+router.delete('/eliminarEmergencia/:id', (req, res) => {
   const { id } = req.params;
-  const query = 'DELETE FROM partes WHERE id = ?';
+  const query = 'UPDATE partes SET activo = 0 WHERE id = ?';
 
   db.query(query, [id], (err, result) => {
     if (err) {
@@ -187,7 +191,7 @@ router.get('/tipos_asistencia', (req, res) => {
 });
 
 
-// Obtener reportes por jefe de dotación, tipo de asistencia y rango de fechas
+// Obtener reportes por jefe de dotación, tipo de asistencia y rango de fechas //Esto debe ser del modulo de estadisticas.
 router.get('/reportes', (req, res) => {
   const { jefeDotacion, tipoAsistencia, startDate, endDate } = req.query;
 
@@ -226,5 +230,67 @@ router.get('/reportes', (req, res) => {
     }
   });
 });
+
+
+// Ruta para crear una bitácora/reporte asociada a una emergencia.
+router.post('/bitacora', (req, res) => {
+  const { id_personal, reporte, parte_id } = req.body;
+  // Validación básica
+  if (!id_personal || !reporte || !parte_id) {
+    return res.status(400).json({ success: false, error: 'Faltan datos requeridos' });
+  }
+  //Insertar en la tabla bitacora
+  const insertQuery = 'INSERT INTO bitacora (id_personal, reporte) VALUES (?, ?)';
+  
+  db.query(insertQuery, [id_personal, reporte], (err, result) => {
+    if (err) {
+      console.error('Error al crear bitácora:', err);
+      return res.status(500).json({ success: false, error: 'Error al crear bitácora' });
+    }
+    const id_bitacora_nuevo = result.insertId;
+    //Actualizar el parte con el id_bitacora
+    const updateQuery = 'UPDATE partes SET id_bitacora = ?, id_estado = 0 WHERE id = ?';
+    db.query(updateQuery, [id_bitacora_nuevo, parte_id], (err, result) => {
+      if (err) {
+        console.error('Error al actualizar parte:', err);
+        return res.status(500).json({ success: false, error: 'Error al actualizar parte' });
+      }
+      res.json({ 
+        success: true,
+        message: 'Bitácora creada y parte actualizado',
+        id_bitacora: id_bitacora_nuevo
+      });
+    });
+  });
+});
+
+//Ruta para recuperar una bitacora/reporte. para generar pdf
+router.get('/bitacora/:parte_id', (req, res) => {
+  const { parte_id } = req.params;
+  
+  const query = `
+    SELECT b.id_bitacora, b.reporte
+    FROM bitacora b
+    JOIN partes p ON b.id_bitacora = p.id_bitacora
+    WHERE p.id = ?
+  `;
+
+  db.query(query, [parte_id], (error, results) => {
+    if (error) {
+      console.error('Error al obtener la bitácora:', error);
+      return res.status(500).json({ 
+        success: false,
+        error: 'Error al obtener los registros de bitácora' 
+      });
+    }
+
+    res.json({
+      success: true,
+      data: results
+    });
+  });
+});
+
+
 
 module.exports = router;

@@ -6,21 +6,38 @@ import PDFGenerator from './PDFGenerator';
 const ITEMS_PER_PAGE = 5;
 
 function EmergenciesTable() {
+  // Estados para datos
   const [emergencies, setEmergencies] = useState([]);
   const [filteredEmergencies, setFilteredEmergencies] = useState([]);
   const [jefesDotacion, setJefesDotacion] = useState([]);
   const [tipoAsistenciaOptions, setTipoAsistenciaOptions] = useState([]);
-  const [filters, setFilters] = useState({ jefeDotacion: '', tipoAsistencia: '', startDate: '', endDate: '' });
-  const [searchTerm, setSearchTerm] = useState('');
+  
+  // Estados para filtros
+  const [filters, setFilters] = useState({ 
+    jefeDotacion: '', 
+    tipoAsistencia: '', 
+    startDate: '', 
+    endDate: '',
+    denunciante: '' 
+  });
+  
+  // Estados para paginación
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // Estados para modales
   const [isPDFModalOpen, setIsPDFModalOpen] = useState(false);
-  const [selectedPart, setSelectedPart] = useState(null);
-
-  // Estados modales
+  const [isBitacoraModalOpen, setIsBitacoraModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [bitacoraText, setBitacoraText] = useState('');
+  
+  // Estados para selección y control
+  const [selectedPart, setSelectedPart] = useState(null);
+  const [selectedPartId, setSelectedPartId] = useState(null);
   const [deleteParteId, setDeleteParteId] = useState('');
   const [deleteError, setDeleteError] = useState('');
+
+  // Estado para formulario de agregar
   const [formData, setFormData] = useState({
     nombre_denunciante: '',
     apellido_denunciante: '',
@@ -32,17 +49,33 @@ function EmergenciesTable() {
     fecha: '',
   });
 
+  // Determinar si una emergencia está activa
+  const isEmergenciaActiva = (emergencia) => {
+    // Ajusta estas condiciones según los valores reales de tu backend
+    return emergencia.estado === "Activo" || 
+           emergencia.estado === "En curso" || 
+           emergencia.estado === "1"; // Ejemplo si usas números
+  };
+
+  // Obtener datos iniciales
   useEffect(() => {
     fetchEmergencies();
     fetchJefesDotacion();
     fetchTipoAsistencia();
   }, []);
 
+  // Fetch de datos
   const fetchEmergencies = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/partesemergencias', { params: filters });
+      const response = await axios.get('http://localhost:3001/partesemergencias');
       setEmergencies(response.data);
       setFilteredEmergencies(response.data);
+      
+      // Verificación de datos en consola
+      console.log("Datos de emergencias recibidos:", response.data);
+      response.data.forEach(emergencia => {
+        console.log(`Emergencia ID: ${emergencia.parte_id}, Estado: ${emergencia.estado}, Activa: ${isEmergenciaActiva(emergencia)}`);
+      });
     } catch (error) {
       console.error("Error al obtener emergencias:", error);
     }
@@ -66,24 +99,93 @@ function EmergenciesTable() {
     }
   };
 
+  // Manejo de filtros
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters({ ...filters, [name]: value });
   };
 
-  const handleFilterApply = () => {
-    fetchEmergencies();
-  };
-  //ACA VA EL HANDLER DEL EX BOTON DE BUSCAR POR NOMBRE
-  const handleSearch = () => {
-    const filtered = emergencies.filter(emergencia =>
-      emergencia.nombre_denunciante.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emergencia.apellido_denunciante.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      emergencia.tipo_asistencia.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  const handleApplyFilters = () => {
+    const filtered = emergencies.filter(emergencia => {
+      const matchesDenunciante = !filters.denunciante || 
+        (emergencia.nombre_denunciante?.toLowerCase().includes(filters.denunciante.toLowerCase())) ||
+        (emergencia.apellido_denunciante?.toLowerCase().includes(filters.denunciante.toLowerCase()));
+      
+      const matchesTipoAsistencia = !filters.tipoAsistencia || 
+        emergencia.tipo_asistencia === filters.tipoAsistencia;
+      
+      const selectedJefe = jefesDotacion.find(j => j.id == filters.jefeDotacion);
+      const matchesJefeDotacion = !filters.jefeDotacion || 
+        (selectedJefe && emergencia.jefe_dotacion === selectedJefe.nombre_completo);
+      
+      if (filters.startDate || filters.endDate) {
+        const [day, month, year] = emergencia.fecha.split('-');
+        const emergenciaDateFormatted = `${year}-${month}-${day}`;
+        
+        if (filters.startDate && emergenciaDateFormatted < filters.startDate) return false;
+        if (filters.endDate && emergenciaDateFormatted > filters.endDate) return false;
+      }
+      
+      return matchesDenunciante && matchesTipoAsistencia && matchesJefeDotacion;
+    });
+    
     setFilteredEmergencies(filtered);
+    setCurrentPage(1);
   };
 
+  // Manejo de paginación
+  const totalPages = Math.ceil(filteredEmergencies.length / ITEMS_PER_PAGE);
+  const currentEmergencies = filteredEmergencies.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  // Manejo de bitácora
+  const openBitacoraModal = (parteId) => {
+    setSelectedPartId(parteId);
+    setIsBitacoraModalOpen(true);
+    setBitacoraText('');
+  };
+
+  const closeBitacoraModal = () => {
+    setIsBitacoraModalOpen(false);
+    setBitacoraText('');
+    setSelectedPartId(null);
+  };
+
+  const handleConfirmBitacora = async () => {
+    if (!bitacoraText || !selectedPartId) {
+      alert('Por favor complete el reporte');
+      return;
+    }
+    try {
+      const id_personal = 1;
+      const response = await axios.post('http://localhost:3001/bitacora', {
+        id_personal: id_personal,
+        reporte: bitacoraText,
+        parte_id: selectedPartId
+      });
+
+      if (response.data.success) {
+        alert('Bitácora guardada correctamente');
+        closeBitacoraModal();
+        fetchEmergencies();
+      } else {
+        alert('Ocurrió un error al guardar la bitácora');
+      }
+    } catch (error) {
+      console.error('Error en la solicitud POST:', error);
+      alert(`Error al guardar la bitácora: ${error.response?.data?.error || error.message}`);
+    }
+  };
+
+  // Manejo de PDF
   const handleGeneratePDF = (partData) => {
     setSelectedPart(partData);
     setIsPDFModalOpen(true);
@@ -94,13 +196,42 @@ function EmergenciesTable() {
     setSelectedPart(null);
   };
 
-  // Agregar y eliminar reportes
+  // Renderizado de botones según estado
+  const renderReportButton = (emergencia) => {
+    const activa = isEmergenciaActiva(emergencia);
+    return (
+      <button 
+        onClick={() => activa && openBitacoraModal(emergencia.parte_id)}
+        disabled={!activa}
+        className={`generate-report-btn ${!activa ? 'disabled-btn' : ''}`}
+        title={!activa ? "Emergencia finalizada - No se pueden agregar más reportes" : "Generar reporte de bitácora"}
+      >
+        Generar reporte
+      </button>
+    );
+  };
+
+  const renderPdfButton = (emergencia) => {
+    const finalizada = !isEmergenciaActiva(emergencia);
+    return (
+      <button 
+        onClick={() => finalizada && handleGeneratePDF(emergencia)}
+        disabled={!finalizada}
+        className={`generate-pdf-btn ${!finalizada ? 'disabled-btn' : ''}`}
+        title={!finalizada ? "Solo disponible para emergencias finalizadas" : "Generar PDF del reporte"}
+      >
+        Generar PDF
+      </button>
+    );
+  };
+
+  // Función para manejar agregar emergencia
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/partesemergencias', formData);
+      const response = await axios.post('http://localhost:3001/crearEmergencia', formData);
       if (response.data.success) {
-        alert("Reporte agregado correctamente");
+        alert("Emergencia agregada correctamente");
         setIsAddModalOpen(false);
         setFormData({
           nombre_denunciante: '',
@@ -122,13 +253,14 @@ function EmergenciesTable() {
     }
   };
 
+  // Función para manejar borrado
   const handleDelete = async () => {
     if (!deleteParteId) {
       setDeleteError("Por favor, ingrese un ID válido.");
       return;
     }
     try {
-      const response = await axios.delete(`http://localhost:3001/partesemergencias/${deleteParteId}`);
+      const response = await axios.delete(`http://localhost:3001/eliminarEmergencia/${deleteParteId}`);
       if (response.data.success) {
         alert("Reporte eliminado correctamente");
         setIsDeleteModalOpen(false);
@@ -144,45 +276,64 @@ function EmergenciesTable() {
     }
   };
 
-  const totalPages = Math.ceil(filteredEmergencies.length / ITEMS_PER_PAGE);
-  const currentEmergencies = filteredEmergencies.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
-
+  // Renderizado visual
   return (
     <div className="table-container">
       <h2 className="table-title">Registro de Emergencias</h2>
 
-      {/* Filtros y Buscador */}
+      {/* Filtros */}
       <div className="filter-container">
-        <select name="tipoAsistencia" value={filters.tipoAsistencia} onChange={handleFilterChange} className="filter-select">
-          <option value="">Tipo de Asistencia</option>
+        <select 
+          name="tipoAsistencia" 
+          value={filters.tipoAsistencia} 
+          onChange={handleFilterChange} 
+          className="filter-select"
+        >
+          <option value="">Todos los tipos</option>
           {tipoAsistenciaOptions.map((tipo) => (
             <option key={tipo} value={tipo}>{tipo}</option>
           ))}
         </select>
         
-        <select name="jefeDotacion" value={filters.jefeDotacion} onChange={handleFilterChange} className="filter-select">
-          <option value="">Jefe de Dotación</option>
+        <select 
+          name="jefeDotacion" 
+          value={filters.jefeDotacion} 
+          onChange={handleFilterChange} 
+          className="filter-select"
+        >
+          <option value="">Todos los jefes</option>
           {jefesDotacion.map((jefe) => (
             <option key={jefe.id} value={jefe.id}>{jefe.nombre_completo}</option>
           ))}
         </select>
         
-        <input type="date" name="startDate" value={filters.startDate} onChange={handleFilterChange} className="filter-input" />
-        <input type="date" name="endDate" value={filters.endDate} onChange={handleFilterChange} className="filter-input" />
+        <input 
+          type="date" 
+          name="startDate" 
+          value={filters.startDate} 
+          onChange={handleFilterChange} 
+          className="filter-input" 
+          placeholder="Desde"
+        />
+        <input 
+          type="date" 
+          name="endDate" 
+          value={filters.endDate} 
+          onChange={handleFilterChange} 
+          className="filter-input" 
+          placeholder="Hasta"
+        />
         
-        <button onClick={handleFilterApply} className="filter-btn">Filtrar</button>
-
         <input
           type="text"
-          placeholder="Buscar por nombre, apellido o tipo de asistencia"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
+          name="denunciante"
+          placeholder="Nombre del denunciante"
+          value={filters.denunciante}
+          onChange={handleFilterChange}
           className="search-input"
         />
-        <button onClick={handleSearch} className="search-btn">Buscar</button>
+
+        <button onClick={handleApplyFilters} className="filter-btn">Aplicar Filtros</button>
       </div>
 
       {/* Tabla */}
@@ -218,78 +369,179 @@ function EmergenciesTable() {
                 <td>{emergencia.tipo_asistencia}</td>
                 <td>{emergencia.jefe_dotacion}</td>
                 <td>{emergencia.parte_escrito}</td>
-                <td>{" "}</td>
+                <td>{emergencia.estado}</td>
                 <td>
-                  <button className="generate-pdf-btn">Generar reporte</button>
+                  {renderReportButton(emergencia)}
                 </td>
                 <td>
-                  <button onClick={() => handleGeneratePDF(emergencia)} className="generate-pdf-btn">Generar PDF</button>
+                  {renderPdfButton(emergencia)}
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="11" style={{ textAlign: 'center', padding: '1rem', color: '#555' }}>No hay emergencias cargadas</td>
+              <td colSpan="13" style={{ textAlign: 'center', padding: '1rem', color: '#555' }}>
+                No hay emergencias cargadas
+              </td>
             </tr>
           )}
         </tbody>
       </table>
 
+      {/* Paginación */}
       <div className="pagination">
-        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>Anterior</button>
-        <span>Página {currentPage} de {totalPages}</span>
-        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>Siguiente</button>
+        <button 
+          onClick={() => handlePageChange(currentPage - 1)} 
+          disabled={currentPage === 1}
+          className={currentPage === 1 ? 'disabled-btn' : ''}
+        >
+          Anterior
+        </button>
+        <span>Página {currentPage} de {totalPages || 1}</span>
+        <button 
+          onClick={() => handlePageChange(currentPage + 1)} 
+          disabled={currentPage === totalPages || totalPages === 0}
+          className={currentPage === totalPages || totalPages === 0 ? 'disabled-btn' : ''}
+        >
+          Siguiente
+        </button>
       </div>
 
-      <button className="add-report-btn" onClick={() => setIsAddModalOpen(true)}>Agregar Nuevo Reporte</button>
-      <button className="delete-report-btn" onClick={() => setIsDeleteModalOpen(true)}>Eliminar Reporte</button>
+      {/* Botones de Acción Principales */}
+      <div className="action-buttons">
+        <button className="add-report-btn" onClick={() => setIsAddModalOpen(true)}>
+          Agregar Nuevo Reporte
+        </button>
+        <button className="delete-report-btn" onClick={() => setIsDeleteModalOpen(true)}>
+          Eliminar Reporte
+        </button>
+      </div>
 
-      {/* Modal para agregar reporte */}
+      {/* Modal para Agregar Reporte */}
       {isAddModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Agregar Nuevo Reporte</h3>
             <form onSubmit={handleAddSubmit} className="form-container">
-              <input type="text" name="nombre_denunciante" placeholder="Nombre del denunciante" value={formData.nombre_denunciante} onChange={(e) => setFormData({ ...formData, nombre_denunciante: e.target.value })} required />
-              <input type="text" name="apellido_denunciante" placeholder="Apellido del denunciante" value={formData.apellido_denunciante} onChange={(e) => setFormData({ ...formData, apellido_denunciante: e.target.value })} required />
-              <input type="number" name="documento_denunciante" placeholder="Documento del denunciante" value={formData.documento_denunciante} onChange={(e) => setFormData({ ...formData, documento_denunciante: e.target.value })} required />
-              <input type="text" name="direccion" placeholder="Dirección" value={formData.direccion} onChange={(e) => setFormData({ ...formData, direccion: e.target.value })} required />
-              <input type="text" name="tipo_asistencia" placeholder="Tipo de Asistencia" value={formData.tipo_asistencia} onChange={(e) => setFormData({ ...formData, tipo_asistencia: e.target.value })} required />
-              <select name="jefe_dotacion" value={formData.jefe_dotacion} onChange={(e) => setFormData({ ...formData, jefe_dotacion: e.target.value })} required>
+            <input 
+                type="text" 
+                name="nombre_denunciante" 
+                placeholder="Nombre del denunciante" 
+                value={formData.nombre_denunciante} 
+                onChange={(e) => setFormData({...formData, nombre_denunciante: e.target.value})} 
+                required 
+              />
+              <input 
+                type="text" 
+                name="apellido_denunciante" 
+                placeholder="Apellido del denunciante" 
+                value={formData.apellido_denunciante} 
+                onChange={(e) => setFormData({...formData, apellido_denunciante: e.target.value})} 
+                required 
+              />
+              <input 
+                type="number" 
+                name="documento_denunciante" 
+                placeholder="Documento del denunciante" 
+                value={formData.documento_denunciante} 
+                onChange={(e) => setFormData({...formData, documento_denunciante: e.target.value})} 
+                required 
+              />
+              <input 
+                type="text" 
+                name="direccion" 
+                placeholder="Dirección" 
+                value={formData.direccion} 
+                onChange={(e) => setFormData({...formData, direccion: e.target.value})} 
+                required 
+              />
+              <input 
+                type="text" 
+                name="tipo_asistencia" 
+                placeholder="Tipo de Asistencia" 
+                value={formData.tipo_asistencia} 
+                onChange={(e) => setFormData({...formData, tipo_asistencia: e.target.value})} 
+                required 
+              />
+              <select 
+                name="jefe_dotacion" 
+                value={formData.jefe_dotacion} 
+                onChange={(e) => setFormData({...formData, jefe_dotacion: e.target.value})} 
+                required
+              >
                 <option value="">Seleccione Jefe de Dotación</option>
                 {jefesDotacion.map((jefe) => (
                   <option key={jefe.id} value={jefe.id}>{jefe.nombre_completo}</option>
                 ))}
               </select>
-              <textarea name="parte_escrito" placeholder="Información adicional" value={formData.parte_escrito} onChange={(e) => setFormData({ ...formData, parte_escrito: e.target.value })} required />
+              <textarea 
+                name="parte_escrito" 
+                placeholder="Información adicional" 
+                value={formData.parte_escrito} 
+                onChange={(e) => setFormData({...formData, parte_escrito: e.target.value})} 
+                required 
+              />
               <label>Fecha de intervención:</label>
-              <input type="date" name="fecha" value={formData.fecha} onChange={(e) => setFormData({ ...formData, fecha: e.target.value })} required />
-              <button type="submit" className="submit-btn">Agregar Reporte</button>
+              <input 
+                type="date" 
+                name="fecha" 
+                value={formData.fecha} 
+                onChange={(e) => setFormData({...formData, fecha: e.target.value})} 
+                required 
+              />
+              <div className="form-buttons">
+                <button type="submit" className="confirm-btn">Agregar Reporte</button>
+                <button type="button" className="cancel-btn" onClick={() => setIsAddModalOpen(false)}>
+                  Cancelar
+                </button>
+              </div>
             </form>
-            <button className="close-modal-btn" onClick={() => setIsAddModalOpen(false)}>Cerrar</button>
           </div>
         </div>
       )}
 
-      {/* Modal para eliminar reporte */}
+      {/* Modal para Eliminar Reporte */}
       {isDeleteModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Eliminar Reporte</h3>
             <input
               type="number"
-              placeholder="Ingrese el ID del parte"
+              placeholder="Ingrese el ID del parte a eliminar"
               value={deleteParteId}
               onChange={(e) => setDeleteParteId(e.target.value)}
-              required
+              className="delete-input"
             />
-            <button className="confirm-delete-btn" onClick={handleDelete}>Eliminar</button>
-            <button className="close-modal-btn" onClick={() => setIsDeleteModalOpen(false)}>Cancelar</button>
             {deleteError && <p className="error-message">{deleteError}</p>}
+            <div className="modal-buttons">
+              <button onClick={handleDelete} className="confirm-delete-btn">Eliminar</button>
+              <button onClick={() => setIsDeleteModalOpen(false)} className="cancel-btn">Cancelar</button>
+            </div>
           </div>
         </div>
       )}
 
+      {/* Modal de Bitácora */}
+      {isBitacoraModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Reporte de Emergencia</h3>
+            <textarea
+              value={bitacoraText}
+              onChange={(e) => setBitacoraText(e.target.value)}
+              placeholder="Escriba aquí el reporte de la emergencia..."
+              rows={8}
+              style={{ width: '100%', marginBottom: '1rem' }}
+            />
+            <div class = "modal-buttons">
+              <button onClick={handleConfirmBitacora} className="confirm-btn">Confirmar</button>
+              <button onClick={closeBitacoraModal} className="cancel-btn">Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de PDF */}
       {isPDFModalOpen && selectedPart && (
         <PDFGenerator partData={selectedPart} onClose={closePDFModal} />
       )}
