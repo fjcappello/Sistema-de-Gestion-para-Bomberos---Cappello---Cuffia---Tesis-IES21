@@ -12,8 +12,8 @@ function Navbar({ onLogout }) {
   };
 
   const handleLogout = () => {
-    onLogout(); 
-    navigate('/'); 
+    onLogout();
+    navigate('/');
   };
 
   return (

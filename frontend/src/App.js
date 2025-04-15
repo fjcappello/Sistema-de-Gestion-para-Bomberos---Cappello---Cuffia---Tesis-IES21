@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import PersonalTable from './components/PersonalTable';
@@ -41,9 +42,25 @@ function App() {
     return () => clearInterval(intervalo);
   }, []);
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
+  const handleLogout = async () => {
+    const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+
+    if (usuarioActual) {
+      try {
+        await axios.post('http://localhost:3001/bitacora/logout', {
+          usuario_id: usuarioActual.legajo,
+          accion: 'Cierre de sesión'
+        });
+        console.log('Logout registrado en bitácora');
+      } catch (error) {
+        console.error('Error registrando logout en bitácora:', error);
+      }
+    }
+
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('usuario');
+    setUsuario(null);
+    setIsAuthenticated(false);
   };
 
   return (

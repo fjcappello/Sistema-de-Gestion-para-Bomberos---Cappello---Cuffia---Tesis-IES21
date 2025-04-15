@@ -1,0 +1,172 @@
+const db = require('../DB/db.js');
+const { registrarBitacora } = require('../middlewares/bitacoraLogger');
+
+// Obtener todos los registros de personal
+const obtenerPersonal = (req, res) => {
+  const query = `
+    SELECT 
+      p.legajo,
+      CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo,
+      p.documento,
+      DATE_FORMAT(p.nacimiento, '%d-%m-%Y') AS nacimiento,
+      DATE_FORMAT(p.fecha_ingreso, '%d-%m-%Y') AS fecha_ingreso,
+      j.jerarquia AS jerarquia,
+      s.nombre AS situacion,
+      p.fecha_revision_medica
+    FROM personal p
+    LEFT JOIN jerarquias j ON p.jerarquia_id = j.id
+    LEFT JOIN situaciones s ON p.situacion_id = s.id
+    ORDER BY p.legajo ASC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener datos de personal:', err);
+      res.status(500).json({ error: 'Error en el servidor al obtener datos de personal' });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+// Obtener nombres de personal
+const obtenerNombres = (req, res) => {
+  const query = `
+    SELECT legajo AS id, nombre, apellido, CONCAT(nombre, " ", apellido) AS nombre_completo
+    FROM personal
+    ORDER BY nombre ASC
+  `;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener nombres de personal:', err);
+      res.status(500).json({ error: 'Error en el servidor' });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+// Insertar nuevo personal
+const crearPersonal = (req, res) => {
+  const { legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica } = req.body;
+
+  const personalQuery = `
+    INSERT INTO personal (legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  db.query(personalQuery, [legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica], (err) => {
+    if (err) {
+      console.error('Error al agregar personal:', err);
+      res.status(500).json({ error: 'Error en el servidor al agregar personal' });
+      return;
+    }
+
+    const loginQuery = `INSERT INTO login (legajo, contraseña) VALUES (?, ?)`;
+    db.query(loginQuery, [legajo, documento], async (err) => {
+      if (err) {
+        console.error('Error al crear login:', err);
+        res.status(500).json({ error: 'Error en el servidor al crear login' });
+        return;
+      }
+
+      await registrarBitacora(legajo, 'Alta de personal', `Se dio de alta a ${nombre} ${apellido} (Legajo ${legajo})`);
+      res.json({ success: 'Personal y login creados correctamente' });
+    });
+  });
+};
+
+// Actualizar datos de personal
+const actualizarPersonal = (req, res) => {
+  const { legajo } = req.params;
+  const { jerarquia_id, situacion_id, fecha_revision_medica } = req.body;
+
+  const fields = [];
+  const values = [];
+
+  if (jerarquia_id !== undefined) {
+    fields.push('jerarquia_id = ?');
+    values.push(jerarquia_id);
+  }
+  if (situacion_id !== undefined) {
+    fields.push('situacion_id = ?');
+    values.push(situacion_id);
+  }
+  if (fecha_revision_medica !== undefined) {
+    fields.push('fecha_revision_medica = ?');
+    values.push(fecha_revision_medica);
+  }
+
+  if (fields.length === 0) {
+    return res.status(400).json({ error: 'No se proporcionaron campos para actualizar' });
+  }
+
+  values.push(legajo);
+  const query = `UPDATE personal SET ${fields.join(', ')} WHERE legajo = ?`;
+
+  db.query(query, values, async (err, result) => {
+    if (err) {
+      console.error('Error al actualizar personal:', err);
+      res.status(500).json({ error: 'Error en el servidor al actualizar personal' });
+    } else if (result.affectedRows === 0) {
+      res.status(404).json({ error: 'Personal no encontrado' });
+    } else {
+      await registrarBitacora(legajo, 'Modificación de personal', `Se actualizaron datos del legajo ${legajo}`);
+      res.json({ success: true });
+    }
+  });
+};
+
+// Eliminar personal
+const eliminarPersonal = (req, res) => {
+  const { legajo } = req.params;
+  const query = `DELETE FROM personal WHERE legajo = ?`;
+
+  db.query(query, [legajo], async (err, result) => {
+    if (err) {
+      console.error('Error al eliminar personal:', err);
+      res.status(500).json({ error: 'Error en el servidor al eliminar personal' });
+    } else if (result.affectedRows === 0) {
+      res.status(404).json({ error: 'Personal no encontrado' });
+    } else {
+      await registrarBitacora(legajo, 'Baja de personal', `Se eliminó el legajo ${legajo}`);
+      res.json({ success: 'Personal eliminado correctamente' });
+    }
+  });
+};
+
+// Jerarquías
+const obtenerJerarquias = (req, res) => {
+  const query = `SELECT id, jerarquia FROM jerarquias ORDER BY jerarquia ASC`;
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener jerarquías:', err);
+      res.status(500).json({ error: 'Error en el servidor al obtener jerarquías' });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+// Situaciones
+const obtenerSituaciones = (req, res) => {
+  const query = 'SELECT id, nombre FROM situaciones ORDER BY nombre ASC';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error al obtener situaciones:', err);
+      res.status(500).json({ error: 'Error en el servidor al obtener situaciones' });
+    } else {
+      res.json(results);
+    }
+  });
+};
+
+module.exports = {
+  obtenerPersonal,
+  obtenerNombres,
+  crearPersonal,
+  actualizarPersonal,
+  eliminarPersonal,
+  obtenerJerarquias,
+  obtenerSituaciones
+};

@@ -1,25 +1,19 @@
 const express = require('express');
 const cors = require('cors');
-
-
-const partesRoutes = require('./Routes/partes');
-const personalRoutes = require('./Routes/personal');
-const mensajesRoutes = require('./Routes/mensajes');
-const loginRoutes = require('./Routes/login');
-const movimientosRoutes = require('./Routes/movimientos');
-
 const app = express();
+const PORT = 3001;
+
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
 
 
-app.use(partesRoutes);
-app.use(personalRoutes);
-app.use(mensajesRoutes);
-app.use(loginRoutes);
-app.use(movimientosRoutes);
+app.use(require('./Routes/login'));
+app.use(require('./Routes/personal'));
+app.use(require('./Routes/partes'));
+app.use(require('./Routes/mensajes'));
+app.use(require('./Routes/movimientos'));
+app.use(require('./Routes/bitacora')); 
 
-const PORT = 3001;
 app.listen(PORT, () => {
   console.log(`Servidor API en http://localhost:${PORT}`);
 });
