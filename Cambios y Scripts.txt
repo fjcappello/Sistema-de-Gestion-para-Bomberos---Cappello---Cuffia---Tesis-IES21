@@ -23,3 +23,22 @@ CREATE TABLE mensaje_destinatarios (
   FOREIGN KEY (mensaje_id) REFERENCES mensajes(id) ON DELETE CASCADE,
   FOREIGN KEY (destinatario_id) REFERENCES personal(legajo)
 );
+
+-- Script para crear la tabla bitacora y datos para cargar
+
+CREATE TABLE bitacora (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  usuario_id BIGINT NOT NULL,
+  accion VARCHAR(100) NOT NULL,
+  fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (usuario_id) REFERENCES personal(legajo)
+    ON UPDATE CASCADE
+);
+
+INSERT INTO bitacora (usuario_id, accion)
+VALUES 
+  (108, 'Inicio de sesión'),
+  (200, 'Alta de parte de emergencia'),
+  (108, 'Lectura de mensaje'),
+  (200, 'Modificación de personal'),
+  (108, 'Cierre de sesión');
