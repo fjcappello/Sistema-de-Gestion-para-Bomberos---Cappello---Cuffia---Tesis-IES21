@@ -1,12 +1,12 @@
 const db = require('../DB/db.js');
 
 // Obtener registros de bitácora con filtros opcionales
-const obtenerBitacora = (req, res) => {
+const obtenerLog = (req, res) => {
   const { usuario_id, accion, desde, hasta } = req.query;
 
   let query = `
     SELECT b.id, b.usuario_id, CONCAT(p.nombre, ' ', p.apellido) AS usuario, b.accion, DATE_FORMAT(b.fecha, '%d/%m/%Y %H:%i:%s') AS fecha
-    FROM bitacora b
+    FROM registro_seguridad b
     LEFT JOIN personal p ON b.usuario_id = p.legajo
     WHERE 1 = 1
   `;
@@ -45,5 +45,5 @@ const obtenerBitacora = (req, res) => {
 };
 
 module.exports = {
-  obtenerBitacora
+  obtenerLog
 };

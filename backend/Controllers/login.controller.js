@@ -1,5 +1,5 @@
 const db = require('../DB/db.js');
-const { registrarBitacora } = require('../middlewares/bitacoraLogger');
+const { registrarBitacora } = require('../Middlewares/logSeguridadLogger.js');
 
 const loginUsuario = (req, res) => {
   const { legajo, password } = req.body;

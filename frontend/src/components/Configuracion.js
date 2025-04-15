@@ -55,7 +55,7 @@ function Configuracion() {
       if (filtros.desde) params.desde = filtros.desde;
       if (filtros.hasta) params.hasta = filtros.hasta;
 
-      const response = await axios.get('http://localhost:3001/obtenerBitacora', { params });
+      const response = await axios.get('http://localhost:3001/registro_seguridad', { params });
       setBitacora(response.data);
     } catch (err) {
       console.error('Error al obtener bitácora:', err);
@@ -179,17 +179,19 @@ function Configuracion() {
             <table className="configuracion-tabla">
               <thead>
                 <tr>
-                  <th>Usuario</th>
-                  <th>Acción</th>
                   <th>Fecha</th>
+                  <th>Legajo</th>
+                  <th>Personal</th>
+                  <th>Acción</th>
                 </tr>
               </thead>
               <tbody>
                 {registrosPaginados.map((item) => (
                   <tr key={item.id}>
-                    <td>{item.usuario || item.usuario_id}</td>
-                    <td>{item.accion}</td>
                     <td>{item.fecha}</td>
+                    <td>{item.usuario_id}</td>
+                    <td>{item.usuario}</td>
+                    <td>{item.accion}</td>
                   </tr>
                 ))}
               </tbody>

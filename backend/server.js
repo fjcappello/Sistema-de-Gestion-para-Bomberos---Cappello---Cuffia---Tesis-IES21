@@ -12,7 +12,7 @@ app.use(require('./Routes/personal'));
 app.use(require('./Routes/partes'));
 app.use(require('./Routes/mensajes'));
 app.use(require('./Routes/movimientos'));
-app.use(require('./Routes/bitacora')); 
+app.use(require('./Routes/logSeguridad')); 
 
 app.listen(PORT, () => {
   console.log(`Servidor API en http://localhost:${PORT}`);

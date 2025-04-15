@@ -10,7 +10,8 @@ function BandejaEntrada() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [bandejaActiva, setBandejaActiva] = useState('entrada');
   const [mensajeActivoId, setMensajeActivoId] = useState(null);
-  const legajo = localStorage.getItem('legajo');
+  const usuario = JSON.parse(localStorage.getItem('usuario'));
+  const legajo = usuario?.legajo;
 
   const fetchMensajes = () => {
     if (legajo) {

@@ -1,5 +1,5 @@
 const db = require('../DB/db.js');
-const { registrarBitacora } = require('../middlewares/bitacoraLogger');
+const { registrarBitacora } = require('../Middlewares/logSeguridadLogger.js');
 
 // Obtener todos los partes con filtros
 const obtenerPartes = (req, res) => {
