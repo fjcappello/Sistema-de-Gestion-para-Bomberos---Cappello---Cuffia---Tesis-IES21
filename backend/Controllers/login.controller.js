@@ -1,5 +1,5 @@
 const db = require('../DB/db.js');
-const { registrarBitacora } = require('../Middlewares/logSeguridadLogger.js');
+const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 
 const loginUsuario = (req, res) => {
   const { legajo, password } = req.body;
@@ -18,9 +18,8 @@ const loginUsuario = (req, res) => {
       const { nombre_completo, primer_ingreso } = results[0];
 
       // Registrar intento de inicio exitoso
-      await registrarBitacora(
+      registrarLog(
         legajo,
-        'Login exitoso',
         `El usuario ${nombre_completo} inició sesión correctamente.`
       );
 
@@ -42,10 +41,9 @@ const cambiarPassword = (req, res) => {
       console.error('Error al cambiar la contraseña:', err);
       res.status(500).json({ success: false, error: 'Error al cambiar la contraseña' });
     } else {
-      await registrarBitacora(
+      registrarLog(
         legajo,
-        'Cambio de contraseña',
-        `El usuario ${legajo} cambió su contraseña y desactivó el primer ingreso.`
+        `Cambio de contraseña: El usuario ${legajo} cambió su contraseña y desactivó el primer ingreso.`
       );
 
       res.json({ success: true, message: 'Contraseña actualizada correctamente' });

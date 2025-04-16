@@ -1,5 +1,5 @@
 const db = require('../DB/db.js');
-const { registrarBitacora } = require('../Middlewares/logSeguridadLogger.js');
+const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 
 // Obtener todos los partes con filtros
 const obtenerPartes = (req, res) => {
@@ -131,10 +131,9 @@ const crearParte = async (req, res) => {
       ]
     );
 
-    await registrarBitacora(
+    registrarLog(
       jefe_dotacion,
-      'Alta de parte de emergencia',
-      `Se registró el parte ${numeroParte} denunciado por ${nombre_denunciante} ${apellido_denunciante}`
+      `Alta de parte de emergencia: se registró el parte ${numeroParte} denunciado por ${nombre_denunciante} ${apellido_denunciante}`
     );
 
     res.json({ success: 'Reporte agregado correctamente', reportId: result.insertId, numeroParte });
@@ -156,10 +155,9 @@ const eliminarParte = (req, res) => {
     } else if (result.affectedRows === 0) {
       res.status(404).json({ error: 'Reporte no encontrado' });
     } else {
-      await registrarBitacora(
+      registrarLog(
         0,
-        'Eliminación de parte de emergencia',
-        `Se eliminó el parte con ID ${id}`
+        `Eliminación de parte de emergencia: se eliminó el parte con ID ${id}`
       );
       res.json({ success: 'Reporte eliminado correctamente' });
     }

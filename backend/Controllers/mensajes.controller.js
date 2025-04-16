@@ -1,5 +1,5 @@
 const db = require('../DB/db.js');
-const { registrarBitacora } = require('../Middlewares/logSeguridadLogger.js');
+const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 
 // Obtener mensajes recibidos
 const obtenerMensajesRecibidos = (req, res) => {
@@ -72,7 +72,7 @@ const enviarMensaje = (req, res) => {
 
       try {
         await Promise.all(destinatarioQueries);
-        await registrarBitacora(remitente_id, 'Envío de mensaje', `Mensaje enviado con asunto "${asunto}" a ${destinatarios.length} destinatario(s)`);
+        registrarLog(remitente_id, `Envío de mensaje: asunto "${asunto}" enviado a ${destinatarios.length} destinatario(s)`);
         res.json({ success: true, message: 'Mensaje enviado' });
       } catch (err) {
         console.error('Error al insertar destinatarios:', err);
@@ -94,7 +94,7 @@ const marcarMensajeLeido = async (req, res) => {
       console.error('Error al marcar mensaje como leído:', err);
       res.status(500).json({ error: 'Error en el servidor' });
     } else {
-      await registrarBitacora(destinatario_id, 'Lectura de mensaje', `Mensaje ID ${id} marcado como leído`);
+      registrarLog(destinatario_id, `Lectura de mensaje: mensaje ID ${id} marcado como leído`);
       res.json({ success: true });
     }
   });

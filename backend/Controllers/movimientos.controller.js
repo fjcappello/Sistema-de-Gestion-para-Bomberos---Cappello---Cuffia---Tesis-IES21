@@ -1,5 +1,5 @@
 const db = require('../DB/db.js');
-const { registrarBitacora } = require('../Middlewares/logSeguridadLogger.js');
+const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 
 // Obtener movimientos visibles
 const obtenerMovimientos = (req, res) => {
@@ -34,10 +34,9 @@ const registrarMovimiento = (req, res) => {
       return res.status(500).json({ error: 'Error al registrar movimiento' });
     }
 
-    await registrarBitacora(
+    registrarLog(
       id_personal || 0,
-      'Registro de movimiento',
-      `Se registró un ${estado_id === 1 ? 'ingreso' : 'egreso'} para ${nombre} ${apellido} (${dni})`
+      `Registro de movimiento: se registró un ${estado_id === 1 ? 'ingreso' : 'egreso'} para ${nombre} ${apellido} (${dni})`
     );
 
     res.json({ success: true, id: result.insertId });
@@ -55,10 +54,9 @@ const ocultarMovimiento = (req, res) => {
       return res.status(500).json({ error: 'Error al ocultar movimiento' });
     }
 
-    await registrarBitacora(
+    registrarLog(
       0,
-      'Ocultamiento de movimiento',
-      `Se ocultó el movimiento ID ${id}`
+      `Ocultamiento de movimiento: se ocultó el movimiento ID ${id}`
     );
 
     res.json({ success: true });

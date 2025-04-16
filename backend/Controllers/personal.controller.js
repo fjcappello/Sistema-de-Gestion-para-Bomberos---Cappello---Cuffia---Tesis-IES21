@@ -1,5 +1,5 @@
 const db = require('../DB/db.js');
-const { registrarBitacora } = require('../Middlewares/logSeguridadLogger.js');
+const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 
 // Obtener todos los registros de personal
 const obtenerPersonal = (req, res) => {
@@ -70,7 +70,7 @@ const crearPersonal = (req, res) => {
         return;
       }
 
-      await registrarBitacora(legajo, 'Alta de personal', `Se dio de alta a ${nombre} ${apellido} (Legajo ${legajo})`);
+      registrarLog(legajo, `Alta de personal: se dio de alta a ${nombre} ${apellido} (Legajo ${legajo})`);
       res.json({ success: 'Personal y login creados correctamente' });
     });
   });
@@ -111,7 +111,7 @@ const actualizarPersonal = (req, res) => {
     } else if (result.affectedRows === 0) {
       res.status(404).json({ error: 'Personal no encontrado' });
     } else {
-      await registrarBitacora(legajo, 'Modificación de personal', `Se actualizaron datos del legajo ${legajo}`);
+      registrarLog(legajo, `Modificación de personal: se actualizaron datos del legajo ${legajo}`);
       res.json({ success: true });
     }
   });
@@ -129,7 +129,7 @@ const eliminarPersonal = (req, res) => {
     } else if (result.affectedRows === 0) {
       res.status(404).json({ error: 'Personal no encontrado' });
     } else {
-      await registrarBitacora(legajo, 'Baja de personal', `Se eliminó el legajo ${legajo}`);
+      registrarLog(legajo, `Baja de personal: se eliminó el legajo ${legajo}`);
       res.json({ success: 'Personal eliminado correctamente' });
     }
   });

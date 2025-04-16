@@ -24,21 +24,21 @@ CREATE TABLE mensaje_destinatarios (
   FOREIGN KEY (destinatario_id) REFERENCES personal(legajo)
 );
 
--- Script para crear la tabla bitacora y datos para cargar
+-- Script para crear la tabla log seguridad y datos para cargar
 
-CREATE TABLE bitacora (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  usuario_id BIGINT NOT NULL,
-  accion VARCHAR(100) NOT NULL,
-  fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (usuario_id) REFERENCES personal(legajo)
-    ON UPDATE CASCADE
-);
+CREATE TABLE `registro_seguridad` (
+  `id` int(11) NOT NULL,
+  `usuario_id` bigint(20) NOT NULL,
+  `accion` varchar(100) NOT NULL,
+  `fecha` datetime DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-INSERT INTO bitacora (usuario_id, accion)
-VALUES 
-  (108, 'Inicio de sesión'),
-  (200, 'Alta de parte de emergencia'),
-  (108, 'Lectura de mensaje'),
-  (200, 'Modificación de personal'),
-  (108, 'Cierre de sesión');
+INSERT INTO `registro_seguridad` (`id`, `usuario_id`, `accion`, `fecha`) VALUES
+(1, 108, 'Inicio de sesión', '2025-04-15 12:45:45'),
+(2, 200, 'Alta de parte de emergencia', '2025-04-15 12:45:45'),
+(3, 108, 'Lectura de mensaje', '2025-04-15 12:45:45'),
+(4, 200, 'Modificación de personal', '2025-04-15 12:45:45'),
+(5, 108, 'Cambio de contraseña', '2025-04-15 12:45:45'),
+(16, 1002, 'Registro de movimiento', '2025-04-15 14:00:01'),
+(17, 1002, 'Alta de parte de emergencia', '2025-04-15 14:00:34'),
+(18, 108, 'Login exitoso', '2025-04-15 14:16:07');
