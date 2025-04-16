@@ -8,46 +8,29 @@ function PDFGenerator({ partData, onClose }) {
   const { usuario } = useUsuario();
   const [logoDataURI, setLogoDataURI] = useState('');
   const [bitacoraContent, setBitacoraContent] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Cargar el logo
+    // Cargar logo
     fetch('/images/logo.png')
       .then((response) => response.blob())
       .then((blob) => {
         const reader = new FileReader();
         reader.onloadend = () => setLogoDataURI(reader.result);
         reader.readAsDataURL(blob);
-      })
-      .catch(error => console.error('Error cargando logo:', error));
+      });
 
-    // Obtener la bitácora con manejo de errores mejorado
+    // Obtener bitácora
     const fetchBitacora = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        setError(null);
-        
         const response = await axios.get(`http://localhost:3001/bitacora/${partData.parte_id}`);
-        console.log('Respuesta del backend:', response.data); // Debug
-        
-        if (response.data.success) {
-          // Verifica si hay datos y si es un array
-          if (Array.isArray(response.data.data) && response.data.data.length > 0) {
-            const reportes = response.data.data.map(entry => {
-              // Asegúrate de que cada entrada tenga el campo 'reporte'
-              return entry.reporte || '(Sin contenido)';
-            });
-            setBitacoraContent(reportes.join('\n\n---\n\n'));
-          } else {
-            setBitacoraContent('No hay registros de bitácora para este parte');
-          }
-        } else {
-          setError('La respuesta del servidor no fue exitosa');
+        if (response.data.success && response.data.data) {
+          const reportes = response.data.data.map(entry => entry.reporte);
+          setBitacoraContent(reportes.join('\n\n---\n\n'));
         }
       } catch (error) {
         console.error('Error obteniendo bitácora:', error);
-        setError('Error al cargar la bitácora');
         setBitacoraContent('No se pudo cargar la bitácora');
       } finally {
         setLoading(false);
@@ -61,25 +44,29 @@ function PDFGenerator({ partData, onClose }) {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
     const margin = 15;
-    let yPosition = 20;
-  
-    // Logo
+    const logoHeight = 30;
+    const logoWidth = 30;
+    const headerY = 25; // Posición vertical base para alineación
+
+    // Logo - Centrado verticalmente con texto
     if (logoDataURI) {
-      doc.addImage(logoDataURI, 'PNG', margin, 10, 30, 30);
-      yPosition = 45;
+      const logoY = headerY - (logoHeight / 2) + 5;
+      doc.addImage(logoDataURI, 'PNG', margin, logoY, logoWidth, logoHeight);
     }
-  
-    // Encabezados
+
+    // Encabezados alineados con logo
     doc.setFontSize(18);
     doc.setTextColor(40, 40, 40);
-    doc.text('Bomberos Santa María de Punilla', pageWidth / 2, yPosition, { align: 'center' });
-    doc.setFontSize(16);
-    yPosition += 10;
-    doc.text('Reporte de Emergencia', pageWidth / 2, yPosition, { align: 'center' });
+    const titleY = headerY + 5;
+    doc.text('Bomberos Santa María de Punilla', pageWidth / 2, titleY, { align: 'center' });
     
+    doc.setFontSize(16);
+    const subtitleY = headerY + 15;
+    doc.text('Reporte de Emergencia', pageWidth / 2, subtitleY, { align: 'center' });
+
     // Tabla de datos
     doc.autoTable({
-      startY: yPosition + 15,
+      startY: subtitleY + 20,
       margin: { left: margin, right: margin },
       head: [['Dato', 'Valor']],
       body: [
@@ -89,7 +76,6 @@ function PDFGenerator({ partData, onClose }) {
         ['Documento', partData.documento_denunciante],
         ['Dirección', partData.direccion],
         ['Tipo de Asistencia', partData.tipo_asistencia],
-        ['Información Inicial', partData.parte_escrito],
       ],
       styles: {
         cellPadding: 5,
@@ -101,79 +87,58 @@ function PDFGenerator({ partData, onClose }) {
         1: { cellWidth: 'wrap' }
       }
     });
-    // Bitácora con manejo de páginas múltiples
+
+    // Bitácora con manejo multipágina
     if (bitacoraContent) {
-      let finalY = doc.lastAutoTable.finalY + 15;
+      let currentY = doc.lastAutoTable.finalY + 15;
       
-      // Verificar si necesito nueva página
-      if (finalY > doc.internal.pageSize.getHeight() - 50) {
+      // Verificar espacio para el título
+      if (currentY > doc.internal.pageSize.getHeight() - 50) {
         doc.addPage();
-        finalY = 20;
+        currentY = 20;
       }
-  
+
       doc.setFontSize(14);
       doc.setTextColor(30, 30, 30);
-      doc.text('Bitácora de la Emergencia', margin, finalY);
-      
+      doc.text('Bitácora de la Emergencia', margin, currentY);
+      currentY += 10;
+
+      // Configuración de texto
       doc.setFontSize(11);
       doc.setTextColor(50, 50, 50);
-      
-      // Dividir el texto y manejar páginas
-      const splitText = doc.splitTextToSize(bitacoraContent, pageWidth - (margin * 2));
-      let remainingText = splitText;
-      let pageCount = 0;
-      const maxPageCount = 10; // Límite de seguridad
-      
-      while (remainingText.length > 0 && pageCount < maxPageCount) {
-        pageCount++;
-        const textHeight = doc.getTextDimensions(remainingText, {
-          maxWidth: pageWidth - (margin * 2)
-        }).h;
-        
-        // Calcular espacio disponible en la página actual
-        const spaceLeft = doc.internal.pageSize.getHeight() - finalY - 30;
-        const canFit = Math.floor(spaceLeft / doc.internal.getLineHeight());
-        
-        if (canFit <= 0) {
+      const lineHeight = 7;
+      const maxWidth = pageWidth - (margin * 2);
+      const lines = doc.splitTextToSize(bitacoraContent, maxWidth);
+
+      // Imprimir línea por línea con control de páginas
+      for (let i = 0; i < lines.length; i++) {
+        if (currentY > doc.internal.pageSize.getHeight() - 20) {
           doc.addPage();
-          finalY = 20;
-          continue;
+          currentY = 20;
         }
-        
-        const textToPrint = remainingText.slice(0, canFit);
-        remainingText = remainingText.slice(canFit);
-        
-        doc.text(textToPrint, margin, finalY + 10);
-        finalY = doc.previousAutoTable.finalY || finalY + (textToPrint.length * doc.internal.getLineHeight());
-        
-        if (remainingText.length > 0) {
-          doc.addPage();
-          finalY = 20;
-        }
+        doc.text(lines[i], margin, currentY);
+        currentY += lineHeight;
       }
     }
-  
-    // Firma en la última página
-    const lastPageHeight = doc.internal.pageSize.getHeight();
-    let signatureY = lastPageHeight - 40;
-    
-    // Si no hay espacio, agregamos nueva página para la firma
-    if (signatureY < 50) {
+
+    // Firma en nueva página si es necesario
+    let signatureY = doc.lastAutoTable.finalY + (bitacoraContent ? 50 : 30);
+    if (signatureY > doc.internal.pageSize.getHeight() - 30) {
       doc.addPage();
       signatureY = 20;
     }
-    
+
     doc.setDrawColor(150, 150, 150);
     doc.line(pageWidth - 80, signatureY, pageWidth - 20, signatureY);
     doc.setFontSize(12);
     doc.text(partData.jefe_dotacion, pageWidth - 50, signatureY + 10, { align: 'center' });
     doc.text('Jefe de Dotación', pageWidth - 50, signatureY + 20, { align: 'center' });
-  
+
     // Pie de página
     const footerText = `Generado por ${usuario?.nombreCompleto || 'Sistema'} el ${new Date().toLocaleDateString()}`;
     doc.setFontSize(9);
     doc.text(footerText, margin, doc.internal.pageSize.getHeight() - 10);
-  
+
     doc.save(`Reporte_Emergencia_${partData.numero_parte}.pdf`);
   };
 
@@ -181,14 +146,29 @@ function PDFGenerator({ partData, onClose }) {
     <div className="modal-overlay">
       <div className="modal-content">
         <h3>Generar Reporte PDF</h3>
-        <p>Se generará el reporte para el parte N°: {partData.numero_parte}</p>
+        <p className="pdf-generator-info">Se generará el reporte para el parte N°: {partData.numero_parte}</p>
+        {loading && <p className="loading-message">Cargando reporte...</p>}
+        {bitacoraContent && (
+          <div className="bitacora-preview">
+            <h4>Previsualización del Reporte:</h4>
+            <div className="bitacora-content">
+              {bitacoraContent ? (
+                bitacoraContent
+              ) : (
+                <p className="text-muted">No hay contenido para previsualizar</p>
+              )}
+            </div>
+          </div>
+        )}
         <div className="modal-buttons">
-          <button onClick={generatePDF} className="confirm-btn">Generar PDF</button>
+          <button 
+            onClick={generatePDF} className="confirm-btn" disabled={loading}>{loading ? 'Generando PDF...' : 'Generar PDF'}</button>
           <button onClick={onClose} className="cancel-btn">Cancelar</button>
         </div>
       </div>
-    </div>
+</div>
   );
-}
+} 
 
 export default PDFGenerator;
+

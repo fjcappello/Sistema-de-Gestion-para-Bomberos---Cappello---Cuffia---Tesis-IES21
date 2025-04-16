@@ -361,14 +361,18 @@ function EmergenciesTable() {
               <tr key={emergencia.parte_id}>
                 <td>{emergencia.parte_id}</td>
                 <td>{emergencia.numero_parte}</td>
-                <td>{emergencia.fecha}</td>
+                <td style={{ whiteSpace: 'nowrap' }}>{emergencia.fecha}</td>
                 <td>{emergencia.nombre_denunciante}</td>
                 <td>{emergencia.apellido_denunciante}</td>
                 <td>{emergencia.documento_denunciante}</td>
                 <td>{emergencia.direccion}</td>
                 <td>{emergencia.tipo_asistencia}</td>
                 <td>{emergencia.jefe_dotacion}</td>
-                <td>{emergencia.parte_escrito}</td>
+                <td title={emergencia.parte_escrito}style={{maxWidth: '200px',overflow: 'hidden',textOverflow: 'ellipsis',whiteSpace: 'nowrap'}}>
+                {emergencia.parte_escrito.length > 40 
+                ? `${emergencia.parte_escrito.substring(0, 40)}...` 
+                : emergencia.parte_escrito}
+              </td>
                 <td>{emergencia.estado}</td>
                 <td>
                   {renderReportButton(emergencia)}
@@ -420,13 +424,22 @@ function EmergenciesTable() {
       {/* Modal para Agregar Reporte */}
       {isAddModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Agregar Nuevo Reporte</h3>
-            <form onSubmit={handleAddSubmit} className="form-container">
-            <input 
+        <div className="modal-content">
+          <h3 style={{ 
+            margin: '0 0 1rem 0',
+            padding: '1.5rem 1.5rem 0',
+            color: '#333',
+            fontSize: '1.25rem'
+          }}>
+            Agregar Nuevo Reporte
+          </h3>
+          
+          <form onSubmit={handleAddSubmit} className="form-container">
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <input 
                 type="text" 
                 name="nombre_denunciante" 
-                placeholder="Nombre del denunciante" 
+                placeholder="Nombre" 
                 value={formData.nombre_denunciante} 
                 onChange={(e) => setFormData({...formData, nombre_denunciante: e.target.value})} 
                 required 
@@ -434,70 +447,80 @@ function EmergenciesTable() {
               <input 
                 type="text" 
                 name="apellido_denunciante" 
-                placeholder="Apellido del denunciante" 
+                placeholder="Apellido" 
                 value={formData.apellido_denunciante} 
                 onChange={(e) => setFormData({...formData, apellido_denunciante: e.target.value})} 
                 required 
               />
-              <input 
-                type="number" 
-                name="documento_denunciante" 
-                placeholder="Documento del denunciante" 
-                value={formData.documento_denunciante} 
-                onChange={(e) => setFormData({...formData, documento_denunciante: e.target.value})} 
-                required 
-              />
-              <input 
-                type="text" 
-                name="direccion" 
-                placeholder="Dirección" 
-                value={formData.direccion} 
-                onChange={(e) => setFormData({...formData, direccion: e.target.value})} 
-                required 
-              />
-              <input 
-                type="text" 
-                name="tipo_asistencia" 
-                placeholder="Tipo de Asistencia" 
-                value={formData.tipo_asistencia} 
-                onChange={(e) => setFormData({...formData, tipo_asistencia: e.target.value})} 
-                required 
-              />
-              <select 
-                name="jefe_dotacion" 
-                value={formData.jefe_dotacion} 
-                onChange={(e) => setFormData({...formData, jefe_dotacion: e.target.value})} 
-                required
-              >
-                <option value="">Seleccione Jefe de Dotación</option>
-                {jefesDotacion.map((jefe) => (
-                  <option key={jefe.id} value={jefe.id}>{jefe.nombre_completo}</option>
-                ))}
-              </select>
-              <textarea 
-                name="parte_escrito" 
-                placeholder="Información adicional" 
-                value={formData.parte_escrito} 
-                onChange={(e) => setFormData({...formData, parte_escrito: e.target.value})} 
-                required 
-              />
-              <label>Fecha de intervención:</label>
-              <input 
-                type="date" 
-                name="fecha" 
-                value={formData.fecha} 
-                onChange={(e) => setFormData({...formData, fecha: e.target.value})} 
-                required 
-              />
-              <div className="form-buttons">
-                <button type="submit" className="confirm-btn">Agregar Reporte</button>
-                <button type="button" className="cancel-btn" onClick={() => setIsAddModalOpen(false)}>
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
+            </div>
+            
+            <input 
+              type="number" 
+              name="documento_denunciante" 
+              placeholder="Documento de identidad" 
+              value={formData.documento_denunciante} 
+              onChange={(e) => setFormData({...formData, documento_denunciante: e.target.value})} 
+              required 
+            />
+            
+            <input 
+              type="text" 
+              name="direccion" 
+              placeholder="Dirección completa" 
+              value={formData.direccion} 
+              onChange={(e) => setFormData({...formData, direccion: e.target.value})} 
+              required 
+            />
+            
+            <input 
+              type="text" 
+              name="tipo_asistencia" 
+              placeholder="Tipo de asistencia requerida" 
+              value={formData.tipo_asistencia} 
+              onChange={(e) => setFormData({...formData, tipo_asistencia: e.target.value})} 
+              required 
+            />
+            
+            <select 
+              name="jefe_dotacion" 
+              value={formData.jefe_dotacion} 
+              onChange={(e) => setFormData({...formData, jefe_dotacion: e.target.value})} 
+              required
+            >
+              <option value="">Seleccione Jefe de Dotación</option>
+              {jefesDotacion.map((jefe) => (
+                <option key={jefe.id} value={jefe.id}>{jefe.nombre_completo}</option>
+              ))}
+            </select>
+            
+            <label>Fecha de intervención:</label>
+            <input 
+              type="date" 
+              name="fecha" 
+              value={formData.fecha} 
+              onChange={(e) => setFormData({...formData, fecha: e.target.value})} 
+              required 
+            />
+            
+            <textarea 
+              name="parte_escrito" 
+              placeholder="Descripción detallada del incidente..." 
+              style={{ width: '100%', marginBottom: '1rem', resize: 'none'}}
+              value={formData.parte_escrito} 
+              onChange={(e) => setFormData({...formData, parte_escrito: e.target.value})} 
+              required 
+            />
+            <div className="form-buttons">
+              <button type="submit" className="confirm-btn">
+                Guardar Reporte
+              </button>
+              <button type="button" className="cancel-btn" onClick={() => setIsAddModalOpen(false)}>
+                Cancelar
+              </button>
+            </div>
+          </form>
         </div>
+      </div>
       )}
 
       {/* Modal para Eliminar Reporte */}
@@ -531,7 +554,7 @@ function EmergenciesTable() {
               onChange={(e) => setBitacoraText(e.target.value)}
               placeholder="Escriba aquí el reporte de la emergencia..."
               rows={8}
-              style={{ width: '100%', marginBottom: '1rem' }}
+              style={{ width: '100%', marginBottom: '1rem', resize: 'none'}}
             />
             <div class = "modal-buttons">
               <button onClick={handleConfirmBitacora} className="confirm-btn">Confirmar</button>
