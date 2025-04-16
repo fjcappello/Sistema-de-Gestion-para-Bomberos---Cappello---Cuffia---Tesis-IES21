@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import PersonalTable from './components/PersonalTable';
@@ -12,6 +13,7 @@ import EnviarMensajeModal from './components/EnviarMensajeModal';
 import ModalCambioPassword from './components/ModalCambioPassword';
 import Configuracion from './components/Configuracion';
 import { useUsuario } from './context/UserContext';
+import MovimientosPersonas from './components/MovimientosPersonas';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -40,9 +42,25 @@ function App() {
     return () => clearInterval(intervalo);
   }, []);
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
+  const handleLogout = async () => {
+    const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+
+    if (usuarioActual) {
+      try {
+        await axios.post('http://localhost:3001/bitacora/logout', {
+          usuario_id: usuarioActual.legajo,
+          accion: 'Cierre de sesión'
+        });
+        console.log('Logout registrado en bitácora');
+      } catch (error) {
+        console.error('Error registrando logout en bitácora:', error);
+      }
+    }
+
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('usuario');
+    setUsuario(null);
+    setIsAuthenticated(false);
   };
 
   return (
@@ -93,6 +111,7 @@ function App() {
                 <Route path="/emergencias" element={<EmergenciesTable />} />
                 <Route path="/personal" element={<PersonalTable />} />
                 <Route path="/reportes/estadisticas" element={<ReportsPage />} />
+                <Route path="/reportes/movimientos-personas" element={<MovimientosPersonas />} />
                 <Route path="/bandeja-entrada" element={<BandejaEntrada />} />
                 <Route path="/configuracion" element={<Configuracion />} />
               </>

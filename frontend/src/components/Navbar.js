@@ -12,8 +12,8 @@ function Navbar({ onLogout }) {
   };
 
   const handleLogout = () => {
-    onLogout(); 
-    navigate('/'); 
+    onLogout();
+    navigate('/');
   };
 
   return (
@@ -40,7 +40,7 @@ function Navbar({ onLogout }) {
           {isReportsDropdownOpen && (
             <ul className="dropdown-menu">
               <li><Link to="/reportes/estadisticas">Estadísticas emergencias</Link></li>
-              <li><Link to="#">Reportes ingresos/salidas</Link></li>
+              <li><Link to="/reportes/movimientos-personas">Reportes ingresos/salidas</Link></li>
               <li><Link to="#">Reportes movimientos moviles</Link></li>
             </ul>
           )}

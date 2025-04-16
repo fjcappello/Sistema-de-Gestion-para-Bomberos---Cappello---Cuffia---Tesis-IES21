@@ -9,7 +9,9 @@ function BandejaEntrada() {
   const [filtros, setFiltros] = useState({ remitente: '', asunto: '', fecha: '' });
   const [mostrarModal, setMostrarModal] = useState(false);
   const [bandejaActiva, setBandejaActiva] = useState('entrada');
-  const legajo = localStorage.getItem('legajo');
+  const [mensajeActivoId, setMensajeActivoId] = useState(null);
+  const usuario = JSON.parse(localStorage.getItem('usuario'));
+  const legajo = usuario?.legajo;
 
   const fetchMensajes = () => {
     if (legajo) {
@@ -25,7 +27,9 @@ function BandejaEntrada() {
 
   const marcarComoLeido = async (id) => {
     try {
-      await axios.put(`http://localhost:3001/mensajes/marcar-leido/${id}`);
+      await axios.put(`http://localhost:3001/mensajes/marcar-leido/${id}`, {
+        destinatario_id: legajo,
+      });
       setMensajes((prev) =>
         prev.map((m) => (m.id === id ? { ...m, leido: 1 } : m))
       );
@@ -42,25 +46,32 @@ function BandejaEntrada() {
 
   const mensajesNoLeidos = mensajes.filter((msg) => !msg.leido).length;
 
+  const handleRowClick = (msg) => {
+    setMensajeActivoId(msg.id);
+    if (!msg.leido) {
+      marcarComoLeido(msg.id);
+    }
+  };
+
   return (
     <div className="bandeja-layout">
-      <aside className="bandeja-menu">
-        <div
-          className={`menu-item ${bandejaActiva === 'entrada' ? 'activo' : ''}`}
-          onClick={() => setBandejaActiva('entrada')}
-        >
-          Bandeja de entrada
-          {mensajesNoLeidos > 0 && <span className="bandeja-badge">{mensajesNoLeidos}</span>}
-        </div>
-        <div
-          className={`menu-item ${bandejaActiva === 'salida' ? 'activo' : ''}`}
-          onClick={() => setBandejaActiva('salida')}
-        >
-          Bandeja de salida
-        </div>
-      </aside>
-
       <main className="bandeja-contenido">
+        <div className="bandeja-selector">
+          <div
+            className={`menu-item ${bandejaActiva === 'entrada' ? 'activo' : ''}`}
+            onClick={() => setBandejaActiva('entrada')}
+          >
+            Bandeja de entrada
+            {mensajesNoLeidos > 0 && <span className="bandeja-badge">{mensajesNoLeidos}</span>}
+          </div>
+          <div
+            className={`menu-item ${bandejaActiva === 'salida' ? 'activo' : ''}`}
+            onClick={() => setBandejaActiva('salida')}
+          >
+            Bandeja de salida
+          </div>
+        </div>
+
         {bandejaActiva === 'entrada' ? (
           <>
             <h2>Mensajes Recibidos</h2>
@@ -96,25 +107,22 @@ function BandejaEntrada() {
                     <th>Remitente</th>
                     <th>Fecha</th>
                     <th>Asunto</th>
-                    <th>Leído</th>
-                    <th>Acción</th>
                   </tr>
                 </thead>
                 <tbody>
                   {mensajesFiltrados.map((msg) => (
-                    <tr key={msg.id} className={msg.leido ? '' : 'no-leido'}>
-                      <td>{msg.remitente}</td>
-                      <td>{new Date(msg.fecha_envio).toLocaleString()}</td>
-                      <td>{msg.asunto}</td>
-                      <td>{msg.leido ? 'Sí' : 'No'}</td>
-                      <td>
-                        {!msg.leido && (
-                          <button onClick={() => marcarComoLeido(msg.id)}>
-                            Marcar como leído
-                          </button>
-                        )}
-                      </td>
-                    </tr>
+                    <React.Fragment key={msg.id}>
+                      <tr onClick={() => handleRowClick(msg)} className={msg.leido ? '' : 'no-leido'}>
+                        <td>{msg.remitente}</td>
+                        <td>{new Date(msg.fecha_envio).toLocaleString()}</td>
+                        <td>{msg.asunto}</td>
+                      </tr>
+                      {mensajeActivoId === msg.id && (
+                        <tr>
+                          <td colSpan="3">{msg.cuerpo}</td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
