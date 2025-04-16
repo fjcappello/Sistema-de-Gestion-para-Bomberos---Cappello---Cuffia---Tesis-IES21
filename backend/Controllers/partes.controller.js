@@ -3,7 +3,7 @@ const { registrarBitacora } = require('../Middlewares/logSeguridadLogger.js');
 
 // Obtener todos los partes con filtros
 const obtenerPartes = (req, res) => {
-  const { jefeDotacion, tipoAsistencia, startDate, endDate } = req.query;
+  const { jefeDotacion, tipoAsistencia, startDate, endDate, denunciante } = req.query;
 
   let query = `
     SELECT 
@@ -16,9 +16,11 @@ const obtenerPartes = (req, res) => {
       p.tipo_asistencia,
       DATE_FORMAT(p.fecha, '%d-%m-%Y') AS fecha,
       CONCAT(per.nombre, ' ', per.apellido) AS jefe_dotacion,
+      e.descripcion AS estado,
       p.parte_escrito
     FROM partes p
     LEFT JOIN personal per ON p.jefe_dotacion = per.legajo
+    LEFT JOIN estado e ON p.id_estado = e.id_estado
     WHERE 1=1
   `;
 
@@ -40,7 +42,13 @@ const obtenerPartes = (req, res) => {
     query += ` AND p.fecha <= ?`;
     params.push(endDate);
   }
+  if (denunciante) {
+    query += ` AND CONCAT(p.nombre_denunciante, ' ', p.apellido_denunciante) LIKE ?`;
+    const denuncianteParametro = `%${denunciante}%`;
+    params.push(denuncianteParametro);
+  }
 
+  query += ` AND p.activo = 1`;
   query += ` ORDER BY p.fecha DESC`;
 
   db.query(query, params, (err, results) => {
@@ -139,7 +147,7 @@ const crearParte = async (req, res) => {
 // Eliminar parte por ID
 const eliminarParte = (req, res) => {
   const { id } = req.params;
-  const query = 'DELETE FROM partes WHERE id = ?';
+  const query = 'UPDATE partes SET activo = 0 WHERE id = ?';
 
   db.query(query, [id], async (err, result) => {
     if (err) {
@@ -211,11 +219,65 @@ const obtenerReporteResumen = (req, res) => {
   });
 };
 
+// Crear bitácora asociada a una emergencia
+const crearBitacora = (req, res) => {
+  const { id_personal, reporte, parte_id } = req.body;
+  if (!id_personal || !reporte || !parte_id) {
+    return res.status(400).json({ success: false, error: 'Faltan datos requeridos' });
+  }
+  const insertQuery = 'INSERT INTO bitacora (id_personal, reporte) VALUES (?, ?)';
+  db.query(insertQuery, [id_personal, reporte], (err, result) => {
+    if (err) {
+      console.error('Error al crear bitácora:', err);
+      return res.status(500).json({ success: false, error: 'Error al crear bitácora' });
+    }
+    const id_bitacora_nuevo = result.insertId;
+    const updateQuery = 'UPDATE partes SET id_bitacora = ?, id_estado = 0 WHERE id = ?';
+    db.query(updateQuery, [id_bitacora_nuevo, parte_id], (err, result) => {
+      if (err) {
+        console.error('Error al actualizar parte:', err);
+        return res.status(500).json({ success: false, error: 'Error al actualizar parte' });
+      }
+      res.json({ 
+        success: true,
+        message: 'Bitácora creada y parte actualizado',
+        id_bitacora: id_bitacora_nuevo
+      });
+    });
+  });
+};
+
+// Obtener bitácora asociada a una emergencia
+const obtenerBitacora = (req, res) => {
+  const { parte_id } = req.params;
+  const query = `
+    SELECT b.id_bitacora, b.reporte
+    FROM bitacora b
+    JOIN partes p ON b.id_bitacora = p.id_bitacora
+    WHERE p.id = ?
+  `;
+  db.query(query, [parte_id], (error, results) => {
+    if (error) {
+      console.error('Error al obtener la bitácora:', error);
+      return res.status(500).json({ 
+        success: false,
+        error: 'Error al obtener los registros de bitácora' 
+      });
+    }
+    res.json({
+      success: true,
+      data: results
+    });
+  });
+};
+
 module.exports = {
   obtenerPartes,
   obtenerPartePorId,
   crearParte,
   eliminarParte,
   obtenerTiposAsistencia,
-  obtenerReporteResumen
+  obtenerReporteResumen,
+  crearBitacora,
+  obtenerBitacora,
 };
