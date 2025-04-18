@@ -39,14 +39,47 @@ function Navbar({ onLogout }) {
           </Link>
           {isReportsDropdownOpen && (
             <ul className="dropdown-menu">
-              <li><Link to="/reportes/estadisticas">Estadísticas emergencias</Link></li>
               <li><Link to="/reportes/movimientos-personas">Reportes ingresos/salidas</Link></li>
               <li><Link to="#">Reportes movimientos moviles</Link></li>
             </ul>
           )}
         </li>
 
-        <li><Link to="/personal">Personal</Link></li>
+        <li
+          className="dropdown"
+          onMouseEnter={() => setReportsDropdownOpen(true)}
+          onMouseLeave={() => setReportsDropdownOpen(false)}
+        >
+          <Link to="#" className="dropdown-btn">
+            Estadísticas
+          </Link>
+          {isReportsDropdownOpen && (
+            <ul className="dropdown-menu">
+            <li><Link to="/reportes/estadisticas">Estadísticas emergencias</Link></li>
+            <li><Link to="/reportes/estadisticas-movimientos">Estadísticas movimientos</Link></li>
+            <li><Link to="/reportes/estadisticas-personas">Estadísticas personas</Link></li>
+            </ul>
+          )}
+        </li>
+
+        <li
+          className="dropdown"
+          onMouseEnter={() => setReportsDropdownOpen(true)}
+          onMouseLeave={() => setReportsDropdownOpen(false)}
+        >
+          <Link to="#" className="dropdown-btn">
+            Operaciones
+          </Link>
+          {isReportsDropdownOpen && (
+            <ul className="dropdown-menu">
+            <li><Link to="/personal">Personal</Link></li>
+            <li><Link to="/moviles">Móviles</Link></li>
+            <li><Link to="#">Pañol Operativo</Link></li>
+            </ul>
+          )}
+        </li>
+
+        
         <li><Link to="/configuracion">Configuración</Link></li>
         <li><button className="logout-btn" onClick={handleLogout}>Salir</button></li>
       </ul>
