@@ -13,6 +13,7 @@ app.use(require('./Routes/partes'));
 app.use(require('./Routes/mensajes'));
 app.use(require('./Routes/movimientos'));
 app.use(require('./Routes/logSeguridad')); 
+app.use(require('./Routes/moviles'));
 
 app.listen(PORT, () => {
   console.log(`Servidor API en http://localhost:${PORT}`);
