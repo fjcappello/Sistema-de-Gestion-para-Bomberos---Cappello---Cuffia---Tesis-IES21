@@ -1,5 +1,14 @@
 const db = require('../DB/db.js');
 
+const registrarLog = (usuario_id, accion) => {
+  const query = `INSERT INTO registro_seguridad (usuario_id, accion, fecha) VALUES (?, ?, NOW())`;
+  db.query(query, [usuario_id, accion], (err) => {
+    if (err) {
+      console.error('Error al registrar en la bitácora:', err);
+    }
+  });
+};
+
 // Obtener todos los móviles
 const getMoviles = (req, res) => {
   const query = `
@@ -34,6 +43,9 @@ const addMovil = (req, res) => {
       res.status(500).json({ error: 'Error al agregar móvil' });
     } else {
       res.json({ success: 'Móvil agregado correctamente', id: result.insertId });
+      if (req.body.usuario_id) {
+        registrarLog(req.body.usuario_id, `Agregó el móvil ${interno}`);
+      }
     }
   });
 };
@@ -59,6 +71,9 @@ const updateMovil = (req, res) => {
       res.status(400).json({ error: 'No se pudo actualizar. El móvil podría no existir o estar dado de baja.' });
     } else {
       res.json({ success: 'Móvil actualizado correctamente' });
+      if (req.body.usuario_id) {
+        registrarLog(req.body.usuario_id, `Modificó móvil con interno ${interno}`);
+      }
     }
   });
 };
@@ -108,6 +123,9 @@ const editMovil = (req, res) => {
       res.status(500).json({ error: 'Error al actualizar móvil' });
     } else {
       res.json({ success: 'Móvil actualizado correctamente' });
+      if (req.body.usuario_id) {
+        registrarLog(req.body.usuario_id, `Editó campos del móvil ID ${id}`);
+      }
     }
   });
 };
