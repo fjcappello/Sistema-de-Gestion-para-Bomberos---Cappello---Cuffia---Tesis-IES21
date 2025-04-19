@@ -33,7 +33,7 @@ function ClimaCard() {
     obtenerClima();
     const interval = setInterval(() => {
       obtenerClima();
-    }, 3600000); // 1 hora
+    }, 3600000); 
 
     return () => clearInterval(interval);
   }, []);
