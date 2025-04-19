@@ -7,8 +7,10 @@ function EnviarMensajeModal({ onClose, onSent }) {
   const [usuarios, setUsuarios] = useState([]);
   const [destinatarios, setDestinatarios] = useState([]);
   const [inputDestinatario, setInputDestinatario] = useState('');
+  const usuarioGuardado = JSON.parse(localStorage.getItem('usuario') || '{}');
+
   const [formData, setFormData] = useState({
-    remitente_id: localStorage.getItem('legajo') || '',
+    remitente_id: usuarioGuardado.legajo || '',
     asunto: '',
     cuerpo: ''
   });

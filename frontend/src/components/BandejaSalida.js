@@ -6,7 +6,10 @@ function BandejaSalida({ onClose }) {
   const [mensajes, setMensajes] = useState([]);
   const [filtros, setFiltros] = useState({ destinatarios: '', asunto: '', fecha: '' });
   const [mensajeActivoId, setMensajeActivoId] = useState(null);
-  const legajo = localStorage.getItem('legajo');
+  const [paginaActual, setPaginaActual] = useState(1);
+  const mensajesPorPagina = 5;
+  const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+  const legajo = usuario.legajo;
 
   useEffect(() => {
     if (legajo) {
@@ -21,6 +24,10 @@ function BandejaSalida({ onClose }) {
     msg.asunto.toLowerCase().includes(filtros.asunto.toLowerCase()) &&
     msg.fecha_envio.includes(filtros.fecha)
   );
+
+  const indiceInicial = (paginaActual - 1) * mensajesPorPagina;
+  const indiceFinal = indiceInicial + mensajesPorPagina;
+  const mensajesPaginados = mensajesFiltrados.slice(indiceInicial, indiceFinal);
 
   const handleRowClick = (msg) => {
     setMensajeActivoId(mensajeActivoId === msg.id ? null : msg.id);
@@ -54,7 +61,7 @@ function BandejaSalida({ onClose }) {
         <button className="close-modal-btn" onClick={onClose}>Volver a entrada</button>
       </div>
 
-      {mensajesFiltrados.length === 0 ? (
+      {mensajesPaginados.length === 0 ? (
         <p>No hay mensajes enviados</p>
       ) : (
         <table className="bandeja-tabla">
@@ -66,14 +73,14 @@ function BandejaSalida({ onClose }) {
             </tr>
           </thead>
           <tbody>
-            {mensajesFiltrados.map((msg) => (
+            {mensajesPaginados.map((msg) => (
               <React.Fragment key={msg.id}>
                 <tr
                   onClick={() => handleRowClick(msg)}
                   className={mensajeActivoId === msg.id ? 'mensaje-activo' : ''}
                   style={{ cursor: 'pointer' }}
                 >
-                  <td>{msg.destinatarios}</td>
+                  <td>{Array.isArray(msg.destinatarios) ? msg.destinatarios.join(', ') : msg.destinatarios}</td>
                   <td>{new Date(msg.fecha_envio).toLocaleString()}</td>
                   <td>{msg.asunto}</td>
                 </tr>
@@ -89,6 +96,25 @@ function BandejaSalida({ onClose }) {
           </tbody>
         </table>
       )}
+      <div className="paginacion">
+        <button
+          onClick={() => setPaginaActual((prev) => Math.max(prev - 1, 1))}
+          disabled={paginaActual === 1}
+        >
+          Anterior
+        </button>
+        <span>Página {paginaActual}</span>
+        <button
+          onClick={() =>
+            setPaginaActual((prev) =>
+              prev < Math.ceil(mensajesFiltrados.length / mensajesPorPagina) ? prev + 1 : prev
+            )
+          }
+          disabled={paginaActual >= Math.ceil(mensajesFiltrados.length / mensajesPorPagina)}
+        >
+          Siguiente
+        </button>
+      </div>
     </div>
   );
 }

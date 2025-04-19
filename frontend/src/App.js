@@ -29,7 +29,13 @@ function App() {
     if (storedAuth === 'true' && storedUsuario) {
       setIsAuthenticated(true);
       const usuarioParseado = JSON.parse(storedUsuario);
-      setUsuario(usuarioParseado);
+      setUsuario({
+        legajo: usuarioParseado.legajo,
+        nombre: usuarioParseado.nombre,
+        apellido: usuarioParseado.apellido,
+        primerIngreso: usuarioParseado.primerIngreso,
+        nombreCompleto: `${usuarioParseado.nombre} ${usuarioParseado.apellido}`
+      });
     } else {
       setIsAuthenticated(false);
       setUsuario(null);
@@ -72,7 +78,11 @@ function App() {
           <ModalCambioPassword
             legajo={usuario.legajo}
             onPasswordChanged={() => {
-              const usuarioActualizado = { ...usuario, primerIngreso: false };
+              const usuarioActualizado = {
+                ...usuario,
+                primerIngreso: false,
+                nombreCompleto: `${usuario.nombre} ${usuario.apellido}`
+              };
               setUsuario(usuarioActualizado);
               localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
             }}

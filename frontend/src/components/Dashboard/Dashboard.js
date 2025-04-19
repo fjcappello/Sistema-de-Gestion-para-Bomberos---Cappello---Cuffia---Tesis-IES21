@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useUsuario } from '../../context/UserContext';
 import '../Styles/Dashboard.css';
 
-// Importar componentes individuales de los cuadrantes
+
 import IngresosEgresosCard from './IngresosEgresosCard';
 import ClimaCard from './ClimaCard';
 import MovilesCard from './MovilesCard';
@@ -21,11 +21,18 @@ function Dashboard() {
 
     return () => clearInterval(intervalo);
   }, []);
+  
+  const obtenerSaludo = () => {
+    const hora = horaActual.getHours();
+    if (hora >= 6 && hora < 12) return 'Buenos días';
+    if (hora >= 12 && hora < 20) return 'Buenas tardes';
+    return 'Buenas noches';
+  };
 
   return (
     <div className="dashboard-container">
       <div className="bienvenida-usuario">
-        Bienvenido {usuario?.nombreCompleto}. {horaActual.toLocaleDateString('es-AR', {
+        {obtenerSaludo()}, <strong>{usuario?.nombreCompleto}</strong>. {horaActual.toLocaleDateString('es-AR', {
           weekday: 'long',
           day: 'numeric',
           month: 'long',

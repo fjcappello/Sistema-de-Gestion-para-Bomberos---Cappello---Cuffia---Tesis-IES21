@@ -39,24 +39,30 @@ function ClimaCard() {
   }, []);
 
   return (
-    <div>
-      <h3>Clima Actual</h3>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-
+    <div style={{
+      backgroundColor: '#fff',
+      padding: '1.5rem',
+      maxWidth: '300px',
+      margin: 'auto',
+      fontFamily: 'Arial, sans-serif',
+    }}>
+      <h3 style={{ textAlign: 'center', color: '#e60000' }}>Clima Actual</h3>
+      {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
+ 
       {clima ? (
-        <>
-          <p><strong>Ubicación:</strong> {clima.name}</p>
-          <p><strong>Temperatura:</strong> {clima.main.temp}°C</p>
-          <p><strong>Humedad:</strong> {clima.main.humidity}%</p>
-          <p><strong>Presión:</strong> {clima.main.pressure} hPa</p>
-          <p><strong>Viento:</strong> {clima.wind.speed} m/s</p>
-          <p><strong>Condición:</strong> {clima.weather[0].description}</p>
-          <p style={{ fontSize: '0.85rem', color: '#555' }}>
-            Última actualización: {ultimaActualizacion?.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+        <div>
+          <p><strong>📍 Ubicación:</strong> {clima.name}</p>
+          <p><strong>🌡️ Temperatura:</strong> {clima.main.temp}°C</p>
+          <p><strong>💧 Humedad:</strong> {clima.main.humidity}%</p>
+          <p><strong>📈 Presión:</strong> {clima.main.pressure} hPa</p>
+          <p><strong>💨 Viento:</strong> {clima.wind.speed} m/s</p>
+          <p><strong>🌥️ Condición:</strong> {clima.weather[0].description}</p>
+          <p style={{ fontSize: '0.85rem', color: '#555', textAlign: 'right', marginTop: '1rem' }}>
+            Última actualización: {ultimaActualizacion?.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}
           </p>
-        </>
+        </div>
       ) : (
-        !error && <p>Cargando clima...</p>
+        !error && <p style={{ textAlign: 'center' }}>Cargando clima...</p>
       )}
     </div>
   );
