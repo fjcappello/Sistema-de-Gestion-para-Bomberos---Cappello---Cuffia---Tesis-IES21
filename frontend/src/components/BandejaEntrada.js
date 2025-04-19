@@ -10,6 +10,8 @@ function BandejaEntrada() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [bandejaActiva, setBandejaActiva] = useState('entrada');
   const [mensajeActivoId, setMensajeActivoId] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const mensajesPorPagina = 5;
   const usuario = JSON.parse(localStorage.getItem('usuario'));
   const legajo = usuario?.legajo;
 
@@ -52,6 +54,10 @@ function BandejaEntrada() {
       marcarComoLeido(msg.id);
     }
   };
+
+  const indiceInicial = (paginaActual - 1) * mensajesPorPagina;
+  const indiceFinal = indiceInicial + mensajesPorPagina;
+  const mensajesPaginados = mensajesFiltrados.slice(indiceInicial, indiceFinal);
 
   return (
     <div className="bandeja-layout">
@@ -98,7 +104,7 @@ function BandejaEntrada() {
               </button>
             </div>
 
-            {mensajesFiltrados.length === 0 ? (
+            {mensajesPaginados.length === 0 ? (
               <p>No hay mensajes</p>
             ) : (
               <table className="bandeja-tabla">
@@ -110,10 +116,10 @@ function BandejaEntrada() {
                   </tr>
                 </thead>
                 <tbody>
-                  {mensajesFiltrados.map((msg) => (
+                  {mensajesPaginados.map((msg) => (
                     <React.Fragment key={msg.id}>
                       <tr onClick={() => handleRowClick(msg)} className={msg.leido ? '' : 'no-leido'}>
-                        <td>{msg.remitente}</td>
+                        <td>{msg.remitente || msg.remitente_id}</td>
                         <td>{new Date(msg.fecha_envio).toLocaleString()}</td>
                         <td>{msg.asunto}</td>
                       </tr>
@@ -127,6 +133,25 @@ function BandejaEntrada() {
                 </tbody>
               </table>
             )}
+            <div className="paginacion">
+              <button
+                onClick={() => setPaginaActual((prev) => Math.max(prev - 1, 1))}
+                disabled={paginaActual === 1}
+              >
+                Anterior
+              </button>
+              <span>Página {paginaActual}</span>
+              <button
+                onClick={() =>
+                  setPaginaActual((prev) =>
+                    prev < Math.ceil(mensajesFiltrados.length / mensajesPorPagina) ? prev + 1 : prev
+                  )
+                }
+                disabled={paginaActual >= Math.ceil(mensajesFiltrados.length / mensajesPorPagina)}
+              >
+                Siguiente
+              </button>
+            </div>
           </>
         ) : (
           <BandejaSalida onClose={() => setBandejaActiva('entrada')} />

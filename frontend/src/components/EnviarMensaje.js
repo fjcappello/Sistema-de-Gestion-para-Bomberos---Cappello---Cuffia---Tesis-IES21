@@ -15,9 +15,10 @@ function EnviarMensaje() {
       .then((res) => setUsuarios(res.data))
       .catch((err) => console.error('Error al obtener usuarios', err));
 
-    const legajoGuardado = localStorage.getItem('legajo');
-    if (legajoGuardado) {
-      setFormData(prev => ({ ...prev, remitente_id: legajoGuardado }));
+    const usuarioGuardado = localStorage.getItem('usuario');
+    if (usuarioGuardado) {
+      const { legajo } = JSON.parse(usuarioGuardado);
+      setFormData(prev => ({ ...prev, remitente_id: legajo }));
     }
   }, []);
 
