@@ -10,7 +10,6 @@ function ClimaCard() {
   const lat = -31.2611;
   const lon = -64.4639;
 
-
   const obtenerClima = async () => {
     try {
       const response = await axios.get(
@@ -46,20 +45,45 @@ function ClimaCard() {
       margin: 'auto',
       fontFamily: 'Arial, sans-serif',
     }}>
-      <h3 style={{ textAlign: 'center', color: '#e60000' }}>Clima Actual</h3>
+      <h3 style={{ textAlign: 'center', color: '#e60000' }}>Clima en Jurisdicción</h3>
       {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
  
       {clima ? (
-        <div>
-          <p><strong>📍 Ubicación:</strong> {clima.name}</p>
-          <p><strong>🌡️ Temperatura:</strong> {clima.main.temp}°C</p>
-          <p><strong>💧 Humedad:</strong> {clima.main.humidity}%</p>
-          <p><strong>📈 Presión:</strong> {clima.main.pressure} hPa</p>
-          <p><strong>💨 Viento:</strong> {clima.wind.speed} m/s</p>
-          <p><strong>🌥️ Condición:</strong> {clima.weather[0].description}</p>
-          <p style={{ fontSize: '0.85rem', color: '#555', textAlign: 'right', marginTop: '1rem' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '0.5rem',
+          fontSize: '0.95rem'
+        }}>
+          <div><strong>🌡️ Temperatura:</strong> {clima.main.temp}°C</div>
+          <div><strong>🌥️ Condición:</strong> {clima.weather[0].description}</div>
+          <div><strong>💧 Humedad:</strong> {clima.main.humidity}%</div>
+          <div><strong>📈 Presión:</strong> {clima.main.pressure} hPa</div>
+          <div><strong>💨 Viento:</strong> {(clima.wind.speed * 3.6).toFixed(1)} Km/h</div>
+          <div>
+            <strong>🔥 Riesgo FWI:</strong> {
+              (() => {
+                const viento = clima.wind.speed;
+                const humedad = clima.main.humidity;
+                let fwi = (viento * 10) / (humedad + 1);
+                let riesgo = 'Desconocido';
+                if (fwi < 1) riesgo = 'Bajo';
+                else if (fwi < 3) riesgo = 'Moderado';
+                else if (fwi < 6) riesgo = 'Alto';
+                else riesgo = 'Extremo';
+                return riesgo;
+              })()
+            }
+          </div>
+          <div style={{
+            gridColumn: '1 / -1',
+            fontSize: '0.85rem',
+            color: '#555',
+            textAlign: 'right',
+            marginTop: '1rem'
+          }}>
             Última actualización: {ultimaActualizacion?.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit', hour12: false })}
-          </p>
+          </div>
         </div>
       ) : (
         !error && <p style={{ textAlign: 'center' }}>Cargando clima...</p>
