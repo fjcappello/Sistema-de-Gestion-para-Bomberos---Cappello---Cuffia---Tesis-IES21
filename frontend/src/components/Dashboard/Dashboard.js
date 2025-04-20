@@ -1,9 +1,7 @@
-
-
 import React, { useEffect, useState } from 'react';
 import { useUsuario } from '../../context/UserContext';
 import '../Styles/Dashboard.css';
-
+import axios from 'axios';
 
 import IngresosEgresosCard from './IngresosEgresosCard';
 import ClimaCard from './ClimaCard';
@@ -13,6 +11,7 @@ import EstadisticasCard from './EstadisticasCard';
 function Dashboard() {
   const { usuario } = useUsuario();
   const [horaActual, setHoraActual] = useState(new Date());
+  const [movimientos, setMovimientos] = useState([]);
 
   useEffect(() => {
     const intervalo = setInterval(() => {
@@ -22,6 +21,37 @@ function Dashboard() {
     return () => clearInterval(intervalo);
   }, []);
   
+  useEffect(() => {
+    const fetchMovimientos = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/movimientos_cuartel');
+        setMovimientos(response.data);
+      } catch (error) {
+        console.error('Error al obtener movimientos:', error);
+      }
+    };
+
+    fetchMovimientos();
+    const interval = setInterval(fetchMovimientos, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleRegistrar = async ({ nombre, apellido, dni, estado_id }) => {
+    try {
+      await axios.post('http://localhost:3001/movimientos_cuartel', {
+        id_personal: null,
+        nombre,
+        apellido,
+        dni,
+        estado_id
+      });
+      const response = await axios.get('http://localhost:3001/movimientos_cuartel');
+      setMovimientos(response.data);
+    } catch (error) {
+      console.error('Error al registrar movimiento:', error);
+    }
+  };
+
   const obtenerSaludo = () => {
     const hora = horaActual.getHours();
     if (hora >= 6 && hora < 12) return 'Buenos días';
@@ -46,7 +76,10 @@ function Dashboard() {
 
       <div className="dashboard-grid">
         <div className="dashboard-card">
-          <IngresosEgresosCard />
+          <IngresosEgresosCard
+            movimientos={movimientos}
+            onRegistrar={handleRegistrar}
+          />
         </div>
         <div className="dashboard-card">
           <ClimaCard />

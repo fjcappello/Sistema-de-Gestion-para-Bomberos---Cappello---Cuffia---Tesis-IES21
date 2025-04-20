@@ -24,6 +24,7 @@ function ReportsPage() {
   useEffect(() => {
     fetchJefesDotacion();
     loadLogo();
+    fetchReports(); 
   }, []);
 
   const fetchJefesDotacion = async () => {
@@ -49,7 +50,14 @@ function ReportsPage() {
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/reportes', { params: filters });
+      const response = await axios.get('http://localhost:3001/estadisticas_filtros', {
+        params: {
+          jefe_dotacion: filters.jefeDotacion,
+          tipo_asistencia: filters.tipoAsistencia,
+          fecha_desde: filters.startDate,
+          fecha_hasta: filters.endDate
+        }
+      });
       const data = response.data;
 
       setChartData({
@@ -67,14 +75,14 @@ function ReportsPage() {
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    setFilters({ ...filters, [name]: value });
+    setFilters(prev => ({ ...prev, [name]: value }));
   };
 
   const generatePDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // Agregar logo 
+
     if (logoDataURI) {
       const logoWidth = 30;
       const logoHeight = 30;
@@ -91,8 +99,8 @@ function ReportsPage() {
 
     // Filtros 
     doc.setFontSize(12);
-    doc.text("Filtros Aplicados:", 10, 45);
-    doc.text(`Jefe de Dotación: ${filters.jefeDotacion || "Todos"}`, 10, 55);
+    const jefeSeleccionado = jefesDotacion.find(j => j.id.toString() === filters.jefeDotacion)?.nombre_completo || "Todos";
+    doc.text(`Jefe de Dotación: ${jefeSeleccionado}`, 10, 55);
     doc.text(`Tipo de Asistencia: ${filters.tipoAsistencia || "Todos"}`, 10, 65);
     doc.text(`Fecha Desde: ${filters.startDate || "Sin especificar"}`, 10, 75);
     doc.text(`Fecha Hasta: ${filters.endDate || "Sin especificar"}`, 10, 85);
@@ -115,10 +123,13 @@ function ReportsPage() {
 
     const printDate = new Date().toLocaleString();
     doc.setFontSize(10);
-    doc.text(`Impreso el: ${printDate}`, 10, doc.internal.pageSize.getHeight() - 10);
+    const usuario = JSON.parse(localStorage.getItem('usuario'));
+    const nombreUsuario = usuario?.nombre ? `${usuario.nombre} ${usuario.apellido}` : 'usuario desconocido';
+    doc.text(`Impreso el ${printDate} por ${nombreUsuario}`, 10, doc.internal.pageSize.getHeight() - 10);
 
 
-    doc.save("Reporte_Emergencias.pdf");
+    const formattedDate = new Date().toLocaleString('es-AR').replace(/[/,:]/g, '-').replace(' ', '_');
+    doc.save(`Estadisticas_Emergencias_${formattedDate}.pdf`);
   };
 
   return (
@@ -131,7 +142,7 @@ function ReportsPage() {
           <select name="jefeDotacion" onChange={handleFilterChange} value={filters.jefeDotacion}>
             <option value="">Todos</option>
             {jefesDotacion.map(jefe => (
-              <option key={jefe.id} value={jefe.nombre_completo}>{jefe.nombre_completo}</option>
+              <option key={jefe.id} value={jefe.id}>{jefe.nombre_completo}</option>
             ))}
           </select>
         </label>
