@@ -45,7 +45,8 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
       alert('Complete todos los campos');
       return;
     }
-    onRegistrar({ ...formData, estado_id });
+    const usuario = JSON.parse(localStorage.getItem('usuario'));
+    onRegistrar({ ...formData, estado_id, usuario_id: usuario?.legajo });
     setFormData({ nombre: '', apellido: '', dni: '', estado_id: '' });
     setSelectedId('');
     setIsModalOpen(false);
@@ -56,13 +57,24 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
   return (
     <div className="ingresos-egresos-card">
       <h3>Últimos Movimientos</h3>
-      <ul>
-        {ultimosMovimientos.map((m, index) => (
-          <li key={index}>
-            {new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })} - {m.estado} - {m.nombre} {m.apellido}
-          </li>
-        ))}
-      </ul>
+      <table className="tabla-movimientos">
+        <thead>
+          <tr>
+            <th>Hora</th>
+            <th>Nombre completo</th>
+            <th>Tipo de registro</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ultimosMovimientos.map((m, index) => (
+            <tr key={index}>
+              <td>{new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</td>
+              <td>{m.nombre} {m.apellido}</td>
+              <td>{m.estado}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
       <button onClick={() => setIsModalOpen(true)}>Registrar Movimiento</button>
 
       {isModalOpen && (
@@ -75,14 +87,55 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
                 <option key={p.id} value={p.id}>{p.nombre_completo}</option>
               ))}
             </select>
-            <br />
-            <input name="nombre" placeholder="Nombre" value={formData.nombre} onChange={handleChange} disabled={!!selectedId} />
-            <input name="apellido" placeholder="Apellido" value={formData.apellido} onChange={handleChange} disabled={!!selectedId} />
-            <input name="dni" placeholder="DNI" value={formData.dni} onChange={handleChange} disabled={!!selectedId} />
-            <br />
+            <br /><br />
+            <input
+              type="text"
+              name="nombre"
+              placeholder="Nombre"
+              value={formData.nombre}
+              onChange={(e) => {
+                const letras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/;
+                if (!selectedId && letras.test(e.target.value)) {
+                  handleChange(e);
+                }
+              }}
+              disabled={!!selectedId}
+            />
+            <input
+              type="text"
+              name="apellido"
+              placeholder="Apellido"
+              value={formData.apellido}
+              onChange={(e) => {
+                const letras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/;
+                if (!selectedId && letras.test(e.target.value)) {
+                  handleChange(e);
+                }
+              }}
+              disabled={!!selectedId}
+            />
+            <input
+              type="text"
+              name="dni"
+              placeholder="DNI"
+              value={formData.dni}
+              onChange={(e) => {
+                const numeros = /^[0-9]*$/;
+                if (!selectedId && numeros.test(e.target.value) && e.target.value.length <= 8) {
+                  handleChange(e);
+                }
+              }}
+              disabled={!!selectedId}
+            />
+            <br /><br />
             <div className="modal-buttons">
-              <button onClick={() => handleRegistro(formData.estado_id)}>Registrar</button>
-              <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
+              <button onClick={() => handleRegistro(1)}>Marcar Ingreso</button>
+              <button onClick={() => handleRegistro(2)}>Marcar Egreso</button>
+              <button onClick={() => {
+                setFormData({ nombre: '', apellido: '', dni: '', estado_id: '' });
+                setSelectedId('');
+                setIsModalOpen(false);
+              }}>Cancelar</button>
             </div>
           </div>
         </div>

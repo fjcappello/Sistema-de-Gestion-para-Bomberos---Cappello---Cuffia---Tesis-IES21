@@ -256,3 +256,31 @@
   color: red;
   font-weight: bold;
 }
+
+/* Tabla Movimientos styles */
+.tabla-movimientos {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.tabla-movimientos th,
+.tabla-movimientos td {
+  border: 1px solid #ddd;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+.tabla-movimientos th {
+  background-color: #f5f5f5;
+  font-weight: bold;
+  color: #333;
+}
+
+.tabla-movimientos tr:nth-child(even) {
+  background-color: #fafafa;
+}
+
+.tabla-movimientos tr:hover {
+  background-color: #f1f1f1;
+}

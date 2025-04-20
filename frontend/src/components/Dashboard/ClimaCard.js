@@ -59,7 +59,7 @@ function ClimaCard() {
           <div><strong>🌥️ Condición:</strong> {clima.weather[0].description}</div>
           <div><strong>💧 Humedad:</strong> {clima.main.humidity}%</div>
           <div><strong>📈 Presión:</strong> {clima.main.pressure} hPa</div>
-          <div><strong>💨 Viento:</strong> {clima.wind.speed} m/s</div>
+          <div><strong>💨 Viento:</strong> {(clima.wind.speed * 3.6).toFixed(1)} Km/h</div>
           <div>
             <strong>🔥 Riesgo FWI:</strong> {
               (() => {
