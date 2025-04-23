@@ -16,6 +16,7 @@ import { useUsuario } from './context/UserContext';
 import MovimientosPersonas from './components/MovimientosPersonas';
 import MovilesRegistro from './components/MovilesRegistro';
 import Dashboard from './components/Dashboard/Dashboard';
+import MovimientoMoviles from './components/MovimientoMoviles';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -104,6 +105,7 @@ function App() {
                 <Route path="/bandeja-entrada" element={<BandejaEntrada />} />
                 <Route path="/configuracion" element={<Configuracion />} />
                 <Route path="/moviles" element={<MovilesRegistro />} />
+                <Route path="/moviles/movimientos" element={<MovimientoMoviles />} />
               </>
             )}
           </Routes>
