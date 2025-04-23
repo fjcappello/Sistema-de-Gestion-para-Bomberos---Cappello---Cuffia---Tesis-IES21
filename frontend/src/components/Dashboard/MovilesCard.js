@@ -25,18 +25,20 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
       <table className="moviles-card-tabla">
         <thead>
           <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
             <th>Móvil</th>
             <th>Chofer</th>
-            <th>Fecha y Hora</th>
             <th>Tipo</th>
           </tr>
         </thead>
         <tbody>
           {movimientos.map(m => (
             <tr key={m.id}>
+              <td>{new Date(m.fecha_salida).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</td>
+              <td>{new Date(m.fecha_salida).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</td>
               <td>{m.interno}</td>
               <td>{m.chofer}</td>
-              <td>{new Date(m.fecha_salida).toLocaleString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
               <td>{m.fecha_retorno ? 'Retorno' : 'Salida'}</td>
             </tr>
           ))}

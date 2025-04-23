@@ -1,4 +1,5 @@
 const db = require('../DB/db.js');
+const { registrarLog } = require('../middlewares/logSeguridad');
 
 const registrarSalida = (req, res) => {
   const { movil_id, chofer_id, destino, jefe_dotacion, dotacion } = req.body;
@@ -31,9 +32,11 @@ const registrarSalida = (req, res) => {
             return res.status(500).json({ error: 'Error al registrar dotación' });
           }
           res.json({ success: 'Salida registrada', movimiento_id });
+          registrarLog(jefe_dotacion, `Registró salida de móvil ID ${movil_id} hacia "${destino}"`);
         });
       } else {
         res.json({ success: 'Salida registrada', movimiento_id });
+        registrarLog(jefe_dotacion, `Registró salida de móvil ID ${movil_id} hacia "${destino}"`);
       }
     });
   });
@@ -85,6 +88,7 @@ const registrarRetorno = (req, res) => {
 
           console.log('✔ Retorno registrado con éxito para movimiento ID:', id);
           res.json({ success: 'Retorno registrado' });
+          registrarLog(null, `Registró retorno del móvil ID ${movil_id}, movimiento ID ${id}`);
         }
       );
     });

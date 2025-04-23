@@ -1,3 +1,4 @@
+const { registrarLog } = require('../middlewares/logSeguridad');
 const db = require('../DB/db.js');
 
 const registrarLog = (usuario_id, accion) => {
