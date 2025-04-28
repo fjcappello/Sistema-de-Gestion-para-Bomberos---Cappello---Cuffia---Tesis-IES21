@@ -1,6 +1,8 @@
 const db = require('../DB/db.js');
 const bcryptjs = require('bcryptjs');
 const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
+const { generarToken } = require('./token.controller.js');
+
 
 const loginUsuario = async function loginUsuario(req, res){
   let valida = false;
@@ -9,9 +11,9 @@ const loginUsuario = async function loginUsuario(req, res){
     SELECT CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo, l.primer_ingreso, l.contraseña AS clave
     FROM personal p
     INNER JOIN login l ON p.legajo = l.legajo
-    WHERE p.legajo = ? ;
+    WHERE p.legajo = ? AND p.situacion_id = 1;
   `;
- //AND p.activo = 1
+
   db.query(query, [legajo], async (err, results) => {
     if (err) {
       console.error('Error en el servidor al intentar iniciar sesión:', err);
@@ -34,7 +36,8 @@ const loginUsuario = async function loginUsuario(req, res){
           legajo,
           `El usuario ${nombre_completo} inició sesión correctamente.`
         );
-        return res.json({ success: true, nombreCompleto: nombre_completo, primerIngreso: primer_ingreso });
+        const token = await generarToken(legajo); 
+        return res.json({ success: true, nombreCompleto: nombre_completo, primerIngreso: primer_ingreso, token: token });
       }
       else{
         return res.json({ success: false, error: 'Legajo o contraseña incorrectos' });
@@ -46,7 +49,6 @@ const loginUsuario = async function loginUsuario(req, res){
   });
 };
 
-//DOC CONVERTI ESTO A ASYNC
 const cambiarPassword = async function cambiarPassword(req, res){
   const { legajo, nuevaPassword } = req.body;
   const query = `

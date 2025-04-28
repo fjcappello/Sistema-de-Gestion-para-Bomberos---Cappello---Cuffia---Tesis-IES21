@@ -24,6 +24,7 @@ function Login({ setIsAuthenticated }) {
         setUsuario(usuario);
         localStorage.setItem('isAuthenticated', 'true');
         localStorage.setItem('usuario', JSON.stringify(usuario));
+        localStorage.setItem('token', response.data.token); // 25/04/2025 agregado del token localstorage
       } else {
         setError('Legajo o contraseña incorrectos.');
       }

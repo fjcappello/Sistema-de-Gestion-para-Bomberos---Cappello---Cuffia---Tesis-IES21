@@ -72,3 +72,20 @@ VALUES
   ('M003', 'Iveco', 'Daily', 'LMN456', 'ZCFC135A005412345', 205600, '2023-08-30', 3),
   ('M004', 'Toyota', 'Hilux', 'QWE987', 'MR0FZ29G201234567', 85400, '2025-03-20', 1),
   ('M005', 'Chevrolet', 'S10', 'GHJ321', '8BG148DB0JC123456', 129000, '2024-12-05', 1);
+
+
+---Login (Añade campo activo y rol con default 0 para realizar una busqueda logica) 25/04/2025
+
+ALTER TABLE personal
+ADD COLUMN activo BOOLEAN DEFAULT 1,
+ADD COLUMN id_rol INT DEFAULT 0;
+
+CREATE TABLE rol (
+  id_rol INT AUTO_INCREMENT PRIMARY KEY,
+  rol VARCHAR(30) NOT NULL
+);
+
+INSERT INTO rol (rol) VALUES
+('Administrador'),
+('Bombero'),
+('Analista');
