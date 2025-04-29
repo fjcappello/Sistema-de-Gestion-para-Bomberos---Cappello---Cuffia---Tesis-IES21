@@ -3,10 +3,10 @@ const bcryptjs = require('bcryptjs');
 const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 const { generarToken } = require('./token.controller.js');
 
-
-const loginUsuario = async function loginUsuario(req, res){
-  let valida = false;
+// LOGIN
+const loginUsuario = function (req, res) {
   const { legajo, password } = req.body;
+  
   const query = `
     SELECT CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo, l.primer_ingreso, l.contraseña AS clave
     FROM personal p
@@ -17,63 +17,72 @@ const loginUsuario = async function loginUsuario(req, res){
   db.query(query, [legajo], async (err, results) => {
     if (err) {
       console.error('Error en el servidor al intentar iniciar sesión:', err);
-      res.status(500).json({ success: false, error: 'Error en el servidor' });
+      return res.status(500).json({ success: false, error: 'Error en el servidor' });
     }
-    //VALIDACIÓN DE SI LA CONSULTAA DIO RESULTADOS 
-    else if (results.length > 0) {
-      const { nombre_completo, primer_ingreso, clave} = results[0];
-      //Si es primer ingreso hago la comparacion normal, sino la de bcryptjs
-      if(primer_ingreso == 0){
-        valida = await bcryptjs.compare(password, clave);
-      }
-      else if(password === clave){
-        valida = true;
-      }
-      //VALIDACION DEL ESTADO DEL PASS
-      if(valida){
-        // Registrar intento de inicio exitoso
-        registrarLog(
-          legajo,
-          `El usuario ${nombre_completo} inició sesión correctamente.`
-        );
-        const token = await generarToken(legajo); 
-        return res.json({ success: true, nombreCompleto: nombre_completo, primerIngreso: primer_ingreso, token: token });
-      }
-      else{
-        return res.json({ success: false, error: 'Legajo o contraseña incorrectos' });
-      }
-    }
-    else{
+
+    if (results.length === 0) {
       return res.json({ success: false, error: 'Legajo o contraseña incorrectos' });
-    } 
+    }
+
+    const { nombre_completo, primer_ingreso, clave } = results[0];
+    let valida = false;
+
+    if (primer_ingreso == 0) {
+      try {
+        valida = await bcryptjs.compare(password, clave);
+      } catch (error) {
+        console.error('Error al comparar contraseñas:', error);
+        return res.status(500).json({ success: false, error: 'Error interno' });
+      }
+    } else if (password === clave) {
+      valida = true;
+    }
+
+    if (valida) {
+      registrarLog(
+        legajo,
+        `El usuario ${nombre_completo} inició sesión correctamente.`
+      );
+
+      const token = generarToken(legajo);
+      return res.json({ success: true, nombreCompleto: nombre_completo, primerIngreso: primer_ingreso, token: token });
+    } else {
+      return res.json({ success: false, error: 'Legajo o contraseña incorrectos' });
+    }
   });
 };
 
-const cambiarPassword = async function cambiarPassword(req, res){
+// CAMBIAR CONTRASEÑA
+const cambiarPassword = function (req, res) {
   const { legajo, nuevaPassword } = req.body;
-  const query = `
-    UPDATE login SET contraseña = ?, primer_ingreso = false WHERE legajo = ?
-  `;
 
   if (!legajo || !nuevaPassword) {
     return res.status(400).json({ success: false, error: 'Faltan datos: legajo y password son requeridos' });
   }
 
-  const hash = await bcryptjs.hash(nuevaPassword, 10);
+  bcryptjs.hash(nuevaPassword, 10, (errHash, hash) => {
+    if (errHash) {
+      console.error('Error al hashear la nueva contraseña:', errHash);
+      return res.status(500).json({ success: false, error: 'Error interno' });
+    }
 
-  db.query(query, [hash, legajo], async (err, result) => {
-    if (err) {
-      console.error('Error al cambiar la contraseña:', err);
-      res.status(500).json({ success: false, error: 'Error al cambiar la contraseña' });
-    } 
-    else {
+    const query = `
+      UPDATE login SET contraseña = ?, primer_ingreso = false WHERE legajo = ?
+    `;
+
+    db.query(query, [hash, legajo], (err, result) => {
+      if (err) {
+        console.error('Error al cambiar la contraseña:', err);
+        return res.status(500).json({ success: false, error: 'Error al cambiar la contraseña' });
+      }
+
       registrarLog(
         legajo,
         `Cambio de contraseña: El usuario ${legajo} cambió su contraseña`
       );
 
-      res.status(202).json({ success: true, message: 'Contraseña actualizada correctamente' });
-    }
+      return res.status(202).json({ success: true, message: 'Contraseña actualizada correctamente' });
+    });
   });
 };
 
