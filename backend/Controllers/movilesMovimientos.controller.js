@@ -1,5 +1,5 @@
 const db = require('../DB/db.js');
-const { registrarLog } = require('../middlewares/logSeguridad');
+const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 
 const registrarSalida = (req, res) => {
   const { movil_id, chofer_id, destino, jefe_dotacion, dotacion } = req.body;
