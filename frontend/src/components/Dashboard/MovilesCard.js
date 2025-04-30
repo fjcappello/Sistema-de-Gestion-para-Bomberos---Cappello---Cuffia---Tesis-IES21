@@ -21,7 +21,7 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
 
   return (
     <div className="moviles-card">
-      <h3 className="moviles-card-titulo">Últimos movimientos</h3>
+      <h3 className="moviles-card-titulo">Movimientos de Moviles</h3>
       <table className="moviles-card-tabla">
         <thead>
           <tr>

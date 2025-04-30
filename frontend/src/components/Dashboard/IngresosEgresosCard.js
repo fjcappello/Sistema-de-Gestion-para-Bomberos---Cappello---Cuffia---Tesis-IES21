@@ -56,7 +56,7 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
 
   return (
     <div className="ingresos-egresos-card">
-      <h3>Últimos Movimientos</h3>
+      <h3>Ingresos y Egresos</h3>
       <table className="tabla-movimientos">
         <thead>
           <tr>
