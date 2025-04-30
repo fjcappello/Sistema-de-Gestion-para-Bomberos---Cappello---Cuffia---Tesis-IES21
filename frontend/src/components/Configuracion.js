@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './Styles/Configuracion.css';
 
 function CambioPassword() {
   const usuario = JSON.parse(localStorage.getItem('usuario'));

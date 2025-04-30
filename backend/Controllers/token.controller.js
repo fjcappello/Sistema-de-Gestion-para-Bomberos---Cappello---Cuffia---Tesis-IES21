@@ -6,7 +6,7 @@ const generarToken = async function(leg) {
         const query = `SELECT p.legajo, l.id_rol, r.rol 
                        FROM personal AS p 
                        INNER JOIN rol AS r ON p.id_rol = r.id_rol
-                       WHERE p.legajo = ? AND p.activo = 1`;
+                       WHERE p.legajo = ? AND p.activo = 1;`
         const [resultados] = await db.query(query, [leg]);
         if (!resultados || resultados.length === 0) {
             throw new Error('Usuario no encontrado o inactivo');
@@ -23,7 +23,7 @@ const generarToken = async function(leg) {
         throw error;
     }
 };
-
+    
 module.exports = {
     generarToken
-};
+}
