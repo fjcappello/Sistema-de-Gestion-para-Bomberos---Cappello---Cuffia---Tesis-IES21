@@ -1,7 +1,7 @@
 const db = require('../DB/db.js');
 const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 
-// Obtener todos los registros de personal
+// Devuelve todos los registros de personal.
 const obtenerPersonal = (req, res) => {
   const query = `
     SELECT 
@@ -29,7 +29,7 @@ const obtenerPersonal = (req, res) => {
   });
 };
 
-// Obtener nombres de personal
+// Devuelve los nombres completos de todo el personal.
 const obtenerNombres = (req, res) => {
   const query = `
     SELECT legajo AS id, nombre, apellido, CONCAT(nombre, " ", apellido) AS nombre_completo
@@ -46,7 +46,7 @@ const obtenerNombres = (req, res) => {
   });
 };
 
-// Insertar nuevo personal
+// Crea un nuevo registro de personal y su login.
 const crearPersonal = (req, res) => {
   const { legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica } = req.body;
 
@@ -63,7 +63,7 @@ const crearPersonal = (req, res) => {
     }
 
     const loginQuery = `INSERT INTO login (legajo, contraseña) VALUES (?, ?)`;
-    db.query(loginQuery, [legajo, documento], async (err) => {
+    db.query(loginQuery, [legajo, documento], (err) => {
       if (err) {
         console.error('Error al crear login:', err);
         res.status(500).json({ error: 'Error en el servidor al crear login' });
@@ -76,7 +76,7 @@ const crearPersonal = (req, res) => {
   });
 };
 
-// Actualizar datos de personal
+// Actualiza jerarquía, situación o revisión médica.
 const actualizarPersonal = (req, res) => {
   const { legajo } = req.params;
   const { jerarquia_id, situacion_id, fecha_revision_medica } = req.body;
@@ -104,7 +104,7 @@ const actualizarPersonal = (req, res) => {
   values.push(legajo);
   const query = `UPDATE personal SET ${fields.join(', ')} WHERE legajo = ?`;
 
-  db.query(query, values, async (err, result) => {
+  db.query(query, values, (err, result) => {
     if (err) {
       console.error('Error al actualizar personal:', err);
       res.status(500).json({ error: 'Error en el servidor al actualizar personal' });
@@ -117,12 +117,12 @@ const actualizarPersonal = (req, res) => {
   });
 };
 
-// Eliminar personal
+// Elimina un registro de personal por legajo.
 const eliminarPersonal = (req, res) => {
   const { legajo } = req.params;
   const query = `DELETE FROM personal WHERE legajo = ?`;
 
-  db.query(query, [legajo], async (err, result) => {
+  db.query(query, [legajo], (err, result) => {
     if (err) {
       console.error('Error al eliminar personal:', err);
       res.status(500).json({ error: 'Error en el servidor al eliminar personal' });
@@ -135,7 +135,7 @@ const eliminarPersonal = (req, res) => {
   });
 };
 
-// Jerarquías
+// Devuelve todas las jerarquías disponibles.
 const obtenerJerarquias = (req, res) => {
   const query = `SELECT id, jerarquia FROM jerarquias ORDER BY jerarquia ASC`;
   db.query(query, (err, results) => {
@@ -148,7 +148,7 @@ const obtenerJerarquias = (req, res) => {
   });
 };
 
-// Situaciones
+// Devuelve todas las situaciones disponibles.
 const obtenerSituaciones = (req, res) => {
   const query = 'SELECT id, nombre FROM situaciones ORDER BY nombre ASC';
   db.query(query, (err, results) => {

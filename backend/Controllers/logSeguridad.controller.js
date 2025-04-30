@@ -1,6 +1,6 @@
 const db = require('../DB/db.js');
 
-// Obtener registros de bitácora con filtros opcionales
+// Devuelve los registros de bitácora filtrados por usuario, acción o fecha.
 const obtenerLog = (req, res) => {
   const { usuario_id, accion, desde, hasta } = req.query;
 

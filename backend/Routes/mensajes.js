@@ -7,16 +7,16 @@ const {
   marcarMensajeLeido
 } = require('../Controllers/mensajes.controller.js');
 
-// GET recibidos
+// Devuelve los mensajes recibidos por el usuario.
 router.get('/mensajes/recibidos/:legajo', obtenerMensajesRecibidos);
 
-// GET enviados
+// Devuelve los mensajes enviados por el usuario.
 router.get('/mensajes/enviados/:legajo', obtenerMensajesEnviados);
 
-// POST enviar
+// Envía un nuevo mensaje.
 router.post('/mensajes/enviar', enviarMensaje);
 
-// PUT marcar como leído
+// Marca un mensaje como leído.
 router.put('/mensajes/marcar-leido/:id', marcarMensajeLeido);
 
 module.exports = router;

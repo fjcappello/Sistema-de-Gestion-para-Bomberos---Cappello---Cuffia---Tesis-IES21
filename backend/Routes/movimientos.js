@@ -6,13 +6,13 @@ const {
   ocultarMovimiento
 } = require('../Controllers/movimientos.controller');
 
-// GET movimientos visibles
+// Devuelve todos los movimientos visibles del cuartel.
 router.get('/movimientos_cuartel', obtenerMovimientos);
 
-// POST nuevo movimiento
+// Registra un nuevo ingreso o egreso en el cuartel.
 router.post('/movimientos_cuartel', registrarMovimiento);
 
-// PUT ocultar movimiento
+// Oculta un movimiento por su ID.
 router.put('/movimientos_cuartel/:id/ocultar', ocultarMovimiento);
 
 module.exports = router;

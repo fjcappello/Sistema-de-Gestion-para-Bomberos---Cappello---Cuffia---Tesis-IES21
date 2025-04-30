@@ -9,19 +9,19 @@ const {
     editMovil
 } = require('../Controllers/moviles.controller');
 
-// Get moviles
+// Devuelve todos los móviles registrados.
 router.get('/moviles', getMoviles);
 
-// Add movil
+// Agrega un nuevo móvil.
 router.post('/moviles_agregar', addMovil);
 
-// Update movil
+// Actualiza un móvil existente por su número interno.
 router.put('/moviles_actualizar/:interno', updateMovil);
 
-// Edit movil
+// Edita campos específicos de un móvil por ID.
 router.put('/moviles_editar/:id', editMovil);
 
-// Get estados moviles
+// Devuelve todos los estados posibles para móviles.
 router.get('/estados_moviles', getEstadosMoviles);
 
 module.exports = router;

@@ -9,7 +9,7 @@ const registrarLog = (usuario_id, accion) => {
   });
 };
 
-// Obtener todos los móviles
+// Devuelve todos los móviles con su estado actual.
 const getMoviles = (req, res) => {
   const query = `
     SELECT m.id, m.interno, m.marca, m.modelo, m.dominio, m.vin, m.kilometraje, m.fecha_service,
@@ -28,7 +28,7 @@ const getMoviles = (req, res) => {
   });
 };
 
-// Agregar un móvil
+// Agrega un nuevo móvil al sistema.
 const addMovil = (req, res) => {
   const { interno, marca, modelo, dominio, vin, kilometraje, fecha_service, estado_id } = req.body;
   const query = `
@@ -50,7 +50,7 @@ const addMovil = (req, res) => {
   });
 };
 
-// Actualizar un móvil
+// Actualiza un móvil existente por su interno.
 const updateMovil = (req, res) => {
   const { interno } = req.params;
   const { marca, modelo, dominio, vin, kilometraje, fecha_service, estado_id } = req.body;
@@ -78,7 +78,7 @@ const updateMovil = (req, res) => {
   });
 };
 
-// Obtener todos los estados de móviles
+// Devuelve la lista de estados posibles para móviles.
 const getEstadosMoviles = (req, res) => {
   const query = 'SELECT id, nombre_estado AS nombre FROM moviles_estados';
   db.query(query, (err, results) => {
@@ -91,7 +91,7 @@ const getEstadosMoviles = (req, res) => {
   });
 };
 
-// Editar campos específicos de un móvil
+// Edita campos puntuales de un móvil por ID.
 const editMovil = (req, res) => {
   const { id } = req.params;
   const campos = [];

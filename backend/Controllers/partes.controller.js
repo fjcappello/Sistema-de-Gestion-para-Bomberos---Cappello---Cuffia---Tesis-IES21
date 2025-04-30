@@ -1,7 +1,7 @@
 const db = require('../DB/db.js');
 const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 
-// Obtener todos los partes con filtros
+// Devuelve todos los partes con filtros opcionales.
 const obtenerPartes = (req, res) => {
   const { jefeDotacion, tipoAsistencia, startDate, endDate, denunciante } = req.query;
 
@@ -61,7 +61,7 @@ const obtenerPartes = (req, res) => {
   });
 };
 
-// Obtener parte por ID o número
+// Devuelve un parte por ID o número de parte.
 const obtenerPartePorId = (req, res) => {
   const { id } = req.params;
   const query = `
@@ -92,7 +92,7 @@ const obtenerPartePorId = (req, res) => {
   });
 };
 
-// Crear nuevo parte
+// Crea un nuevo parte de emergencia.
 const crearParte = async (req, res) => {
   const {
     nombre_denunciante,
@@ -143,7 +143,7 @@ const crearParte = async (req, res) => {
   }
 };
 
-// Eliminar parte por ID
+// Elimina (desactiva) un parte por ID.
 const eliminarParte = (req, res) => {
   const { id } = req.params;
   const query = 'UPDATE partes SET activo = 0 WHERE id = ?';
@@ -164,7 +164,7 @@ const eliminarParte = (req, res) => {
   });
 };
 
-// Tipos de asistencia únicos
+// Devuelve la lista de tipos de asistencia únicos.
 const obtenerTiposAsistencia = (req, res) => {
   const query = `
     SELECT DISTINCT tipo_asistencia FROM partes ORDER BY tipo_asistencia ASC
@@ -181,7 +181,7 @@ const obtenerTiposAsistencia = (req, res) => {
   });
 };
 
-// Reporte resumen agrupado
+// Devuelve un resumen agrupado por tipo de asistencia.
 const obtenerReporteResumen = (req, res) => {
   const { jefeDotacion, tipoAsistencia, startDate, endDate } = req.query;
 
@@ -217,7 +217,7 @@ const obtenerReporteResumen = (req, res) => {
   });
 };
 
-// Crear bitácora asociada a una emergencia
+// Crea una bitácora para un parte específico.
 const crearBitacora = (req, res) => {
   const { id_personal, reporte, parte_id } = req.body;
   if (!id_personal || !reporte || !parte_id) {
@@ -245,7 +245,7 @@ const crearBitacora = (req, res) => {
   });
 };
 
-// Obtener bitácora asociada a una emergencia
+// Devuelve la bitácora asociada a un parte.
 const obtenerBitacora = (req, res) => {
   const { parte_id } = req.params;
   const query = `

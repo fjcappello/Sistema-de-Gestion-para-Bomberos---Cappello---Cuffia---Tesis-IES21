@@ -1,7 +1,7 @@
 const db = require('../DB/db.js');
 const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 
-// Obtener movimientos visibles
+// Devuelve los movimientos visibles registrados en el sistema.
 const obtenerMovimientos = (req, res) => {
   const query = `
     SELECT m.id, m.timestamp, m.nombre, m.apellido, m.dni, e.descripcion AS estado
@@ -19,7 +19,7 @@ const obtenerMovimientos = (req, res) => {
   });
 };
 
-// Registrar nuevo movimiento
+// Registra un nuevo ingreso o egreso al cuartel.
 const registrarMovimiento = (req, res) => {
   const { id_personal, nombre, apellido, dni, estado_id } = req.body;
 
@@ -28,7 +28,7 @@ const registrarMovimiento = (req, res) => {
     VALUES (?, ?, ?, ?, ?)
   `;
 
-  db.query(query, [id_personal || null, nombre, apellido, dni, estado_id], async (err, result) => {
+  db.query(query, [id_personal || null, nombre, apellido, dni, estado_id], (err, result) => {
     if (err) {
       console.error('Error al registrar movimiento:', err);
       return res.status(500).json({ error: 'Error al registrar movimiento' });
@@ -43,12 +43,12 @@ const registrarMovimiento = (req, res) => {
   });
 };
 
-// Ocultar un movimiento (soft delete)
+// Oculta un movimiento (soft delete).
 const ocultarMovimiento = (req, res) => {
   const { id } = req.params;
   const query = 'UPDATE movimientos_cuartel SET visible = 0 WHERE id = ?';
 
-  db.query(query, [id], async (err, result) => {
+  db.query(query, [id], (err, result) => {
     if (err) {
       console.error('Error al ocultar movimiento:', err);
       return res.status(500).json({ error: 'Error al ocultar movimiento' });
