@@ -35,7 +35,6 @@ function OtrasCuentas() {
   }, [seleccionado, usuarios]);
 
 
-
   const manejarRestablecerPassword = () => {
     axios.put('http://localhost:3001/restablecer-cuenta', { legajo: seleccionado })
       .then(res => alert('Contraseña restablecida correctamente'))
@@ -58,7 +57,6 @@ function OtrasCuentas() {
       .catch(error => console.error('Error actualizando permiso:', error));
   };
   
-
   return (
     <div className="configuracion-layout">
       <div className="configuracion-contenido">
@@ -110,7 +108,7 @@ function OtrasCuentas() {
             </button>
           </div>
         </div>
-
+        <p>CARTELITO AQUI</p>
         {/* Restablecer Contraseña */}
         <div className="configuracion-filtros">
           <h3>Reestablecer contraseña</h3>
@@ -119,6 +117,7 @@ function OtrasCuentas() {
             Restablecer Contraseña
           </button>
         </div>
+        <p>CARTELITO AQUI</p>
       </div>
     </div>
   );

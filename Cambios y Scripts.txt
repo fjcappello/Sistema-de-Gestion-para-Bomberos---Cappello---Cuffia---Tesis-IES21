@@ -77,7 +77,6 @@ VALUES
 ---Login (Añade campo activo y rol con default 0 para realizar una busqueda logica) 25/04/2025
 
 ALTER TABLE personal
-ADD COLUMN activo BOOLEAN DEFAULT 1,
 ADD COLUMN id_rol INT DEFAULT 0;
 
 CREATE TABLE rol (
