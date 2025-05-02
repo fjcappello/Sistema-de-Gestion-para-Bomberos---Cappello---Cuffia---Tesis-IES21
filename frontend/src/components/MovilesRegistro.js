@@ -19,14 +19,14 @@ function MovilesRegistro() {
     modelo: '',
     dominio: '',
     vin: '',
-    kilometraje: '',
+    kilometraje_inicial: '',
     fecha_service: '',
     estado_id: 1
   });
 
   const [estados, setEstados] = useState([]);
   const [editData, setEditData] = useState(null);
-  const [editFormData, setEditFormData] = useState({ kilometraje: '', fecha_service: '', estado_id: '' });
+  const [editFormData, setEditFormData] = useState({ kilometraje_actual: '', fecha_service: '', estado_id: '' });
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const today = new Date().toISOString().split("T")[0];
 
@@ -136,8 +136,8 @@ function MovilesRegistro() {
     e.preventDefault();
 
     const cambios = {};
-    if (editFormData.kilometraje !== editData.kilometraje) {
-      cambios.kilometraje = editFormData.kilometraje;
+    if (editFormData.kilometraje_actual !== editData.kilometraje_actual) {
+      cambios.kilometraje_actual = editFormData.kilometraje_actual;
     }
     if (editFormData.fecha_service !== editData.fecha_service) {
       cambios.fecha_service = editFormData.fecha_service;
@@ -225,7 +225,7 @@ function MovilesRegistro() {
               <td>{movil.modelo}</td>
               <td>{movil.dominio}</td>
               <td>{movil.vin}</td>
-              <td>{movil.kilometraje}</td>
+              <td>{movil.kilometraje_actual}</td>
               <td>{formatFecha(movil.fecha_service)}</td>
               <td>
                 {(() => {
@@ -238,7 +238,7 @@ function MovilesRegistro() {
                   onClick={() => {
                     setEditData(movil);
                     setEditFormData({
-                      kilometraje: movil.kilometraje,
+                      kilometraje_actual: movil.kilometraje_actual,
                       fecha_service: movil.fecha_service,
                       estado_id: movil.estado_id
                     });
@@ -266,13 +266,13 @@ function MovilesRegistro() {
         <div className="modal-overlay">
           <div className="modal">
           <form className="moviles-registro-editar-form" onSubmit={handleEditSubmit}>
-              <label>Kilometraje:</label>
+              <label>Kilometraje Actual:</label>
               <input 
                 type="number" 
-                name="kilometraje" 
-                value={editFormData.kilometraje} 
+                name="kilometraje_actual" 
+                value={editFormData.kilometraje_actual} 
                 onChange={handleEditChange} 
-                placeholder="Kilometraje" 
+                placeholder="Kilometraje Actual" 
               />
               <label>Fecha de Service:</label>
               <input 
@@ -315,7 +315,7 @@ function MovilesRegistro() {
               <label>VIN:</label>
               <input type="text" name="vin" value={formData.vin} onChange={handleChangeFormData} required />
               <label>Kilometraje:</label>
-              <input type="number" name="kilometraje" value={formData.kilometraje} onChange={handleChangeFormData} required />
+              <input type="number" name="kilometraje_inicial" value={formData.kilometraje_inicial} onChange={handleChangeFormData} required />
               <label>Fecha de Service:</label>
               <input type="date" name="fecha_service" value={formData.fecha_service} onChange={handleChangeFormData} min={today} required />
               <label>Estado:</label>

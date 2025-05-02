@@ -13,6 +13,7 @@ app.use(require('./Routes/mensajes'));
 app.use(require('./Routes/movimientos'));
 app.use(require('./Routes/logSeguridad')); 
 app.use(require('./Routes/moviles'));
+app.use(require('./Routes/movimientoMoviles'));
 app.use(require('./Routes/estadisticas'));
 app.use(require('./Routes/otrasCuentas'))
 

@@ -88,3 +88,5 @@ INSERT INTO rol (rol) VALUES
 ('Administrador'),
 ('Bombero'),
 ('Analista');
+
+  

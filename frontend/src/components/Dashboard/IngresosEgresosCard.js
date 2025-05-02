@@ -56,10 +56,11 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
 
   return (
     <div className="ingresos-egresos-card">
-      <h3>Últimos Movimientos</h3>
+      <h3>Ingresos y Egresos</h3>
       <table className="tabla-movimientos">
         <thead>
           <tr>
+            <th>Fecha</th>
             <th>Hora</th>
             <th>Nombre completo</th>
             <th>Tipo de registro</th>
@@ -68,6 +69,7 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
         <tbody>
           {ultimosMovimientos.map((m, index) => (
             <tr key={index}>
+              <td>{new Date(m.timestamp).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</td>
               <td>{new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</td>
               <td>{m.nombre} {m.apellido}</td>
               <td>{m.estado}</td>

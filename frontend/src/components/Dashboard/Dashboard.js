@@ -59,6 +59,14 @@ function Dashboard() {
     return 'Buenas noches';
   };
 
+  const abrirModalSalida = (movimiento = null) => {
+    console.log('Abrir modal de salida', movimiento);
+  };
+
+  const abrirModalRetorno = (movimiento) => {
+    console.log('Abrir modal de retorno', movimiento);
+  };
+
   return (
     <div className="dashboard-container">
       <div className="bienvenida-usuario">
@@ -85,7 +93,7 @@ function Dashboard() {
           <ClimaCard />
         </div>
         <div className="dashboard-card">
-          <MovilesCard />
+          <MovilesCard abrirModalSalida={abrirModalSalida} abrirModalRetorno={abrirModalRetorno} />
         </div>
         <div className="dashboard-card">
           <EstadisticasCard />

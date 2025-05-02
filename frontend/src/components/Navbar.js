@@ -41,8 +41,8 @@ function Navbar({ onLogout }) {
           <Link to="#" className="dropdown-btn">Reportes</Link>
           {isReportsDropdownOpen && (
             <ul className="dropdown-menu">
-              <li><Link to="/reportes/movimientos-personas">Reportes ingresos/salidas</Link></li>
-              <li><Link to="#">Reportes movimientos móviles</Link></li>
+              <li><Link to="/reportes/movimientos-personas">Asistencia del personal</Link></li>
+              <li><Link to="/moviles/movimientos">Movimientos de móviles</Link></li>
             </ul>
           )}
         </li>

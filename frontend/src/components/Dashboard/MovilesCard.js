@@ -1,35 +1,52 @@
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import '../Styles/Dashboard.css';
 
+function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
+  const [movimientos, setMovimientos] = useState([]);
 
-import React from 'react';
+  useEffect(() => {
+    const cargarUltimosMovimientos = async () => {
+      try {
+        const response = await axios.get('http://localhost:3001/moviles_movimientos');
+        const datos = response.data.slice(-4).reverse(); // últimos 4 movimientos
+        setMovimientos(datos);
+      } catch (error) {
+        console.error('Error al cargar movimientos recientes:', error);
+      }
+    };
 
-function MovilesCard() {
+    cargarUltimosMovimientos();
+  }, []);
+
   return (
-    <div>
-      <h3>Móviles Registrados</h3>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <div className="moviles-card">
+      <h3 className="moviles-card-titulo">Movimientos de Moviles</h3>
+      <table className="moviles-card-tabla">
         <thead>
           <tr>
-            <th>Interno</th>
-            <th>Marca</th>
-            <th>Modelo</th>
-            <th>Dominio</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Móvil</th>
+            <th>Chofer</th>
+            <th>Tipo</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>01</td>
-            <td>Ford</td>
-            <td>Ranger</td>
-            <td>AB123CD</td>
-          </tr>
-          <tr>
-            <td>02</td>
-            <td>Mercedes</td>
-            <td>Sprinter</td>
-            <td>CD456EF</td>
-          </tr>
+          {movimientos.map(m => (
+            <tr key={m.id}>
+              <td>{new Date(m.fecha_salida).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</td>
+              <td>{new Date(m.fecha_salida).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</td>
+              <td>{m.interno}</td>
+              <td>{m.chofer}</td>
+              <td>{m.fecha_retorno ? 'Retorno' : 'Salida'}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
+      <div style={{ marginTop: '10px' }}>
+        <a href="/moviles/movimientos" className="btn btn-moviles-card">Ir a gestión de móviles</a>
+      </div>
     </div>
   );
 }

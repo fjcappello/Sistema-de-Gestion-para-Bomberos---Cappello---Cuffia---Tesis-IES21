@@ -1,18 +1,11 @@
+const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
 const db = require('../DB/db.js');
 
-const registrarLog = (usuario_id, accion) => {
-  const query = `INSERT INTO registro_seguridad (usuario_id, accion, fecha) VALUES (?, ?, NOW())`;
-  db.query(query, [usuario_id, accion], (err) => {
-    if (err) {
-      console.error('Error al registrar en la bitácora:', err);
-    }
-  });
-};
 
 // Obtener todos los móviles
 const getMoviles = (req, res) => {
   const query = `
-    SELECT m.id, m.interno, m.marca, m.modelo, m.dominio, m.vin, m.kilometraje, m.fecha_service,
+    SELECT m.id, m.interno, m.marca, m.modelo, m.dominio, m.vin, m.kilometraje_inicial, m.kilometraje_actual, m.fecha_service,
            m.estado_id, me.nombre_estado AS estado
     FROM moviles m
     JOIN moviles_estados me ON m.estado_id = me.id
@@ -32,10 +25,10 @@ const getMoviles = (req, res) => {
 const addMovil = (req, res) => {
   const { interno, marca, modelo, dominio, vin, kilometraje, fecha_service, estado_id } = req.body;
   const query = `
-    INSERT INTO moviles (interno, marca, modelo, dominio, vin, kilometraje, fecha_service, estado_id)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO moviles (interno, marca, modelo, dominio, vin, kilometraje_inicial, kilometraje_actual, fecha_service, estado_id)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
-  const values = [interno, marca, modelo, dominio, vin, kilometraje, fecha_service, estado_id];
+  const values = [interno, marca, modelo, dominio, vin, kilometraje, kilometraje, fecha_service, estado_id];
 
   db.query(query, values, (err, result) => {
     if (err) {
@@ -53,15 +46,15 @@ const addMovil = (req, res) => {
 // Actualizar un móvil
 const updateMovil = (req, res) => {
   const { interno } = req.params;
-  const { marca, modelo, dominio, vin, kilometraje, fecha_service, estado_id } = req.body;
+  const { marca, modelo, dominio, vin, fecha_service, estado_id } = req.body;
 
   const query = `
     UPDATE moviles
-    SET marca = ?, modelo = ?, dominio = ?, vin = ?, kilometraje = ?, fecha_service = ?, estado_id = ?
+    SET marca = ?, modelo = ?, dominio = ?, vin = ?, fecha_service = ?, estado_id = ?
     WHERE interno = ? AND estado_id IN (1, 2)
   `;
 
-  const values = [marca, modelo, dominio, vin, kilometraje, fecha_service, estado_id, interno];
+  const values = [marca, modelo, dominio, vin, fecha_service, estado_id, interno];
 
   db.query(query, values, (err, result) => {
     if (err) {
@@ -97,9 +90,9 @@ const editMovil = (req, res) => {
   const campos = [];
   const valores = [];
 
-  if (req.body.kilometraje !== undefined) {
-    campos.push("kilometraje = ?");
-    valores.push(req.body.kilometraje);
+  if (req.body.kilometraje_actual !== undefined) {
+    campos.push("kilometraje_actual = ?");
+    valores.push(req.body.kilometraje_actual);
   }
   if (req.body.fecha_service !== undefined) {
     campos.push("fecha_service = ?");
