@@ -70,12 +70,6 @@ function EmergenciesTable() {
       const response = await axios.get('http://localhost:3001/partesemergencias');
       setEmergencies(response.data);
       setFilteredEmergencies(response.data);
-      
-      // Verificación de datos en consola
-      console.log("Datos de emergencias recibidos:", response.data);
-      response.data.forEach(emergencia => {
-        console.log(`Emergencia ID: ${emergencia.parte_id}, Estado: ${emergencia.estado}, Activa: ${isEmergenciaActiva(emergencia)}`);
-      });
     } catch (error) {
       console.error("Error al obtener emergencias:", error);
     }

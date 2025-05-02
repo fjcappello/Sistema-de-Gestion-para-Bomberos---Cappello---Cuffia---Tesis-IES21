@@ -12,6 +12,9 @@ import BandejaEntrada from './components/BandejaEntrada';
 import EnviarMensajeModal from './components/EnviarMensajeModal';
 import ModalCambioPassword from './components/ModalCambioPassword';
 import Configuracion from './components/Configuracion';
+import Auditoria from './components/Auditoria';  // Importamos el componente Auditoria
+import MiCuenta from './components/MiCuenta';  // Importamos el componente MiCuenta
+import OtrasCuentas from './components/OtrasCuentas';
 import { useUsuario } from './context/UserContext';
 import MovimientosPersonas from './components/MovimientosPersonas';
 import MovilesRegistro from './components/MovilesRegistro';
@@ -105,7 +108,9 @@ function App() {
                 <Route path="/bandeja-entrada" element={<BandejaEntrada />} />
                 <Route path="/configuracion" element={<Configuracion />} />
                 <Route path="/moviles" element={<MovilesRegistro />} />
-                <Route path="/moviles/movimientos" element={<MovimientoMoviles />} />
+                <Route path="/mi-cuenta" element={<MiCuenta />} />
+                <Route path="/auditoria" element={<Auditoria />} />
+                <Route path="/otras-cuentas" element={<OtrasCuentas />} />
               </>
             )}
           </Routes>
@@ -116,3 +121,4 @@ function App() {
 }
 
 export default App;
+
