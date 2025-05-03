@@ -105,6 +105,7 @@ function App() {
                 <Route path="/personal" element={<PersonalTable />} />
                 <Route path="/reportes/estadisticas" element={<ReportsPage />} />
                 <Route path="/reportes/movimientos-personas" element={<MovimientosPersonas />} />
+                <Route path="/reportes/movimientos-moviles" element={<MovimientoMoviles />} />
                 <Route path="/bandeja-entrada" element={<BandejaEntrada />} />
                 <Route path="/configuracion" element={<Configuracion />} />
                 <Route path="/moviles" element={<MovilesRegistro />} />
