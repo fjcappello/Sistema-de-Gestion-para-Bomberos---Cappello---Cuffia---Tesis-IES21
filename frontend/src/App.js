@@ -59,9 +59,9 @@ function App() {
 
     if (usuarioActual) {
       try {
-        await axios.post('http://localhost:3001/bitacora/logout', {
-          usuario_id: usuarioActual.legajo,
-          accion: 'Cierre de sesión'
+        await axios.post('http://localhost:3001/logout', {
+          legajo: usuarioActual.legajo,
+          nombreCompleto: usuarioActual.nombreCompleto
         });
         console.log('Logout registrado en bitácora');
       } catch (error) {
@@ -122,4 +122,3 @@ function App() {
 }
 
 export default App;
-
