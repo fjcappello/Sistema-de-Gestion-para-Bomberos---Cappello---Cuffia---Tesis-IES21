@@ -73,7 +73,8 @@ function Navbar({ onLogout }) {
             <ul className="dropdown-menu">
               <li><Link to="/personal">Personal</Link></li>
               <li><Link to="/moviles">Móviles</Link></li>
-              <li><Link to="#">Pañol Operativo</Link></li>
+              <li><Link to="/panol-operativo">Pañol Operativo</Link></li>
+
             </ul>
           )}
         </li>

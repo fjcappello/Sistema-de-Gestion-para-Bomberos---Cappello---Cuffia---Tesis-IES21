@@ -65,7 +65,6 @@ const cambiarPermisosCuenta = function cambiarPermisosCuenta(req, res) {
         return res.status(400).json({ error: 'Faltan datos requeridos.' });
     }
     db.query(query, [id_rol, legajo], (error, results) => {
-        console.log('Datos recibidos:', { legajo, id_rol });
         if (error) {
             console.error('Error en la base de datos:', error);
             return res.status(500).json({ error: 'Error al actualizar permisos.' });
