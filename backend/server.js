@@ -16,6 +16,7 @@ app.use(require('./Routes/moviles'));
 app.use(require('./Routes/movimientoMoviles'));
 app.use(require('./Routes/estadisticas'));
 app.use(require('./Routes/otrasCuentas'))
+app.use(require('./Routes/panolOperativo'))
 
 app.listen(PORT, () => {
   console.log(`Servidor API en http://localhost:${PORT}`);

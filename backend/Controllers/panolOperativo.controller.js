@@ -1,16 +1,17 @@
 const db = require('../DB/db.js');
-
+const path = require('path');
+const fs = require('fs');
 
 //Recuperar las herramientas del pañol segun filtros
-const recuperarHerramientas = function recuperarHerramientas(req, res) {
+const recuperarElementos = function recuperarElementos(req, res) {
     const {tipo, fincorp, fvenc, estado, texto} = req.body;
     
-    let query = `SELECT p.id_herramienta, p.herramienta, t.tipo, m.marca, p.f_incorporacion, p.f_vencimiento, l.asignacion, p.f_asignacion, e.estado, p.foto
+    let query = `SELECT p.id_elemento, p.elemento, t.tipo, m.marca, p.f_incorporacion, p.f_vencimiento, l.asignacion, p.f_asignacion, e.estado, p.foto
                 FROM panol AS p INNER JOIN
-                tipo_herramienta AS t ON p.id_tipo = t.id_tipo
-                INNER JOIN marca_herramienta AS m ON p.id_marca = m.id_marca
+                tipo_elemento AS t ON p.id_tipo = t.id_tipo
+                INNER JOIN marca_elemento AS m ON p.id_marca = m.id_marca
                 INNER JOIN lugar_asignacion AS l ON l.id_asignacion = p.id_asignacion
-                INNER JOIN estado_herramienta AS e ON p.id_estado = e.id_estado
+                INNER JOIN estado_elemento AS e ON p.id_estado = e.id_estado
                 WHERE 1=1`;
 
     let parametros = [];
@@ -32,18 +33,18 @@ const recuperarHerramientas = function recuperarHerramientas(req, res) {
         parametros.push(estado);
     }
     if(texto){
-        query += ` AND (p.id_herramienta LIKE ? OR p.herramienta LIKE ?)`
+        query += ` AND (p.id_elemento LIKE ? OR p.elemento LIKE ?)`
         const e = `%${texto}%`;
         parametros.push(e, e);
     }
 
     db.query(query, parametros ,(error, results) => {
         if (error) {
-            console.error('Error al recuperar las herramientas del pañol:', error);
-            return res.status(500).json({ error: 'Error al recuperar las herrameintas del pañol' });
+            console.error('Error al recuperar los elementos del pañol:', error);
+            return res.status(500).json({ error: 'Error al recuperar los elementos del pañol' });
         }
         if (results.length === 0) {
-            return res.status(404).json({ message: 'No se encontraron herramientas.' });
+            return res.status(404).json({ message: 'No se encontraron elementos.' });
         }
         return res.status(200).json(results);
     });
@@ -51,14 +52,14 @@ const recuperarHerramientas = function recuperarHerramientas(req, res) {
 
 //Recuperar los tipos de herramientas
 const recuperarTipos = function recuperarTipos(req, res) {
-    const query = `SELECT * FROM tipo_herramienta`;
+    const query = `SELECT * FROM tipo_elemento`;
     db.query(query, parametros ,(error, results) => {
         if (error) {
-            console.error('Error al recuperar los tipos de herramienta:', error);
-            return res.status(500).json({ error: 'Error al recuperar los tipos de herramienta' });
+            console.error('Error al recuperar los tipos de elemento:', error);
+            return res.status(500).json({ error: 'Error al recuperar los tipos de elemento' });
         }
         if (results.length === 0) {
-            return res.status(404).json({ message: 'No se encontraron tipos de herramientas.' });
+            return res.status(404).json({ message: 'No se encontraron tipos de elementos.' });
         }
         return res.status(200).json(results);
     });
@@ -66,14 +67,14 @@ const recuperarTipos = function recuperarTipos(req, res) {
 
 //Recuperar los estados de las herramientas
 const recuperarEstados = function recuperarEstados(req, res) {
-    const query = `SELECT * FROM tipo_herramienta`;
+    const query = `SELECT * FROM tipo_elemento`;
     db.query(query, parametros ,(error, results) => {
         if (error) {
-            console.error('Error al recuperar los tipos de herramienta:', error);
-            return res.status(500).json({ error: 'Error al recuperar los tipos de herramienta' });
+            console.error('Error al recuperar los tipos de elemento:', error);
+            return res.status(500).json({ error: 'Error al recuperar los tipos de elemento' });
         }
         if (results.length === 0) {
-            return res.status(404).json({ message: 'No se encontraron tipos de herramientas.' });
+            return res.status(404).json({ message: 'No se encontraron tipos de elementos.' });
         }
         return res.status(200).json(results);
     });
@@ -81,66 +82,40 @@ const recuperarEstados = function recuperarEstados(req, res) {
 
 //Cambiar estado de una herramienta
 const cambiarEstados = function cambiarEstados(req, res) {
-    let flag = false
-    const {id_estado, id_herramienta} = req.body;
-    const query = `UPDATE panol VALUE id_estado = ? WHERE id_herramienta = ?`;
-    if (!id_estado || !id_herramienta) {
-        return res.status(400).json({ error: 'Faltan datos: id_estado o id_herramienta' });
+    const foto = cargaDeFoto(req.file);
+    const {id_estado, id_elemento} = req.body;
+    const query = `UPDATE panol SET id_estado = ?, foto = ? WHERE id_elemento = ?`;
+    if (!id_estado || !id_elemento) {
+        return res.status(400).json({ error: 'Faltan datos: id_estado o id_elemento' });
     }
-    if(flag){
-        db.query(query, parametros ,(error, results) => {
-            if (error) {
-                console.error('Error al intentar cambiar el estado:', error);
-                return res.status(500).json({ error: 'Error al intentar cambiar el estado' });
-            }
-            if (results.affectedRows === 0) {
-                return res.status(404).json({ message: 'No se encontraron tipos de herramientas.' });
-            }
-            return res.status(200).json(results);
-        });
+    if(!foto){
+        return res.status(400).json({ error: 'Faltan datos: Debe cargar la foto del elemento dado de baja' });
     }
-    return res.status(401).json({succes: false, message: "Debe ingresar una foto del elemento destruido antes de darlo de baja"});
+    const parametros = [id_estado, foto, id_elemento];
+    db.query(query, parametros ,(error, results) => {
+        if (error) {
+            console.error('Error al intentar cambiar el estado:', error);
+            return res.status(500).json({ error: 'Error al intentar cambiar el estado' });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ message: 'No se encontraron tipos de elementos.' });
+        }
+        return res.status(200).json(results);
+    });
 };
 
-//Agregar foto para poder dar de baja
-const agregarFoto = function agregarFoto(req, res) {
-    let bandera = false;
-    const query = `UPDATE panol VALUE foto = ? WHERE id_herramienta = ?`;
-    const {url, id_herramienta} = req.body;
-    const parametros = [url, id_herramienta];
-    
-    if(!parametros || !id_herramienta){
-        return res.status(400).json({succes: false, message: "Faltan datos importantes: id_herramienta o url de la imagen"});
-    }
-   
-    //Aqui va el proceso de cargar la imagen y el cambio de estado de la bandera
-
-    if(bandera){
-        db.query(query, parametros ,(error, results) => {
-            if (error) {
-                console.error('Error al recuperar los tipos de herramienta:', error);
-                return res.status(500).json({ error: 'Error al recuperar los tipos de herramienta' });
-            }
-            if (results.length === 0) {
-                return res.status(404).json({ message: 'No se encontraron tipos de herramientas.' });
-            }
-            return res.status(200).json(results);
-        });
-    }
-    return res.status().json({succes: false, message: "No se completó la subida de la foto de la herramienta/equipo destruido."})
+// Función para cargar la foto y obtener la direccion
+const cargaDeFoto = function cargaDeFoto(archivo) {
+    const uniqueName = `${Date.now()}-${archivo.originalname}`;
+    const nuevoCamino = path.join(__dirname, '..', '..', 'resources', uniqueName);
+    fs.renameSync(archivo.path, nuevoCamino);
+    return `resources/${uniqueName}`;
 };
-
-
-//Funcion de cargar la foto foto
-const cargaDeFoto = function cargaDeFoto(){
-    
-}
 
 
 module.exports = {
-    recuperarHerramientas,
+    recuperarElementos,
     recuperarTipos,
     recuperarEstados,
     cambiarEstados,
-    agregarFoto
 };
