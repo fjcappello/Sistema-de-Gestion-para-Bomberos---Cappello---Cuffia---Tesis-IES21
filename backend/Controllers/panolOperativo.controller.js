@@ -6,16 +6,31 @@ const fs = require('fs');
 const recuperarElementos = function recuperarElementos(req, res) {
     const {tipo, fincorp, fvenc, estado, texto} = req.body;
     
-    let query = `SELECT p.id_elemento, p.elemento, t.tipo, m.marca, p.f_incorporacion, p.f_vencimiento, l.asignacion, p.f_asignacion, e.estado, p.foto
-                FROM panol AS p INNER JOIN
-                tipo_elemento AS t ON p.id_tipo = t.id_tipo
-                INNER JOIN marca_elemento AS m ON p.id_marca = m.id_marca
-                INNER JOIN lugar_asignacion AS l ON l.id_asignacion = p.id_asignacion
-                INNER JOIN estado_elemento AS e ON p.id_estado = e.id_estado
-                WHERE 1=1`;
+    let query = `SELECT 
+                    p.id_elemento, 
+                    p.elemento, 
+                    t.tipo, 
+                    m.marca, 
+                    DATE_FORMAT(p.f_incorporacion, '%Y-%m-%d') AS f_incorporacion, 
+                    DATE_FORMAT(p.f_vencimiento, '%Y-%m-%d') AS f_vencimiento, 
+                    l.asignacion, 
+                    p.f_asignacion, 
+                    e.estado, 
+                    p.foto
+                FROM 
+                    panol AS p
+                INNER JOIN 
+                    tipo_elemento AS t ON p.id_tipo = t.id_tipo
+                INNER JOIN 
+                    marca_elemento AS m ON p.id_marca = m.id_marca
+                INNER JOIN 
+                    lugar_asignacion AS l ON l.id_asignacion = p.id_asignacion
+                INNER JOIN 
+                    estado_elemento AS e ON p.id_estado = e.id_estado
+                WHERE 1 + 1 = 2;`;
 
     let parametros = [];
-
+    /*
     if(tipo){
         query += ` AND p.id_tipo = ? `
         parametros.push(tipo);
@@ -36,7 +51,7 @@ const recuperarElementos = function recuperarElementos(req, res) {
         query += ` AND (p.id_elemento LIKE ? OR p.elemento LIKE ?)`
         const e = `%${texto}%`;
         parametros.push(e, e);
-    }
+    }*/
 
     db.query(query, parametros ,(error, results) => {
         if (error) {
@@ -53,7 +68,7 @@ const recuperarElementos = function recuperarElementos(req, res) {
 //Recuperar los tipos de herramientas
 const recuperarTipos = function recuperarTipos(req, res) {
     const query = `SELECT * FROM tipo_elemento`;
-    db.query(query, parametros ,(error, results) => {
+    db.query(query,(error, results) => {
         if (error) {
             console.error('Error al recuperar los tipos de elemento:', error);
             return res.status(500).json({ error: 'Error al recuperar los tipos de elemento' });
@@ -67,14 +82,14 @@ const recuperarTipos = function recuperarTipos(req, res) {
 
 //Recuperar los estados de las herramientas
 const recuperarEstados = function recuperarEstados(req, res) {
-    const query = `SELECT * FROM tipo_elemento`;
-    db.query(query, parametros ,(error, results) => {
+    const query = `SELECT * FROM estado_elemento`;
+    db.query(query, (error, results) => {
         if (error) {
             console.error('Error al recuperar los tipos de elemento:', error);
-            return res.status(500).json({ error: 'Error al recuperar los tipos de elemento' });
+            return res.status(500).json({ error: 'Error al recuperar los estados de elemento' });
         }
         if (results.length === 0) {
-            return res.status(404).json({ message: 'No se encontraron tipos de elementos.' });
+            return res.status(404).json({ message: 'No se encontraron estados de elementos.' });
         }
         return res.status(200).json(results);
     });
