@@ -92,3 +92,9 @@
   text-align: left;
   margin-bottom: 0.5rem;
 }
+
+.mensaje-exito {
+  color: green;
+  margin-top: 8px;
+  font-weight: bold;
+}
