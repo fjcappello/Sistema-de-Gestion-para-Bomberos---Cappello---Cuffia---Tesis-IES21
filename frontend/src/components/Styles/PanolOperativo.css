@@ -319,3 +319,23 @@
     cursor: pointer;
     transition: background-color 0.3s ease;
   }
+
+.boton-accion-mod{
+  display: block;
+  padding: 6px 10px;
+  font-size: 14px;
+  margin-bottom: 6px; /* separación vertical */
+  border: none;
+  border-radius: 5px;
+  background-color: #db3434;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  width: 100px;
+  text-align: center;
+}
+
+.boton-accion-mod:hover,
+.boton-accion-foto:hover {
+  background-color: #2980b9;
+}

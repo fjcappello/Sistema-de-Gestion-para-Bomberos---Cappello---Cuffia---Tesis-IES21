@@ -14,7 +14,7 @@ const recuperarElementos = function recuperarElementos(req, res) {
                     DATE_FORMAT(p.f_incorporacion, '%Y-%m-%d') AS f_incorporacion, 
                     DATE_FORMAT(p.f_vencimiento, '%Y-%m-%d') AS f_vencimiento, 
                     l.asignacion, 
-                    p.f_asignacion, 
+                    DATE_FORMAT(p.f_asignacion, '%Y-%m-%d') AS f_asignacion, 
                     e.estado, 
                     p.foto
                 FROM 
@@ -28,33 +28,9 @@ const recuperarElementos = function recuperarElementos(req, res) {
                 INNER JOIN 
                     estado_elemento AS e ON p.id_estado = e.id_estado
                 WHERE 1 + 1 = 2 ORDER BY id_elemento ASC
-`;
+            `;
 
-    let parametros = [];
-    /*
-    if(tipo){
-        query += ` AND p.id_tipo = ? `
-        parametros.push(tipo);
-    }
-    if(fincorp){
-        query += ` AND p.f_incorporacion = ?`
-        parametros.push(fincorp);
-    }
-    if(fvenc){
-        query += ` AND p.f_vencimiento = ? `
-        parametros.push(fvenc);
-    }
-    if(estado){
-        query += ` AND p.id_estado = ? `
-        parametros.push(estado);
-    }
-    if(texto){
-        query += ` AND (p.id_elemento LIKE ? OR p.elemento LIKE ?)`
-        const e = `%${texto}%`;
-        parametros.push(e, e);
-    }*/
-
-    db.query(query, parametros ,(error, results) => {
+    db.query(query,(error, results) => {
         if (error) {
             console.error('Error al recuperar los elementos del pañol:', error);
             return res.status(500).json({ error: 'Error al recuperar los elementos del pañol' });
@@ -96,6 +72,75 @@ const recuperarEstados = function recuperarEstados(req, res) {
     });
 };
 
+//Recuperar los tipos de herramientas
+const recuperarMarcas = function recuperarMarcas(req, res) {
+    const query = `SELECT * FROM marca_elemento`;
+    db.query(query,(error, results) => {
+        if (error) {
+            console.error('Error al recuperar las marcas de elementos:', error);
+            return res.status(500).json({ error: 'Error al recuperar las marcas de elemento' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron marcas de elementos.' });
+        }
+        return res.status(200).json(results);
+    });
+};
+
+
+const recuperarAsignaciones = function recuperarAsignaciones(req, res) {
+    const query = `SELECT * FROM lugar_asignacion`;
+    db.query(query,(error, results) => {
+        if (error) {
+            console.error('Error al recuperar las marcas de elementos:', error);
+            return res.status(500).json({ error: 'Error al recuperar las marcas de elemento' });
+        }
+        if (results.length === 0) {
+            return res.status(404).json({ message: 'No se encontraron marcas de elementos.' });
+        }
+        return res.status(200).json(results);
+    });
+};
+
+//Agregar una nuevo elemento de pañol
+const agregarElemento = function agregarElemento(req, res) {
+
+    let {elemento, id_tipo, id_marca, f_incorporacion, f_vencimiento, id_asignacion, f_asignacion, id_estado} = req.body;
+    const query = `INSERT INTO panol (
+                        elemento, 
+                        id_tipo, 
+                        id_marca, 
+                        f_incorporacion, 
+                        f_vencimiento, 
+                        id_asignacion, 
+                        f_asignacion, 
+                        id_estado
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    //Verificaciond e datos
+    if (!elemento || !id_tipo || !id_marca || !f_incorporacion || !id_asignacion || !id_estado) {
+        return res.status(400).json({ error: 'Faltan datos: elemento, id_tipo, id_marca, f_incorporacion, id_asignacion o id_estado' });
+    }
+    //Verificacion y control de campos opcionales
+    f_vencimiento = f_vencimiento || null;
+    f_asignacion = f_asignacion || null;
+
+    const parametros = [elemento, id_tipo, id_marca, f_incorporacion, f_vencimiento, id_asignacion, f_asignacion, id_estado];
+    db.query(query, parametros ,(error, results) => {
+        if (error) {
+            console.error('Error al intentar crear un elemento:', error);
+            return res.status(500).json({ error: 'Error al intentar crear un elemento' });
+        }
+        if (results.affectedRows === 0) {
+            return res.status(400).json({ message: 'No se pudo agregar correctamente el nuevo elemento.' });
+        }
+        return res.status(200).json({
+            message: 'Elemento agregado correctamente',
+            id_insertado: results.insertId
+        });
+    });
+};
+
+
 //Cambiar estado de una herramienta
 const cambiarEstados = function cambiarEstados(req, res) {
     const foto = cargaDeFoto(req.file);
@@ -133,5 +178,8 @@ module.exports = {
     recuperarElementos,
     recuperarTipos,
     recuperarEstados,
+    recuperarMarcas,
+    agregarElemento,
+    recuperarAsignaciones,
     cambiarEstados,
 };
