@@ -8,7 +8,7 @@ function PanolOperativo() {
   const [tipos, setTipos] = useState([]);
   const [estados, setEstados] = useState([]);
   const [marcas, setMarcas] = useState([]);
-  const [asignacion, setAsignacion] = useState([]);
+  const [asignaciones, setAsignaciones] = useState([]);
 
   const [tipoSeleccionado, setTipoSeleccionado] = useState('');
   const [estadoSeleccionado, setEstadoSeleccionado] = useState('');
@@ -18,13 +18,13 @@ function PanolOperativo() {
   const [fechaVenciDesde, setFechaVenciDesde] = useState('');
   const [fechaVenciHasta, setFechaVenciHasta] = useState('');
 
+  //HOOKS para Paginar
   const [paginaActual, setPaginaActual] = useState(1);
   const elementosPorPagina = 5;
 
+  //HOOKS para Agregar
   const [modalAbierto, setModalAbierto] = useState(false);
-  const [modoEdicion, setModoEdicion] = useState(false);
   const [formulario, setFormulario] = useState({
-    id_elemento: null,
     elemento: '',
     tipo: '',
     marca: '',
@@ -35,8 +35,15 @@ function PanolOperativo() {
     estado: '',
   });
 
+  //HOOKS para Editar
+  const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
+  const [elementoEditar, setElementoEditar] = useState(null);
+  const [imagenActiva, setImagenActiva] = useState(false);
+  const [ImagenContenido, setImagenContenido] = useState('');
+
+
   useEffect(() => {
-    axios.get(`http://localhost:3001/recuperar-elementosPanol`)
+    axios.get('http://localhost:3001/recuperar-elementosPanol')
       .then(res => setElementos(res.data))
       .catch(error => console.error('Error cargando elementos:', error));
   }, []);
@@ -54,15 +61,15 @@ function PanolOperativo() {
   }, []);
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/recuperar-marcasPanol`)
+    axios.get('http://localhost:3001/recuperar-marcasPanol')
       .then(res => setMarcas(res.data))
       .catch(error => console.error('Error cargando elementos:', error));
   }, []);
 
   useEffect(() => {
-    axios.get(`http://localhost:3001/recuperar-asignacionPanol`)
-      .then(res => setAsignacion(res.data))
-      .catch(error => console.error('Error cargando asignaciones:', error));
+    axios.get('http://localhost:3001/recuperar-asignacionPanol')
+      .then(res => setAsignaciones(res.data))
+      .catch(error => console.error('Error cargando elementos:', error));
   }, []);
 
   const elementosFiltrados = useMemo(() => {
@@ -130,151 +137,236 @@ function PanolOperativo() {
     setPaginaActual(1);
   };
 
-  const abrirModalNuevo = () => {
-    setFormulario({
-      id_elemento: null,
-      elemento: '',
-      tipo: '',
-      marca: '',
-      f_incorporacion: '',
-      f_vencimiento: '',
-      asignacion: '',
-      f_asignacion: '',
-      estado: '',
-    });
-    setModoEdicion(false);
-    setModalAbierto(true);
-  };
-
-  const abrirModalEdicion = (el) => {
-    setFormulario({
-      id_elemento: el.id_elemento,
-      elemento: el.elemento,
-      tipo: el.tipo,
-      marca: el.marca,
-      f_incorporacion: el.f_incorporacion.split('T')[0],
-      f_vencimiento: el.f_vencimiento ? el.f_vencimiento.split('T')[0] : '',
-      asignacion: el.asignacion || '',
-      f_asignacion: el.f_asignacion ? el.f_asignacion.split('T')[0] : '',
-      estado: el.estado
-    });
-    setModoEdicion(true);
-    setModalAbierto(true);
-  };
-
-  const guardarElemento = async () => {
+  const crearElemento = async () => {
     try {
-      if (modoEdicion) {
-        await axios.put(`http://localhost:3001/editar-elementoPanol/${formulario.id_elemento}`, {
-          ...formulario
+      const response = await axios.post('http://localhost:3001/agregar-elementoPanol', {
+        elemento: formulario.elemento,
+        id_tipo: formulario.tipo,
+        id_marca: formulario.marca,
+        f_incorporacion: formulario.f_incorporacion,
+        f_vencimiento: formulario.f_vencimiento,
+        id_asignacion: formulario.asignacion,
+        f_asignacion: formulario.f_asignacion,
+        id_estado: formulario.estado
+      });
+      alert(`Se ha agregado el elemento exitosamente. Código: ${response.data.id_insertado}`);
+      if (response.status === 200) {
+        const nuevosDatos = await axios.get('http://localhost:3001/recuperar-elementosPanol');
+        setElementos(nuevosDatos.data);
+        setModalAbierto(false);
+        setFormulario({
+          elemento: '',
+          tipo: '',
+          marca: '',
+          f_incorporacion: '',
+          f_vencimiento: '',
+          asignacion: '',
+          f_asignacion: '',
+          estado: '',
         });
-        alert('Elemento modificado exitosamente.');
-      } else {
-        const res = await axios.post('http://localhost:3001/agregar-elementoPanol', {
-          ...formulario
-        });
-        alert(`Elemento agregado. Código: ${res.data.id_insertado}`);
       }
-
-      const nuevosDatos = await axios.get(`http://localhost:3001/recuperar-elementosPanol`);
-      setElementos(nuevosDatos.data);
-      setModalAbierto(false);
     } catch (error) {
-      console.error('Error guardando el elemento:', error);
-      alert('Ocurrió un error al guardar el elemento.');
+      console.error('Error al agregar el elemento:', error);
+      alert('Ocurrió un error al intentar agregar el elemento.');
     }
   };
 
-  const exportarExcel = () => {
-    const ws = XLSX.utils.json_to_sheet(elementosFiltrados);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "PañolOperativo");
-    XLSX.writeFile(wb, "pañol_operativo.xlsx");
+  const exportarAExcel = () => {
+  const hoja = XLSX.utils.json_to_sheet(elementosFiltrados);
+  const libro = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(libro, hoja, 'Pañol Operativo');
+  const ahora = new Date();
+  const fechaFormateada = ahora.toISOString().slice(0, 19).replace(/[:T]/g, '-'); // ej: 2025-05-10-14-30-00
+  const nombreArchivo = `PañolOperativo_${fechaFormateada}.xlsx`;
+  XLSX.writeFile(libro, nombreArchivo);
   };
+
+
+  //Funcion para manejar el envio del formulario
+  const handleEditarElemento = (e) => {
+  e.preventDefault(); // Evita el comportamiento por defecto del formulario
+
+  const form = e.target.closest("form");
+
+  const formulario = {
+    id_elemento: elementoEditar.id_elemento,
+    asignacion: form.id_asignacion.value,
+    f_asignacion: form.f_asignacion.value,
+    estado: form.id_estado.value,
+  };
+
+  // Validación: si el estado es BAJA (3) y no hay imagen cargada
+  if (parseInt(formulario.estado) === 3 && !ImagenContenido) {
+    alert("Debe subir una imagen para dar de baja el elemento.");
+    return;
+  }
+
+  editarElemento(formulario, ImagenContenido);
+  };
+
+  //Función para activar/desactivar input de imagen según estado
+  const activadorImagenes = (valor) => {
+    const estadoSeleccionado = Number(valor);
+    if (estadoSeleccionado === 3) {
+      setImagenActiva(false);
+    } else {
+      setImagenActiva(true);
+      const inputFile = document.getElementById("foto");
+      if (inputFile) {
+        inputFile.value = "";
+      }
+      setImagenContenido(""); 
+    }
+  };
+
+  //Función para guardar cambios en un elemento
+  const editarElemento = async (formulario, ImagenContenido) => {
+    try {
+      const formData = new FormData();
+
+      formData.append("id_elemento", formulario.id_elemento);
+      formData.append("id_asignacion", formulario.asignacion);
+      formData.append("f_asignacion", formulario.f_asignacion);
+      formData.append("id_estado", formulario.estado);
+
+      // Solo incluir imagen si el estado es BAJA (id 3) y hay imagen cargada
+      if (parseInt(formulario.estado) === 3 && ImagenContenido) {
+        formData.append("foto", ImagenContenido);
+      }
+      const response = await axios.put(
+        `http://localhost:3001/editar-elementoPanol/${formulario.id_elemento}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      if (response.status === 200) {
+        alert("Elemento editado exitosamente.");
+        const nuevosDatos = await axios.get("http://localhost:3001/recuperar-elementosPanol");
+        setElementos(nuevosDatos.data);
+        setModalEditarAbierto(false);
+        setImagenContenido("");
+        setImagenActiva(false);
+      }
+    } catch (error) {
+      console.error("Error al editar el elemento:", error);
+      alert("Ocurrió un error al intentar editar el elemento.");
+    }
+  };
+
+  //Funcion para cerrar modal de edicion
+  const cerrarModalEditar = () => {
+  setModalEditarAbierto(false);
+  setImagenContenido(""); 
+  setImagenActiva(false); 
+  setElementoEditar(null);
+  const inputFile = document.getElementById("foto");
+  if (inputFile) inputFile.value = ""; 
+};
+
+
 
   return (
     <div className="moviles-registro-container">
       <h2 className="moviles-registro-titulo">Pañol Operativo</h2>
 
-      {/* Filtros */}
       <div className="filtros">
-        <div className="filtro-group">
-          <label>Buscar:</label>
-          <input
-            type="text"
-            value={textoFiltro}
-            onChange={(e) => setTextoFiltro(e.target.value)}
-            placeholder="Código o nombre"
-          />
+        <input
+          type="text"
+          placeholder="Elemento o código"
+          value={textoFiltro}
+          onChange={(e) => {
+            setTextoFiltro(e.target.value);
+            setPaginaActual(1);
+          }}
+        />
+
+        <select
+          value={tipoSeleccionado}
+          onChange={(e) => {
+            setTipoSeleccionado(e.target.value);
+            setPaginaActual(1);
+          }}
+        >
+          <option value="">Selecciona Tipo</option>
+          {tipos.map((tipo) => (
+            <option key={tipo.tipo} value={tipo.tipo}>
+              {tipo.tipo}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={estadoSeleccionado}
+          onChange={(e) => {
+            setEstadoSeleccionado(e.target.value);
+            setPaginaActual(1);
+          }}
+        >
+          <option value="">Selecciona Estado</option>
+          {estados.map((estado) => (
+            <option key={estado.estado} value={estado.estado}>
+              {estado.estado}
+            </option>
+          ))}
+        </select>
+
+        <div className="rango-fechas">
+          <label>Incorporación desde:
+            <input
+              type="date"
+              value={fechaIncorpoDesde}
+              onChange={(e) => {
+                setFechaIncorpoDesde(e.target.value);
+                setPaginaActual(1);
+              }}
+            />
+          </label>
+          <label> hasta:
+            <input
+              type="date"
+              value={fechaIncorpoHasta}
+              onChange={(e) => {
+                setFechaIncorpoHasta(e.target.value);
+                setPaginaActual(1);
+              }}
+            />
+          </label>
         </div>
 
-        <div className="filtro-group">
-          <label>Tipo:</label>
-          <select
-            value={tipoSeleccionado}
-            onChange={(e) => setTipoSeleccionado(e.target.value)}
-          >
-            <option value="">Todos</option>
-            {tipos.map(tipo => (
-              <option key={tipo.id_tipo} value={tipo.tipo}>{tipo.tipo}</option>
-            ))}
-          </select>
+        <div className="rango-fechas">
+          <label>Vencimiento desde: 
+            <input
+              type="date"
+              value={fechaVenciDesde}
+              onChange={(e) => {
+                setFechaVenciDesde(e.target.value);
+                setPaginaActual(1);
+              }}
+            />
+          </label>
+          <label> hasta:
+            <input
+              type="date"
+              value={fechaVenciHasta}
+              onChange={(e) => {
+                setFechaVenciHasta(e.target.value);
+                setPaginaActual(1);
+              }}
+            />
+          </label>
         </div>
 
-        <div className="filtro-group">
-          <label>Estado:</label>
-          <select
-            value={estadoSeleccionado}
-            onChange={(e) => setEstadoSeleccionado(e.target.value)}
-          >
-            <option value="">Todos</option>
-            {estados.map(estado => (
-              <option key={estado.id_estado} value={estado.estado}>{estado.estado}</option>
-            ))}
-          </select>
-        </div>
-
-        <div className="filtro-group">
-          <label>Incorp. desde:</label>
-          <input
-            type="date"
-            value={fechaIncorpoDesde}
-            onChange={(e) => setFechaIncorpoDesde(e.target.value)}
-          />
-        </div>
-
-        <div className="filtro-group">
-          <label>Incorp. hasta:</label>
-          <input
-            type="date"
-            value={fechaIncorpoHasta}
-            onChange={(e) => setFechaIncorpoHasta(e.target.value)}
-          />
-        </div>
-
-        <div className="filtro-group">
-          <label>Venc. desde:</label>
-          <input
-            type="date"
-            value={fechaVenciDesde}
-            onChange={(e) => setFechaVenciDesde(e.target.value)}
-          />
-        </div>
-
-        <div className="filtro-group">
-          <label>Venc. hasta:</label>
-          <input
-            type="date"
-            value={fechaVenciHasta}
-            onChange={(e) => setFechaVenciHasta(e.target.value)}
-          />
-        </div>
-
-        <button className="filtros-button" onClick={limpiarFiltros}>Limpiar filtros</button>
-        <button className="filtros-button" onClick={exportarExcel}>Exportar a Excel</button>
+        <button className="filtros-button" onClick={limpiarFiltros}>
+          Limpiar filtros
+        </button>
+        <button className="filtros-button" onClick={exportarAExcel}>
+          Exportar a Excel
+        </button>
       </div>
 
-      {/* Tabla */}
       <table className="moviles-registro-tabla">
         <thead>
           <tr>
@@ -298,141 +390,126 @@ function PanolOperativo() {
               <td>{el.tipo}</td>
               <td>{el.marca}</td>
               <td>{el.f_incorporacion}</td>
-              <td>{el.f_vencimiento || '-'}</td>
-              <td>{el.asignacion || '-'}</td>
-              <td>{el.f_asignacion || '-'}</td>
+              <td>{el.f_vencimiento}</td>
+              <td>{el.asignacion}</td>
+              <td>{el.f_asignacion}</td>
               <td>{el.estado}</td>
               <td>
-                <button className="boton-accion-mod" onClick={() => abrirModalEdicion(el)}>Modificar</button>
-                <button className="boton-accion-mod">Ver Foto</button>
+                <div>
+                  <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
+                  <button className="boton-accion-mod" onClick={() => console.log()} disabled={el.estado !== "Baja"}>Ver Foto</button>
+                </div>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {/* Paginación */}
       <div className="paginacion">
-        <button 
-          className="boton-paginacion" 
-          onClick={irPaginaAnterior} 
-          disabled={paginaActual === 1}
-        >
+        <button className="boton-paginacion" onClick={irPaginaAnterior} disabled={paginaActual === 1}>
           Anterior
         </button>
-        <span className="pagina-actual">Página {paginaActual} de {totalPaginas}</span>
-        <button 
-          className="boton-paginacion" 
-          onClick={irPaginaSiguiente} 
-          disabled={paginaActual === totalPaginas}
-        >
+        <span className="pagina-actual">
+          Página {paginaActual} de {totalPaginas}
+        </span>
+        <button className="boton-paginacion" onClick={irPaginaSiguiente} disabled={paginaActual === totalPaginas}>
           Siguiente
         </button>
       </div>
 
-      {/* Botón agregar */}
       <div className="action-buttons">
-        <button className="add-report-btn" onClick={abrirModalNuevo}>Agregar elemento</button>
+        <button className="add-report-btn" onClick={() => setModalAbierto(true)}>
+          Agregar elemento
+        </button>
       </div>
 
-      {/* Modal reutilizable */}
       {modalAbierto && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3 className="modal-title">{modoEdicion ? 'Editar Elemento' : 'Agregar Nuevo Elemento'}</h3>
-            <form className="form-container" onSubmit={(e) => { e.preventDefault(); guardarElemento(); }}>
-              <div className="form-group">
-                <label>Elemento:</label>
-                <input 
-                  type="text" 
-                  value={formulario.elemento}
-                  onChange={(e) => setFormulario({...formulario, elemento: e.target.value})}
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label>Tipo:</label>
-                <select
-                  value={formulario.tipo}
-                  onChange={(e) => setFormulario({...formulario, tipo: e.target.value})}
-                  required
-                >
-                  <option value="">Seleccione un tipo</option>
-                  {tipos.map(tipo => (
-                    <option key={tipo.id_tipo} value={tipo.tipo}>{tipo.tipo}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="form-group">
-                <label>Marca:</label>
-                <select
-                  value={formulario.marca}
-                  onChange={(e) => setFormulario({...formulario, marca: e.target.value})}
-                  required
-                >
-                  <option value="">Seleccione una marca</option>
-                  {marcas.map(marca => (
-                    <option key={marca.id_marca} value={marca.marca}>{marca.marca}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="form-group">
-                <label>Fecha Incorporación:</label>
-                <input 
-                  type="date" 
-                  value={formulario.f_incorporacion}
-                  onChange={(e) => setFormulario({...formulario, f_incorporacion: e.target.value})}
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label>Fecha Vencimiento:</label>
-                <input 
-                  type="date" 
-                  value={formulario.f_vencimiento}
-                  onChange={(e) => setFormulario({...formulario, f_vencimiento: e.target.value})}
-                />
-              </div>
-              
-              <div className="form-group">
-                <label>Asignación:</label>
-                <input 
-                  type="text" 
-                  value={formulario.asignacion}
-                  onChange={(e) => setFormulario({...formulario, asignacion: e.target.value})}
-                />
-              </div>
-              
-              <div className="form-group">
-                <label>Fecha Asignación:</label>
-                <input 
-                  type="date" 
-                  value={formulario.f_asignacion}
-                  onChange={(e) => setFormulario({...formulario, f_asignacion: e.target.value})}
-                />
-              </div>
-              
-              <div className="form-group">
-                <label>Estado:</label>
-                <select
-                  value={formulario.estado}
-                  onChange={(e) => setFormulario({...formulario, estado: e.target.value})}
-                  required
-                >
-                  <option value="">Seleccione un estado</option>
-                  {estados.map(estado => (
-                    <option key={estado.id_estado} value={estado.estado}>{estado.estado}</option>
-                  ))}
-                </select>
-              </div>
-              
+            <h3 className="modal-title">Agregar Nuevo Elemento</h3>
+            <form className="form-container" onSubmit={(e) => { e.preventDefault(); crearElemento(); }}>
+              <input
+                name="elemento"
+                placeholder="Elemento"
+                value={formulario.elemento}
+                onChange={(e) => setFormulario({ ...formulario, elemento: e.target.value })}
+                required
+              />
+
+              <select
+                value={formulario.tipo}
+                onChange={(e) => setFormulario({ ...formulario, tipo: e.target.value })}
+                required
+              >
+                <option value="">Seleccione un tipo</option>
+                {tipos.map((tipo) => (
+                  <option key={tipo.id_tipo} value={tipo.id_tipo}>
+                    {tipo.tipo}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={formulario.marca}
+                onChange={(e) => setFormulario({ ...formulario, marca: e.target.value })}
+                required
+              >
+                <option value="">Seleccione una marca</option>
+                {marcas.map((marca) => (
+                  <option key={marca.id_marca} value={marca.id_marca}>
+                    {marca.marca}
+                  </option>
+                ))}
+              </select>
+
+              <label>Fecha de Incorporación:</label>
+              <input
+                type="date"
+                name="f_incorporacion"
+                value={formulario.f_incorporacion}
+                onChange={(e) => setFormulario({ ...formulario, f_incorporacion: e.target.value })}
+                required
+              />
+
+              <label>Fecha de Vencimiento:</label>
+              <input
+                type="date"
+                name="f_vencimiento"
+                value={formulario.f_vencimiento}
+                onChange={(e) => setFormulario({ ...formulario, f_vencimiento: e.target.value })}
+              />
+
+              <input
+                name="asignacion"
+                placeholder="Asignación"
+                value={formulario.asignacion}
+                onChange={(e) => setFormulario({ ...formulario, asignacion: e.target.value })}
+              />
+
+              <label>Fecha de Asignación:</label>
+              <input
+                type="date"
+                name="f_asignacion"
+                value={formulario.f_asignacion}
+                onChange={(e) => setFormulario({ ...formulario, f_asignacion: e.target.value })}
+              />
+
+              <select
+                value={formulario.estado}
+                onChange={(e) => setFormulario({ ...formulario, estado: e.target.value })}
+                required
+              >
+                <option value="">Seleccione un estado</option>
+                {estados.map((estado) => (
+                  <option key={estado.id_estado} value={estado.id_estado}>
+                    {estado.estado}
+                  </option>
+                ))}
+              </select>
+
               <div className="form-buttons">
                 <button type="submit" className="confirm-btn">
-                  {modoEdicion ? 'Guardar Cambios' : 'Agregar'}
+                  Agregar
                 </button>
                 <button type="button" className="cancel-btn" onClick={() => setModalAbierto(false)}>
                   Cancelar
@@ -442,8 +519,62 @@ function PanolOperativo() {
           </div>
         </div>
       )}
+
+      {/* Modal Editar */}
+      {modalEditarAbierto && elementoEditar && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3 className="modal-title">Editar Elemento</h3>
+            <form className="form-container" onSubmit={(e) => { e.preventDefault();}}>
+              <p>Elemento:</p>
+              <input type="text" name="elemento" value={elementoEditar.elemento} readOnly />
+
+              <p>ID Elemento:</p>
+              <input type="text" name="id_elemento" value={elementoEditar.id_elemento} readOnly />
+
+              <p>Asignado en:</p>
+              <select name="id_asignacion" required defaultValue={
+                asignaciones.find(a => a.asignacion === elementoEditar.asignacion)?.id_asignacion || ""
+              }>
+                {asignaciones.map((asignacion) => (
+                  <option key={asignacion.id_asignacion} value={asignacion.id_asignacion}>
+                    {asignacion.asignacion}
+                  </option>
+                ))}
+              </select>
+
+
+              <p>Fecha de asignación:</p>
+              <input type="date" name="f_asignacion" required defaultValue={elementoEditar.f_asignacion} />
+
+              <p>Estado:</p>
+              <select name="id_estado" required defaultValue={
+                estados.find(e => e.estado === elementoEditar.estado)?.id_estado || ""} onChange={(e) => activadorImagenes(e.target.value)}>
+                {estados.map((estado) => (
+                  <option key={estado.id_estado} value={estado.id_estado}>
+                    {estado.estado}
+                  </option>
+                ))}
+              </select>
+
+              <p>Imagen de baja</p>
+              <input type="file" id="foto" name="foto" accept="image/*" disabled={imagenActiva}onChange={(e) => setImagenContenido(e.target.files[0])}/>
+
+              <div className="form-buttons">
+                <button type="submit" className="confirm-btn" onClick={handleEditarElemento}>Guardar Cambios</button>
+                <button type="button" className="cancel-btn" onClick={cerrarModalEditar}>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
+ 
+
+
 
 export default PanolOperativo;
+
