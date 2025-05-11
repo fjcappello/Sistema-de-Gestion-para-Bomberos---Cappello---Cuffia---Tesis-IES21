@@ -38,8 +38,12 @@ function PanolOperativo() {
   //HOOKS para Editar
   const [modalEditarAbierto, setModalEditarAbierto] = useState(false);
   const [elementoEditar, setElementoEditar] = useState(null);
-  const [imagenActiva, setImagenActiva] = useState(false);
+  const [imagenActiva, setImagenActiva] = useState(true);
   const [ImagenContenido, setImagenContenido] = useState('');
+
+  //HOOKS para visualizar foto de baja
+  const [modalFotoAbierto, setModalFotoAbierto] = useState(false);
+  const [fotoUrl, setFotoUrl] = useState('');
 
 
   useEffect(() => {
@@ -184,24 +188,24 @@ function PanolOperativo() {
 
   //Funcion para manejar el envio del formulario
   const handleEditarElemento = (e) => {
-  e.preventDefault(); // Evita el comportamiento por defecto del formulario
+    e.preventDefault(); // Evita el comportamiento por defecto del formulario
 
-  const form = e.target.closest("form");
+    const form = e.target.closest("form");
 
-  const formulario = {
-    id_elemento: elementoEditar.id_elemento,
-    asignacion: form.id_asignacion.value,
-    f_asignacion: form.f_asignacion.value,
-    estado: form.id_estado.value,
-  };
+    const formulario = {
+      id_elemento: elementoEditar.id_elemento,
+      asignacion: form.id_asignacion.value,
+      f_asignacion: form.f_asignacion.value,
+      estado: form.id_estado.value,
+    };
 
-  // Validación: si el estado es BAJA (3) y no hay imagen cargada
-  if (parseInt(formulario.estado) === 3 && !ImagenContenido) {
-    alert("Debe subir una imagen para dar de baja el elemento.");
-    return;
-  }
+    // Validación: si el estado es BAJA (3) y no hay imagen cargada
+    if (parseInt(formulario.estado) === 3 && !ImagenContenido) {
+      alert("Debe subir una imagen para dar de baja el elemento.");
+      return;
+    }
 
-  editarElemento(formulario, ImagenContenido);
+    editarElemento(formulario, ImagenContenido);
   };
 
   //Función para activar/desactivar input de imagen según estado
@@ -234,7 +238,7 @@ function PanolOperativo() {
         formData.append("foto", ImagenContenido);
       }
       const response = await axios.put(
-        `http://localhost:3001/editar-elementoPanol/${formulario.id_elemento}`,
+        `http://localhost:3001/cambiar-estadosPanol`,
         formData,
         {
           headers: {
@@ -258,15 +262,15 @@ function PanolOperativo() {
 
   //Funcion para cerrar modal de edicion
   const cerrarModalEditar = () => {
-  setModalEditarAbierto(false);
-  setImagenContenido(""); 
-  setImagenActiva(false); 
-  setElementoEditar(null);
-  const inputFile = document.getElementById("foto");
-  if (inputFile) inputFile.value = ""; 
-};
+    setImagenContenido(""); 
+    setImagenActiva(true); 
+    setElementoEditar(null);
+    const inputFile = document.getElementById("foto");
+    if (inputFile) inputFile.value = ""; 
+    setModalEditarAbierto(false);
+  };
 
-
+  
 
   return (
     <div className="moviles-registro-container">
@@ -397,7 +401,7 @@ function PanolOperativo() {
               <td>
                 <div>
                   <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
-                  <button className="boton-accion-mod" onClick={() => console.log()} disabled={el.estado !== "Baja"}>Ver Foto</button>
+                  <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`http://localhost:3001/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button>
                 </div>
               </td>
             </tr>
@@ -479,12 +483,18 @@ function PanolOperativo() {
                 onChange={(e) => setFormulario({ ...formulario, f_vencimiento: e.target.value })}
               />
 
-              <input
+              <select
                 name="asignacion"
-                placeholder="Asignación"
                 value={formulario.asignacion}
                 onChange={(e) => setFormulario({ ...formulario, asignacion: e.target.value })}
-              />
+              >
+                <option value="" disabled>Seleccione un lugar</option>
+                {asignaciones.map((asignacion) => (
+                  <option key={asignacion.id_asignacion} value={asignacion.id_asignacion}>
+                    {asignacion.asignacion}
+                  </option>
+                ))}
+              </select>
 
               <label>Fecha de Asignación:</label>
               <input
@@ -569,6 +579,20 @@ function PanolOperativo() {
         </div>
       )}
 
+      {/* Modal Foto de Baja */}
+      {modalFotoAbierto && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3 className="modal-title">Foto de Baja</h3>
+            <div className="foto-container modal-foto">
+              <img src={fotoUrl} alt="Foto de Baja" className="foto-baja" />
+            </div>
+            <div className="form-buttons">
+              <button type="button" className="cancel-btn" onClick={() => setModalFotoAbierto(false)}>Cerrar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

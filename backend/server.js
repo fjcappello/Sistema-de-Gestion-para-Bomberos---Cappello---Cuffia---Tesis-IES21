@@ -2,10 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const app = express();
 const PORT = 3001;
+const path = require('path');
+
+
 
 app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(express.json());
-
+app.use('/resources', express.static(path.join(__dirname, '..', 'resources')));//para servir imagenes
 app.use(require('./Routes/login'));
 app.use(require('./Routes/personal'));
 app.use(require('./Routes/partes'));

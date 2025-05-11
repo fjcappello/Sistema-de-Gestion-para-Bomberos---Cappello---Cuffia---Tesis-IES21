@@ -339,3 +339,9 @@
 .boton-accion-foto:hover {
   background-color: #2980b9;
 }
+
+.modal-foto img {
+  max-width: 100%;   /* Ajusta la imagen al ancho del modal */
+  max-height: 80vh;  /* Limita la altura a un 80% de la altura de la ventana */
+  object-fit: contain; /* Asegura que la imagen se ajusta proporcionalmente */
+}

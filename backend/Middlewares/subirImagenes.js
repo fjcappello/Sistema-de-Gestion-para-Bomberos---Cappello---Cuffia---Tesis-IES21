@@ -8,3 +8,6 @@ const subirImagen = multer({ dest: 'resources/' });
 module.exports = {
     subirImagen
 }
+
+
+

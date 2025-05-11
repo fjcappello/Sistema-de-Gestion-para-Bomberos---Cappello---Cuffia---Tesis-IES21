@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {subirImagen} = require('../Middlewares/subirImagenes.js')
-const { recuperarElementos, recuperarEstados, recuperarTipos, recuperarMarcas, agregarElemento, recuperarAsignaciones,  cambiarEstados} = require('../Controllers/panolOperativo.controller.js');
+const { recuperarElementos, recuperarEstados, recuperarTipos, recuperarMarcas, agregarElemento, recuperarAsignaciones,  editarElemento} = require('../Controllers/panolOperativo.controller.js');
 
 // Recupera los elementos del Pañol Operativo filtrados.
 router.get('/recuperar-elementosPanol', recuperarElementos);
@@ -22,6 +22,6 @@ router.get('/recuperar-asignacionPanol', recuperarAsignaciones);
 router.post('/agregar-elementoPanol', agregarElemento);
 
 // Cambia el estado de un elemento del Pañol Operativo.
-router.put('/cambiar-estadosPanol', subirImagen.single('imagenElemento') ,cambiarEstados);
+router.put('/cambiar-estadosPanol', subirImagen.single('foto') , editarElemento);
 
 module.exports = router;

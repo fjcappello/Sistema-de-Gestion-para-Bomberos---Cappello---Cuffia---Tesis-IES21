@@ -140,28 +140,31 @@ const agregarElemento = function agregarElemento(req, res) {
     });
 };
 
-
-//Cambiar estado de una herramienta
-const cambiarEstados = function cambiarEstados(req, res) {
-    const foto = cargaDeFoto(req.file);
-    const {id_estado, id_elemento} = req.body;
-    const query = `UPDATE panol SET id_estado = ?, foto = ? WHERE id_elemento = ?`;
-    if (!id_estado || !id_elemento) {
-        return res.status(400).json({ error: 'Faltan datos: id_estado o id_elemento' });
+// Editar un elemento del pañol
+const editarElemento = (req, res) => {
+    const { id_elemento, id_asignacion, f_asignacion, id_estado } = req.body;
+    if (!id_elemento || !id_asignacion || !id_estado) {
+        return res.status(400).json({ error: 'Faltan datos requeridos' });
     }
-    if(!foto){
-        return res.status(400).json({ error: 'Faltan datos: Debe cargar la foto del elemento dado de baja' });
+    let query = `UPDATE panol SET id_asignacion = ?, f_asignacion = ?, id_estado = ?`;
+    const parametros = [id_asignacion, f_asignacion, id_estado];
+    // Si hay imagen cargada Y el estado es 3 (BAJA), se agrega foto
+    if (req.file && parseInt(id_estado) === 3) {
+        const foto = cargaDeFoto(req.file);
+        query += `, foto = ?`;
+        parametros.push(foto);
     }
-    const parametros = [id_estado, foto, id_elemento];
-    db.query(query, parametros ,(error, results) => {
+    query += ` WHERE id_elemento = ?`;
+    parametros.push(id_elemento);
+    db.query(query, parametros, (error, results) => {
         if (error) {
-            console.error('Error al intentar cambiar el estado:', error);
-            return res.status(500).json({ error: 'Error al intentar cambiar el estado' });
+            console.error('Error al editar el elemento:', error);
+            return res.status(500).json({ error: 'Error en la edición del elemento' });
         }
         if (results.affectedRows === 0) {
-            return res.status(404).json({ message: 'No se encontraron tipos de elementos.' });
+            return res.status(404).json({ message: 'Elemento no encontrado' });
         }
-        return res.status(200).json(results);
+        return res.status(200).json({ message: 'Elemento actualizado correctamente' });
     });
 };
 
@@ -173,7 +176,6 @@ const cargaDeFoto = function cargaDeFoto(archivo) {
     return `resources/${uniqueName}`;
 };
 
-
 module.exports = {
     recuperarElementos,
     recuperarTipos,
@@ -181,5 +183,8 @@ module.exports = {
     recuperarMarcas,
     agregarElemento,
     recuperarAsignaciones,
-    cambiarEstados,
+    editarElemento,
 };
+
+
+
