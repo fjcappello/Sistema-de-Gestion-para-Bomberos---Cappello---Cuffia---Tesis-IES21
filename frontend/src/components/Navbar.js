@@ -57,7 +57,7 @@ function Navbar({ onLogout }) {
           {isStatisticsDropdownOpen && (
             <ul className="dropdown-menu">
               <li><Link to="/reportes/estadisticas">Estadísticas emergencias</Link></li>
-              {/* Puedes agregar más ítems si querés */}
+              <li><Link to="/estadisticas-asistencia">Estadísticas asistencia</Link></li>
             </ul>
           )}
         </li>
