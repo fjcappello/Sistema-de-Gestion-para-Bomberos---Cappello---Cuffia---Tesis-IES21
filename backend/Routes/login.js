@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { loginUsuario, cambiarPassword, logoutUsuario } = require('../Controllers/login.controller.js');
+const { loginUsuario, cambiarPassword, logoutUsuario } = require('../Controllers/login.controller');
 
 // Verifica si el legajo y la contraseña son correctos
 router.post('/login', loginUsuario);

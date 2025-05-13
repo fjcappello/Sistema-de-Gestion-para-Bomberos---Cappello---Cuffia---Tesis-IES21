@@ -205,7 +205,26 @@ const cambiarPassword = function (req, res) {
   });
 };
 
+
+// LOGOUT
+const logoutUsuario = function (req, res) {
+  const { legajo, nombreCompleto } = req.body;
+
+  if (!legajo || !nombreCompleto) {
+    return res.status(400).json({ success: false, error: 'Faltan datos: legajo y nombreCompleto son requeridos' });
+  }
+
+  try {
+    registrarLog(legajo, `El usuario ${nombreCompleto} cerró sesión.`);
+    return res.status(200).json({ success: true, message: 'Logout registrado correctamente' });
+  } catch (error) {
+    console.error('Error al registrar logout:', error);
+    return res.status(500).json({ success: false, error: 'Error interno al registrar logout' });
+  }
+};
+
 module.exports = {
   loginUsuario,
-  cambiarPassword
+  cambiarPassword,
+  logoutUsuario
 };
