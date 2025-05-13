@@ -7,6 +7,7 @@ import EmergenciesTable from './components/EmergenciesTable';
 import Login from './components/Login';
 import './components/Styles/App.css';
 import ReportsPage from './components/EstadisticasEmergencias';
+import EstadisticaAsistencia from './components/estadisticasAsistencias';
 import EnviarMensaje from './components/EnviarMensaje';
 import BandejaEntrada from './components/BandejaEntrada';
 import EnviarMensajeModal from './components/EnviarMensajeModal';
@@ -105,6 +106,7 @@ function App() {
                 <Route path="/emergencias" element={<EmergenciesTable />} />
                 <Route path="/personal" element={<PersonalTable />} />
                 <Route path="/reportes/estadisticas" element={<ReportsPage />} />
+                <Route path="/estadisticas-asistencia" element={<EstadisticaAsistencia />} />
                 <Route path="/reportes/movimientos-personas" element={<MovimientosPersonas />} />
                 <Route path="/reportes/movimientos-moviles" element={<MovimientoMoviles />} />
                 <Route path="/bandeja-entrada" element={<BandejaEntrada />} />

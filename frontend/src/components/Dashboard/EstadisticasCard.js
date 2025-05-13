@@ -37,7 +37,7 @@ function EstadisticasCard() {
 
   return (
     <div>
-      <h3>Estadísticas</h3>
+      <h3>Estadísticas de Emergencias</h3>
       <div style={{ marginBottom: '1rem' }}>
         <label htmlFor="periodo">Periodo: </label>
         <select id="periodo" value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
