@@ -37,7 +37,7 @@ const generarToken = function (legajo, callback) {
     SELECT p.legajo, p.id_rol, r.rol 
     FROM personal AS p 
     INNER JOIN rol AS r ON p.id_rol = r.id_rol
-    WHERE p.legajo = ? AND p.activo = 1;
+    WHERE p.legajo = ? AND p.situacion_id = 1;
   `;
 
   db.query(query, [legajo], (err, resultados) => {

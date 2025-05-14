@@ -113,7 +113,7 @@ const { generarToken } = require('./token.controller.js');
 // LOGIN
 const loginUsuario = function (req, res) {
   const { legajo, password } = req.body;
-
+  console.log(legajo, password)
   const query = `
     SELECT CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo, l.primer_ingreso, l.contraseña AS clave
     FROM personal p

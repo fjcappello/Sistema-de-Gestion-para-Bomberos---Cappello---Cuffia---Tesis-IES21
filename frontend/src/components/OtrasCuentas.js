@@ -9,6 +9,9 @@ function OtrasCuentas() {
   const [permisoSeleccionado, setPermisoSeleccionado] = useState('');
   const [permisos, setPermisos] = useState([]);
 
+  const [mensajePermiso, setMensajePermiso] = useState('');
+  const [mensajePassword, setMensajePassword] = useState('');
+
   useEffect(() => {
     axios.get('http://localhost:3001/usuarios')
       .then(res => setUsuarios(res.data))
@@ -34,29 +37,31 @@ function OtrasCuentas() {
     }
   }, [seleccionado, usuarios]);
 
-
   const manejarRestablecerPassword = () => {
     axios.put('http://localhost:3001/restablecer-cuenta', { legajo: seleccionado })
-      .then(res => alert('Contraseña restablecida correctamente'))
+      .then(() => {
+        setMensajePassword('✅ Contraseña restablecida correctamente.');
+        setTimeout(() => setMensajePassword(''), 3000);
+      })
       .catch(error => console.error('Error restableciendo contraseña:', error));
   };
 
   const manejarActualizarPermiso = () => {
-    axios.put('http://localhost:3001/cambiar-permisos', { 
-      legajo: seleccionado, 
-      id_rol: permisoSeleccionado 
+    axios.put('http://localhost:3001/cambiar-permisos', {
+      legajo: seleccionado,
+      id_rol: permisoSeleccionado
     })
-      .then(res => {
-        alert('Permiso actualizado correctamente');
-  
-        // Recargar usuarios desde la API para reflejar los cambios
+      .then(() => {
+        setMensajePermiso('✅ Permiso actualizado correctamente.');
+        setTimeout(() => setMensajePermiso(''), 3000);
+
         axios.get('http://localhost:3001/usuarios')
           .then(res => setUsuarios(res.data))
           .catch(error => console.error('Error recargando usuarios:', error));
       })
       .catch(error => console.error('Error actualizando permiso:', error));
   };
-  
+
   return (
     <div className="configuracion-layout">
       <div className="configuracion-contenido">
@@ -66,15 +71,15 @@ function OtrasCuentas() {
         <div className="configuracion-filtros">
           <h3>Usuario</h3>
           <div className="usuario-row">
-            <select 
+            <select
               className="configuracion-input"
               value={seleccionado}
               onChange={(e) => setSeleccionado(e.target.value)}
             >
               <option value="">-- Selecciona Usuario --</option>
               {usuarios.map((usuario) => (
-                <option 
-                  key={usuario.legajo} 
+                <option
+                  key={usuario.legajo}
                   value={usuario.legajo.toString()}
                 >
                   {usuario.legajo + " - " + usuario.nombre}
@@ -88,15 +93,15 @@ function OtrasCuentas() {
         <div className="configuracion-filtros">
           <h3>Permisos</h3>
           <div className="permisos-row">
-            <select 
+            <select
               className="configuracion-input"
               value={permisoSeleccionado}
               onChange={(e) => setPermisoSeleccionado(e.target.value)}
             >
               <option value="">-- Selecciona Permiso --</option>
               {permisos.map((permiso) => (
-                <option 
-                  key={permiso.id_rol} 
+                <option
+                  key={permiso.id_rol}
                   value={permiso.id_rol.toString()}
                 >
                   {permiso.rol}
@@ -107,8 +112,9 @@ function OtrasCuentas() {
               Actualizar Permisos
             </button>
           </div>
+          {mensajePermiso && <p className="mensaje-exito">{mensajePermiso}</p>}
         </div>
-        <p>CARTELITO AQUI</p>
+
         {/* Restablecer Contraseña */}
         <div className="configuracion-filtros">
           <h3>Reestablecer contraseña</h3>
@@ -116,8 +122,8 @@ function OtrasCuentas() {
           <button className="configuracion-boton" onClick={manejarRestablecerPassword}>
             Restablecer Contraseña
           </button>
+          {mensajePassword && <p className="mensaje-exito">{mensajePassword}</p>}
         </div>
-        <p>CARTELITO AQUI</p>
       </div>
     </div>
   );

@@ -9,6 +9,6 @@ router.post('/login', loginUsuario);
 router.post('/cambiar-password', cambiarPassword);
 
 // Registra el cierre de sesión
-router.post('/logout', logoutUsuario);
+//router.post('/logout', logoutUsuario);
 
 module.exports = router;
