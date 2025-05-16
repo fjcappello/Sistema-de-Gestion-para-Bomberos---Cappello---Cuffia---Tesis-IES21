@@ -1,9 +1,10 @@
-const db = require('../DB/db.js');
-const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
+const db = require("../DB/db.js");
+const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 // Obtener todos los partes con filtros
 const obtenerPartes = (req, res) => {
-  const { jefeDotacion, tipoAsistencia, startDate, endDate, denunciante } = req.query;
+  const { jefeDotacion, tipoAsistencia, startDate, endDate, denunciante } =
+    req.query;
 
   let query = `
     SELECT 
@@ -53,8 +54,8 @@ const obtenerPartes = (req, res) => {
 
   db.query(query, params, (err, results) => {
     if (err) {
-      console.error('Error al obtener datos:', err);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error("Error al obtener datos:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     } else {
       res.json(results);
     }
@@ -82,8 +83,8 @@ const obtenerPartePorId = (req, res) => {
   `;
   db.query(query, [id, id], (err, results) => {
     if (err) {
-      console.error('Error al obtener el parte:', err);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error("Error al obtener el parte:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     } else if (results.length === 0) {
       res.status(404).json(null);
     } else {
@@ -102,7 +103,7 @@ const crearParte = async (req, res) => {
     tipo_asistencia,
     jefe_dotacion,
     parte_escrito,
-    fecha
+    fecha,
   } = req.body;
 
   try {
@@ -127,7 +128,7 @@ const crearParte = async (req, res) => {
         jefe_dotacion,
         parte_escrito,
         fecha,
-        numeroParte
+        numeroParte,
       ]
     );
 
@@ -136,30 +137,38 @@ const crearParte = async (req, res) => {
       `Alta de parte de emergencia: se registró el parte ${numeroParte} denunciado por ${nombre_denunciante} ${apellido_denunciante}`
     );
 
-    res.json({ success: 'Reporte agregado correctamente', reportId: result.insertId, numeroParte });
+    res.json({
+      success: "Reporte agregado correctamente",
+      reportId: result.insertId,
+      numeroParte,
+    });
   } catch (error) {
-    console.error('Error al agregar el reporte:', error);
-    res.status(500).json({ error: 'Error en el servidor al agregar el reporte' });
+    console.error("Error al agregar el reporte:", error);
+    res
+      .status(500)
+      .json({ error: "Error en el servidor al agregar el reporte" });
   }
 };
 
 // Eliminar parte por ID
 const eliminarParte = (req, res) => {
   const { id } = req.params;
-  const query = 'UPDATE partes SET activo = 0 WHERE id = ?';
+  const query = "UPDATE partes SET activo = 0 WHERE id = ?";
 
   db.query(query, [id], async (err, result) => {
     if (err) {
-      console.error('Error al eliminar el reporte:', err);
-      res.status(500).json({ error: 'Error en el servidor al eliminar el reporte' });
+      console.error("Error al eliminar el reporte:", err);
+      res
+        .status(500)
+        .json({ error: "Error en el servidor al eliminar el reporte" });
     } else if (result.affectedRows === 0) {
-      res.status(404).json({ error: 'Reporte no encontrado' });
+      res.status(404).json({ error: "Reporte no encontrado" });
     } else {
       registrarLog(
         0,
         `Eliminación de parte de emergencia: se eliminó el parte con ID ${id}`
       );
-      res.json({ success: 'Reporte eliminado correctamente' });
+      res.json({ success: "Reporte eliminado correctamente" });
     }
   });
 };
@@ -172,10 +181,10 @@ const obtenerTiposAsistencia = (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error al obtener tipos de asistencia:', err);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error("Error al obtener tipos de asistencia:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     } else {
-      const tiposAsistencia = results.map(row => row.tipo_asistencia);
+      const tiposAsistencia = results.map((row) => row.tipo_asistencia);
       res.json(tiposAsistencia);
     }
   });
@@ -209,8 +218,8 @@ const obtenerReporteResumen = (req, res) => {
 
   db.query(query, params, (err, results) => {
     if (err) {
-      console.error('Error al obtener reportes:', err);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error("Error al obtener reportes:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     } else {
       res.json(results);
     }
@@ -221,25 +230,33 @@ const obtenerReporteResumen = (req, res) => {
 const crearBitacora = (req, res) => {
   const { id_personal, reporte, parte_id } = req.body;
   if (!id_personal || !reporte || !parte_id) {
-    return res.status(400).json({ success: false, error: 'Faltan datos requeridos' });
+    return res
+      .status(400)
+      .json({ success: false, error: "Faltan datos requeridos" });
   }
-  const insertQuery = 'INSERT INTO bitacora (id_personal, reporte) VALUES (?, ?)';
+  const insertQuery =
+    "INSERT INTO bitacora (id_personal, reporte) VALUES (?, ?)";
   db.query(insertQuery, [id_personal, reporte], (err, result) => {
     if (err) {
-      console.error('Error al crear bitácora:', err);
-      return res.status(500).json({ success: false, error: 'Error al crear bitácora' });
+      console.error("Error al crear bitácora:", err);
+      return res
+        .status(500)
+        .json({ success: false, error: "Error al crear bitácora" });
     }
     const id_bitacora_nuevo = result.insertId;
-    const updateQuery = 'UPDATE partes SET id_bitacora = ?, id_estado = 0 WHERE id = ?';
+    const updateQuery =
+      "UPDATE partes SET id_bitacora = ?, id_estado = 0 WHERE id = ?";
     db.query(updateQuery, [id_bitacora_nuevo, parte_id], (err, result) => {
       if (err) {
-        console.error('Error al actualizar parte:', err);
-        return res.status(500).json({ success: false, error: 'Error al actualizar parte' });
+        console.error("Error al actualizar parte:", err);
+        return res
+          .status(500)
+          .json({ success: false, error: "Error al actualizar parte" });
       }
-      res.json({ 
+      res.json({
         success: true,
-        message: 'Bitácora creada y parte actualizado',
-        id_bitacora: id_bitacora_nuevo
+        message: "Bitácora creada y parte actualizado",
+        id_bitacora: id_bitacora_nuevo,
       });
     });
   });
@@ -256,15 +273,15 @@ const obtenerBitacora = (req, res) => {
   `;
   db.query(query, [parte_id], (error, results) => {
     if (error) {
-      console.error('Error al obtener la bitácora:', error);
-      return res.status(500).json({ 
+      console.error("Error al obtener la bitácora:", error);
+      return res.status(500).json({
         success: false,
-        error: 'Error al obtener los registros de bitácora' 
+        error: "Error al obtener los registros de bitácora",
       });
     }
     res.json({
       success: true,
-      data: results
+      data: results,
     });
   });
 };

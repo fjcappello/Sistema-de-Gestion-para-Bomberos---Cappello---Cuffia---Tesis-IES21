@@ -89,7 +89,6 @@ const obtenerAsistenciaPorMes = (req, res) => {
   });
 };
 
-
 // Asistencia por jerarquía
 const obtenerAsistenciaPorJerarquia = (req, res) => {
   let query = `
@@ -116,5 +115,5 @@ module.exports = {
   obtenerRankingHoras,
   obtenerAsistenciaPorDia,
   obtenerAsistenciaPorMes,
-  obtenerAsistenciaPorJerarquia
+  obtenerAsistenciaPorJerarquia,
 };

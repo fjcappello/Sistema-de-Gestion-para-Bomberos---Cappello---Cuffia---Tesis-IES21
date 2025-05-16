@@ -13,8 +13,8 @@ import BandejaEntrada from './components/BandejaEntrada';
 import EnviarMensajeModal from './components/EnviarMensajeModal';
 import ModalCambioPassword from './components/ModalCambioPassword';
 import Configuracion from './components/Configuracion';
-import Auditoria from './components/Auditoria';  // Importamos el componente Auditoria
-import MiCuenta from './components/MiCuenta';  // Importamos el componente MiCuenta
+import Auditoria from './components/Auditoria';
+import MiCuenta from './components/MiCuenta';
 import OtrasCuentas from './components/OtrasCuentas';
 import { useUsuario } from './context/UserContext';
 import MovimientosPersonas from './components/MovimientosPersonas';
@@ -40,7 +40,7 @@ function App() {
         nombre: usuarioParseado.nombre,
         apellido: usuarioParseado.apellido,
         primerIngreso: usuarioParseado.primerIngreso,
-        nombreCompleto: `${usuarioParseado.nombre} ${usuarioParseado.apellido}`
+        nombreCompleto: `${usuarioParseado.nombre} ${usuarioParseado.apellido}`,
       });
     } else {
       setIsAuthenticated(false);
@@ -51,7 +51,7 @@ function App() {
   useEffect(() => {
     const intervalo = setInterval(() => {
       setHoraActual(new Date());
-    }, 60000); // cada 1 minuto
+    }, 60000);
 
     return () => clearInterval(intervalo);
   }, []);
@@ -63,7 +63,7 @@ function App() {
       try {
         await axios.post('http://localhost:3001/logout', {
           legajo: usuarioActual.legajo,
-          nombreCompleto: usuarioActual.nombreCompleto
+          nombreCompleto: usuarioActual.nombreCompleto,
         });
         console.log('Logout registrado en bitácora');
       } catch (error) {
@@ -87,10 +87,13 @@ function App() {
               const usuarioActualizado = {
                 ...usuario,
                 primerIngreso: false,
-                nombreCompleto: `${usuario.nombre} ${usuario.apellido}`
+                nombreCompleto: `${usuario.nombre} ${usuario.apellido}`,
               };
               setUsuario(usuarioActualizado);
-              localStorage.setItem('usuario', JSON.stringify(usuarioActualizado));
+              localStorage.setItem(
+                'usuario',
+                JSON.stringify(usuarioActualizado)
+              );
             }}
           />
         )}
@@ -99,23 +102,35 @@ function App() {
         <main>
           <Routes>
             {!isAuthenticated ? (
-              <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+              <Route
+                path="/"
+                element={<Login setIsAuthenticated={setIsAuthenticated} />}
+              />
             ) : (
               <>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/emergencias" element={<EmergenciesTable />} />
                 <Route path="/personal" element={<PersonalTable />} />
                 <Route path="/reportes/estadisticas" element={<ReportsPage />} />
-                <Route path="/estadisticas-asistencia" element={<EstadisticaAsistencia />} />
-                <Route path="/reportes/movimientos-personas" element={<MovimientosPersonas />} />
-                <Route path="/reportes/movimientos-moviles" element={<MovimientoMoviles />} />
+                <Route
+                  path="/estadisticas-asistencia"
+                  element={<EstadisticaAsistencia />}
+                />
+                <Route
+                  path="/reportes/movimientos-personas"
+                  element={<MovimientosPersonas />}
+                />
+                <Route
+                  path="/reportes/movimientos-moviles"
+                  element={<MovimientoMoviles />}
+                />
                 <Route path="/bandeja-entrada" element={<BandejaEntrada />} />
                 <Route path="/configuracion" element={<Configuracion />} />
                 <Route path="/moviles" element={<MovilesRegistro />} />
                 <Route path="/mi-cuenta" element={<MiCuenta />} />
                 <Route path="/auditoria" element={<Auditoria />} />
                 <Route path="/otras-cuentas" element={<OtrasCuentas />} />
-                <Route path="/panol-operativo" element={<PanolOperativo/>} />
+                <Route path="/panol-operativo" element={<PanolOperativo />} />
               </>
             )}
           </Routes>

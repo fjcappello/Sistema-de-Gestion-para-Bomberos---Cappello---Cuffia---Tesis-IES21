@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 function EnviarMensaje() {
   const [usuarios, setUsuarios] = useState([]);
   const [formData, setFormData] = useState({
-    remitente_id: '', // Esto deberías setearlo desde el login (ej: localStorage)
-    asunto: '',
-    cuerpo: ''
+    remitente_id: "", // Esto deberías setearlo desde el login (ej: localStorage)
+    asunto: "",
+    cuerpo: "",
   });
   const [destinatarios, setDestinatarios] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/personal-nombres')
+    axios
+      .get("http://localhost:3001/personal-nombres")
       .then((res) => setUsuarios(res.data))
-      .catch((err) => console.error('Error al obtener usuarios', err));
+      .catch((err) => console.error("Error al obtener usuarios", err));
 
-    const usuarioGuardado = localStorage.getItem('usuario');
+    const usuarioGuardado = localStorage.getItem("usuario");
     if (usuarioGuardado) {
       const { legajo } = JSON.parse(usuarioGuardado);
-      setFormData(prev => ({ ...prev, remitente_id: legajo }));
+      setFormData((prev) => ({ ...prev, remitente_id: legajo }));
     }
   }, []);
 
@@ -27,14 +28,14 @@ function EnviarMensaje() {
   };
 
   const handleAddDestinatario = (e) => {
-    if (e.key === 'Enter' && e.target.value) {
+    if (e.key === "Enter" && e.target.value) {
       setDestinatarios([...destinatarios, e.target.value]);
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
   const handleRemoveDestinatario = (destinatario) => {
-    setDestinatarios(destinatarios.filter(d => d !== destinatario));
+    setDestinatarios(destinatarios.filter((d) => d !== destinatario));
   };
 
   const handleEnviar = async (e) => {
@@ -42,18 +43,18 @@ function EnviarMensaje() {
     try {
       const finalFormData = {
         ...formData,
-        destinatarios
+        destinatarios,
       };
-      await axios.post('http://localhost:3001/mensajes', finalFormData);
-      alert('Mensaje enviado');
-      setFormData(prev => ({
+      await axios.post("http://localhost:3001/mensajes", finalFormData);
+      alert("Mensaje enviado");
+      setFormData((prev) => ({
         ...prev,
-        asunto: '',
-        cuerpo: ''
+        asunto: "",
+        cuerpo: "",
       }));
       setDestinatarios([]);
     } catch (error) {
-      console.error('Error al enviar mensaje', error);
+      console.error("Error al enviar mensaje", error);
     }
   };
 
@@ -69,7 +70,13 @@ function EnviarMensaje() {
         <div>
           {destinatarios.map((destinatario, index) => (
             <span key={index}>
-              {destinatario} <button type="button" onClick={() => handleRemoveDestinatario(destinatario)}>x</button>
+              {destinatario}{" "}
+              <button
+                type="button"
+                onClick={() => handleRemoveDestinatario(destinatario)}
+              >
+                x
+              </button>
             </span>
           ))}
         </div>

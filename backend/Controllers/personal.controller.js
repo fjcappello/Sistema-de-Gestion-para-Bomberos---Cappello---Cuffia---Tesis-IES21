@@ -1,5 +1,5 @@
-const db = require('../DB/db.js');
-const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
+const db = require("../DB/db.js");
+const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 // Obtener todos los registros de personal
 const obtenerPersonal = (req, res) => {
@@ -21,8 +21,10 @@ const obtenerPersonal = (req, res) => {
 
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error al obtener datos de personal:', err);
-      res.status(500).json({ error: 'Error en el servidor al obtener datos de personal' });
+      console.error("Error al obtener datos de personal:", err);
+      res
+        .status(500)
+        .json({ error: "Error en el servidor al obtener datos de personal" });
     } else {
       res.json(results);
     }
@@ -38,8 +40,8 @@ const obtenerNombres = (req, res) => {
   `;
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error al obtener nombres de personal:', err);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error("Error al obtener nombres de personal:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     } else {
       res.json(results);
     }
@@ -48,32 +50,63 @@ const obtenerNombres = (req, res) => {
 
 // Insertar nuevo personal
 const crearPersonal = (req, res) => {
-  const { legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica } = req.body;
+  const {
+    legajo,
+    nombre,
+    apellido,
+    documento,
+    nacimiento,
+    fecha_ingreso,
+    jerarquia_id,
+    situacion_id,
+    fecha_revision_medica,
+  } = req.body;
 
   const personalQuery = `
     INSERT INTO personal (legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(personalQuery, [legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica], (err) => {
-    if (err) {
-      console.error('Error al agregar personal:', err);
-      res.status(500).json({ error: 'Error en el servidor al agregar personal' });
-      return;
-    }
-
-    const loginQuery = `INSERT INTO login (legajo, contraseña) VALUES (?, ?)`;
-    db.query(loginQuery, [legajo, documento], async (err) => {
+  db.query(
+    personalQuery,
+    [
+      legajo,
+      nombre,
+      apellido,
+      documento,
+      nacimiento,
+      fecha_ingreso,
+      jerarquia_id,
+      situacion_id,
+      fecha_revision_medica,
+    ],
+    (err) => {
       if (err) {
-        console.error('Error al crear login:', err);
-        res.status(500).json({ error: 'Error en el servidor al crear login' });
+        console.error("Error al agregar personal:", err);
+        res
+          .status(500)
+          .json({ error: "Error en el servidor al agregar personal" });
         return;
       }
 
-      registrarLog(legajo, `Alta de personal: se dio de alta a ${nombre} ${apellido} (Legajo ${legajo})`);
-      res.json({ success: 'Personal y login creados correctamente' });
-    });
-  });
+      const loginQuery = `INSERT INTO login (legajo, contraseña) VALUES (?, ?)`;
+      db.query(loginQuery, [legajo, documento], async (err) => {
+        if (err) {
+          console.error("Error al crear login:", err);
+          res
+            .status(500)
+            .json({ error: "Error en el servidor al crear login" });
+          return;
+        }
+
+        registrarLog(
+          legajo,
+          `Alta de personal: se dio de alta a ${nombre} ${apellido} (Legajo ${legajo})`
+        );
+        res.json({ success: "Personal y login creados correctamente" });
+      });
+    }
+  );
 };
 
 // Actualizar datos de personal
@@ -85,33 +118,40 @@ const actualizarPersonal = (req, res) => {
   const values = [];
 
   if (jerarquia_id !== undefined) {
-    fields.push('jerarquia_id = ?');
+    fields.push("jerarquia_id = ?");
     values.push(jerarquia_id);
   }
   if (situacion_id !== undefined) {
-    fields.push('situacion_id = ?');
+    fields.push("situacion_id = ?");
     values.push(situacion_id);
   }
   if (fecha_revision_medica !== undefined) {
-    fields.push('fecha_revision_medica = ?');
+    fields.push("fecha_revision_medica = ?");
     values.push(fecha_revision_medica);
   }
 
   if (fields.length === 0) {
-    return res.status(400).json({ error: 'No se proporcionaron campos para actualizar' });
+    return res
+      .status(400)
+      .json({ error: "No se proporcionaron campos para actualizar" });
   }
 
   values.push(legajo);
-  const query = `UPDATE personal SET ${fields.join(', ')} WHERE legajo = ?`;
+  const query = `UPDATE personal SET ${fields.join(", ")} WHERE legajo = ?`;
 
   db.query(query, values, async (err, result) => {
     if (err) {
-      console.error('Error al actualizar personal:', err);
-      res.status(500).json({ error: 'Error en el servidor al actualizar personal' });
+      console.error("Error al actualizar personal:", err);
+      res
+        .status(500)
+        .json({ error: "Error en el servidor al actualizar personal" });
     } else if (result.affectedRows === 0) {
-      res.status(404).json({ error: 'Personal no encontrado' });
+      res.status(404).json({ error: "Personal no encontrado" });
     } else {
-      registrarLog(legajo, `Modificación de personal: se actualizaron datos del legajo ${legajo}`);
+      registrarLog(
+        legajo,
+        `Modificación de personal: se actualizaron datos del legajo ${legajo}`
+      );
       res.json({ success: true });
     }
   });
@@ -124,13 +164,15 @@ const eliminarPersonal = (req, res) => {
 
   db.query(query, [legajo], async (err, result) => {
     if (err) {
-      console.error('Error al eliminar personal:', err);
-      res.status(500).json({ error: 'Error en el servidor al eliminar personal' });
+      console.error("Error al eliminar personal:", err);
+      res
+        .status(500)
+        .json({ error: "Error en el servidor al eliminar personal" });
     } else if (result.affectedRows === 0) {
-      res.status(404).json({ error: 'Personal no encontrado' });
+      res.status(404).json({ error: "Personal no encontrado" });
     } else {
       registrarLog(legajo, `Baja de personal: se eliminó el legajo ${legajo}`);
-      res.json({ success: 'Personal eliminado correctamente' });
+      res.json({ success: "Personal eliminado correctamente" });
     }
   });
 };
@@ -140,8 +182,10 @@ const obtenerJerarquias = (req, res) => {
   const query = `SELECT id, jerarquia FROM jerarquias ORDER BY jerarquia ASC`;
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error al obtener jerarquías:', err);
-      res.status(500).json({ error: 'Error en el servidor al obtener jerarquías' });
+      console.error("Error al obtener jerarquías:", err);
+      res
+        .status(500)
+        .json({ error: "Error en el servidor al obtener jerarquías" });
     } else {
       res.json(results);
     }
@@ -150,11 +194,13 @@ const obtenerJerarquias = (req, res) => {
 
 // Situaciones
 const obtenerSituaciones = (req, res) => {
-  const query = 'SELECT id, nombre FROM situaciones ORDER BY nombre ASC';
+  const query = "SELECT id, nombre FROM situaciones ORDER BY nombre ASC";
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error al obtener situaciones:', err);
-      res.status(500).json({ error: 'Error en el servidor al obtener situaciones' });
+      console.error("Error al obtener situaciones:", err);
+      res
+        .status(500)
+        .json({ error: "Error en el servidor al obtener situaciones" });
     } else {
       res.json(results);
     }
@@ -168,5 +214,5 @@ module.exports = {
   actualizarPersonal,
   eliminarPersonal,
   obtenerJerarquias,
-  obtenerSituaciones
+  obtenerSituaciones,
 };

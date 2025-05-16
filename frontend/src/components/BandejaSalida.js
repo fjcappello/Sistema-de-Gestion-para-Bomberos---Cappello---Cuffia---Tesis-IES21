@@ -1,28 +1,38 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import './Styles/BandejaEntrada.css';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import "./Styles/BandejaEntrada.css";
 
 function BandejaSalida({ onClose }) {
   const [mensajes, setMensajes] = useState([]);
-  const [filtros, setFiltros] = useState({ destinatarios: '', asunto: '', fecha: '' });
+  const [filtros, setFiltros] = useState({
+    destinatarios: "",
+    asunto: "",
+    fecha: "",
+  });
   const [mensajeActivoId, setMensajeActivoId] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
   const mensajesPorPagina = 5;
-  const usuario = JSON.parse(localStorage.getItem('usuario') || '{}');
+  const usuario = JSON.parse(localStorage.getItem("usuario") || "{}");
   const legajo = usuario.legajo;
 
   useEffect(() => {
     if (legajo) {
-      axios.get(`http://localhost:3001/mensajes/enviados/${legajo}`)
+      axios
+        .get(`http://localhost:3001/mensajes/enviados/${legajo}`)
         .then((res) => setMensajes(res.data))
-        .catch((err) => console.error('Error al obtener mensajes enviados', err));
+        .catch((err) =>
+          console.error("Error al obtener mensajes enviados", err)
+        );
     }
   }, [legajo]);
 
-  const mensajesFiltrados = mensajes.filter((msg) =>
-    msg.destinatarios.toLowerCase().includes(filtros.destinatarios.toLowerCase()) &&
-    msg.asunto.toLowerCase().includes(filtros.asunto.toLowerCase()) &&
-    msg.fecha_envio.includes(filtros.fecha)
+  const mensajesFiltrados = mensajes.filter(
+    (msg) =>
+      msg.destinatarios
+        .toLowerCase()
+        .includes(filtros.destinatarios.toLowerCase()) &&
+      msg.asunto.toLowerCase().includes(filtros.asunto.toLowerCase()) &&
+      msg.fecha_envio.includes(filtros.fecha)
   );
 
   const indiceInicial = (paginaActual - 1) * mensajesPorPagina;
@@ -45,7 +55,9 @@ function BandejaSalida({ onClose }) {
           type="text"
           placeholder="Filtrar por destinatarios"
           value={filtros.destinatarios}
-          onChange={(e) => setFiltros({ ...filtros, destinatarios: e.target.value })}
+          onChange={(e) =>
+            setFiltros({ ...filtros, destinatarios: e.target.value })
+          }
         />
         <input
           type="text"
@@ -58,7 +70,9 @@ function BandejaSalida({ onClose }) {
           value={filtros.fecha}
           onChange={(e) => setFiltros({ ...filtros, fecha: e.target.value })}
         />
-        <button className="close-modal-btn" onClick={onClose}>Volver a entrada</button>
+        <button className="close-modal-btn" onClick={onClose}>
+          Volver a entrada
+        </button>
       </div>
 
       {mensajesPaginados.length === 0 ? (
@@ -77,10 +91,14 @@ function BandejaSalida({ onClose }) {
               <React.Fragment key={msg.id}>
                 <tr
                   onClick={() => handleRowClick(msg)}
-                  className={mensajeActivoId === msg.id ? 'mensaje-activo' : ''}
-                  style={{ cursor: 'pointer' }}
+                  className={mensajeActivoId === msg.id ? "mensaje-activo" : ""}
+                  style={{ cursor: "pointer" }}
                 >
-                  <td>{Array.isArray(msg.destinatarios) ? msg.destinatarios.join(', ') : msg.destinatarios}</td>
+                  <td>
+                    {Array.isArray(msg.destinatarios)
+                      ? msg.destinatarios.join(", ")
+                      : msg.destinatarios}
+                  </td>
                   <td>{new Date(msg.fecha_envio).toLocaleString()}</td>
                   <td>{msg.asunto}</td>
                 </tr>
@@ -107,10 +125,15 @@ function BandejaSalida({ onClose }) {
         <button
           onClick={() =>
             setPaginaActual((prev) =>
-              prev < Math.ceil(mensajesFiltrados.length / mensajesPorPagina) ? prev + 1 : prev
+              prev < Math.ceil(mensajesFiltrados.length / mensajesPorPagina)
+                ? prev + 1
+                : prev
             )
           }
-          disabled={paginaActual >= Math.ceil(mensajesFiltrados.length / mensajesPorPagina)}
+          disabled={
+            paginaActual >=
+            Math.ceil(mensajesFiltrados.length / mensajesPorPagina)
+          }
         >
           Siguiente
         </button>

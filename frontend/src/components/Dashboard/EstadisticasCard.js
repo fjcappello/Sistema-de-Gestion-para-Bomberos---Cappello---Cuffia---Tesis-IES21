@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Bar } from 'react-chartjs-2';
-import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js';
+import {
+  Chart as ChartJS,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip,
+  Legend,
+} from 'chart.js';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
@@ -12,7 +19,7 @@ function EstadisticasCard() {
   const fetchEstadisticas = async () => {
     try {
       const response = await axios.get('http://localhost:3001/estadisticas', {
-        params: { dias: periodo }
+        params: { dias: periodo },
       });
       setData(response.data);
     } catch (error) {
@@ -25,14 +32,14 @@ function EstadisticasCard() {
   }, [periodo]);
 
   const chartData = {
-    labels: data.map(item => item.tipo_asistencia),
+    labels: data.map((item) => item.tipo_asistencia),
     datasets: [
       {
-        label: `Cantidad de intervenciones`,
-        data: data.map(item => item.cantidad),
-        backgroundColor: '#e60000'
-      }
-    ]
+        label: 'Cantidad de intervenciones',
+        data: data.map((item) => item.cantidad),
+        backgroundColor: '#e60000',
+      },
+    ],
   };
 
   return (
@@ -40,7 +47,11 @@ function EstadisticasCard() {
       <h3>Estadísticas de Emergencias</h3>
       <div style={{ marginBottom: '1rem' }}>
         <label htmlFor="periodo">Periodo: </label>
-        <select id="periodo" value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
+        <select
+          id="periodo"
+          value={periodo}
+          onChange={(e) => setPeriodo(e.target.value)}
+        >
           <option value="30">Último mes</option>
           <option value="180">Últimos 6 meses</option>
           <option value="365">Último año</option>

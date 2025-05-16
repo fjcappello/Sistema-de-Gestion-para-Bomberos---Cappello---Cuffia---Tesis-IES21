@@ -1,5 +1,5 @@
-const db = require('../DB/db.js');
-const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
+const db = require("../DB/db.js");
+const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 // Obtener mensajes recibidos
 const obtenerMensajesRecibidos = (req, res) => {
@@ -14,8 +14,8 @@ const obtenerMensajesRecibidos = (req, res) => {
   `;
   db.query(query, [legajo], (err, results) => {
     if (err) {
-      console.error('Error al obtener mensajes recibidos:', err);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error("Error al obtener mensajes recibidos:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     } else {
       res.json(results);
     }
@@ -36,8 +36,8 @@ const obtenerMensajesEnviados = (req, res) => {
   `;
   db.query(query, [legajo], (err, results) => {
     if (err) {
-      console.error('Error al obtener mensajes enviados:', err);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error("Error al obtener mensajes enviados:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     } else {
       res.json(results);
     }
@@ -52,12 +52,12 @@ const enviarMensaje = (req, res) => {
 
   db.query(query, [remitente_id, asunto, cuerpo], async (err, result) => {
     if (err) {
-      console.error('Error al enviar mensaje:', err);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error("Error al enviar mensaje:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     } else {
       const mensajeId = result.insertId;
 
-      const destinatarioQueries = destinatarios.map(destinatario_id => {
+      const destinatarioQueries = destinatarios.map((destinatario_id) => {
         return new Promise((resolve, reject) => {
           const insertQuery = `
             INSERT INTO mensaje_destinatarios (mensaje_id, destinatario_id)
@@ -72,11 +72,14 @@ const enviarMensaje = (req, res) => {
 
       try {
         await Promise.all(destinatarioQueries);
-        registrarLog(remitente_id, `Envío de mensaje: asunto "${asunto}" enviado a ${destinatarios.length} destinatario(s)`);
-        res.json({ success: true, message: 'Mensaje enviado' });
+        registrarLog(
+          remitente_id,
+          `Envío de mensaje: asunto "${asunto}" enviado a ${destinatarios.length} destinatario(s)`
+        );
+        res.json({ success: true, message: "Mensaje enviado" });
       } catch (err) {
-        console.error('Error al insertar destinatarios:', err);
-        res.status(500).json({ error: 'Error en el servidor' });
+        console.error("Error al insertar destinatarios:", err);
+        res.status(500).json({ error: "Error en el servidor" });
       }
     }
   });
@@ -91,10 +94,13 @@ const marcarMensajeLeido = async (req, res) => {
 
   db.query(query, [id, destinatario_id], async (err) => {
     if (err) {
-      console.error('Error al marcar mensaje como leído:', err);
-      res.status(500).json({ error: 'Error en el servidor' });
+      console.error("Error al marcar mensaje como leído:", err);
+      res.status(500).json({ error: "Error en el servidor" });
     } else {
-      registrarLog(destinatario_id, `Lectura de mensaje: mensaje ID ${id} marcado como leído`);
+      registrarLog(
+        destinatario_id,
+        `Lectura de mensaje: mensaje ID ${id} marcado como leído`
+      );
       res.json({ success: true });
     }
   });
@@ -104,5 +110,5 @@ module.exports = {
   obtenerMensajesRecibidos,
   obtenerMensajesEnviados,
   enviarMensaje,
-  marcarMensajeLeido
+  marcarMensajeLeido,
 };

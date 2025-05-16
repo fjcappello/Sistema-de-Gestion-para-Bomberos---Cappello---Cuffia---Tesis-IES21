@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import * as XLSX from 'xlsx';
 import './Styles/PanolOperativo.css';
+import { useUsuario } from '../context/UserContext';
 
 function PanolOperativo() {
   const [elementos, setElementos] = useState([]);
@@ -9,7 +10,7 @@ function PanolOperativo() {
   const [estados, setEstados] = useState([]);
   const [marcas, setMarcas] = useState([]);
   const [asignaciones, setAsignaciones] = useState([]);
-
+  const { usuario } = useUsuario();
   const [tipoSeleccionado, setTipoSeleccionado] = useState('');
   const [estadoSeleccionado, setEstadoSeleccionado] = useState('');
   const [textoFiltro, setTextoFiltro] = useState('');
@@ -383,7 +384,7 @@ function PanolOperativo() {
             <th>Asignación</th>
             <th>F. asignación</th>
             <th>Estado</th>
-            <th>Acciones</th>
+            {usuario?.rol === 'Administrador' && <th>Acciones</th>}
           </tr>
         </thead>
         <tbody>
@@ -398,12 +399,14 @@ function PanolOperativo() {
               <td>{el.asignacion}</td>
               <td>{el.f_asignacion}</td>
               <td>{el.estado}</td>
-              <td>
-                <div>
-                  <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
-                  <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`http://localhost:3001/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button>
-                </div>
-              </td>
+              {usuario?.rol === 'Administrador' && (
+                <td>
+                  <div>
+                    <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
+                    <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`http://localhost:3001/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button>
+                  </div>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
@@ -422,9 +425,11 @@ function PanolOperativo() {
       </div>
 
       <div className="action-buttons">
-        <button className="add-report-btn" onClick={() => setModalAbierto(true)}>
-          Agregar elemento
-        </button>
+        {usuario?.rol === 'Administrador' && (
+          <button className="add-report-btn" onClick={() => setModalAbierto(true)}>
+            Agregar elemento
+          </button>
+        )}
       </div>
 
       {modalAbierto && (

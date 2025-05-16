@@ -1,5 +1,5 @@
-const db = require('../DB/db.js');
-const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
+const db = require("../DB/db.js");
+const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 // Obtener movimientos visibles
 const obtenerMovimientos = (req, res) => {
@@ -12,8 +12,8 @@ const obtenerMovimientos = (req, res) => {
   `;
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error al obtener movimientos:', err);
-      return res.status(500).json({ error: 'Error al consultar movimientos' });
+      console.error("Error al obtener movimientos:", err);
+      return res.status(500).json({ error: "Error al consultar movimientos" });
     }
     res.json(results);
   });
@@ -28,30 +28,36 @@ const registrarMovimiento = (req, res) => {
     VALUES (?, ?, ?, ?, ?)
   `;
 
-  db.query(query, [id_personal || null, nombre, apellido, dni, estado_id], async (err, result) => {
-    if (err) {
-      console.error('Error al registrar movimiento:', err);
-      return res.status(500).json({ error: 'Error al registrar movimiento' });
+  db.query(
+    query,
+    [id_personal || null, nombre, apellido, dni, estado_id],
+    async (err, result) => {
+      if (err) {
+        console.error("Error al registrar movimiento:", err);
+        return res.status(500).json({ error: "Error al registrar movimiento" });
+      }
+
+      registrarLog(
+        id_personal || 0,
+        `Registro de movimiento: se registró un ${
+          estado_id === 1 ? "ingreso" : "egreso"
+        } para ${nombre} ${apellido} (${dni})`
+      );
+
+      res.json({ success: true, id: result.insertId });
     }
-
-    registrarLog(
-      id_personal || 0,
-      `Registro de movimiento: se registró un ${estado_id === 1 ? 'ingreso' : 'egreso'} para ${nombre} ${apellido} (${dni})`
-    );
-
-    res.json({ success: true, id: result.insertId });
-  });
+  );
 };
 
 // Ocultar un movimiento (soft delete)
 const ocultarMovimiento = (req, res) => {
   const { id } = req.params;
-  const query = 'UPDATE movimientos_cuartel SET visible = 0 WHERE id = ?';
+  const query = "UPDATE movimientos_cuartel SET visible = 0 WHERE id = ?";
 
   db.query(query, [id], async (err, result) => {
     if (err) {
-      console.error('Error al ocultar movimiento:', err);
-      return res.status(500).json({ error: 'Error al ocultar movimiento' });
+      console.error("Error al ocultar movimiento:", err);
+      return res.status(500).json({ error: "Error al ocultar movimiento" });
     }
 
     registrarLog(
@@ -66,5 +72,5 @@ const ocultarMovimiento = (req, res) => {
 module.exports = {
   obtenerMovimientos,
   registrarMovimiento,
-  ocultarMovimiento
+  ocultarMovimiento,
 };

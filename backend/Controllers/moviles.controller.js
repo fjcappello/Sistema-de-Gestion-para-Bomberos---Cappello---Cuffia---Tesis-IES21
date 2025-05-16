@@ -1,6 +1,5 @@
-const { registrarLog } = require('../Middlewares/logSeguridadLogger.js');
-const db = require('../DB/db.js');
-
+const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
+const db = require("../DB/db.js");
 
 // Obtener todos los móviles
 const getMoviles = (req, res) => {
@@ -13,8 +12,8 @@ const getMoviles = (req, res) => {
   `;
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error al obtener móviles:', err);
-      res.status(500).json({ error: 'Error del servidor' });
+      console.error("Error al obtener móviles:", err);
+      res.status(500).json({ error: "Error del servidor" });
     } else {
       res.json(results);
     }
@@ -23,19 +22,41 @@ const getMoviles = (req, res) => {
 
 // Agregar un móvil
 const addMovil = (req, res) => {
-  const { interno, marca, modelo, dominio, vin, kilometraje, fecha_service, estado_id } = req.body;
+  const {
+    interno,
+    marca,
+    modelo,
+    dominio,
+    vin,
+    kilometraje,
+    fecha_service,
+    estado_id,
+  } = req.body;
   const query = `
     INSERT INTO moviles (interno, marca, modelo, dominio, vin, kilometraje_inicial, kilometraje_actual, fecha_service, estado_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
-  const values = [interno, marca, modelo, dominio, vin, kilometraje, kilometraje, fecha_service, estado_id];
+  const values = [
+    interno,
+    marca,
+    modelo,
+    dominio,
+    vin,
+    kilometraje,
+    kilometraje,
+    fecha_service,
+    estado_id,
+  ];
 
   db.query(query, values, (err, result) => {
     if (err) {
-      console.error('Error al agregar móvil:', err);
-      res.status(500).json({ error: 'Error al agregar móvil' });
+      console.error("Error al agregar móvil:", err);
+      res.status(500).json({ error: "Error al agregar móvil" });
     } else {
-      res.json({ success: 'Móvil agregado correctamente', id: result.insertId });
+      res.json({
+        success: "Móvil agregado correctamente",
+        id: result.insertId,
+      });
       if (req.body.usuario_id) {
         registrarLog(req.body.usuario_id, `Agregó el móvil ${interno}`);
       }
@@ -54,18 +75,34 @@ const updateMovil = (req, res) => {
     WHERE interno = ? AND estado_id IN (1, 2)
   `;
 
-  const values = [marca, modelo, dominio, vin, fecha_service, estado_id, interno];
+  const values = [
+    marca,
+    modelo,
+    dominio,
+    vin,
+    fecha_service,
+    estado_id,
+    interno,
+  ];
 
   db.query(query, values, (err, result) => {
     if (err) {
-      console.error('Error al actualizar móvil:', err);
-      res.status(500).json({ error: 'Error al actualizar móvil' });
+      console.error("Error al actualizar móvil:", err);
+      res.status(500).json({ error: "Error al actualizar móvil" });
     } else if (result.affectedRows === 0) {
-      res.status(400).json({ error: 'No se pudo actualizar. El móvil podría no existir o estar dado de baja.' });
+      res
+        .status(400)
+        .json({
+          error:
+            "No se pudo actualizar. El móvil podría no existir o estar dado de baja.",
+        });
     } else {
-      res.json({ success: 'Móvil actualizado correctamente' });
+      res.json({ success: "Móvil actualizado correctamente" });
       if (req.body.usuario_id) {
-        registrarLog(req.body.usuario_id, `Modificó móvil con interno ${interno}`);
+        registrarLog(
+          req.body.usuario_id,
+          `Modificó móvil con interno ${interno}`
+        );
       }
     }
   });
@@ -73,11 +110,11 @@ const updateMovil = (req, res) => {
 
 // Obtener todos los estados de móviles
 const getEstadosMoviles = (req, res) => {
-  const query = 'SELECT id, nombre_estado AS nombre FROM moviles_estados';
+  const query = "SELECT id, nombre_estado AS nombre FROM moviles_estados";
   db.query(query, (err, results) => {
     if (err) {
-      console.error('Error al obtener estados de móviles:', err);
-      res.status(500).json({ error: 'Error al obtener estados' });
+      console.error("Error al obtener estados de móviles:", err);
+      res.status(500).json({ error: "Error al obtener estados" });
     } else {
       res.json(results);
     }
@@ -104,7 +141,9 @@ const editMovil = (req, res) => {
   }
 
   if (campos.length === 0) {
-    return res.status(400).json({ error: "No se especificaron campos a modificar" });
+    return res
+      .status(400)
+      .json({ error: "No se especificaron campos a modificar" });
   }
 
   valores.push(id);
@@ -112,10 +151,10 @@ const editMovil = (req, res) => {
 
   db.query(query, valores, (err, result) => {
     if (err) {
-      console.error('Error al actualizar móvil:', err);
-      res.status(500).json({ error: 'Error al actualizar móvil' });
+      console.error("Error al actualizar móvil:", err);
+      res.status(500).json({ error: "Error al actualizar móvil" });
     } else {
-      res.json({ success: 'Móvil actualizado correctamente' });
+      res.json({ success: "Móvil actualizado correctamente" });
       if (req.body.usuario_id) {
         registrarLog(req.body.usuario_id, `Editó campos del móvil ID ${id}`);
       }
@@ -128,5 +167,5 @@ module.exports = {
   addMovil,
   updateMovil,
   getEstadosMoviles,
-  editMovil
+  editMovil,
 };

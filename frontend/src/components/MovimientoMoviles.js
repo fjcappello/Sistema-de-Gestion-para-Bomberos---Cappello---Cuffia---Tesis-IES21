@@ -1,40 +1,44 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import * as XLSX from 'xlsx';
-import './Styles/MovimientoMoviles.css'; 
- 
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import * as XLSX from "xlsx";
+import "./Styles/MovimientoMoviles.css";
+
 const formatFecha = (fechaStr) => {
   const fecha = new Date(fechaStr);
-  const dia = String(fecha.getDate()).padStart(2, '0');
-  const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+  const dia = String(fecha.getDate()).padStart(2, "0");
+  const mes = String(fecha.getMonth() + 1).padStart(2, "0");
   const anio = fecha.getFullYear();
-  const hora = String(fecha.getHours()).padStart(2, '0');
-  const minuto = String(fecha.getMinutes()).padStart(2, '0');
+  const hora = String(fecha.getHours()).padStart(2, "0");
+  const minuto = String(fecha.getMinutes()).padStart(2, "0");
   return `${dia}/${mes}/${anio} ${hora}:${minuto}`;
 };
 
 function MovimientoMoviles() {
   const [movimientos, setMovimientos] = useState([]);
-  const [filtros, setFiltros] = useState({ interno: '', fechaDesde: '', fechaHasta: '' });
+  const [filtros, setFiltros] = useState({
+    interno: "",
+    fechaDesde: "",
+    fechaHasta: "",
+  });
   const [mostrarModalSalida, setMostrarModalSalida] = useState(false);
   const [mostrarModalRetorno, setMostrarModalRetorno] = useState(false);
   const [moviles, setMoviles] = useState([]);
   const [personal, setPersonal] = useState([]);
   const [movimientoSeleccionado, setMovimientoSeleccionado] = useState(null);
   const [novedadSeleccionada, setNovedadSeleccionada] = useState(null);
-  const [busquedaDotacion, setBusquedaDotacion] = useState('');
+  const [busquedaDotacion, setBusquedaDotacion] = useState("");
 
   const [formSalida, setFormSalida] = useState({
-    movil_id: '',
-    chofer_id: '',
-    destino: '',
-    jefe_dotacion: '',
-    dotacion: []
+    movil_id: "",
+    chofer_id: "",
+    destino: "",
+    jefe_dotacion: "",
+    dotacion: [],
   });
 
   const [formRetorno, setFormRetorno] = useState({
-    kilometraje_final: '',
-    novedades: ''
+    kilometraje_final: "",
+    novedades: "",
   });
 
   const [erroresSalida, setErroresSalida] = useState({});
@@ -49,58 +53,62 @@ function MovimientoMoviles() {
   }, []);
 
   const cargarMoviles = async () => {
-    const response = await axios.get('http://localhost:3001/moviles');
-    setMoviles(response.data.filter(m => m.estado_id === 1));
+    const response = await axios.get("http://localhost:3001/moviles");
+    setMoviles(response.data.filter((m) => m.estado_id === 1));
   };
 
   const cargarPersonal = async () => {
-    const response = await axios.get('http://localhost:3001/personal');
+    const response = await axios.get("http://localhost:3001/personal");
     setPersonal(response.data);
   };
 
   const cargarMovimientos = async () => {
-    const response = await axios.get('http://localhost:3001/moviles_movimientos');
-    const movimientosConMovilId = response.data.map(mov => {
-      const movil = moviles.find(m => m.interno === mov.interno);
+    const response = await axios.get(
+      "http://localhost:3001/moviles_movimientos"
+    );
+    const movimientosConMovilId = response.data.map((mov) => {
+      const movil = moviles.find((m) => m.interno === mov.interno);
       return {
         ...mov,
         movil_id: movil ? movil.id : null,
-        jefe_dotacion: mov.jefe_dotacion
+        jefe_dotacion: mov.jefe_dotacion,
       };
     });
     setMovimientos(movimientosConMovilId);
   };
 
-  const handleFiltroChange = e => {
+  const handleFiltroChange = (e) => {
     const { name, value } = e.target;
-    setFiltros(prev => ({ ...prev, [name]: value }));
+    setFiltros((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFormSalidaChange = e => {
+  const handleFormSalidaChange = (e) => {
     const { name, value } = e.target;
-    setFormSalida(prev => ({ ...prev, [name]: value }));
+    setFormSalida((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFormRetornoChange = e => {
+  const handleFormRetornoChange = (e) => {
     const { name, value } = e.target;
-    setFormRetorno(prev => ({ ...prev, [name]: value }));
+    setFormRetorno((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleDotacionChange = e => {
-    const value = Array.from(e.target.selectedOptions, opt => parseInt(opt.value));
-    setFormSalida(prev => ({ ...prev, dotacion: value }));
+  const handleDotacionChange = (e) => {
+    const value = Array.from(e.target.selectedOptions, (opt) =>
+      parseInt(opt.value)
+    );
+    setFormSalida((prev) => ({ ...prev, dotacion: value }));
   };
 
   const agregarADotacion = () => {
-    const match = personal.find(p =>
+    const match = personal.find((p) =>
       p.nombre_completo?.toLowerCase().includes(busquedaDotacion.toLowerCase())
     );
     if (match && !formSalida.dotacion.includes(match.legajo)) {
-      setFormSalida(prev => ({
+      setFormSalida((prev) => ({
         ...prev,
-        dotacion: [...prev.dotacion, match.legajo]
+        dotacion: [...prev.dotacion, match.legajo],
       }));
-      setBusquedaDotacion('');
+      setBusquedaDotacion("");
     }
   };
 
@@ -113,30 +121,41 @@ function MovimientoMoviles() {
     setErroresSalida(nuevosErrores);
 
     if (Object.keys(nuevosErrores).length > 0) {
-      alert('Debe completar todos los campos obligatorios.');
+      alert("Debe completar todos los campos obligatorios.");
       return;
     }
 
-    const salidaActiva = movimientos.some(m =>
-      m.movil_id?.toString() === formSalida.movil_id &&
-      (!m.fecha_retorno || m.fecha_retorno === '0000-00-00 00:00:00' || m.kilometraje_final === null)
+    const salidaActiva = movimientos.some(
+      (m) =>
+        m.movil_id?.toString() === formSalida.movil_id &&
+        (!m.fecha_retorno ||
+          m.fecha_retorno === "0000-00-00 00:00:00" ||
+          m.kilometraje_final === null)
     );
     if (salidaActiva) {
-      alert('Ya existe una salida activa para este móvil. Debe registrar el retorno antes de crear una nueva.');
+      alert(
+        "Ya existe una salida activa para este móvil. Debe registrar el retorno antes de crear una nueva."
+      );
       return;
     }
 
     try {
-      await axios.post('http://localhost:3001/moviles_salida', {
-        ...formSalida
+      await axios.post("http://localhost:3001/moviles_salida", {
+        ...formSalida,
       });
       cargarMovimientos();
       setMostrarModalSalida(false);
-      setFormSalida({ movil_id: '', chofer_id: '', destino: '', jefe_dotacion: '', dotacion: [] });
+      setFormSalida({
+        movil_id: "",
+        chofer_id: "",
+        destino: "",
+        jefe_dotacion: "",
+        dotacion: [],
+      });
       setErroresSalida({});
       cargarMovimientos();
     } catch (err) {
-      alert('Error al registrar salida');
+      alert("Error al registrar salida");
     }
   };
 
@@ -149,25 +168,33 @@ function MovimientoMoviles() {
 
       cargarMovimientos();
       setMostrarModalRetorno(false);
-      setFormRetorno({ kilometraje_final: '', novedades: '' });
+      setFormRetorno({ kilometraje_final: "", novedades: "" });
     } catch (err) {
-      console.error('Error real al registrar retorno:', err);
+      console.error("Error real al registrar retorno:", err);
       if (err.response) {
-        alert(`Error al registrar retorno: ${err.response.status} - ${err.response.data?.error || err.response.statusText}`);
+        alert(
+          `Error al registrar retorno: ${err.response.status} - ${
+            err.response.data?.error || err.response.statusText
+          }`
+        );
       } else if (err.request) {
-        alert('Error al registrar retorno: No se recibió respuesta del servidor.');
+        alert(
+          "Error al registrar retorno: No se recibió respuesta del servidor."
+        );
       } else {
         alert(`Error desconocido: ${err.message}`);
       }
     }
   };
 
-  const movimientosFiltrados = movimientos.filter(m => {
-    const coincideInterno = filtros.interno === '' || m.interno === filtros.interno;
+  const movimientosFiltrados = movimientos.filter((m) => {
+    const coincideInterno =
+      filtros.interno === "" || m.interno === filtros.interno;
     const fechaSalida = new Date(m.fecha_salida);
     const desde = filtros.fechaDesde ? new Date(filtros.fechaDesde) : null;
     const hasta = filtros.fechaHasta ? new Date(filtros.fechaHasta) : null;
-    const coincideFecha = (!desde || fechaSalida >= desde) && (!hasta || fechaSalida <= hasta);
+    const coincideFecha =
+      (!desde || fechaSalida >= desde) && (!hasta || fechaSalida <= hasta);
     return coincideInterno && coincideFecha;
   });
 
@@ -177,33 +204,36 @@ function MovimientoMoviles() {
   );
 
   const exportarAExcel = () => {
-    const data = movimientosFiltrados.map(m => {
-      const jefe = personal.find(p => p.legajo === m.jefe_dotacion);
-      const dotacionCompleta = Array.isArray(m.dotacion) && m.dotacion.length > 0
-        ? m.dotacion.map(id => {
-            const p = personal.find(pers => pers.legajo === id);
-            return p ? p.nombre_completo : `Legajo ${id}`;
-          }).join(', ')
-        : 'Sin dotación acompañante';
+    const data = movimientosFiltrados.map((m) => {
+      const jefe = personal.find((p) => p.legajo === m.jefe_dotacion);
+      const dotacionCompleta =
+        Array.isArray(m.dotacion) && m.dotacion.length > 0
+          ? m.dotacion
+              .map((id) => {
+                const p = personal.find((pers) => pers.legajo === id);
+                return p ? p.nombre_completo : `Legajo ${id}`;
+              })
+              .join(", ")
+          : "Sin dotación acompañante";
 
       return {
         Interno: m.interno,
-        'Fecha salida': formatFecha(m.fecha_salida),
+        "Fecha salida": formatFecha(m.fecha_salida),
         Chofer: m.chofer,
         Destino: m.destino,
-        'Kilometraje salida': m.km_salida || '',
-        'Jefe de dotación': jefe ? jefe.nombre_completo : '',
+        "Kilometraje salida": m.km_salida || "",
+        "Jefe de dotación": jefe ? jefe.nombre_completo : "",
         Dotación: dotacionCompleta,
-        'Fecha retorno': m.fecha_retorno ? formatFecha(m.fecha_retorno) : '',
-        'Kilometraje final': m.kilometraje_final || '',
-        Novedades: m.novedades?.trim() ? m.novedades : 'Sin novedades'
+        "Fecha retorno": m.fecha_retorno ? formatFecha(m.fecha_retorno) : "",
+        "Kilometraje final": m.kilometraje_final || "",
+        Novedades: m.novedades?.trim() ? m.novedades : "Sin novedades",
       };
     });
 
     const hoja = XLSX.utils.json_to_sheet(data);
     const libro = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(libro, hoja, 'Movimientos');
-    XLSX.writeFile(libro, 'movimientos_móviles.xlsx');
+    XLSX.utils.book_append_sheet(libro, hoja, "Movimientos");
+    XLSX.writeFile(libro, "movimientos_móviles.xlsx");
   };
 
   return (
@@ -211,15 +241,36 @@ function MovimientoMoviles() {
       <h2 className="moviles-movimientos-titulo">Movimientos de móviles</h2>
 
       <div className="moviles-movimientos-filtros">
-        <select name="interno" className="filtro-select" value={filtros.interno} onChange={handleFiltroChange}>
+        <select
+          name="interno"
+          className="filtro-select"
+          value={filtros.interno}
+          onChange={handleFiltroChange}
+        >
           <option value="">Todos los internos</option>
-          {moviles.map(m => (
-            <option key={m.id} value={m.interno}>{m.interno}</option>
+          {moviles.map((m) => (
+            <option key={m.id} value={m.interno}>
+              {m.interno}
+            </option>
           ))}
         </select>
-        <input type="date" name="fechaDesde" className="filtro-fecha" value={filtros.fechaDesde || ''} onChange={handleFiltroChange} />
-        <input type="date" name="fechaHasta" className="filtro-fecha" value={filtros.fechaHasta || ''} onChange={handleFiltroChange} />
-        <button onClick={() => setMostrarModalSalida(true)}>Registrar salida</button>
+        <input
+          type="date"
+          name="fechaDesde"
+          className="filtro-fecha"
+          value={filtros.fechaDesde || ""}
+          onChange={handleFiltroChange}
+        />
+        <input
+          type="date"
+          name="fechaHasta"
+          className="filtro-fecha"
+          value={filtros.fechaHasta || ""}
+          onChange={handleFiltroChange}
+        />
+        <button onClick={() => setMostrarModalSalida(true)}>
+          Registrar salida
+        </button>
         <button onClick={exportarAExcel} className="btn-exportar">
           Exportar a Excel
         </button>
@@ -240,34 +291,45 @@ function MovimientoMoviles() {
           </tr>
         </thead>
         <tbody>
-          {movimientosPaginados.map(m => (
+          {movimientosPaginados.map((m) => (
             <tr key={m.id}>
               <td>{m.interno}</td>
               <td>{formatFecha(m.fecha_salida)}</td>
               <td>{m.chofer}</td>
               <td>{m.destino}</td>
-              <td>{m.km_salida || '-'}</td>
+              <td>{m.km_salida || "-"}</td>
               <td>
                 {(() => {
-                  const jefe = personal.find(p => p.legajo === m.jefe_dotacion);
-                  return jefe ? jefe.nombre_completo : '-';
+                  const jefe = personal.find(
+                    (p) => p.legajo === m.jefe_dotacion
+                  );
+                  return jefe ? jefe.nombre_completo : "-";
                 })()}
               </td>
-              <td>{m.fecha_retorno ? formatFecha(m.fecha_retorno) : '-'}</td>
-              <td>{m.kilometraje_final || '-'}</td>
+              <td>{m.fecha_retorno ? formatFecha(m.fecha_retorno) : "-"}</td>
+              <td>{m.kilometraje_final || "-"}</td>
               <td>
-                {(!m.fecha_retorno || m.fecha_retorno === '0000-00-00 00:00:00' || m.kilometraje_final === null) ? (
-                  <button className="btn-retorno" onClick={() => {
-                    setMovimientoSeleccionado(m);
-                    setMostrarModalRetorno(true);
-                  }}>
+                {!m.fecha_retorno ||
+                m.fecha_retorno === "0000-00-00 00:00:00" ||
+                m.kilometraje_final === null ? (
+                  <button
+                    className="btn-retorno"
+                    onClick={() => {
+                      setMovimientoSeleccionado(m);
+                      setMostrarModalRetorno(true);
+                    }}
+                  >
                     Registrar retorno
                   </button>
                 ) : (
                   <button
                     className="btn-retorno"
                     title="Ver novedades registradas"
-                    onClick={() => setNovedadSeleccionada(m.novedades || 'Sin novedades registradas')}
+                    onClick={() =>
+                      setNovedadSeleccionada(
+                        m.novedades || "Sin novedades registradas"
+                      )
+                    }
                   >
                     📝 Novedades
                   </button>
@@ -278,11 +340,25 @@ function MovimientoMoviles() {
         </tbody>
       </table>
       <div className="paginacion">
-        <button onClick={() => setPaginaActual(p => Math.max(p - 1, 1))} disabled={paginaActual === 1}>Anterior</button>
+        <button
+          onClick={() => setPaginaActual((p) => Math.max(p - 1, 1))}
+          disabled={paginaActual === 1}
+        >
+          Anterior
+        </button>
         <span>Página {paginaActual}</span>
         <button
-          onClick={() => setPaginaActual(p => p < Math.ceil(movimientosFiltrados.length / registrosPorPagina) ? p + 1 : p)}
-          disabled={paginaActual === Math.ceil(movimientosFiltrados.length / registrosPorPagina)}
+          onClick={() =>
+            setPaginaActual((p) =>
+              p < Math.ceil(movimientosFiltrados.length / registrosPorPagina)
+                ? p + 1
+                : p
+            )
+          }
+          disabled={
+            paginaActual ===
+            Math.ceil(movimientosFiltrados.length / registrosPorPagina)
+          }
         >
           Siguiente
         </button>
@@ -292,73 +368,116 @@ function MovimientoMoviles() {
         <div className="modal-overlay">
           <div className="modal">
             <h3>Registrar salida</h3>
-            <select name="movil_id" className={erroresSalida.movil_id ? 'input-error' : ''} value={formSalida.movil_id} onChange={handleFormSalidaChange}>
+            <select
+              name="movil_id"
+              className={erroresSalida.movil_id ? "input-error" : ""}
+              value={formSalida.movil_id}
+              onChange={handleFormSalidaChange}
+            >
               <option value="">Seleccione móvil</option>
-              {moviles.map(m => <option key={m.id} value={m.id}>{m.interno}</option>)}
+              {moviles.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.interno}
+                </option>
+              ))}
             </select>
-            <select name="chofer_id" className={erroresSalida.chofer_id ? 'input-error' : ''} value={formSalida.chofer_id} onChange={handleFormSalidaChange}>
+            <select
+              name="chofer_id"
+              className={erroresSalida.chofer_id ? "input-error" : ""}
+              value={formSalida.chofer_id}
+              onChange={handleFormSalidaChange}
+            >
               <option value="">Seleccione chofer</option>
-              {personal.map(p => (
+              {personal.map((p) => (
                 <option key={p.legajo} value={p.legajo}>
                   {p.nombre_completo || `Legajo ${p.legajo}`}
                 </option>
               ))}
             </select>
-            <select name="jefe_dotacion" value={formSalida.jefe_dotacion} onChange={handleFormSalidaChange}>
+            <select
+              name="jefe_dotacion"
+              value={formSalida.jefe_dotacion}
+              onChange={handleFormSalidaChange}
+            >
               <option value="">Seleccione jefe de dotación</option>
-              {personal.map(p => (
+              {personal.map((p) => (
                 <option key={p.legajo} value={p.legajo}>
                   {p.nombre_completo || `Legajo ${p.legajo}`}
                 </option>
               ))}
             </select>
-            <input type="text" name="destino" className={erroresSalida.destino ? 'input-error' : ''} placeholder="Destino" value={formSalida.destino} onChange={handleFormSalidaChange} />
+            <input
+              type="text"
+              name="destino"
+              className={erroresSalida.destino ? "input-error" : ""}
+              placeholder="Destino"
+              value={formSalida.destino}
+              onChange={handleFormSalidaChange}
+            />
             <label>Seleccione dotación (opcional)</label>
             <input
               type="text"
               placeholder="Buscar personal"
               value={busquedaDotacion}
-              onChange={e => setBusquedaDotacion(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && agregarADotacion()}
+              onChange={(e) => setBusquedaDotacion(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && agregarADotacion()}
             />
             {busquedaDotacion && (
               <ul className="sugerencias-dotacion">
-                {personal.filter(p =>
-                  p.nombre_completo?.toLowerCase().includes(busquedaDotacion.toLowerCase()) &&
-                  !formSalida.dotacion.includes(p.legajo)
-                ).slice(0, 5).map(p => (
-                  <li key={p.legajo} onClick={() => {
-                    setFormSalida(prev => ({
-                      ...prev,
-                      dotacion: [...prev.dotacion, p.legajo]
-                    }));
-                    setBusquedaDotacion('');
-                  }}>
-                    {p.nombre_completo}
-                  </li>
-                ))}
+                {personal
+                  .filter(
+                    (p) =>
+                      p.nombre_completo
+                        ?.toLowerCase()
+                        .includes(busquedaDotacion.toLowerCase()) &&
+                      !formSalida.dotacion.includes(p.legajo)
+                  )
+                  .slice(0, 5)
+                  .map((p) => (
+                    <li
+                      key={p.legajo}
+                      onClick={() => {
+                        setFormSalida((prev) => ({
+                          ...prev,
+                          dotacion: [...prev.dotacion, p.legajo],
+                        }));
+                        setBusquedaDotacion("");
+                      }}
+                    >
+                      {p.nombre_completo}
+                    </li>
+                  ))}
               </ul>
             )}
-            <button type="button" onClick={agregarADotacion}>Agregar a dotación</button>
+            <button type="button" onClick={agregarADotacion}>
+              Agregar a dotación
+            </button>
             <ul>
-              {formSalida.dotacion.map(legajo => {
-                const persona = personal.find(p => p.legajo === legajo);
+              {formSalida.dotacion.map((legajo) => {
+                const persona = personal.find((p) => p.legajo === legajo);
                 return (
                   <li key={legajo}>
                     {persona?.nombre_completo || `Legajo ${legajo}`}
-                    <button className="btn-eliminar" onClick={() => {
-                      setFormSalida(prev => ({
-                        ...prev,
-                        dotacion: prev.dotacion.filter(l => l !== legajo)
-                      }));
-                    }}>✖</button>
+                    <button
+                      className="btn-eliminar"
+                      onClick={() => {
+                        setFormSalida((prev) => ({
+                          ...prev,
+                          dotacion: prev.dotacion.filter((l) => l !== legajo),
+                        }));
+                      }}
+                    >
+                      ✖
+                    </button>
                   </li>
                 );
               })}
             </ul>
             <div className="form-buttons-agregar">
               <button onClick={registrarSalida}>Guardar</button>
-              <button onClick={() => setMostrarModalSalida(false)}>Cancelar</button>
+              <button onClick={() => setMostrarModalSalida(false)}>
+                Cancelar
+              </button>
             </div>
           </div>
         </div>
@@ -369,12 +488,25 @@ function MovimientoMoviles() {
           <div className="modal">
             <h3>Registrar retorno</h3>
             <label>Kilometraje final</label>
-            <input type="number" name="kilometraje_final" placeholder="Kilometraje final" value={formRetorno.kilometraje_final} onChange={handleFormRetornoChange} />
+            <input
+              type="number"
+              name="kilometraje_final"
+              placeholder="Kilometraje final"
+              value={formRetorno.kilometraje_final}
+              onChange={handleFormRetornoChange}
+            />
             <label>Novedades</label>
-            <textarea name="novedades" placeholder="Novedades" value={formRetorno.novedades} onChange={handleFormRetornoChange}></textarea>
+            <textarea
+              name="novedades"
+              placeholder="Novedades"
+              value={formRetorno.novedades}
+              onChange={handleFormRetornoChange}
+            ></textarea>
             <div className="form-buttons-agregar">
               <button onClick={registrarRetorno}>Guardar</button>
-              <button onClick={() => setMostrarModalRetorno(false)}>Cancelar</button>
+              <button onClick={() => setMostrarModalRetorno(false)}>
+                Cancelar
+              </button>
             </div>
           </div>
         </div>
@@ -384,10 +516,14 @@ function MovimientoMoviles() {
           <div className="modal">
             <h3>Novedades</h3>
             <p>{novedadSeleccionada}</p>
-            <button onClick={() => {
-              setNovedadSeleccionada(null);
-              cargarMovimientos();
-            }}>Cerrar</button>
+            <button
+              onClick={() => {
+                setNovedadSeleccionada(null);
+                cargarMovimientos();
+              }}
+            >
+              Cerrar
+            </button>
           </div>
         </div>
       )}

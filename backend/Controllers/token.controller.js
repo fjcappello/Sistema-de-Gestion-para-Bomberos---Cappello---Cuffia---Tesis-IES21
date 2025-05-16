@@ -28,9 +28,8 @@ module.exports = {
     generarToken
 }*/
 
-
-const jwt = require('jsonwebtoken');
-const db = require('../DB/db.js');
+const jwt = require("jsonwebtoken");
+const db = require("../DB/db.js");
 
 const generarToken = function (legajo, callback) {
   const query = `
@@ -42,29 +41,29 @@ const generarToken = function (legajo, callback) {
 
   db.query(query, [legajo], (err, resultados) => {
     if (err) {
-      console.error('Error al generar el token (DB):', err);
+      console.error("Error al generar el token (DB):", err);
       return callback(err);
     }
 
     if (!resultados || resultados.length === 0) {
-      return callback(new Error('Usuario no encontrado o inactivo'));
+      return callback(new Error("Usuario no encontrado o inactivo"));
     }
 
     const { legajo, id_rol, rol } = resultados[0];
     const payload = { legajo, id_rol, rol };
-    const secret = 'Esperanto3012'; // Cambiar por process.env.SECRET en producción
-    const options = { expiresIn: '8h' };
+    const secret = "Esperanto3012"; // Cambiar por process.env.SECRET en producción
+    const options = { expiresIn: "8h" };
 
     try {
       const token = jwt.sign(payload, secret, options);
       callback(null, token);
     } catch (errToken) {
-      console.error('Error firmando el token:', errToken);
+      console.error("Error firmando el token:", errToken);
       callback(errToken);
     }
   });
 };
 
 module.exports = {
-  generarToken
+  generarToken,
 };

@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
+
 const {
   obtenerRankingAsistencias,
   obtenerRankingHoras,
   obtenerAsistenciaPorDia,
   obtenerAsistenciaPorMes,
-  obtenerAsistenciaPorJerarquia
+  obtenerAsistenciaPorJerarquia,
 } = require('../Controllers/estadisticasAsistencias.controller');
 
 // Rutas

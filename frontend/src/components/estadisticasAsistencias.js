@@ -1,12 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Bar, Line, Pie } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement,
+} from 'chart.js';
 import jsPDF from 'jspdf';
 import './Styles/estadisticasAsistencias.css';
 import { useUsuario } from '../context/UserContext';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  PointElement,
+  LineElement
+);
 
 function EstadisticaAsistencia() {
   const [ranking, setRanking] = useState([]);
@@ -24,7 +45,6 @@ function EstadisticaAsistencia() {
     if (fechaDesde) params.desde = fechaDesde;
     if (fechaHasta) params.hasta = fechaHasta;
     if (nombrePersonal) params.nombre = nombrePersonal;
-
     params.solo_personal = true;
 
     console.log('Solicitando estadísticas con filtros:', params);
@@ -60,7 +80,6 @@ function EstadisticaAsistencia() {
     const margin = 15;
     let y = margin;
 
-    // Add logo and title inline
     const img = new Image();
     img.src = '/images/logo.png';
     img.onload = () => {
@@ -69,13 +88,10 @@ function EstadisticaAsistencia() {
       const logoY = y;
 
       pdf.addImage(img, 'PNG', margin, logoY, imgWidth, imgHeight);
-
       pdf.setFontSize(18);
       pdf.text('Bomberos Santa María de Punilla', margin + imgWidth + 10, logoY + imgHeight / 2 + 5);
 
       y += imgHeight + 10;
-
-      // Title and subtitle
       pdf.setFontSize(18);
       pdf.text('Estadísticas de Asistencia', pageWidth / 2, y, { align: 'center' });
       y += 10;
@@ -83,27 +99,16 @@ function EstadisticaAsistencia() {
       pdf.text('Informe detallado de asistencia y horas trabajadas', pageWidth / 2, y, { align: 'center' });
       y += 15;
 
-      // Filtros aplicados
       pdf.setFontSize(11);
       if (fechaDesde || fechaHasta || nombrePersonal) {
         y += 5;
         pdf.text('Filtros aplicados:', margin, y);
-        if (fechaDesde) {
-          y += 5;
-          pdf.text(`Desde: ${fechaDesde}`, margin + 5, y);
-        }
-        if (fechaHasta) {
-          y += 5;
-          pdf.text(`Hasta: ${fechaHasta}`, margin + 5, y);
-        }
-        if (nombrePersonal) {
-          y += 5;
-          pdf.text(`Personal: ${nombrePersonal}`, margin + 5, y);
-        }
+        if (fechaDesde) y += 5, pdf.text(`Desde: ${fechaDesde}`, margin + 5, y);
+        if (fechaHasta) y += 5, pdf.text(`Hasta: ${fechaHasta}`, margin + 5, y);
+        if (nombrePersonal) y += 5, pdf.text(`Personal: ${nombrePersonal}`, margin + 5, y);
         y += 5;
       }
 
-      // Ranking de Asistencias
       pdf.setFontSize(14);
       pdf.text('Ranking de Asistencias', margin, y);
       y += 8;
@@ -121,8 +126,6 @@ function EstadisticaAsistencia() {
       });
 
       y += 10;
-
-      // Ranking por Horas en el Cuartel
       pdf.setFontSize(14);
       pdf.text('Ranking por Horas en el Cuartel', margin, y);
       y += 8;
@@ -141,8 +144,6 @@ function EstadisticaAsistencia() {
       });
 
       y += 10;
-
-      // Asistencia por Día
       pdf.setFontSize(14);
       pdf.text('Asistencia por Día', margin, y);
       y += 8;
@@ -160,8 +161,6 @@ function EstadisticaAsistencia() {
       });
 
       y += 10;
-
-      // Asistencia por Mes
       pdf.setFontSize(14);
       pdf.text('Asistencia por Mes', margin, y);
       y += 8;
@@ -178,7 +177,6 @@ function EstadisticaAsistencia() {
         y += 6;
       });
 
-      // Footer with user and date
       const footerText = `Generado por: ${usuario?.nombre || 'Usuario'} - Fecha: ${new Date().toLocaleDateString()}`;
       pdf.setFontSize(8);
       pdf.text(footerText, pageWidth / 2, 290, { align: 'center' });
@@ -186,8 +184,6 @@ function EstadisticaAsistencia() {
       pdf.save(`Estadisticas_Asistencia_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`);
     };
   };
-
-  // Prepare data and options for charts
 
   const rankingData = {
     labels: ranking.map(item => item.nombre_completo),
@@ -289,14 +285,16 @@ function EstadisticaAsistencia() {
     <div className="asistencia-stats-container">
       <div className="asistencia-filtros">
         <label className="filtro-fecha-desde">
-          Desde: <input type="date" value={fechaDesde} onChange={(e) => setFechaDesde(e.target.value)} />
+          Desde:
+          <input type="date" value={fechaDesde} onChange={e => setFechaDesde(e.target.value)} />
         </label>
         <label className="filtro-fecha-hasta">
-          Hasta: <input type="date" value={fechaHasta} onChange={(e) => setFechaHasta(e.target.value)} />
+          Hasta:
+          <input type="date" value={fechaHasta} onChange={e => setFechaHasta(e.target.value)} />
         </label>
         <label className="filtro-personal-nombre">
           Personal:
-          <select value={nombrePersonal} onChange={(e) => setNombrePersonal(e.target.value)}>
+          <select value={nombrePersonal} onChange={e => setNombrePersonal(e.target.value)}>
             <option value="">Todos</option>
             {listaPersonal.map(p => (
               <option key={p.id} value={p.nombre_completo}>
@@ -305,7 +303,9 @@ function EstadisticaAsistencia() {
             ))}
           </select>
         </label>
-        <button className="asistencia-filtrar-btn" onClick={fetchData}>Aplicar Filtros</button>
+        <button className="asistencia-filtrar-btn" onClick={fetchData}>
+          Aplicar Filtros
+        </button>
         <button
           className="asistencia-limpiar-btn"
           onClick={() => {
@@ -318,11 +318,13 @@ function EstadisticaAsistencia() {
           Limpiar Filtros
         </button>
       </div>
+
       <div className="asistencia-exportar">
         <button className="asistencia-exportar-btn" onClick={exportPDF}>
           Exportar PDF
         </button>
       </div>
+
       <h2 className="asistencia-title">Estadísticas de Asistencia</h2>
 
       <div className="asistencia-section">
