@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db");
-const logSeguridad = require("../utils/logSeguridad");
 
 router.get("/estadisticas", (req, res) => {
   const dias = parseInt(req.query.dias) || 30;
@@ -19,11 +18,6 @@ router.get("/estadisticas", (req, res) => {
       return res.status(500).json({ error: "Error al obtener estadísticas" });
     }
 
-    logSeguridad(
-      "Consulta estadísticas sin filtros",
-      "GET",
-      req.query.usuario || "Sistema"
-    );
     res.json(results);
   });
 });
@@ -73,11 +67,6 @@ router.get("/estadisticas_filtros", (req, res) => {
         .json({ error: "Error al obtener estadísticas filtradas" });
     }
 
-    logSeguridad(
-      "Consulta estadísticas con filtros",
-      "GET",
-      req.query.usuario || "Sistema"
-    );
     res.json(results);
   });
 });

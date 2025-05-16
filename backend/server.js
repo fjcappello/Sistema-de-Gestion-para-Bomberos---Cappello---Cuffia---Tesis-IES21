@@ -23,6 +23,9 @@ app.use(require("./Routes/estadisticasAsistencias"));
 
 app.use(require('./Routes/estadisticasAsistencias'));
 
+const { logoutUsuario } = require("./Controllers/login.controller");
+app.post("/logout", logoutUsuario);
+
 app.listen(PORT, () => {
   console.log(`Servidor API en http://localhost:${PORT}`);
 });

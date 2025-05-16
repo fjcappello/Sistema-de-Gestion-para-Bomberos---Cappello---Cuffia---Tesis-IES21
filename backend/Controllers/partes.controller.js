@@ -253,6 +253,9 @@ const crearBitacora = (req, res) => {
           .status(500)
           .json({ success: false, error: "Error al actualizar parte" });
       }
+      if (id_personal) {
+        registrarLog(id_personal, `Creó una bitácora asociada al parte ID ${parte_id}`);
+      }
       res.json({
         success: true,
         message: "Bitácora creada y parte actualizado",

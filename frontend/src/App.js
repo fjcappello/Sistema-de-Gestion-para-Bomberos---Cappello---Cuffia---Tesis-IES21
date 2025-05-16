@@ -56,6 +56,30 @@ function App() {
     return () => clearInterval(intervalo);
   }, []);
 
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+      if (usuarioActual) {
+        navigator.sendBeacon(
+          'http://localhost:3001/logout',
+          new Blob(
+            [JSON.stringify({
+              legajo: usuarioActual.legajo,
+              nombreCompleto: usuarioActual.nombreCompleto,
+            })],
+            { type: 'application/json' }
+          )
+        );
+      }
+
+      localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('usuario');
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
   const handleLogout = async () => {
     const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
 
