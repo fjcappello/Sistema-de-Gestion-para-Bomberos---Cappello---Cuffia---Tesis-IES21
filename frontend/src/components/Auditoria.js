@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import './Styles/Configuracion.css'; // Conservamos el estilo actual
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import "./Styles/Configuracion.css"; // Conservamos el estilo actual
 
 function Auditoria() {
   const [bitacora, setBitacora] = useState([]);
-  const [filtros, setFiltros] = useState({ usuario_id: '', accion: '', desde: '', hasta: '' });
+  const [filtros, setFiltros] = useState({
+    usuario_id: "",
+    accion: "",
+    desde: "",
+    hasta: "",
+  });
   const [pagina, setPagina] = useState(1);
   const registrosPorPagina = 5;
 
@@ -16,10 +21,13 @@ function Auditoria() {
       if (filtros.desde) params.desde = filtros.desde;
       if (filtros.hasta) params.hasta = filtros.hasta;
 
-      const response = await axios.get('http://localhost:3001/registro_seguridad', { params });
+      const response = await axios.get(
+        "http://localhost:3001/registro_seguridad",
+        { params }
+      );
       setBitacora(response.data);
     } catch (err) {
-      console.error('Error al obtener bitácora:', err);
+      console.error("Error al obtener bitácora:", err);
     }
   };
 
@@ -40,7 +48,9 @@ function Auditoria() {
             type="text"
             placeholder="Legajo"
             value={filtros.usuario_id}
-            onChange={(e) => setFiltros({ ...filtros, usuario_id: e.target.value })}
+            onChange={(e) =>
+              setFiltros({ ...filtros, usuario_id: e.target.value })
+            }
           />
           <input
             type="text"
@@ -58,28 +68,44 @@ function Auditoria() {
             value={filtros.hasta}
             onChange={(e) => setFiltros({ ...filtros, hasta: e.target.value })}
           />
-          <button className="nuevo-mensaje-btn" onClick={fetchBitacora}>Filtrar</button>
-          <button className="nuevo-mensaje-btn" onClick={() => {
-            import('xlsx').then(xlsx => {
-              const datos = bitacora.map(({ id, usuario_id, usuario, fecha, accion }) => {
-                return {
-                  'Fecha y Hora': fecha,
-                  'Legajo': usuario_id,
-                  'Personal': usuario || '',
-                  'Acción': accion
-                };
+          <button className="nuevo-mensaje-btn" onClick={fetchBitacora}>
+            Filtrar
+          </button>
+          <button
+            className="nuevo-mensaje-btn"
+            onClick={() => {
+              import("xlsx").then((xlsx) => {
+                const datos = bitacora.map(
+                  ({ id, usuario_id, usuario, fecha, accion }) => {
+                    return {
+                      "Fecha y Hora": fecha,
+                      Legajo: usuario_id,
+                      Personal: usuario || "",
+                      Acción: accion,
+                    };
+                  }
+                );
+
+                const ahora = new Date();
+                const formatoFecha = ahora
+                  .toLocaleDateString("es-AR")
+                  .replace(/\//g, "-");
+                const formatoHora = ahora
+                  .toLocaleTimeString("es-AR", { hour12: false })
+                  .replace(/:/g, "-");
+
+                const worksheet = xlsx.utils.json_to_sheet(datos);
+                const workbook = xlsx.utils.book_new();
+                xlsx.utils.book_append_sheet(workbook, worksheet, "Auditoria");
+                xlsx.writeFile(
+                  workbook,
+                  `auditoria_${formatoFecha}_${formatoHora}.xlsx`
+                );
               });
-
-              const ahora = new Date();
-              const formatoFecha = ahora.toLocaleDateString('es-AR').replace(/\//g, '-');
-              const formatoHora = ahora.toLocaleTimeString('es-AR', { hour12: false }).replace(/:/g, '-');
-
-              const worksheet = xlsx.utils.json_to_sheet(datos);
-              const workbook = xlsx.utils.book_new();
-              xlsx.utils.book_append_sheet(workbook, worksheet, 'Auditoria');
-              xlsx.writeFile(workbook, `auditoria_${formatoFecha}_${formatoHora}.xlsx`);
-            });
-          }}>Exportar Excel</button>
+            }}
+          >
+            Exportar Excel
+          </button>
         </div>
         <table className="configuracion-tabla">
           <thead>
@@ -102,9 +128,23 @@ function Auditoria() {
           </tbody>
         </table>
         <div className="paginacion">
-          <button onClick={() => setPagina(p => Math.max(p - 1, 1))} disabled={pagina === 1}>Anterior</button>
+          <button
+            onClick={() => setPagina((p) => Math.max(p - 1, 1))}
+            disabled={pagina === 1}
+          >
+            Anterior
+          </button>
           <span>Página {pagina}</span>
-          <button onClick={() => setPagina(p => (p * registrosPorPagina < bitacora.length ? p + 1 : p))} disabled={pagina * registrosPorPagina >= bitacora.length}>Siguiente</button>
+          <button
+            onClick={() =>
+              setPagina((p) =>
+                p * registrosPorPagina < bitacora.length ? p + 1 : p
+              )
+            }
+            disabled={pagina * registrosPorPagina >= bitacora.length}
+          >
+            Siguiente
+          </button>
         </div>
       </main>
     </div>

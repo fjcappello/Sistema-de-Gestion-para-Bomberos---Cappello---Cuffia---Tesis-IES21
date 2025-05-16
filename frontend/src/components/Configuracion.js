@@ -1,40 +1,43 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import './Styles/Configuracion.css';
+import React, { useState } from "react";
+import axios from "axios";
+import "./Styles/Configuracion.css";
 
 function CambioPassword() {
-  const usuario = JSON.parse(localStorage.getItem('usuario'));
-  const [nueva, setNueva] = useState('');
-  const [confirmar, setConfirmar] = useState('');
-  const [mensaje, setMensaje] = useState('');
-  const [error, setError] = useState('');
+  const usuario = JSON.parse(localStorage.getItem("usuario"));
+  const [nueva, setNueva] = useState("");
+  const [confirmar, setConfirmar] = useState("");
+  const [mensaje, setMensaje] = useState("");
+  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const cambiarPassword = async () => {
     if (nueva !== confirmar) {
-      setError('Las contraseñas no coinciden.');
-      setMensaje('');
+      setError("Las contraseñas no coinciden.");
+      setMensaje("");
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:3001/cambiar-password', {
-        legajo: usuario.legajo,
-        nuevaPassword: nueva
-      });
+      const response = await axios.post(
+        "http://localhost:3001/cambiar-password",
+        {
+          legajo: usuario.legajo,
+          nuevaPassword: nueva,
+        }
+      );
 
       if (response.data.success) {
-        setMensaje('Contraseña actualizada con éxito.');
-        setError('');
-        setNueva('');
-        setConfirmar('');
+        setMensaje("Contraseña actualizada con éxito.");
+        setError("");
+        setNueva("");
+        setConfirmar("");
       } else {
-        setError(response.data.error || 'No se pudo actualizar la contraseña.');
-        setMensaje('');
+        setError(response.data.error || "No se pudo actualizar la contraseña.");
+        setMensaje("");
       }
     } catch (err) {
-      setError('Error al conectar con el servidor.');
-      setMensaje('');
+      setError("Error al conectar con el servidor.");
+      setMensaje("");
     }
   };
 
@@ -60,8 +63,12 @@ function CambioPassword() {
           value={confirmar}
           onChange={(e) => setConfirmar(e.target.value)}
         />
-        <button type="button" className="nuevo-mensaje-btn" onClick={togglePasswordVisibility}>
-          {showPassword ? '🙈' : '👁️'}
+        <button
+          type="button"
+          className="nuevo-mensaje-btn"
+          onClick={togglePasswordVisibility}
+        >
+          {showPassword ? "🙈" : "👁️"}
         </button>
         <button className="nuevo-mensaje-btn" onClick={cambiarPassword}>
           Guardar

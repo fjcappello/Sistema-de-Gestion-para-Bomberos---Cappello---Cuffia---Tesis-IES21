@@ -1,4 +1,4 @@
-const db = require('../DB/db.js');
+const db = require("../DB/db.js");
 
 // Obtener registros de bitácora con filtros opcionales
 const obtenerLog = (req, res) => {
@@ -13,31 +13,31 @@ const obtenerLog = (req, res) => {
   const params = [];
 
   if (usuario_id) {
-    query += ' AND b.usuario_id = ?';
+    query += " AND b.usuario_id = ?";
     params.push(usuario_id);
   }
 
   if (accion) {
-    query += ' AND b.accion LIKE ?';
+    query += " AND b.accion LIKE ?";
     params.push(`%${accion}%`);
   }
 
   if (desde) {
-    query += ' AND b.fecha >= ?';
+    query += " AND b.fecha >= ?";
     params.push(desde);
   }
 
   if (hasta) {
-    query += ' AND b.fecha <= ?';
+    query += " AND b.fecha <= ?";
     params.push(hasta);
   }
 
-  query += ' ORDER BY b.fecha DESC';
+  query += " ORDER BY b.fecha DESC";
 
   db.query(query, params, (err, results) => {
     if (err) {
-      console.error('Error al obtener la bitácora:', err);
-      res.status(500).json({ error: 'Error al consultar la bitácora' });
+      console.error("Error al obtener la bitácora:", err);
+      res.status(500).json({ error: "Error al consultar la bitácora" });
     } else {
       res.json(results);
     }
@@ -45,5 +45,5 @@ const obtenerLog = (req, res) => {
 };
 
 module.exports = {
-  obtenerLog
+  obtenerLog,
 };

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useUsuario } from '../../context/UserContext';
-import '../Styles/Dashboard.css';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { useUsuario } from "../../context/UserContext";
+import "../Styles/Dashboard.css";
+import axios from "axios";
 
-import IngresosEgresosCard from './IngresosEgresosCard';
-import ClimaCard from './ClimaCard';
-import MovilesCard from './MovilesCard';
-import EstadisticasCard from './EstadisticasCard';
+import IngresosEgresosCard from "./IngresosEgresosCard";
+import ClimaCard from "./ClimaCard";
+import MovilesCard from "./MovilesCard";
+import EstadisticasCard from "./EstadisticasCard";
 
 function Dashboard() {
   const { usuario } = useUsuario();
@@ -20,14 +20,16 @@ function Dashboard() {
 
     return () => clearInterval(intervalo);
   }, []);
-  
+
   useEffect(() => {
     const fetchMovimientos = async () => {
       try {
-        const response = await axios.get('http://localhost:3001/movimientos_cuartel');
+        const response = await axios.get(
+          "http://localhost:3001/movimientos_cuartel"
+        );
         setMovimientos(response.data);
       } catch (error) {
-        console.error('Error al obtener movimientos:', error);
+        console.error("Error al obtener movimientos:", error);
       }
     };
 
@@ -38,47 +40,52 @@ function Dashboard() {
 
   const handleRegistrar = async ({ nombre, apellido, dni, estado_id }) => {
     try {
-      await axios.post('http://localhost:3001/movimientos_cuartel', {
+      await axios.post("http://localhost:3001/movimientos_cuartel", {
         id_personal: null,
         nombre,
         apellido,
         dni,
-        estado_id
+        estado_id,
       });
-      const response = await axios.get('http://localhost:3001/movimientos_cuartel');
+      const response = await axios.get(
+        "http://localhost:3001/movimientos_cuartel"
+      );
       setMovimientos(response.data);
     } catch (error) {
-      console.error('Error al registrar movimiento:', error);
+      console.error("Error al registrar movimiento:", error);
     }
   };
 
   const obtenerSaludo = () => {
     const hora = horaActual.getHours();
-    if (hora >= 6 && hora < 12) return 'Buenos días';
-    if (hora >= 12 && hora < 20) return 'Buenas tardes';
-    return 'Buenas noches';
+    if (hora >= 6 && hora < 12) return "Buenos días";
+    if (hora >= 12 && hora < 20) return "Buenas tardes";
+    return "Buenas noches";
   };
 
   const abrirModalSalida = (movimiento = null) => {
-    console.log('Abrir modal de salida', movimiento);
+    console.log("Abrir modal de salida", movimiento);
   };
 
   const abrirModalRetorno = (movimiento) => {
-    console.log('Abrir modal de retorno', movimiento);
+    console.log("Abrir modal de retorno", movimiento);
   };
 
   return (
     <div className="dashboard-container">
       <div className="bienvenida-usuario">
-        {obtenerSaludo()}, <strong>{usuario?.nombreCompleto}</strong>. {horaActual.toLocaleDateString('es-AR', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        })} - {horaActual.toLocaleTimeString('es-AR', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false
+        {obtenerSaludo()}, <strong>{usuario?.nombreCompleto}</strong>.{" "}
+        {horaActual.toLocaleDateString("es-AR", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        })}{" "}
+        -{" "}
+        {horaActual.toLocaleTimeString("es-AR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
         })}
       </div>
 
@@ -93,7 +100,10 @@ function Dashboard() {
           <ClimaCard />
         </div>
         <div className="dashboard-card">
-          <MovilesCard abrirModalSalida={abrirModalSalida} abrirModalRetorno={abrirModalRetorno} />
+          <MovilesCard
+            abrirModalSalida={abrirModalSalida}
+            abrirModalRetorno={abrirModalRetorno}
+          />
         </div>
         <div className="dashboard-card">
           <EstadisticasCard />

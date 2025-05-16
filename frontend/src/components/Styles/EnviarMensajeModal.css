@@ -1,41 +1,41 @@
 .lista-sugerencias {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-height: 150px;
-    overflow-y: auto;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    position: relative;
-    z-index: 10;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 150px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 10;
 }
 
 .lista-sugerencias li {
-    padding: 0.5rem;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .lista-sugerencias li:hover {
-    background-color: #f2f2f2;
+  background-color: #f2f2f2;
 }
 
 .sugerencia-activa {
-    background-color: #e60000;
-    color: white;
+  background-color: #e60000;
+  color: white;
 }
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .lista-sugerencias {
-    animation: fadeIn 0.2s ease-out;
+  animation: fadeIn 0.2s ease-out;
 }

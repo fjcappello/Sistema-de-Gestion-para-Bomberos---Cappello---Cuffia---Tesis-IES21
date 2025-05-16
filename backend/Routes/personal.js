@@ -1,4 +1,4 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const {
   obtenerPersonal,
@@ -7,16 +7,16 @@ const {
   actualizarPersonal,
   eliminarPersonal,
   obtenerJerarquias,
-  obtenerSituaciones
-} = require('../Controllers/personal.controller');
+  obtenerSituaciones,
+} = require("../Controllers/personal.controller");
 
-router.get('/personal', obtenerPersonal);
-router.get('/personal_nombres', obtenerNombres);
-router.post('/personal', crearPersonal);
-router.put('/personal/:legajo', actualizarPersonal);
-router.delete('/personal/:legajo', eliminarPersonal);
+router.get("/personal", obtenerPersonal);
+router.get("/personal_nombres", obtenerNombres);
+router.post("/personal", crearPersonal);
+router.put("/personal/:legajo", actualizarPersonal);
+router.delete("/personal/:legajo", eliminarPersonal);
 
-router.get('/jerarquias', obtenerJerarquias);
-router.get('/situaciones', obtenerSituaciones);
+router.get("/jerarquias", obtenerJerarquias);
+router.get("/situaciones", obtenerSituaciones);
 
 module.exports = router;

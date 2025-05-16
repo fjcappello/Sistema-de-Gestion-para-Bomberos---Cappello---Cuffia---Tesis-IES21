@@ -18,7 +18,8 @@ function Login({ setIsAuthenticated }) {
         const usuario = {
           legajo,
           nombreCompleto: response.data.nombreCompleto,
-          primerIngreso: response.data.primerIngreso === 1 || response.data.primerIngreso === true
+          primerIngreso: response.data.primerIngreso === 1 || response.data.primerIngreso === true,
+          rol: response.data.rol
         };
         setIsAuthenticated(true);
         setUsuario(usuario);

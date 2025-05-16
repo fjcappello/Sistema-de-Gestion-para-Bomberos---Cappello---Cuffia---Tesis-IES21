@@ -1,20 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import '../Styles/Dashboard.css';
+import React, { useState, useEffect } from "react";
+import "../Styles/Dashboard.css";
 
 function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [formData, setFormData] = useState({ nombre: '', apellido: '', dni: '', estado_id: '' });
+  const [formData, setFormData] = useState({
+    nombre: "",
+    apellido: "",
+    dni: "",
+    estado_id: "",
+  });
   const [personal, setPersonal] = useState([]);
-  const [selectedId, setSelectedId] = useState('');
+  const [selectedId, setSelectedId] = useState("");
 
   useEffect(() => {
     const fetchPersonal = async () => {
       try {
-        const response = await fetch('http://localhost:3001/personal_nombres');
+        const response = await fetch("http://localhost:3001/personal_nombres");
         const data = await response.json();
         setPersonal(data);
       } catch (error) {
-        console.error('Error al cargar personal:', error);
+        console.error("Error al cargar personal:", error);
       }
     };
 
@@ -23,32 +28,37 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSelectPersona = (e) => {
     const id = e.target.value;
     setSelectedId(id);
-    if (id === '') {
-      setFormData({ nombre: '', apellido: '', dni: '', estado_id: '' });
+    if (id === "") {
+      setFormData({ nombre: "", apellido: "", dni: "", estado_id: "" });
     } else {
-      const persona = personal.find(p => p.id.toString() === id);
+      const persona = personal.find((p) => p.id.toString() === id);
       if (persona) {
-        const [nombre, apellido] = persona.nombre_completo.split(' ');
-        setFormData({ nombre, apellido, dni: persona.id.toString(), estado_id: '' });
+        const [nombre, apellido] = persona.nombre_completo.split(" ");
+        setFormData({
+          nombre,
+          apellido,
+          dni: persona.id.toString(),
+          estado_id: "",
+        });
       }
     }
   };
 
   const handleRegistro = (estado_id) => {
     if (!formData.nombre || !formData.apellido || !formData.dni || !estado_id) {
-      alert('Complete todos los campos');
+      alert("Complete todos los campos");
       return;
     }
-    const usuario = JSON.parse(localStorage.getItem('usuario'));
+    const usuario = JSON.parse(localStorage.getItem("usuario"));
     onRegistrar({ ...formData, estado_id, usuario_id: usuario?.legajo });
-    setFormData({ nombre: '', apellido: '', dni: '', estado_id: '' });
-    setSelectedId('');
+    setFormData({ nombre: "", apellido: "", dni: "", estado_id: "" });
+    setSelectedId("");
     setIsModalOpen(false);
   };
 
@@ -69,9 +79,23 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
         <tbody>
           {ultimosMovimientos.map((m, index) => (
             <tr key={index}>
-              <td>{new Date(m.timestamp).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' })}</td>
-              <td>{new Date(m.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false })}</td>
-              <td>{m.nombre} {m.apellido}</td>
+              <td>
+                {new Date(m.timestamp).toLocaleDateString("es-AR", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "2-digit",
+                })}
+              </td>
+              <td>
+                {new Date(m.timestamp).toLocaleTimeString([], {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  hour12: false,
+                })}
+              </td>
+              <td>
+                {m.nombre} {m.apellido}
+              </td>
               <td>{m.estado}</td>
             </tr>
           ))}
@@ -83,13 +107,20 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
         <div className="modal-overlay">
           <div className="modal-content">
             <h4>Registrar Movimiento</h4>
-            <select className="persona-select" value={selectedId} onChange={handleSelectPersona}>
+            <select
+              className="persona-select"
+              value={selectedId}
+              onChange={handleSelectPersona}
+            >
               <option value="">Ingreso Manual</option>
               {personal.map((p) => (
-                <option key={p.id} value={p.id}>{p.nombre_completo}</option>
+                <option key={p.id} value={p.id}>
+                  {p.nombre_completo}
+                </option>
               ))}
             </select>
-            <br /><br />
+            <br />
+            <br />
             <input
               type="text"
               name="nombre"
@@ -123,21 +154,35 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
               value={formData.dni}
               onChange={(e) => {
                 const numeros = /^[0-9]*$/;
-                if (!selectedId && numeros.test(e.target.value) && e.target.value.length <= 8) {
+                if (
+                  !selectedId &&
+                  numeros.test(e.target.value) &&
+                  e.target.value.length <= 8
+                ) {
                   handleChange(e);
                 }
               }}
               disabled={!!selectedId}
             />
-            <br /><br />
+            <br />
+            <br />
             <div className="modal-buttons">
               <button onClick={() => handleRegistro(1)}>Marcar Ingreso</button>
               <button onClick={() => handleRegistro(2)}>Marcar Egreso</button>
-              <button onClick={() => {
-                setFormData({ nombre: '', apellido: '', dni: '', estado_id: '' });
-                setSelectedId('');
-                setIsModalOpen(false);
-              }}>Cancelar</button>
+              <button
+                onClick={() => {
+                  setFormData({
+                    nombre: "",
+                    apellido: "",
+                    dni: "",
+                    estado_id: "",
+                  });
+                  setSelectedId("");
+                  setIsModalOpen(false);
+                }}
+              >
+                Cancelar
+              </button>
             </div>
           </div>
         </div>
