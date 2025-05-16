@@ -234,7 +234,7 @@ function MovilesRegistro() {
           <option value="Sí">Sí</option>
           <option value="No">No</option>
         </select>
-        {usuario?.rol === "Administrador" && (
+        {["Administrador", "Jefatura"].includes(usuario?.rol) && (
           <button onClick={() => setIsAddModalOpen(true)}>Agregar Móvil</button>
         )}
         <button onClick={handleLimpiarFiltros}>Limpiar Filtros</button>
@@ -251,7 +251,7 @@ function MovilesRegistro() {
             <th>Kilometraje</th>
             <th>Fecha de Service</th>
             <th>Estado</th>
-            {usuario?.rol === "Administrador" && <th>Acciones</th>}
+            {["Administrador", "Jefatura"].includes(usuario?.rol) && <th>Acciones</th>}
           </tr>
         </thead>
         <tbody>
@@ -279,7 +279,7 @@ function MovilesRegistro() {
                   return estado ? estado.nombre : `ID: ${movil.estado_id}`;
                 })()}
               </td>
-              {usuario?.rol === "Administrador" && (
+              {["Administrador", "Jefatura"].includes(usuario?.rol) && (
                 <td>
                   <button
                     onClick={() => {

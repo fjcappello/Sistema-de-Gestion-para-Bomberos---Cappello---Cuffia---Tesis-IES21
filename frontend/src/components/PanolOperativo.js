@@ -384,7 +384,7 @@ function PanolOperativo() {
             <th>Asignación</th>
             <th>F. asignación</th>
             <th>Estado</th>
-            {usuario?.rol === 'Administrador' && <th>Acciones</th>}
+            {["Administrador", "Jefatura"].includes(usuario?.rol) && <th>Acciones</th>}
           </tr>
         </thead>
         <tbody>
@@ -399,7 +399,7 @@ function PanolOperativo() {
               <td>{el.asignacion}</td>
               <td>{el.f_asignacion}</td>
               <td>{el.estado}</td>
-              {usuario?.rol === 'Administrador' && (
+              {["Administrador", "Jefatura"].includes(usuario?.rol) && (
                 <td>
                   <div>
                     <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
@@ -425,7 +425,7 @@ function PanolOperativo() {
       </div>
 
       <div className="action-buttons">
-        {usuario?.rol === 'Administrador' && (
+        {["Administrador", "Jefatura"].includes(usuario?.rol) && (
           <button className="add-report-btn" onClick={() => setModalAbierto(true)}>
             Agregar elemento
           </button>

@@ -283,7 +283,7 @@ function MovimientosPersonas() {
                   <th>Apellido</th>
                   <th>DNI / Legajo</th>
                   <th>Tipo</th>
-                  {usuario?.rol === "Administrador" && <th>Acción</th>}
+                  {["Administrador", "Jefatura"].includes(usuario?.rol) && <th>Acción</th>}
                 </tr>
               </thead>
               <tbody>
@@ -304,7 +304,7 @@ function MovimientosPersonas() {
                       <td>{m.apellido}</td>
                       <td>{m.dni}</td>
                       <td>{m.estado}</td>
-                      {usuario?.rol === "Administrador" && (
+                      {["Administrador", "Jefatura"].includes(usuario?.rol) && (
                         <td>
                           <button
                             className="btn eliminar"
@@ -318,7 +318,7 @@ function MovimientosPersonas() {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={usuario?.rol === "Administrador" ? "7" : "6"}>
+                    <td colSpan={["Administrador", "Jefatura"].includes(usuario?.rol) ? "7" : "6"}>
                       No hay movimientos registrados
                     </td>
                   </tr>

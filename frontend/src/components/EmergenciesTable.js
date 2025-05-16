@@ -478,7 +478,7 @@ function EmergenciesTable() {
         >
           Agregar Nuevo Reporte
         </button>
-        {usuario?.rol === "Administrador" && (
+        {["Administrador", "Jefatura"].includes(usuario?.rol) && (
           <button
             className="delete-report-btn"
             onClick={() => setIsDeleteModalOpen(true)}

@@ -103,9 +103,18 @@ function EstadisticaAsistencia() {
       if (fechaDesde || fechaHasta || nombrePersonal) {
         y += 5;
         pdf.text('Filtros aplicados:', margin, y);
-        if (fechaDesde) y += 5, pdf.text(`Desde: ${fechaDesde}`, margin + 5, y);
-        if (fechaHasta) y += 5, pdf.text(`Hasta: ${fechaHasta}`, margin + 5, y);
-        if (nombrePersonal) y += 5, pdf.text(`Personal: ${nombrePersonal}`, margin + 5, y);
+        if (fechaDesde) {
+          y += 5;
+          pdf.text(`Desde: ${fechaDesde}`, margin + 5, y);
+        }
+        if (fechaHasta) {
+          y += 5;
+          pdf.text(`Hasta: ${fechaHasta}`, margin + 5, y);
+        }
+        if (nombrePersonal) {
+          y += 5;
+          pdf.text(`Personal: ${nombrePersonal}`, margin + 5, y);
+        }
         y += 5;
       }
 

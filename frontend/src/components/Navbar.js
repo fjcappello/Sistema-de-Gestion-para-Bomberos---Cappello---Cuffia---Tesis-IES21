@@ -120,7 +120,7 @@ function Navbar({ onLogout }) {
               <li>
                 <Link to="/mi-cuenta">Mi cuenta</Link>
               </li>
-              {usuario?.rol === 'Administrador' && (
+              {["Administrador", "Jefatura"].includes(usuario?.rol) && (
                 <>
                   <li>
                     <Link to="/otras-cuentas">Otras cuentas</Link>

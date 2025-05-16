@@ -368,9 +368,9 @@ function PersonalTable() {
             <th>Jerarquía</th>
             <th>Situación</th>
             <th>Fecha Revisión Médica</th>
-            {usuario?.rol === "Administrador" && <th>Acciones</th>}
+            {["Administrador", "Jefatura"].includes(usuario?.rol) && <th>Acciones</th>}
           </tr>
-        </thead>
+        </thead>  
         <tbody>
           {currentPersonal.length > 0 ? (
             currentPersonal.map((rrhh) => (
@@ -412,22 +412,22 @@ function PersonalTable() {
                     </span>
                   )}
                 </td>
-                {usuario?.rol === "Administrador" && (
-                  <td>
-                    <button
-                      className="edit-btn"
-                      title="Editar esta persona"
-                      onClick={() => openEditModal(rrhh)}
-                    >
-                      Editar
-                    </button>
-                  </td>
-                )}
+            {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+              <td>
+                <button
+                  className="edit-btn"
+                  title="Editar esta persona"
+                  onClick={() => openEditModal(rrhh)}
+                >
+                  Editar
+                </button>
+              </td>
+            )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={usuario?.rol === "Administrador" ? "9" : "8"}>
+              <td colSpan={["Administrador", "Jefatura"].includes(usuario?.rol) ? "9" : "8"}>
                 No hay datos de personal disponibles
               </td>
             </tr>
@@ -453,7 +453,7 @@ function PersonalTable() {
         </button>
       </div>
 
-      {usuario?.rol === "Administrador" && (
+      {["Administrador", "Jefatura"].includes(usuario?.rol) && (
         <>
           <button className="add-person-btn" onClick={openAddModal}>
             Agregar Nuevo Personal
