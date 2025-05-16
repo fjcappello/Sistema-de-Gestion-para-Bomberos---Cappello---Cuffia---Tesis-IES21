@@ -6,7 +6,6 @@ const { generarToken } = require('./token.controller.js');
 // LOGIN
 const loginUsuario = function (req, res) {
   const { legajo, password } = req.body;
-  console.log(legajo, password)
   const query = `
     SELECT CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo, l.primer_ingreso, l.contraseña AS clave, r.rol AS nombre_rol
     FROM personal p
@@ -42,7 +41,7 @@ const loginUsuario = function (req, res) {
     if (valida) {
       registrarLog(
         legajo,
-        `El usuario ${nombre_completo} inició sesión correctamente.`
+        `El usuario inició sesión correctamente.`
       );
 
       // ⚠️ generarToken con callback
@@ -103,6 +102,8 @@ const cambiarPassword = function (req, res) {
 
 // LOGOUT
 const logoutUsuario = function (req, res) {
+
+
   const { legajo, nombreCompleto } = req.body;
 
   if (!legajo || !nombreCompleto) {
@@ -110,7 +111,7 @@ const logoutUsuario = function (req, res) {
   }
 
   try {
-    registrarLog(legajo, `El usuario ${nombreCompleto} cerró sesión.`);
+    registrarLog(legajo, `El usuario cerró sesión.`);
     return res.status(200).json({ success: true, message: 'Logout registrado correctamente' });
   } catch (error) {
     console.error('Error al registrar logout:', error);

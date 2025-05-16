@@ -17,8 +17,8 @@ function Navbar({ onLogout }) {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
 
-  const handleLogout = () => {
-    onLogout();
+  const handleLogout = async () => {
+    await onLogout();
     navigate('/');
   };
 

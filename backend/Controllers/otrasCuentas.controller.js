@@ -1,4 +1,5 @@
 const db = require("../DB/db.js");
+const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 //Función para traer los usuarios.
 const recuperarUsuarios = function recuperarUsuarios(req, res) {
@@ -53,9 +54,10 @@ const restablecerCuenta = function restablecerCuenta(req, res) {
     if (results.affectedRows === 0) {
       return res.status(404).json({ error: "Legajo no encontrado." });
     }
-    return res
+    res
       .status(200)
       .json({ message: "Contraseña restablecida correctamente." });
+    registrarLog(legajo, "Restableció la cuenta del usuario");
   });
 };
 
@@ -75,9 +77,10 @@ const cambiarPermisosCuenta = function cambiarPermisosCuenta(req, res) {
     if (results.affectedRows === 0) {
       return res.status(404).json({ error: "Legajo no encontrado." });
     }
-    return res
+    res
       .status(200)
       .json({ message: "Permisos actualizados correctamente." });
+    registrarLog(legajo, `Cambió los permisos del usuario al rol ID ${id_rol}`);
   });
 };
 
