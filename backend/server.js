@@ -21,6 +21,8 @@ app.use(require("./Routes/panolOperativo"));
 
 app.use(require("./Routes/estadisticasAsistencias"));
 
+app.use(require('./Routes/estadisticasAsistencias'));
+
 app.listen(PORT, () => {
   console.log(`Servidor API en http://localhost:${PORT}`);
 });

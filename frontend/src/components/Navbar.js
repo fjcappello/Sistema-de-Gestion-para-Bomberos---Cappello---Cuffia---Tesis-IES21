@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useUsuario } from "../context/UserContext";
-import "./Styles/Navbar.css";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useUsuario } from '../context/UserContext';
+import './Styles/Navbar.css';
 
 function Navbar({ onLogout }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -11,7 +11,6 @@ function Navbar({ onLogout }) {
   const [isSettingsDropdownOpen, setSettingsDropdownOpen] = useState(false);
 
   const navigate = useNavigate();
-
   const { usuario } = useUsuario();
 
   const toggleMobileMenu = () => {
@@ -20,7 +19,7 @@ function Navbar({ onLogout }) {
 
   const handleLogout = () => {
     onLogout();
-    navigate("/");
+    navigate('/');
   };
 
   return (
@@ -30,7 +29,7 @@ function Navbar({ onLogout }) {
         <span className="navbar-title">BOMBEROS SANTA MARIA DE PUNILLA</span>
       </div>
 
-      <ul className={`navbar-links ${isMobileMenuOpen ? "active" : ""}`}>
+      <ul className={`navbar-links ${isMobileMenuOpen ? 'active' : ''}`}>
         <li>
           <Link to="/">Principal</Link>
         </li>
@@ -53,14 +52,10 @@ function Navbar({ onLogout }) {
           {isReportsDropdownOpen && (
             <ul className="dropdown-menu">
               <li>
-                <Link to="/reportes/movimientos-personas">
-                  Asistencia del personal
-                </Link>
+                <Link to="/reportes/movimientos-personas">Asistencia del personal</Link>
               </li>
               <li>
-                <Link to="/reportes/movimientos-moviles">
-                  Movimientos de móviles
-                </Link>
+                <Link to="/reportes/movimientos-moviles">Movimientos de móviles</Link>
               </li>
             </ul>
           )}
@@ -78,14 +73,10 @@ function Navbar({ onLogout }) {
           {isStatisticsDropdownOpen && (
             <ul className="dropdown-menu">
               <li>
-                <Link to="/reportes/estadisticas">
-                  Estadísticas emergencias
-                </Link>
+                <Link to="/reportes/estadisticas">Estadísticas emergencias</Link>
               </li>
               <li>
-                <Link to="/estadisticas-asistencia">
-                  Estadísticas asistencia
-                </Link>
+                <Link to="/estadisticas-asistencia">Estadísticas asistencia</Link>
               </li>
             </ul>
           )}
@@ -129,7 +120,7 @@ function Navbar({ onLogout }) {
               <li>
                 <Link to="/mi-cuenta">Mi cuenta</Link>
               </li>
-              {usuario?.rol === "Administrador" && (
+              {usuario?.rol === 'Administrador' && (
                 <>
                   <li>
                     <Link to="/otras-cuentas">Otras cuentas</Link>

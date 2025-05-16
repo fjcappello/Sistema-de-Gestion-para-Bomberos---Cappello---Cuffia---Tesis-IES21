@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Bar } from "react-chartjs-2";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   BarElement,
@@ -8,22 +8,22 @@ import {
   LinearScale,
   Tooltip,
   Legend,
-} from "chart.js";
+} from 'chart.js';
 
 ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function EstadisticasCard() {
   const [data, setData] = useState([]);
-  const [periodo, setPeriodo] = useState("30"); // valores: 30, 180, 365
+  const [periodo, setPeriodo] = useState('30'); // valores: 30, 180, 365
 
   const fetchEstadisticas = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/estadisticas", {
+      const response = await axios.get('http://localhost:3001/estadisticas', {
         params: { dias: periodo },
       });
       setData(response.data);
     } catch (error) {
-      console.error("Error al obtener estadísticas:", error);
+      console.error('Error al obtener estadísticas:', error);
     }
   };
 
@@ -35,9 +35,9 @@ function EstadisticasCard() {
     labels: data.map((item) => item.tipo_asistencia),
     datasets: [
       {
-        label: `Cantidad de intervenciones`,
+        label: 'Cantidad de intervenciones',
         data: data.map((item) => item.cantidad),
-        backgroundColor: "#e60000",
+        backgroundColor: '#e60000',
       },
     ],
   };
@@ -45,7 +45,7 @@ function EstadisticasCard() {
   return (
     <div>
       <h3>Estadísticas de Emergencias</h3>
-      <div style={{ marginBottom: "1rem" }}>
+      <div style={{ marginBottom: '1rem' }}>
         <label htmlFor="periodo">Periodo: </label>
         <select
           id="periodo"
@@ -57,7 +57,7 @@ function EstadisticasCard() {
           <option value="365">Último año</option>
         </select>
       </div>
-      <div style={{ width: "100%", maxHeight: "300px" }}>
+      <div style={{ width: '100%', maxHeight: '300px' }}>
         <Bar data={chartData} />
       </div>
     </div>

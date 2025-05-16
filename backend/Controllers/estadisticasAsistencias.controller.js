@@ -1,4 +1,4 @@
-const db = require("../DB/db.js");
+const db = require('../DB/db.js');
 
 // Personal que más y menos asistió
 const obtenerRankingAsistencias = (req, res) => {
@@ -7,7 +7,7 @@ const obtenerRankingAsistencias = (req, res) => {
     FROM movimientos_cuartel
     WHERE estado_id = 1 AND visible = 1
   `;
-  if (req.query.solo_personal === "true") {
+  if (req.query.solo_personal === 'true') {
     query += ` AND id_personal IS NOT NULL`;
   }
   query += `
@@ -15,7 +15,7 @@ const obtenerRankingAsistencias = (req, res) => {
     ORDER BY cantidad DESC
   `;
   db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: "Error al obtener ranking" });
+    if (err) return res.status(500).json({ error: 'Error al obtener ranking' });
     res.json(results);
   });
 };
@@ -34,7 +34,7 @@ const obtenerRankingHoras = (req, res) => {
       FROM movimientos_cuartel m1
       WHERE m1.estado_id = 1 AND m1.visible = 1
   `;
-  if (req.query.solo_personal === "true") {
+  if (req.query.solo_personal === 'true') {
     query += ` AND m1.id_personal IS NOT NULL`;
   }
   query += `
@@ -44,7 +44,7 @@ const obtenerRankingHoras = (req, res) => {
     ORDER BY horas_totales DESC
   `;
   db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: "Error al obtener horas" });
+    if (err) return res.status(500).json({ error: 'Error al obtener horas' });
     res.json(results);
   });
 };
@@ -56,7 +56,7 @@ const obtenerAsistenciaPorDia = (req, res) => {
     FROM movimientos_cuartel
     WHERE estado_id = 1 AND visible = 1
   `;
-  if (req.query.solo_personal === "true") {
+  if (req.query.solo_personal === 'true') {
     query += ` AND id_personal IS NOT NULL`;
   }
   query += `
@@ -64,7 +64,7 @@ const obtenerAsistenciaPorDia = (req, res) => {
     ORDER BY dia
   `;
   db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: "Error al obtener por día" });
+    if (err) return res.status(500).json({ error: 'Error al obtener por día' });
     res.json(results);
   });
 };
@@ -76,7 +76,7 @@ const obtenerAsistenciaPorMes = (req, res) => {
     FROM movimientos_cuartel
     WHERE estado_id = 1 AND visible = 1
   `;
-  if (req.query.solo_personal === "true") {
+  if (req.query.solo_personal === 'true') {
     query += ` AND id_personal IS NOT NULL`;
   }
   query += `
@@ -84,7 +84,7 @@ const obtenerAsistenciaPorMes = (req, res) => {
     ORDER BY mes
   `;
   db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: "Error al obtener por mes" });
+    if (err) return res.status(500).json({ error: 'Error al obtener por mes' });
     res.json(results);
   });
 };
@@ -97,7 +97,7 @@ const obtenerAsistenciaPorJerarquia = (req, res) => {
     JOIN personal p ON m.id_personal = p.legajo
     WHERE m.estado_id = 1 AND m.visible = 1
   `;
-  if (req.query.solo_personal === "true") {
+  if (req.query.solo_personal === 'true') {
     query += ` AND m.id_personal IS NOT NULL`;
   }
   query += `
@@ -105,8 +105,7 @@ const obtenerAsistenciaPorJerarquia = (req, res) => {
     ORDER BY cantidad DESC
   `;
   db.query(query, (err, results) => {
-    if (err)
-      return res.status(500).json({ error: "Error al obtener por jerarquía" });
+    if (err) return res.status(500).json({ error: 'Error al obtener por jerarquía' });
     res.json(results);
   });
 };

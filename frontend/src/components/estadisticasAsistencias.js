@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Bar, Line, Pie } from "react-chartjs-2";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Bar, Line, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -12,10 +12,10 @@ import {
   ArcElement,
   PointElement,
   LineElement,
-} from "chart.js";
-import jsPDF from "jspdf";
-import "./Styles/estadisticasAsistencias.css";
-import { useUsuario } from "../context/UserContext";
+} from 'chart.js';
+import jsPDF from 'jspdf';
+import './Styles/estadisticasAsistencias.css';
+import { useUsuario } from '../context/UserContext';
 
 ChartJS.register(
   CategoryScale,
@@ -34,9 +34,9 @@ function EstadisticaAsistencia() {
   const [horas, setHoras] = useState([]);
   const [porDia, setPorDia] = useState([]);
   const [porMes, setPorMes] = useState([]);
-  const [fechaDesde, setFechaDesde] = useState("");
-  const [fechaHasta, setFechaHasta] = useState("");
-  const [nombrePersonal, setNombrePersonal] = useState("");
+  const [fechaDesde, setFechaDesde] = useState('');
+  const [fechaHasta, setFechaHasta] = useState('');
+  const [nombrePersonal, setNombrePersonal] = useState('');
   const [listaPersonal, setListaPersonal] = useState([]);
   const { usuario } = useUsuario();
 
@@ -45,171 +45,113 @@ function EstadisticaAsistencia() {
     if (fechaDesde) params.desde = fechaDesde;
     if (fechaHasta) params.hasta = fechaHasta;
     if (nombrePersonal) params.nombre = nombrePersonal;
-
     params.solo_personal = true;
 
-    console.log("Solicitando estadísticas con filtros:", params);
+    console.log('Solicitando estadísticas con filtros:', params);
 
-    axios
-      .get("http://localhost:3001/ranking-asistencias", { params })
-      .then((res) => setRanking(res.data))
-      .catch((err) => console.error("Error en /ranking-asistencias", err));
+    axios.get('http://localhost:3001/ranking-asistencias', { params })
+      .then(res => setRanking(res.data))
+      .catch(err => console.error('Error en /ranking-asistencias', err));
 
-    axios
-      .get("http://localhost:3001/ranking-horas", { params })
-      .then((res) => setHoras(res.data))
-      .catch((err) => console.error("Error en /ranking-horas", err));
+    axios.get('http://localhost:3001/ranking-horas', { params })
+      .then(res => setHoras(res.data))
+      .catch(err => console.error('Error en /ranking-horas', err));
 
-    axios
-      .get("http://localhost:3001/asistencia-dia", { params })
-      .then((res) => setPorDia(res.data))
-      .catch((err) => console.error("Error en /asistencia-dia", err));
+    axios.get('http://localhost:3001/asistencia-dia', { params })
+      .then(res => setPorDia(res.data))
+      .catch(err => console.error('Error en /asistencia-dia', err));
 
-    axios
-      .get("http://localhost:3001/asistencia-mes", { params })
-      .then((res) => setPorMes(res.data))
-      .catch((err) => console.error("Error en /asistencia-mes", err));
+    axios.get('http://localhost:3001/asistencia-mes', { params })
+      .then(res => setPorMes(res.data))
+      .catch(err => console.error('Error en /asistencia-mes', err));
   };
 
   useEffect(() => {
     fetchData();
-    axios
-      .get("http://localhost:3001/personal/nombres")
-      .then((res) => setListaPersonal(res.data))
-      .catch((err) => console.error("Error al cargar personal:", err));
+    axios.get('http://localhost:3001/personal/nombres')
+      .then(res => setListaPersonal(res.data))
+      .catch(err => console.error('Error al cargar personal:', err));
     // eslint-disable-next-line
   }, []);
 
   const exportPDF = () => {
-    const pdf = new jsPDF("p", "mm", "a4");
+    const pdf = new jsPDF('p', 'mm', 'a4');
     const pageWidth = pdf.internal.pageSize.getWidth();
     const margin = 15;
     let y = margin;
 
-    // Add logo and title inline
     const img = new Image();
-    img.src = "/images/logo.png";
+    img.src = '/images/logo.png';
     img.onload = () => {
       const imgWidth = 25;
       const imgHeight = (img.height * imgWidth) / img.width;
       const logoY = y;
 
-      pdf.addImage(img, "PNG", margin, logoY, imgWidth, imgHeight);
-
+      pdf.addImage(img, 'PNG', margin, logoY, imgWidth, imgHeight);
       pdf.setFontSize(18);
-      pdf.text(
-        "Bomberos Santa María de Punilla",
-        margin + imgWidth + 10,
-        logoY + imgHeight / 2 + 5
-      );
+      pdf.text('Bomberos Santa María de Punilla', margin + imgWidth + 10, logoY + imgHeight / 2 + 5);
 
       y += imgHeight + 10;
-
-      // Title and subtitle
       pdf.setFontSize(18);
-      pdf.text("Estadísticas de Asistencia", pageWidth / 2, y, {
-        align: "center",
-      });
+      pdf.text('Estadísticas de Asistencia', pageWidth / 2, y, { align: 'center' });
       y += 10;
       pdf.setFontSize(12);
-      pdf.text(
-        "Informe detallado de asistencia y horas trabajadas",
-        pageWidth / 2,
-        y,
-        { align: "center" }
-      );
+      pdf.text('Informe detallado de asistencia y horas trabajadas', pageWidth / 2, y, { align: 'center' });
       y += 15;
 
-      // Filtros aplicados
       pdf.setFontSize(11);
       if (fechaDesde || fechaHasta || nombrePersonal) {
         y += 5;
-        pdf.text("Filtros aplicados:", margin, y);
-        if (fechaDesde) {
-          y += 5;
-          pdf.text(`Desde: ${fechaDesde}`, margin + 5, y);
-        }
-        if (fechaHasta) {
-          y += 5;
-          pdf.text(`Hasta: ${fechaHasta}`, margin + 5, y);
-        }
-        if (nombrePersonal) {
-          y += 5;
-          pdf.text(`Personal: ${nombrePersonal}`, margin + 5, y);
-        }
+        pdf.text('Filtros aplicados:', margin, y);
+        if (fechaDesde) y += 5, pdf.text(`Desde: ${fechaDesde}`, margin + 5, y);
+        if (fechaHasta) y += 5, pdf.text(`Hasta: ${fechaHasta}`, margin + 5, y);
+        if (nombrePersonal) y += 5, pdf.text(`Personal: ${nombrePersonal}`, margin + 5, y);
         y += 5;
       }
 
-      // Ranking de Asistencias
       pdf.setFontSize(14);
-      pdf.text("Ranking de Asistencias", margin, y);
+      pdf.text('Ranking de Asistencias', margin, y);
       y += 8;
       pdf.setFontSize(10);
-      pdf.text(
-        "Lista de personal ordenada por cantidad de asistencias.",
-        margin,
-        y
-      );
+      pdf.text('Lista de personal ordenada por cantidad de asistencias.', margin, y);
       y += 8;
 
-      ranking.forEach((item) => {
+      ranking.forEach(item => {
         if (y > 270) {
           pdf.addPage();
           y = margin;
         }
-        pdf.text(
-          `${item.nombre_completo}: ${item.cantidad} asistencias`,
-          margin + 5,
-          y
-        );
+        pdf.text(`${item.nombre_completo}: ${item.cantidad} asistencias`, margin + 5, y);
         y += 6;
       });
 
       y += 10;
-
-      // Ranking por Horas en el Cuartel
       pdf.setFontSize(14);
-      pdf.text("Ranking por Horas en el Cuartel", margin, y);
+      pdf.text('Ranking por Horas en el Cuartel', margin, y);
       y += 8;
       pdf.setFontSize(10);
-      pdf.text(
-        "Lista de personal ordenada por horas totales trabajadas.",
-        margin,
-        y
-      );
+      pdf.text('Lista de personal ordenada por horas totales trabajadas.', margin, y);
       y += 8;
 
-      horas.forEach((item) => {
+      horas.forEach(item => {
         if (y > 270) {
           pdf.addPage();
           y = margin;
         }
         const horasValor = Number(item.horas_totales);
-        pdf.text(
-          `${item.nombre}: ${
-            isNaN(horasValor) ? "0.00" : horasValor.toFixed(2)
-          } horas`,
-          margin + 5,
-          y
-        );
+        pdf.text(`${item.nombre}: ${isNaN(horasValor) ? '0.00' : horasValor.toFixed(2)} horas`, margin + 5, y);
         y += 6;
       });
 
       y += 10;
-
-      // Asistencia por Día
       pdf.setFontSize(14);
-      pdf.text("Asistencia por Día", margin, y);
+      pdf.text('Asistencia por Día', margin, y);
       y += 8;
       pdf.setFontSize(10);
-      pdf.text(
-        "Cantidad de ingresos por día en el período seleccionado.",
-        margin,
-        y
-      );
+      pdf.text('Cantidad de ingresos por día en el período seleccionado.', margin, y);
       y += 8;
 
-      porDia.forEach((item) => {
+      porDia.forEach(item => {
         if (y > 270) {
           pdf.addPage();
           y = margin;
@@ -219,20 +161,14 @@ function EstadisticaAsistencia() {
       });
 
       y += 10;
-
-      // Asistencia por Mes
       pdf.setFontSize(14);
-      pdf.text("Asistencia por Mes", margin, y);
+      pdf.text('Asistencia por Mes', margin, y);
       y += 8;
       pdf.setFontSize(10);
-      pdf.text(
-        "Cantidad de ingresos por mes en el período seleccionado.",
-        margin,
-        y
-      );
+      pdf.text('Cantidad de ingresos por mes en el período seleccionado.', margin, y);
       y += 8;
 
-      porMes.forEach((item) => {
+      porMes.forEach(item => {
         if (y > 270) {
           pdf.addPage();
           y = margin;
@@ -241,30 +177,21 @@ function EstadisticaAsistencia() {
         y += 6;
       });
 
-      // Footer with user and date
-      const footerText = `Generado por: ${
-        usuario?.nombre || "Usuario"
-      } - Fecha: ${new Date().toLocaleDateString()}`;
+      const footerText = `Generado por: ${usuario?.nombre || 'Usuario'} - Fecha: ${new Date().toLocaleDateString()}`;
       pdf.setFontSize(8);
-      pdf.text(footerText, pageWidth / 2, 290, { align: "center" });
+      pdf.text(footerText, pageWidth / 2, 290, { align: 'center' });
 
-      pdf.save(
-        `Estadisticas_Asistencia_${new Date()
-          .toLocaleDateString()
-          .replace(/\//g, "-")}.pdf`
-      );
+      pdf.save(`Estadisticas_Asistencia_${new Date().toLocaleDateString().replace(/\//g, '-')}.pdf`);
     };
   };
 
-  // Prepare data and options for charts
-
   const rankingData = {
-    labels: ranking.map((item) => item.nombre_completo),
+    labels: ranking.map(item => item.nombre_completo),
     datasets: [
       {
-        label: "Cantidad de Asistencias",
-        data: ranking.map((item) => item.cantidad),
-        backgroundColor: "#ff3333",
+        label: 'Cantidad de Asistencias',
+        data: ranking.map(item => item.cantidad),
+        backgroundColor: '#ff3333',
       },
     ],
   };
@@ -276,18 +203,18 @@ function EstadisticaAsistencia() {
       tooltip: { enabled: true },
     },
     scales: {
-      x: { title: { display: true, text: "" } },
-      y: { beginAtZero: true, title: { display: true, text: "Cantidad" } },
+      x: { title: { display: true, text: '' } },
+      y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
     },
   };
 
   const horasData = {
-    labels: horas.map((item) => item.nombre),
+    labels: horas.map(item => item.nombre),
     datasets: [
       {
-        label: "Horas Totales",
-        data: horas.map((item) => item.horas_totales),
-        backgroundColor: "#4CAF50",
+        label: 'Horas Totales',
+        data: horas.map(item => item.horas_totales),
+        backgroundColor: '#4CAF50',
       },
     ],
   };
@@ -299,19 +226,19 @@ function EstadisticaAsistencia() {
       tooltip: { enabled: true },
     },
     scales: {
-      x: { title: { display: true, text: "Nombre" } },
-      y: { beginAtZero: true, title: { display: true, text: "Horas" } },
+      x: { title: { display: true, text: 'Nombre' } },
+      y: { beginAtZero: true, title: { display: true, text: 'Horas' } },
     },
   };
 
   const porDiaData = {
-    labels: porDia.map((item) => item.dia),
+    labels: porDia.map(item => item.dia),
     datasets: [
       {
-        label: "Ingresos",
-        data: porDia.map((item) => item.cantidad),
-        borderColor: "#8884d8",
-        backgroundColor: "#8884d8",
+        label: 'Ingresos',
+        data: porDia.map(item => item.cantidad),
+        borderColor: '#8884d8',
+        backgroundColor: '#8884d8',
         fill: false,
         tension: 0.4,
         pointRadius: 5,
@@ -326,18 +253,18 @@ function EstadisticaAsistencia() {
       tooltip: { enabled: true },
     },
     scales: {
-      x: { title: { display: true, text: "Día" } },
-      y: { beginAtZero: true, title: { display: true, text: "Cantidad" } },
+      x: { title: { display: true, text: 'Día' } },
+      y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
     },
   };
 
   const porMesData = {
-    labels: porMes.map((item) => item.mes),
+    labels: porMes.map(item => item.mes),
     datasets: [
       {
-        label: "Ingresos",
-        data: porMes.map((item) => item.cantidad),
-        backgroundColor: "#ffc658",
+        label: 'Ingresos',
+        data: porMes.map(item => item.cantidad),
+        backgroundColor: '#ffc658',
       },
     ],
   };
@@ -349,8 +276,8 @@ function EstadisticaAsistencia() {
       tooltip: { enabled: true },
     },
     scales: {
-      x: { title: { display: true, text: "Mes" } },
-      y: { beginAtZero: true, title: { display: true, text: "Cantidad" } },
+      x: { title: { display: true, text: 'Mes' } },
+      y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
     },
   };
 
@@ -358,29 +285,18 @@ function EstadisticaAsistencia() {
     <div className="asistencia-stats-container">
       <div className="asistencia-filtros">
         <label className="filtro-fecha-desde">
-          Desde:{" "}
-          <input
-            type="date"
-            value={fechaDesde}
-            onChange={(e) => setFechaDesde(e.target.value)}
-          />
+          Desde:
+          <input type="date" value={fechaDesde} onChange={e => setFechaDesde(e.target.value)} />
         </label>
         <label className="filtro-fecha-hasta">
-          Hasta:{" "}
-          <input
-            type="date"
-            value={fechaHasta}
-            onChange={(e) => setFechaHasta(e.target.value)}
-          />
+          Hasta:
+          <input type="date" value={fechaHasta} onChange={e => setFechaHasta(e.target.value)} />
         </label>
         <label className="filtro-personal-nombre">
           Personal:
-          <select
-            value={nombrePersonal}
-            onChange={(e) => setNombrePersonal(e.target.value)}
-          >
+          <select value={nombrePersonal} onChange={e => setNombrePersonal(e.target.value)}>
             <option value="">Todos</option>
-            {listaPersonal.map((p) => (
+            {listaPersonal.map(p => (
               <option key={p.id} value={p.nombre_completo}>
                 {p.nombre_completo}
               </option>
@@ -393,20 +309,22 @@ function EstadisticaAsistencia() {
         <button
           className="asistencia-limpiar-btn"
           onClick={() => {
-            setFechaDesde("");
-            setFechaHasta("");
-            setNombrePersonal("");
+            setFechaDesde('');
+            setFechaHasta('');
+            setNombrePersonal('');
             fetchData();
           }}
         >
           Limpiar Filtros
         </button>
       </div>
+
       <div className="asistencia-exportar">
         <button className="asistencia-exportar-btn" onClick={exportPDF}>
           Exportar PDF
         </button>
       </div>
+
       <h2 className="asistencia-title">Estadísticas de Asistencia</h2>
 
       <div className="asistencia-section">
