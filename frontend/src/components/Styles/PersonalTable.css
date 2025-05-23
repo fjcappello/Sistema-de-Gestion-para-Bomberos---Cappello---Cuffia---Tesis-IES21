@@ -1,22 +1,22 @@
-/* DataGrid */
 .table-container {
   padding: 1rem;
 }
 
-.emergencies-table {
+/* Data Grid */
+.personal-table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1rem;
 }
 
-.emergencies-table th, .emergencies-table td {
+.personal-table th, .personal-table td {
   padding: 0.75rem;
   border: 1px solid #ddd;
   text-align: left;
 }
 
-.emergencies-table th {
-  background-color: #ff3333;
+.personal-table th {
+  background-color: #ff3333; 
   color: white;
 }
 
@@ -31,7 +31,7 @@
   padding: 0.5rem 1rem;
   margin: 0 0.25rem;
   cursor: pointer;
-  background-color: #4CAF50;
+  background-color: #4CAF50; 
   color: white;
   border: none;
   border-radius: 4px;
@@ -42,10 +42,9 @@
   cursor: not-allowed;
 }
 
-/* Boton de agregar reporte */
-.add-report-btn {
+/* boton de agregar personal */
+.add-person-btn {
   margin-top: 1rem;
-  margin-right: 0.5rem; 
   padding: 0.75rem 1.5rem;
   background-color: green;
   color: white;
@@ -56,11 +55,29 @@
   transition: background-color 0.3s ease;
 }
 
-.add-report-btn:hover {
+.add-person-btn:hover {
   background-color: #cc0000;
 }
 
-/* Modal de agregar */
+/* boton de eliminar personal */
+.delete-person-btn {
+  margin-top: 1rem;
+  margin-left: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background-color: red;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.delete-person-btn:hover {
+  background-color: #b30000;
+}
+
+/* Modal */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -121,59 +138,7 @@
   background-color: #cc0000;
 }
 
-.delete-report-btn {
-  margin-top: 1rem;
-  padding: 0.75rem 1.5rem;
-  background-color: red;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.delete-report-btn:hover {
-  background-color: #cc0000;
-}
-/* Modal para eliminar*/
-.modal-content input[type="number"] {
-  display: block;
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.confirm-delete-btn, .close-modal-btn {
-  display: inline-block;
-  margin: 0.5rem;
-  padding: 0.5rem 1.5rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.confirm-delete-btn {
-  background-color: red;
-  color: white;
-}
-
-.confirm-delete-btn:hover {
-  background-color: #cc0000;
-}
-
-.close-modal-btn {
-  background-color: #555;
-  color: white;
-}
-
-.close-modal-btn:hover {
-  background-color: #333;
-}
-
-/* Confirmaciones */
+/* confirmacion de eliminacion */
 .confirm-overlay {
   position: fixed;
   top: 0;
@@ -189,27 +154,78 @@
 
 .confirm-content {
   background: white;
-  padding: 1.5rem;
+  padding: 2rem;
+  width: 90%;
+  max-width: 400px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.confirm-content p {
+.confirm-delete-btn {
+  background-color: red;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  margin-right: 0.5rem;
+}
+
+.confirm-delete-btn:hover {
+  background-color: #b30000;
+}
+
+.error-message {
+  color: red;
+  margin-top: 1rem;
+}
+
+.edit-btn {
+  padding: 0.5rem 1rem;
+  background-color: #ffa500;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.edit-btn:hover {
+  background-color: #cc8400;
+}
+
+/* Filtros */
+.filtros-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
   margin-bottom: 1rem;
 }
 
-.confirm-content .confirm-delete-btn,
-.confirm-content .close-modal-btn {
-  display: inline-block;
-  margin: 0.5rem;
-  padding: 0.5rem 1.5rem;
+.filtro-input,
+.filtro-select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
 }
 
-/* Mensaje de error en la eliminacion */
-.error-message {
-  color: red;
-  font-size: 0.9rem;
-  margin-top: 0.5rem;
-  text-align: center;
+.filtro-checkbox {
+  margin-left: 0.5rem;
+  transform: scale(1.2);
+}
+
+@media (max-width: 600px) {
+  .filtros-container {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .filtro-input,
+  .filtro-select {
+    width: 100%;
+  }
 }

@@ -1,0 +1,143 @@
+.bandeja-layout {
+  display: flex;
+  background-color: #f9f9f9; /* Fondo más claro */
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  align-items: stretch;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra */
+  border-radius: 8px; /* Bordes redondeados */
+}
+
+.menu-item {
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.75rem;
+  border-radius: 20px;
+  transition: all 0.3s ease; /* Transición más suave */
+  border: 2px solid transparent;
+}
+
+.menu-item:hover {
+  border: 2px solid #e60000;
+  background-color: #fef0f0;
+}
+
+.menu-item.activo {
+  background-color: transparent;
+  color: #e60000;
+  border: 2px solid #e60000;
+  border-radius: 20px;
+}
+
+.bandeja-contenido {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+  min-height: calc(100vh - 80px);
+  width: 100%; /* espacio para barra lateral fija */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #ffffff;
+  border-radius: 8px;
+}
+
+.bandeja-encabezado {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  text-align: center;
+  color: #e60000;
+}
+
+.bandeja-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1000px;
+}
+
+.bandeja-filtros input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  font-size: 0.95rem;
+}
+
+.nuevo-mensaje-btn {
+  padding: 0.5rem 1rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+}
+
+.nuevo-mensaje-btn:hover {
+  background-color: #218838;
+}
+
+.bandeja-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  border: 1px solid #ddd;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.bandeja-tabla th,
+.bandeja-tabla td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.no-leido {
+  font-weight: bold;
+  background-color: #fff5f5;
+}
+
+.bandeja-badge {
+  background-color: #e60000;
+  color: white;
+  font-size: 0.75rem;
+  width: 20px;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.close-modal-btn {
+  padding: 0.5rem 1rem;
+  background-color: #b30000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.close-modal-btn:hover {
+  background-color: #800000;
+}
+
+.bandeja-selector {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  justify-content: flex-start;
+}

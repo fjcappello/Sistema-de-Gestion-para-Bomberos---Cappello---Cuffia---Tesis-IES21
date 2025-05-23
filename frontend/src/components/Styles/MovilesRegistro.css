@@ -1,0 +1,310 @@
+.moviles-registro-container {
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.moviles-registro-titulo {
+  font-size: 1.8rem;
+  color: #b30000;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.moviles-registro-formulario {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  justify-content: center;
+}
+
+.moviles-registro-formulario input,
+.moviles-registro-formulario select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 180px;
+}
+
+.moviles-registro-formulario button {
+  background-color: #b30000;
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.moviles-registro-formulario button:hover {
+  background-color: #800000;
+}
+
+.moviles-registro-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.moviles-registro-tabla th,
+.moviles-registro-tabla td {
+  border: 1px solid #ddd;
+  padding: 0.75rem;
+  text-align: left;
+}
+
+.moviles-registro-tabla th {
+  background-color: #ff3333;
+  color: white;
+}
+
+.moviles-registro-tabla tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+/* Estilos para filtros */
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.filtros input,
+.filtros select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 160px;
+}
+
+.filtros button {
+  background-color: #ff3333;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filtros button:hover {
+  background-color: #cc0000;
+}
+
+/* Estilos para paginación */
+.paginacion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.paginacion button {
+  background-color: #b30000;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.paginacion button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.moviles-registro-editar-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #fff8e1;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.moviles-registro-editar-form input,
+.moviles-registro-editar-form select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 160px;
+}
+
+.moviles-registro-editar-form button {
+  background-color: #4caf50;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.moviles-registro-editar-form button:hover {
+  background-color: #388e3c;
+}
+
+.agregar-movil-button {
+  background-color: #ff3333;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.agregar-movil-button:hover {
+  background-color: #cc0000;
+}
+
+/* Estilos para modales flotantes */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 450px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+/* Estilos para modales flotantes */
+.modal h2 {
+  text-align: center;
+  color: #b30000;
+  margin-bottom: 1rem;
+}
+
+.modal label {
+  font-weight: bold;
+  align-self: flex-start;
+}
+
+.modal input,
+.modal select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.modal button {
+  background-color: #4caf50;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal button:hover {
+  background-color: #388e3c;
+}
+
+.moviles-registro-agregar-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 2rem;
+  padding: 1rem;
+}
+
+.moviles-registro-agregar-form label {
+  font-weight: bold;
+}
+
+.moviles-registro-agregar-form input,
+.moviles-registro-agregar-form select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.moviles-registro-agregar-form .col-span-2 {
+  grid-column: span 2;
+}
+
+.form-buttons-agregar {
+  grid-column: span 2;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.moviles-registro-agregar-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem 2rem;
+  padding: 1rem;
+}
+
+.moviles-registro-agregar-form label {
+  grid-column: span 2;
+  font-weight: bold;
+  margin-bottom: -0.5rem;
+}
+
+.moviles-registro-agregar-form input,
+.moviles-registro-agregar-form select {
+  grid-column: span 2;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-buttons-agregar {
+  grid-column: span 2;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.editar-deshabilitado {
+  background-color: #ccc;
+  color: #666;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: not-allowed;
+}

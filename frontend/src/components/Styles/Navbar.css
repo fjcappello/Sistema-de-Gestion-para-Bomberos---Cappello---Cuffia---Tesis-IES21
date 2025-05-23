@@ -1,12 +1,12 @@
 /* Estilos del Navbar */
 .navbar {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 1rem; 
+  padding: 0.5rem 1rem;
   background-color: #e60000;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%; 
+  width: 100%;
 }
 
 .navbar-logo {
@@ -14,29 +14,28 @@
   align-items: center;
 }
 
-
 .navbar-logo img {
-  height: 60px; 
+  height: 60px;
   width: auto;
-  margin-right: 10px; 
+  margin-right: 10px;
 }
 
 .navbar-title {
   font-weight: bold;
   color: #fff;
-  font-size: 1.2rem; 
-  margin-right: 20px; 
+  font-size: 1.2rem;
+  margin-right: 20px;
 }
 
 .navbar-links {
   list-style: none;
   display: flex;
-  gap: 0.5rem; 
+  gap: 0.5rem;
 }
 
 .navbar-links li {
   display: inline;
-  position: relative; 
+  position: relative;
 }
 
 .navbar-links a {
@@ -52,14 +51,14 @@
   position: absolute;
   width: 0;
   height: 2px;
-  background-color: white; 
+  background-color: white;
   bottom: 0;
   left: 0;
   transition: width 0.3s ease;
 }
 
 .navbar-links a:hover::after {
-  width: 100%; 
+  width: 100%;
 }
 
 /* Botón Salir */
@@ -68,7 +67,7 @@
   color: #fff;
   border: 1px solid #fff;
   padding: 0.3rem 0.8rem;
-  font-size: 0.9rem; 
+  font-size: 0.9rem;
   border-radius: 5px;
   transition: background-color 0.3s ease, color 0.3s ease;
   cursor: pointer;
@@ -78,6 +77,53 @@
 .logout-btn:hover {
   background-color: #fff;
   color: #e60000;
+}
+
+/* Menú desplegable para Reportes */
+.dropdown {
+  position: relative;
+}
+
+.dropdown-btn {
+  color: #fff;
+  font-weight: bold;
+  padding: 0.5rem;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #b30000;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  padding: 0.5rem 0;
+  display: none;
+  flex-direction: column; /* Organiza las opciones en columna */
+  min-width: 150px;
+}
+
+.dropdown:hover .dropdown-menu,
+.dropdown-menu.active {
+  display: flex; /* Cambia a flex para mostrar el submenú */
+}
+
+.dropdown-menu li {
+  padding: 0.5rem 1rem;
+}
+
+.dropdown-menu li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  display: block; /* Muestra las opciones en bloques individuales */
+}
+
+.dropdown-menu li a:hover {
+  color: #e6e6e6;
 }
 
 /* Menú hamburguesa para pantallas pequeñas */
@@ -121,5 +167,13 @@
   .navbar-links.active a {
     padding: 0.75rem;
     text-align: center;
+  }
+
+  .dropdown-menu {
+    position: relative;
+    top: 0;
+    background-color: #e60000;
+    width: 100%;
+    box-shadow: none;
   }
 }

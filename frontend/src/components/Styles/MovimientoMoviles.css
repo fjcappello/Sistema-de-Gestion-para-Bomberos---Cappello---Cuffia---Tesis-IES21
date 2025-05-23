@@ -1,0 +1,167 @@
+.moviles-movimientos-container {
+  padding: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.moviles-movimientos-titulo {
+  font-size: 1.6rem;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #b30000;
+}
+
+.moviles-movimientos-select,
+.moviles-movimientos-input,
+.moviles-movimientos-multiselect {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.moviles-movimientos-multiselect {
+  height: 120px;
+}
+
+.submit-btn {
+  display: block;
+  width: 100%;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+  background-color: #45a049;
+}
+
+.moviles-movimientos-filtros {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.moviles-movimientos-filtros input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  flex: 1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 180px;
+}
+
+.moviles-movimientos-filtros button {
+  background-color: #4caf50;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.moviles-movimientos-filtros button:hover {
+  background-color: #45a049;
+}
+
+.moviles-movimientos-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.moviles-movimientos-tabla th,
+.moviles-movimientos-tabla td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.moviles-movimientos-tabla th {
+  background-color: #ff3333;
+  color: white;
+}
+
+.moviles-movimientos-tabla tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.moviles-movimientos-tabla tr:hover {
+  background-color: #f1f1f1;
+}
+
+.form-container input,
+.form-container select,
+.form-container textarea {
+  width: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.modal textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.filtro-select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 180px;
+  flex: 1;
+}
+
+.filtro-fecha {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  min-width: 180px;
+  flex: 1;
+}
+
+.btn-retorno {
+  background-color: #0066cc;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-retorno:hover {
+  background-color: #004999;
+}
+
+.btn-exportar {
+  background-color: #28a745;
+  color: white;
+  font-weight: bold;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-exportar:hover {
+  background-color: #218838;
+}

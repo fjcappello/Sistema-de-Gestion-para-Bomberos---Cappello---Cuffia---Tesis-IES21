@@ -1,48 +1,160 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Navbar from './components/Navbar';
-import PersonalTable from './components/PersonalTable';
+import PersonalTable from './components/Personal';
 import EmergenciesTable from './components/EmergenciesTable';
 import Login from './components/Login';
-import './App.css';
+import './components/Styles/App.css';
+import ReportsPage from './components/EstadisticasEmergencias';
+import EstadisticaAsistencia from './components/estadisticasAsistencias';
+import EnviarMensaje from './components/EnviarMensaje';
+import BandejaEntrada from './components/BandejaEntrada';
+import EnviarMensajeModal from './components/EnviarMensajeModal';
+import ModalCambioPassword from './components/ModalCambioPassword';
+import Configuracion from './components/Configuracion';
+import Auditoria from './components/Auditoria';
+import MiCuenta from './components/MiCuenta';
+import OtrasCuentas from './components/OtrasCuentas';
+import { useUsuario } from './context/UserContext';
+import MovimientosPersonas from './components/MovimientosPersonas';
+import MovilesRegistro from './components/MovilesRegistro';
+import Dashboard from './components/Dashboard/Dashboard';
+import MovimientoMoviles from './components/MovimientoMoviles';
+import PanolOperativo from './components/PanolOperativo';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const { usuario, setUsuario } = useUsuario();
+  const [horaActual, setHoraActual] = useState(new Date());
 
   useEffect(() => {
     const storedAuth = localStorage.getItem('isAuthenticated');
-    if (storedAuth === 'true') {
+    const storedUsuario = localStorage.getItem('usuario');
+
+    if (storedAuth === 'true' && storedUsuario) {
       setIsAuthenticated(true);
+      const usuarioParseado = JSON.parse(storedUsuario);
+      setUsuario({
+        legajo: usuarioParseado.legajo,
+        nombre: usuarioParseado.nombre,
+        apellido: usuarioParseado.apellido,
+        primerIngreso: usuarioParseado.primerIngreso,
+        nombreCompleto: `${usuarioParseado.nombre} ${usuarioParseado.apellido}`,
+      });
+    } else {
+      setIsAuthenticated(false);
+      setUsuario(null);
     }
   }, []);
 
-  const handleLogout = () => {
-    setIsAuthenticated(false);
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setHoraActual(new Date());
+    }, 60000);
+
+    return () => clearInterval(intervalo);
+  }, []);
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+      if (usuarioActual) {
+        navigator.sendBeacon(
+          'http://localhost:3001/logout',
+          new Blob(
+            [JSON.stringify({
+              legajo: usuarioActual.legajo,
+              nombreCompleto: usuarioActual.nombreCompleto,
+            })],
+            { type: 'application/json' }
+          )
+        );
+      }
+
       localStorage.removeItem('isAuthenticated');
+      localStorage.removeItem('usuario');
     };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+  }, []);
+
+  const handleLogout = async () => {
+    const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+
+    if (usuarioActual) {
+      try {
+        await axios.post('http://localhost:3001/logout', {
+          legajo: usuarioActual.legajo,
+          nombreCompleto: usuarioActual.nombreCompleto,
+        });
+        console.log('Logout registrado en bitácora');
+      } catch (error) {
+        console.error('Error registrando logout en bitácora:', error);
+      }
+    }
+
+    localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('usuario');
+    setUsuario(null);
+    setIsAuthenticated(false);
+  };
 
   return (
     <Router>
       <div className="App">
-        {}
+        {usuario?.primerIngreso && (
+          <ModalCambioPassword
+            legajo={usuario.legajo}
+            onPasswordChanged={() => {
+              const usuarioActualizado = {
+                ...usuario,
+                primerIngreso: false,
+                nombreCompleto: `${usuario.nombre} ${usuario.apellido}`,
+              };
+              setUsuario(usuarioActualizado);
+              localStorage.setItem(
+                'usuario',
+                JSON.stringify(usuarioActualizado)
+              );
+            }}
+          />
+        )}
         {isAuthenticated && <Navbar onLogout={handleLogout} />}
 
         <main>
           <Routes>
-            {}
             {!isAuthenticated ? (
-              <Route path="/" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+              <Route
+                path="/"
+                element={<Login setIsAuthenticated={setIsAuthenticated} />}
+              />
             ) : (
               <>
-                {}
-                <Route path="/" element={<h1>Bienvenido al Sistema de Gestión de Bomberos</h1>} />
-
-                {}
+                <Route path="/" element={<Dashboard />} />
                 <Route path="/emergencias" element={<EmergenciesTable />} />
-
-                {}
                 <Route path="/personal" element={<PersonalTable />} />
+                <Route path="/reportes/estadisticas" element={<ReportsPage />} />
+                <Route
+                  path="/estadisticas-asistencia"
+                  element={<EstadisticaAsistencia />}
+                />
+                <Route
+                  path="/reportes/movimientos-personas"
+                  element={<MovimientosPersonas />}
+                />
+                <Route
+                  path="/reportes/movimientos-moviles"
+                  element={<MovimientoMoviles />}
+                />
+                <Route path="/bandeja-entrada" element={<BandejaEntrada />} />
+                <Route path="/configuracion" element={<Configuracion />} />
+                <Route path="/moviles" element={<MovilesRegistro />} />
+                <Route path="/mi-cuenta" element={<MiCuenta />} />
+                <Route path="/auditoria" element={<Auditoria />} />
+                <Route path="/otras-cuentas" element={<OtrasCuentas />} />
+                <Route path="/panol-operativo" element={<PanolOperativo />} />
               </>
             )}
           </Routes>
