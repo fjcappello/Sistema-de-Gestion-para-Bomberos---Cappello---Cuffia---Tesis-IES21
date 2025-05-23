@@ -4,7 +4,7 @@ import './Styles/Login.css';
 import { useUsuario } from '../context/UserContext';
 
 function Login({ setIsAuthenticated }) {
-  const { setUsuario } = useUsuario();
+  const { setAuthData } = useUsuario();
   const [legajo, setLegajo] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -21,12 +21,10 @@ function Login({ setIsAuthenticated }) {
           primerIngreso: response.data.primerIngreso === 1 || response.data.primerIngreso === true,
           rol: response.data.rol
         };
-        setIsAuthenticated(true);
-        setUsuario(usuario);
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('usuario', JSON.stringify(usuario));
-        localStorage.setItem('token', response.data.token); // 25/04/2025 agregado del token localstorage
-        console.log(response.data.token);
+        setIsAuthenticated(true); // This might become redundant if App.js relies on UserContext.usuario
+        setAuthData(usuario, response.data.token);
+        // localStorage for 'isAuthenticated' and 'usuario' is now handled in setAuthData
+        console.log("Token set in context and window.jwtToken:", response.data.token);
       } else {
         setError('Legajo o contraseña incorrectos.');
       }

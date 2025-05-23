@@ -56,7 +56,7 @@
 }
 
 .add-person-btn:hover {
-  background-color: #cc0000;
+  background-color: #006400; /* Darker green */
 }
 
 /* boton de eliminar personal */
@@ -178,8 +178,21 @@
 }
 
 .error-message {
-  color: red;
+  color: red; /* Or a preferred shade of red */
   margin-top: 1rem;
+  padding: 0.5rem;
+  border: 1px solid red; /* Optional: add a border */
+  border-radius: 4px; /* Optional: for consistency */
+  background-color: #ffeeee; /* Optional: light red background */
+}
+
+.success-message {
+  color: green; /* Or a preferred shade of green */
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border: 1px solid green; /* Optional: add a border */
+  border-radius: 4px; /* Optional: for consistency */
+  background-color: #e6ffe6; /* Optional: light green background */
 }
 
 .edit-btn {

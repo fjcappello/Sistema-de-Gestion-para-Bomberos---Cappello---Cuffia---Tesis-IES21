@@ -21,8 +21,6 @@ app.use(require("./Routes/panolOperativo"));
 
 app.use(require("./Routes/estadisticasAsistencias"));
 
-app.use(require('./Routes/estadisticasAsistencias'));
-
 const { logoutUsuario } = require("./Controllers/login.controller");
 app.post("/logout", logoutUsuario);
 

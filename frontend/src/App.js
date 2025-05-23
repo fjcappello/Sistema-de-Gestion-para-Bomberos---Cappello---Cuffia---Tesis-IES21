@@ -25,7 +25,7 @@ import PanolOperativo from './components/PanolOperativo';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { usuario, setUsuario } = useUsuario();
+  const { usuario, setUsuario, logout: contextLogout } = useUsuario(); // Renamed to avoid conflict
   const [horaActual, setHoraActual] = useState(new Date());
 
   useEffect(() => {
@@ -95,10 +95,10 @@ function App() {
       }
     }
 
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('usuario');
-    setUsuario(null);
-    setIsAuthenticated(false);
+    // localStorage items are now handled by contextLogout
+    contextLogout(); // Call logout from UserContext
+    setIsAuthenticated(false); // Still manage local auth state for routing
+    // setUsuario(null) is handled by contextLogout
   };
 
   return (

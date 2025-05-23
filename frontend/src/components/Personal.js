@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import "./Styles/PersonalTable.css";
 import { useUsuario } from "../context/UserContext";
@@ -38,31 +38,53 @@ function PersonalTable() {
     situacion: "",
     vencida: false,
   });
+  const [modalUserMessage, setModalUserMessage] = useState(null);
 
   const fetchPersonal = async () => {
     try {
       const response = await axios.get("http://localhost:3001/personal");
-      setPersonal(response.data);
+      if (response.data && response.data.status === "success") {
+        setPersonal(response.data.data);
+      } else {
+        const errorMessage = response.data && response.data.error ? response.data.error.message : "Error desconocido al obtener personal";
+        console.error("Error al obtener datos de personal:", errorMessage);
+        alert("Error al obtener datos de personal: " + errorMessage);
+      }
     } catch (error) {
-      console.error("Error al obtener datos de personal:", error);
+      console.error("Error de red al obtener datos de personal:", error);
+      alert("Error de red al obtener datos de personal. Verifique la conexión.");
     }
   };
 
   const fetchJerarquias = async () => {
     try {
       const response = await axios.get("http://localhost:3001/jerarquias");
-      setJerarquias(response.data);
+      if (response.data && response.data.status === "success") {
+        setJerarquias(response.data.data);
+      } else {
+        const errorMessage = response.data && response.data.error ? response.data.error.message : "Error desconocido al obtener jerarquías";
+        console.error("Error al obtener jerarquías:", errorMessage);
+        alert("Error al obtener jerarquías: " + errorMessage);
+      }
     } catch (error) {
-      console.error("Error al obtener jerarquías:", error);
+      console.error("Error de red al obtener jerarquías:", error);
+      alert("Error de red al obtener jerarquías. Verifique la conexión.");
     }
   };
 
   const fetchSituaciones = async () => {
     try {
       const response = await axios.get("http://localhost:3001/situaciones");
-      setSituaciones(response.data);
+      if (response.data && response.data.status === "success") {
+        setSituaciones(response.data.data);
+      } else {
+        const errorMessage = response.data && response.data.error ? response.data.error.message : "Error desconocido al obtener situaciones";
+        console.error("Error al obtener situaciones:", errorMessage);
+        alert("Error al obtener situaciones: " + errorMessage);
+      }
     } catch (error) {
-      console.error("Error al obtener situaciones:", error);
+      console.error("Error de red al obtener situaciones:", error);
+      alert("Error de red al obtener situaciones. Verifique la conexión.");
     }
   };
 
@@ -82,39 +104,59 @@ function PersonalTable() {
 
     const legajoVal = parseInt(formData.legajo, 10);
     if (isNaN(legajoVal) || legajoVal <= 0) {
-      alert("El legajo debe ser un número positivo mayor a 0.");
+      setModalUserMessage({ type: 'error', text: "El legajo debe ser un número positivo mayor a 0." });
       return;
     }
 
     const documentoVal = parseInt(formData.documento, 10);
     if (isNaN(documentoVal) || documentoVal < 1 || documentoVal > 99999999) {
-      alert("El documento debe ser un número entre 1 y 99,999,999.");
+      setModalUserMessage({ type: 'error', text: "El documento debe ser un número entre 1 y 99,999,999." });
       return;
     }
 
-    formData.situacion_id = 1; // Establecer valor fijo de 'Activo'
+    // Find 'Activo' situation ID dynamically
+    const situacionActivo = situaciones.find(s => s.nombre && s.nombre.toLowerCase() === 'activo');
+
+    if (!situacionActivo) {
+      setModalUserMessage({ type: 'error', text: "Error: Situación 'Activo' no encontrada. No se puede agregar personal." });
+      return;
+    }
+    formData.situacion_id = situacionActivo.id;
+    setModalUserMessage(null); // Clear previous messages before API call
 
     try {
       const response = await axios.post(
         "http://localhost:3001/personal",
         formData
       );
-      if (response.data.success) {
-        alert("Personal agregado correctamente");
-        setIsAddModalOpen(false);
-        clearFormData();
-        fetchPersonal();
+      if (response.data && response.data.status === "success") {
+        setModalUserMessage({ type: 'success', text: response.data.message || "Personal agregado correctamente" });
+        setTimeout(() => {
+          setIsAddModalOpen(false);
+          clearFormData();
+          fetchPersonal();
+          setModalUserMessage(null);
+        }, 2000); // Close modal after 2 seconds
       } else {
-        alert(
-          "Error al agregar personal: " +
-            (response.data.error || "Operación fallida")
-        );
+        let errorMessageText = "Error al agregar personal.";
+        if (response.data && response.data.error) {
+          errorMessageText = response.data.error.message;
+          if (response.data.details && response.data.details.length > 0) {
+            errorMessageText += "\nDetalles:\n" + response.data.details.join("\n");
+          }
+        }
+        setModalUserMessage({ type: 'error', text: errorMessageText });
       }
     } catch (error) {
-      console.error("Error al intentar agregar personal:", error);
-      alert(
-        "Error en el servidor al intentar agregar personal. Verifique la conexión."
-      );
+      console.error("Error al intentar agregar personal:", error.response ? error.response.data : error);
+      let errorMessageText = "Error en el servidor al intentar agregar personal.";
+      if (error.response && error.response.data && error.response.data.error) {
+        errorMessageText = error.response.data.error.message;
+        if (error.response.data.details && error.response.data.details.length > 0) {
+          errorMessageText += "\nDetalles:\n" + error.response.data.details.join("\n");
+        }
+      }
+      setModalUserMessage({ type: 'error', text: errorMessageText });
     }
   };
 
@@ -142,9 +184,10 @@ function PersonalTable() {
       dataToUpdate.fecha_revision_medica = formData.fecha_revision_medica;
 
     if (Object.keys(dataToUpdate).length === 0) {
-      alert("Debe modificar al menos un campo para guardar los cambios.");
+      setModalUserMessage({ type: 'error', text: "Debe modificar al menos un campo para guardar los cambios." });
       return;
     }
+    setModalUserMessage(null); // Clear previous messages
 
     try {
       const response = await axios.put(
@@ -152,48 +195,67 @@ function PersonalTable() {
         dataToUpdate
       );
 
-      if (response.data.success) {
-        alert("Datos actualizados correctamente");
-        setIsEditModalOpen(false);
-        fetchPersonal();
+      if (response.data && response.data.status === "success") {
+        setModalUserMessage({ type: 'success', text: response.data.message || "Datos actualizados correctamente" });
+        setTimeout(() => {
+          setIsEditModalOpen(false);
+          fetchPersonal();
+          setModalUserMessage(null);
+        }, 2000);
       } else {
-        alert(
-          "Error al actualizar: " + (response.data.error || "Operación fallida")
-        );
+        let errorMessageText = "Error al actualizar.";
+        if (response.data && response.data.error) {
+          errorMessageText = response.data.error.message;
+          if (response.data.details && response.data.details.length > 0) {
+            errorMessageText += "\nDetalles:\n" + response.data.details.join("\n");
+          }
+        }
+        setModalUserMessage({ type: 'error', text: errorMessageText });
       }
     } catch (error) {
-      console.error("Error al intentar actualizar:", error);
-      alert("Error en el servidor al intentar actualizar datos.");
+      console.error("Error al intentar actualizar:", error.response ? error.response.data : error);
+      let errorMessageText = "Error en el servidor al intentar actualizar datos.";
+      if (error.response && error.response.data && error.response.data.error) {
+        errorMessageText = error.response.data.error.message;
+        if (error.response.data.details && error.response.data.details.length > 0) {
+          errorMessageText += "\nDetalles:\n" + error.response.data.details.join("\n");
+        }
+      }
+      setModalUserMessage({ type: 'error', text: errorMessageText });
     }
   };
 
   const handleDelete = async () => {
     if (!deleteLegajo) {
-      setDeleteError("Por favor, ingrese un número de legajo válido.");
+      setModalUserMessage({ type: 'error', text: "Por favor, ingrese un número de legajo válido." });
+      // Note: This message will appear in the main delete modal, not the confirm dialog, if not handled carefully.
+      // For now, we'll set it and it will be visible when the confirm dialog closes or if the input is in the main modal.
+      // If deleteLegajo input is only in main modal, this is fine.
       return;
     }
+    setModalUserMessage(null); // Clear previous messages
 
     try {
       const response = await axios.delete(
         `http://localhost:3001/personal/${deleteLegajo}`
       );
-      if (response.data.success) {
-        alert("Personal eliminado correctamente");
-        setIsDeleteModalOpen(false);
-        setDeleteLegajo("");
-        setDeleteError("");
-        fetchPersonal();
+      if (response.data && response.data.status === "success") {
+        setModalUserMessage({ type: 'success', text: response.data.message || "Personal eliminado correctamente" });
+        setTimeout(() => {
+          setIsDeleteModalOpen(false);
+          setDeleteLegajo("");
+          setConfirmDelete(false); 
+          fetchPersonal();
+          setModalUserMessage(null);
+        }, 2000);
       } else {
-        setDeleteError(
-          "Error al eliminar personal: " +
-            (response.data.error || "Operación fallida")
-        );
+        const errorMessageText = (response.data && response.data.error && response.data.error.message) || "Error al eliminar personal.";
+        setModalUserMessage({ type: 'error', text: errorMessageText });
       }
     } catch (error) {
-      console.error("Error al intentar eliminar personal:", error);
-      setDeleteError(
-        "Error en el servidor al intentar eliminar personal. Verifique la conexión."
-      );
+      console.error("Error al intentar eliminar personal:", error.response ? error.response.data : error);
+      const errorMessageText = (error.response && error.response.data && error.response.data.error && error.response.data.error.message) || "Error en el servidor al intentar eliminar personal.";
+      setModalUserMessage({ type: 'error', text: errorMessageText });
     }
   };
 
@@ -213,16 +275,18 @@ function PersonalTable() {
 
   const openAddModal = () => {
     clearFormData();
+    setModalUserMessage(null);
     setIsAddModalOpen(true);
   };
 
   const openEditModal = (rrhh) => {
     setFormData({
       legajo: rrhh.legajo,
-      jerarquia_id: rrhh.jerarquia_id,
-      situacion_id: rrhh.situacion_id,
+      jerarquia_id: rrhh.jerarquia_id, // Assuming jerarquia_id is available directly
+      situacion_id: rrhh.situacion_id, // Assuming situacion_id is available directly
       fecha_revision_medica: rrhh.fecha_revision_medica?.split("T")[0] || "",
     });
+    setModalUserMessage(null);
     setIsEditModalOpen(true);
   };
 
@@ -234,48 +298,53 @@ function PersonalTable() {
     return new Date(date) < oneYearAgo;
   };
 
-  const personalFiltrado = personal.filter((p) => {
-    const coincideLegajo =
-      filtros.legajo === "" || p.legajo.toString().includes(filtros.legajo);
-    const coincideNombreApellido =
-      filtros.nombreApellido === "" ||
-      p.nombre_completo
-        .toLowerCase()
-        .includes(filtros.nombreApellido.toLowerCase());
-    const coincideDocumento =
-      filtros.documento === "" ||
-      p.documento.toString().includes(filtros.documento);
-    const coincideIngresoDesde =
-      filtros.ingresoDesde === "" ||
-      new Date(p.fecha_ingreso) >= new Date(filtros.ingresoDesde);
-    const coincideIngresoHasta =
-      filtros.ingresoHasta === "" ||
-      new Date(p.fecha_ingreso) <= new Date(filtros.ingresoHasta);
-    const coincideJerarquia =
-      filtros.jerarquia === "" || p.jerarquia === filtros.jerarquia;
-    const coincideSituacion =
-      filtros.situacion === "" || p.situacion === filtros.situacion;
-    const coincideVencida =
-      !filtros.vencida || isExpired(p.fecha_revision_medica);
-    return (
-      coincideLegajo &&
-      coincideNombreApellido &&
-      coincideDocumento &&
-      coincideIngresoDesde &&
-      coincideIngresoHasta &&
-      coincideJerarquia &&
-      coincideSituacion &&
-      coincideVencida
-    );
-  });
+  const personalFiltrado = useMemo(() => {
+    return personal.filter((p) => {
+      const coincideLegajo =
+        filtros.legajo === "" || p.legajo.toString().includes(filtros.legajo);
+      const coincideNombreApellido =
+        filtros.nombreApellido === "" ||
+        p.nombre_completo
+          .toLowerCase()
+          .includes(filtros.nombreApellido.toLowerCase());
+      const coincideDocumento =
+        filtros.documento === "" ||
+        p.documento.toString().includes(filtros.documento);
+      const coincideIngresoDesde =
+        filtros.ingresoDesde === "" ||
+        new Date(p.fecha_ingreso) >= new Date(filtros.ingresoDesde);
+      const coincideIngresoHasta =
+        filtros.ingresoHasta === "" ||
+        new Date(p.fecha_ingreso) <= new Date(filtros.ingresoHasta);
+      const coincideJerarquia =
+        filtros.jerarquia === "" || p.jerarquia === filtros.jerarquia;
+      const coincideSituacion =
+        filtros.situacion === "" || p.situacion === filtros.situacion;
+      const coincideVencida =
+        !filtros.vencida || isExpired(p.fecha_revision_medica);
+      return (
+        coincideLegajo &&
+        coincideNombreApellido &&
+        coincideDocumento &&
+        coincideIngresoDesde &&
+        coincideIngresoHasta &&
+        coincideJerarquia &&
+        coincideSituacion &&
+        coincideVencida
+      );
+    });
+  }, [personal, filtros]);
 
-  const totalPagesFiltered = Math.ceil(
-    personalFiltrado.length / ITEMS_PER_PAGE
-  );
-  const currentPersonal = personalFiltrado.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE
-  );
+  const totalPagesFiltered = useMemo(() => {
+    return Math.ceil(personalFiltrado.length / ITEMS_PER_PAGE);
+  }, [personalFiltrado, ITEMS_PER_PAGE]);
+
+  const currentPersonal = useMemo(() => {
+    return personalFiltrado.slice(
+      (currentPage - 1) * ITEMS_PER_PAGE,
+      currentPage * ITEMS_PER_PAGE
+    );
+  }, [personalFiltrado, currentPage, ITEMS_PER_PAGE]);
 
   return (
     <div className="table-container">
@@ -460,7 +529,11 @@ function PersonalTable() {
           </button>
           <button
             className="delete-person-btn"
-            onClick={() => setIsDeleteModalOpen(true)}
+            onClick={() => {
+              setModalUserMessage(null);
+              setDeleteError(""); // Keep this if it's used for the input field validation styling/message
+              setIsDeleteModalOpen(true);
+            }}
           >
             Eliminar Personal
           </button>
@@ -471,6 +544,11 @@ function PersonalTable() {
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Agregar Nuevo Personal</h3>
+            {modalUserMessage && (
+              <div className={`modal-message ${modalUserMessage.type === 'error' ? 'error-message' : 'success-message'}`}>
+                {modalUserMessage.text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
+              </div>
+            )}
             <form onSubmit={handleAddSubmit} className="form-container">
               <input
                 type="number"
@@ -559,7 +637,10 @@ function PersonalTable() {
             </form>
             <button
               className="close-modal-btn"
-              onClick={() => setIsAddModalOpen(false)}
+              onClick={() => {
+                setIsAddModalOpen(false);
+                setModalUserMessage(null);
+              }}
             >
               Cerrar
             </button>
@@ -571,6 +652,11 @@ function PersonalTable() {
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Editar Personal</h3>
+            {modalUserMessage && (
+              <div className={`modal-message ${modalUserMessage.type === 'error' ? 'error-message' : 'success-message'}`}>
+                {modalUserMessage.text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
+              </div>
+            )}
             <form onSubmit={handleEditSubmit} className="form-container">
               <label>Jerarquía:</label>
               <select
@@ -618,6 +704,7 @@ function PersonalTable() {
               onClick={() => {
                 clearFormData();
                 setIsEditModalOpen(false);
+                setModalUserMessage(null);
               }}
             >
               Cerrar
@@ -630,6 +717,12 @@ function PersonalTable() {
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Eliminar Personal</h3>
+            {/* Display general modal messages here, if any, before confirmation */}
+            {modalUserMessage && !confirmDelete && ( // Show only if not in confirm step or if message is general
+              <div className={`modal-message ${modalUserMessage.type === 'error' ? 'error-message' : 'success-message'}`}>
+                 {modalUserMessage.text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
+              </div>
+            )}
             <input
               type="text"
               className="filtro-input"
@@ -637,19 +730,32 @@ function PersonalTable() {
               value={deleteLegajo}
               onChange={(e) => {
                 setDeleteLegajo(e.target.value);
-                setDeleteError("");
+                setDeleteError(""); // Keep if specific input validation uses it
+                setModalUserMessage(null); // Clear general message on input change
               }}
               required
             />
             <button
               className="confirm-delete-btn"
-              onClick={() => setConfirmDelete(true)}
+              onClick={() => {
+                if (!deleteLegajo) {
+                     setModalUserMessage({ type: 'error', text: "Por favor, ingrese un número de legajo válido." });
+                     return;
+                }
+                setModalUserMessage(null); // Clear message before going to confirm
+                setConfirmDelete(true);
+                }
+              }
             >
               Eliminar
             </button>
             <button
               className="close-modal-btn"
-              onClick={() => setIsDeleteModalOpen(false)}
+              onClick={() => {
+                setIsDeleteModalOpen(false);
+                setModalUserMessage(null);
+                setConfirmDelete(false);
+              }}
             >
               Cancelar
             </button>
@@ -659,13 +765,23 @@ function PersonalTable() {
             <div className="confirm-overlay">
               <div className="confirm-content">
                 <p>¿Está seguro? Esta acción no se puede deshacer.</p>
-                {deleteError && <p className="error-message">{deleteError}</p>}
+                {/* Display message specific to the confirmation step */}
+                {modalUserMessage && (
+                  <div className={`modal-message ${modalUserMessage.type === 'error' ? 'error-message' : 'success-message'}`}>
+                    {modalUserMessage.text.split('\n').map((line, i) => <p key={i}>{line}</p>)}
+                  </div>
+                )}
+                {/* Fallback for deleteError if it's still used for something specific */}
+                {deleteError && !modalUserMessage && <p className="error-message">{deleteError}</p>}
                 <button className="confirm-delete-btn" onClick={handleDelete}>
                   Confirmar
                 </button>
                 <button
                   className="close-modal-btn"
-                  onClick={() => setConfirmDelete(false)}
+                  onClick={() => {
+                    setConfirmDelete(false);
+                    setModalUserMessage(null); // Clear message when cancelling confirm
+                  }}
                 >
                   Cancelar
                 </button>
