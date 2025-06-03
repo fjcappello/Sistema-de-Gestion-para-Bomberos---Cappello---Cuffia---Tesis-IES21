@@ -2,18 +2,19 @@
 
 :root {
   /* Colors */
-  --primary-color: #007bff; /* Example: Blue */
+  --primary-color: #D32F2F; /* Updated: Red */
   --secondary-color: #6c757d; /* Example: Gray */
-  --accent-color: #17a2b8; /* Example: Teal */
+  --accent-color: #17a2b8; /* Example: Teal - To be phased out or used for distinct accents */
+  --accent-color-alpha: rgba(23, 162, 184, 0.25); /* Alpha for Teal, if needed */
   --success-color: #28a745; /* Example: Green */
-  --error-color: #dc3545; /* Example: Red */
+  --error-color: #B71C1C; /* Updated: Darker Red, as primary is now the main red */
   --warning-color: #ffc107; /* Example: Yellow */
 
   --text-color-primary: #212529; /* Dark gray for text */
   --text-color-secondary: #6c757d; /* Lighter gray for secondary text */
   --text-color-muted: #adb5bd; /* Muted gray */
   --link-color: var(--primary-color);
-  --link-hover-color: var(--accent-color);
+  --link-hover-color: var(--primary-color-dark); /* Links hover to darker primary */
 
   --background-color: #ffffff; /* White background */
   --surface-color: #f8f9fa; /* Light gray for surfaces like cards, sidebars */
@@ -78,15 +79,17 @@
   --overlay-background-color: rgba(0, 0, 0, 0.6); /* Slightly darker overlay */
 
   /* Color Variants for UI states */
-  --primary-color-dark: #0056b3;
-  --primary-color-darker: #004085;
-  --primary-color-alpha: rgba(0, 123, 255, 0.25);
-  --primary-color-lightest: #cfe2ff; /* For table hover or light backgrounds */
+  --primary-color-dark: #B71C1C; /* Darker Red */
+  --primary-color-darker: #8A0000; /* Even Darker Red */
+  --primary-color-alpha: rgba(211, 47, 47, 0.25); /* Alpha for Red */
+  --primary-color-lightest: #FFCDD2; /* Light Red */
 
   --success-color-dark: #1e7e34;
   --success-color-darker: #155724;
-  --error-color-dark: #b21f2d;
-  --error-color-darker: #842029;
+  --success-color-alpha: rgba(40, 167, 69, 0.25); /* Alpha for success color */
+  --error-color-dark: #8A0000; /* Darker shade of new error color */
+  --error-color-darker: #6A0000; /* Even darker shade of new error color */
+  --error-color-alpha: rgba(183, 28, 28, 0.25); /* Alpha for new error color */
   --secondary-color-dark: #545b62; /* Adjusted for better contrast from #6c757d */
   --secondary-color-darker: #495057;
 
@@ -108,6 +111,17 @@
   @keyframes fadeInScale {
     from { opacity: 0; transform: scale(0.95); }
     to { opacity: 1; transform: scale(1); }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 }
 
@@ -160,13 +174,32 @@ p {
 
 a {
   color: var(--link-color);
-  text-decoration: none;
-  transition: var(--transition-base);
+  text-decoration: none; /* Keep text-decoration none if using pseudo-element for underline */
+  position: relative; /* For positioning the pseudo-element */
+  padding-bottom: 2px; /* Add a little space for the underline not to touch text */
+  transition: color 0.2s ease-in-out; /* Only transition color on the link itself */
+}
+
+a::after {
+  content: '';
+  position: absolute;
+  bottom: 0; /* Position at the bottom of the padding */
+  left: 0;
+  width: 100%;
+  height: 1.5px; /* Slightly thinner underline */
+  background-color: var(--primary-color); /* Or currentColor to match link color, or --link-hover-color */
+  transform: scaleX(0);
+  transform-origin: left; /* Underline grows from the left */
+  transition: transform 0.3s ease-out;
 }
 
 a:hover {
   color: var(--link-hover-color);
-  text-decoration: underline;
+  text-decoration: none; /* Ensure no default underline on hover */
+}
+
+a:hover::after {
+  transform: scaleX(1);
 }
 
 ul,
@@ -331,22 +364,142 @@ button,
 [type="button"],
 [type="reset"],
 [type="submit"] {
-  -webkit-appearance: button; /* 2 */
-  background-color: var(--primary-color); /* Example button background */
-  color: white; /* Example button text color */
+  -webkit-appearance: button;
+  background-color: var(--primary-color); /* Will now use the red primary color */
+  color: var(--text-color-on-primary);
   border: 1px solid var(--primary-color);
-  padding: var(--spacing-xs) var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md); /* Standardized padding */
+  border-radius: var(--border-radius-sm); /* Standardized border radius */
+  font-weight: var(--font-weight-medium); /* Standardized font weight */
   cursor: pointer;
-  transition: var(--transition-base);
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, transform 0.2s ease-in-out; /* Updated transition */
+  text-align: center; /* Ensure text is centered */
 }
 
 button:hover,
 [type="button"]:hover,
 [type="reset"]:hover,
 [type="submit"]:hover {
-  background-color: var(--link-hover-color); /* Darken button on hover */
-  border-color: var(--link-hover-color);
+  background-color: var(--primary-color-dark); /* Uses new red --primary-color-dark */
+  border-color: var(--primary-color-dark);
+  transform: scale(1.03) translateY(-1px); /* Updated transform */
+  box-shadow: var(--shadow-sm);
 }
+
+button:active,
+[type="button"]:active,
+[type="reset"]:active,
+[type="submit"]:active {
+  background-color: var(--primary-color-darker);
+  border-color: var(--primary-color-darker);
+  transform: scale(0.98); /* Updated transform */
+  box-shadow: none; /* Remove shadow on active */
+}
+
+button:focus,
+[type="button"]:focus,
+[type="reset"]:focus,
+[type="submit"]:focus {
+  outline: none;
+  border-color: var(--primary-color-dark);
+  box-shadow: 0 0 0 3px var(--primary-color-alpha); /* Standardized focus ring */
+}
+
+/* Secondary button style */
+.btn-secondary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+  color: var(--text-color-on-primary); /* Assuming white text, adjust if secondary is light */
+}
+.btn-secondary:hover {
+  background-color: var(--secondary-color-dark);
+  border-color: var(--secondary-color-dark);
+}
+.btn-secondary:active {
+  background-color: var(--secondary-color-darker);
+  border-color: var(--secondary-color-darker);
+}
+.btn-secondary:focus {
+  border-color: var(--secondary-color-dark);
+  box-shadow: 0 0 0 3px var(--secondary-color-alpha); /* Alpha for secondary */
+}
+
+/* Success button style */
+.btn-success {
+  background-color: var(--success-color);
+  border-color: var(--success-color);
+  color: var(--text-color-on-success);
+}
+.btn-success:hover {
+  background-color: var(--success-color-dark);
+  border-color: var(--success-color-dark);
+}
+.btn-success:active {
+  background-color: var(--success-color-darker);
+  border-color: var(--success-color-darker);
+}
+.btn-success:focus {
+  border-color: var(--success-color-dark);
+  box-shadow: 0 0 0 3px var(--success-color-alpha); /* Define --success-color-alpha */
+}
+
+/* Error button style */
+.btn-error {
+  background-color: var(--error-color); /* Uses new #B71C1C */
+  border-color: var(--error-color);
+  color: var(--text-color-on-error); /* Ensure this provides good contrast */
+}
+.btn-error:hover {
+  background-color: var(--error-color-dark); /* Uses new #8A0000 */
+  border-color: var(--error-color-dark);
+}
+.btn-error:active {
+  background-color: var(--error-color-darker); /* Uses new #6A0000 */
+  border-color: var(--error-color-darker);
+}
+.btn-error:focus {
+  border-color: var(--error-color-dark);
+  box-shadow: 0 0 0 3px var(--error-color-alpha); /* Uses new alpha for #B71C1C */
+}
+
+/* Warning button style */
+.btn-warning {
+  background-color: var(--warning-color);
+  border-color: var(--warning-color);
+  color: var(--text-color-on-warning);
+}
+.btn-warning:hover {
+  background-color: var(--warning-color-dark);
+  border-color: var(--warning-color-dark);
+}
+.btn-warning:active {
+  background-color: var(--warning-color-darker);
+  border-color: var(--warning-color-darker);
+}
+.btn-warning:focus {
+  border-color: var(--warning-color-dark);
+  box-shadow: 0 0 0 3px var(--warning-color-alpha);
+}
+
+/* Outline button style */
+.btn-outline-primary {
+  background-color: transparent;
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+.btn-outline-primary:hover {
+  background-color: var(--primary-color);
+  color: var(--text-color-on-primary);
+}
+.btn-outline-primary:focus {
+  background-color: transparent; /* Keep background transparent on focus if preferred */
+  color: var(--primary-color);
+  border-color: var(--primary-color-dark); /* Darken border slightly */
+  box-shadow: 0 0 0 3px var(--primary-color-alpha);
+}
+
+/* Add more outline variants as needed (e.g., .btn-outline-secondary) */
+
 
 input[type="text"],
 input[type="email"],
@@ -403,4 +556,9 @@ input::-webkit-inner-spin-button {
 }
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* Animation Utility Classes */
+.animated-fadeInUp {
+  animation: fadeInUp 0.5s ease-out forwards;
 }

@@ -11,7 +11,8 @@
   top: 0;
   left: 0;
   z-index: 1000; /* Ensure it's above other content */
-  height: var(--spacing-xxl); /* Example: 48px, adjust as needed */
+  height: 86px; /* Increased height for larger logo (approx 5.375rem or var(--spacing-xxl) * 1.8) */
+  padding: var(--spacing-xs) var(--spacing-lg); /* 8px top/bottom, 24px left/right */
 }
 
 .navbar-logo {
@@ -21,7 +22,7 @@
 }
 
 .navbar-logo img {
-  height: calc(var(--spacing-xxl) - (2 * var(--spacing-xs))); /* Full height minus some padding */
+  height: 70px; /* Increased logo height */
   width: auto;
   margin-right: var(--spacing-md); /* Was 10px */
 }
@@ -37,6 +38,8 @@
   list-style: none;
   display: flex;
   align-items: center; /* Align items vertically */
+  justify-content: center; /* Center link items within this container */
+  flex-grow: 1; /* Allow this section to take available space */
   gap: var(--spacing-sm); /* Was 0.5rem */
   height: 100%;
 }
@@ -201,7 +204,7 @@
     display: none;
     flex-direction: column;
     position: absolute;
-    top: var(--spacing-xxl); /* Height of the navbar */
+    top: 86px; /* Adjusted to new navbar height */
     right: 0;
     background-color: var(--primary-color); /* Was #e60000 */
     width: 100%;
@@ -260,6 +263,7 @@
   }
   .navbar-logo img {
     margin-right: var(--spacing-sm);
-    height: calc(var(--spacing-xxl) - (2 * var(--spacing-md)));
+    height: calc(86px - (2 * var(--spacing-sm))); /* Adjust based on new navbar height and mobile padding */
+    /* Current var(--spacing-sm) is 12px. So, 86 - 24 = 62px. This is a good mobile logo height. */
   }
 }
