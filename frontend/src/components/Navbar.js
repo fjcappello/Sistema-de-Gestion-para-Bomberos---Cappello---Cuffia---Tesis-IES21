@@ -143,7 +143,7 @@ function Navbar({ onLogout }) {
       </ul>
 
       {/* Botón menú hamburguesa */}
-      <button className="hamburger" onClick={toggleMobileMenu}>
+      <button className={`hamburger ${isMobileMenuOpen ? 'active' : ''}`} onClick={toggleMobileMenu}>
         <span className="line"></span>
         <span className="line"></span>
         <span className="line"></span>

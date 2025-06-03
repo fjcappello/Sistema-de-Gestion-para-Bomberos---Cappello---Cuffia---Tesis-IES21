@@ -385,10 +385,11 @@ function EmergenciesTable() {
       </div>
 
       {/* Tabla */}
-      <table className="emergencies-table">
-        <thead>
-          <tr>
-            <th>Parte ID</th>
+      <div className="emergencies-table-container">
+        <table className="emergencies-table">
+          <thead>
+            <tr>
+              <th>Parte ID</th>
             <th>Número de Parte</th>
             <th>Fecha</th>
             <th>Nombre</th>
@@ -409,7 +410,7 @@ function EmergenciesTable() {
               <tr key={emergencia.parte_id}>
                 <td>{emergencia.parte_id}</td>
                 <td>{emergencia.numero_parte}</td>
-                <td style={{ whiteSpace: "nowrap" }}>{emergencia.fecha}</td>
+                <td className="td-nowrap">{emergencia.fecha}</td>
                 <td>{emergencia.nombre_denunciante}</td>
                 <td>{emergencia.apellido_denunciante}</td>
                 <td>{emergencia.documento_denunciante}</td>
@@ -418,12 +419,7 @@ function EmergenciesTable() {
                 <td>{emergencia.jefe_dotacion}</td>
                 <td
                   title={emergencia.parte_escrito}
-                  style={{
-                    maxWidth: "200px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
+                  className="td-truncate"
                 >
                   {emergencia.parte_escrito.length > 40
                     ? `${emergencia.parte_escrito.substring(0, 40)}...`
@@ -438,14 +434,15 @@ function EmergenciesTable() {
             <tr>
               <td
                 colSpan="13"
-                style={{ textAlign: "center", padding: "1rem", color: "#555" }}
+                className="td-no-data"
               >
                 No hay emergencias cargadas
               </td>
             </tr>
           )}
         </tbody>
-      </table>
+        </table>
+      </div>
 
       {/* Paginación */}
       <div className="pagination">
@@ -492,19 +489,12 @@ function EmergenciesTable() {
       {isAddModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3
-              style={{
-                margin: "0 0 1rem 0",
-                padding: "1.5rem 1.5rem 0",
-                color: "#333",
-                fontSize: "1.25rem",
-              }}
-            >
+            <h3 className="modal-title-custom">
               Agregar Nuevo Reporte
             </h3>
 
             <form onSubmit={handleAddSubmit} className="form-container">
-              <div style={{ display: "flex", gap: "0.75rem" }}>
+              <div className="form-row-flex">
                 <input
                   type="text"
                   name="nombre_denunciante"
@@ -599,7 +589,7 @@ function EmergenciesTable() {
               <textarea
                 name="parte_escrito"
                 placeholder="Descripción detallada del incidente..."
-                style={{ width: "100%", marginBottom: "1rem", resize: "none" }}
+                className="textarea-parte-escrito"
                 value={formData.parte_escrito}
                 onChange={(e) =>
                   setFormData({ ...formData, parte_escrito: e.target.value })
@@ -661,13 +651,13 @@ function EmergenciesTable() {
               onChange={(e) => setBitacoraText(e.target.value)}
               placeholder="Escriba aquí el reporte de la emergencia..."
               rows={8}
-              style={{ width: "100%", marginBottom: "1rem", resize: "none" }}
+              className="textarea-bitacora"
             />
-            <div class="modal-buttons">
-              <button onClick={handleConfirmBitacora} className="confirm-btn">
+            <div className="modal-buttons"> {/* Corrected class typo from "class" to "className" */}
+              <button onClick={handleConfirmBitacora} className="btn btn-success confirm-btn"> {/* Added btn and btn-success */}
                 Confirmar
               </button>
-              <button onClick={closeBitacoraModal} className="cancel-btn">
+              <button type="button" onClick={closeBitacoraModal} className="btn btn-secondary cancel-btn"> {/* Added btn and btn-secondary */}
                 Cancelar
               </button>
             </div>

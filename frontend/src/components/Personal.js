@@ -357,10 +357,11 @@ function PersonalTable() {
           Solo vencidas
         </label>
       </div>
-      <table className="personal-table">
-        <thead>
-          <tr>
-            <th>Legajo</th>
+      <div className="personal-table-wrapper">
+        <table className="personal-table">
+          <thead>
+            <tr>
+              <th>Legajo</th>
             <th>Nombre y Apellido</th>
             <th>Documento</th>
             <th>Fecha de nacimiento</th>
@@ -376,14 +377,7 @@ function PersonalTable() {
             currentPersonal.map((rrhh) => (
               <tr
                 key={rrhh.legajo}
-                style={{
-                  backgroundColor: isExpired(rrhh.fecha_revision_medica)
-                    ? "red"
-                    : "white",
-                  color: isExpired(rrhh.fecha_revision_medica)
-                    ? "white"
-                    : "black",
-                }}
+                className={isExpired(rrhh.fecha_revision_medica) ? "expired-row" : ""}
                 title={
                   isExpired(rrhh.fecha_revision_medica)
                     ? "Ficha médica vencida"
@@ -405,8 +399,8 @@ function PersonalTable() {
                     : ""}
                   {isExpired(rrhh.fecha_revision_medica) && (
                     <span
+                      className="expired-warning-icon"
                       title="Ficha médica vencida"
-                      style={{ marginLeft: "4px", color: "white" }}
                     >
                       ⚠️ Ficha Medica Vencida
                     </span>
@@ -415,7 +409,7 @@ function PersonalTable() {
             {["Administrador", "Jefatura"].includes(usuario?.rol) && (
               <td>
                 <button
-                  className="edit-btn"
+                  className="btn btn-warning edit-btn" /* Added .btn and .btn-warning */
                   title="Editar esta persona"
                   onClick={() => openEditModal(rrhh)}
                 >
@@ -433,7 +427,8 @@ function PersonalTable() {
             </tr>
           )}
         </tbody>
-      </table>
+        </table>
+      </div>
 
       <div className="pagination">
         <button
@@ -474,7 +469,7 @@ function PersonalTable() {
             <form onSubmit={handleAddSubmit} className="form-container">
               <input
                 type="number"
-                className="filtro-input"
+                /* className="filtro-input" // Removed to use global input style */
                 name="legajo"
                 placeholder="Legajo"
                 value={formData.legajo}
@@ -484,7 +479,7 @@ function PersonalTable() {
               />
               <input
                 type="text"
-                className="filtro-input"
+                /* className="filtro-input" // Removed */
                 name="nombre"
                 placeholder="Nombre"
                 value={formData.nombre}
@@ -493,7 +488,7 @@ function PersonalTable() {
               />
               <input
                 type="text"
-                className="filtro-input"
+                /* className="filtro-input" // Removed */
                 name="apellido"
                 placeholder="Apellido"
                 value={formData.apellido}
@@ -502,7 +497,7 @@ function PersonalTable() {
               />
               <input
                 type="number"
-                className="filtro-input"
+                /* className="filtro-input" // Removed */
                 name="documento"
                 placeholder="Documento"
                 value={formData.documento}
@@ -514,7 +509,7 @@ function PersonalTable() {
               <label>Fecha de Nacimiento:</label>
               <input
                 type="date"
-                className="filtro-input"
+                /* className="filtro-input" // Removed */
                 name="nacimiento"
                 value={formData.nacimiento}
                 onChange={handleInputChange}
@@ -523,7 +518,7 @@ function PersonalTable() {
               <label>Fecha de Ingreso:</label>
               <input
                 type="date"
-                className="filtro-input"
+                /* className="filtro-input" // Removed */
                 name="fecha_ingreso"
                 value={formData.fecha_ingreso}
                 onChange={handleInputChange}
@@ -531,7 +526,7 @@ function PersonalTable() {
               />
               <label>Jerarquía:</label>
               <select
-                className="filtro-select"
+                /* className="filtro-select" // Removed */
                 name="jerarquia_id"
                 value={formData.jerarquia_id}
                 onChange={handleInputChange}
@@ -546,23 +541,26 @@ function PersonalTable() {
               <label>Fecha Revisión Médica:</label>
               <input
                 type="date"
-                className="filtro-input"
+                /* className="filtro-input" // Removed */
                 name="fecha_revision_medica"
                 value={formData.fecha_revision_medica}
                 onChange={handleInputChange}
                 required
                 max={new Date().toISOString().split("T")[0]}
               />
-              <button type="submit" className="submit-btn">
-                Agregar Personal
-              </button>
+              <div className="modal-buttons"> {/* Added modal-buttons wrapper */}
+                <button type="submit" className="btn btn-success"> {/* Changed class */}
+                  Agregar Personal
+                </button>
+                <button
+                  type="button" /* Ensure type is button for non-submit actions */
+                  className="btn btn-secondary" /* Changed class */
+                  onClick={() => setIsAddModalOpen(false)}
+                >
+                  Cerrar
+                </button>
+              </div>
             </form>
-            <button
-              className="close-modal-btn"
-              onClick={() => setIsAddModalOpen(false)}
-            >
-              Cerrar
-            </button>
           </div>
         </div>
       )}
@@ -574,7 +572,7 @@ function PersonalTable() {
             <form onSubmit={handleEditSubmit} className="form-container">
               <label>Jerarquía:</label>
               <select
-                className="filtro-select"
+                /* className="filtro-select" // Removed */
                 name="jerarquia_id"
                 value={formData.jerarquia_id}
                 onChange={handleInputChange}
@@ -588,7 +586,7 @@ function PersonalTable() {
               </select>
               <label>Situación:</label>
               <select
-                className="filtro-select"
+                /* className="filtro-select" // Removed */
                 name="situacion_id"
                 value={formData.situacion_id}
                 onChange={handleInputChange}
@@ -603,25 +601,28 @@ function PersonalTable() {
               <label>Fecha Revisión Médica:</label>
               <input
                 type="date"
-                className="filtro-input"
+                /* className="filtro-input" // Removed */
                 name="fecha_revision_medica"
                 value={formData.fecha_revision_medica}
                 onChange={handleInputChange}
                 max={new Date().toISOString().split("T")[0]}
               />
-              <button type="submit" className="submit-btn">
-                Guardar Cambios
-              </button>
+              <div className="modal-buttons"> {/* Added modal-buttons wrapper */}
+                <button type="submit" className="btn btn-success"> {/* Changed class */}
+                  Guardar Cambios
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-secondary" /* Changed class */
+                  onClick={() => {
+                    clearFormData();
+                    setIsEditModalOpen(false);
+                  }}
+                >
+                  Cerrar
+                </button>
+              </div>
             </form>
-            <button
-              className="close-modal-btn"
-              onClick={() => {
-                clearFormData();
-                setIsEditModalOpen(false);
-              }}
-            >
-              Cerrar
-            </button>
           </div>
         </div>
       )}
@@ -632,7 +633,7 @@ function PersonalTable() {
             <h3>Eliminar Personal</h3>
             <input
               type="text"
-              className="filtro-input"
+              /* className="filtro-input" // Removed */
               placeholder="Ingrese el legajo"
               value={deleteLegajo}
               onChange={(e) => {
@@ -641,34 +642,40 @@ function PersonalTable() {
               }}
               required
             />
-            <button
-              className="confirm-delete-btn"
-              onClick={() => setConfirmDelete(true)}
-            >
-              Eliminar
-            </button>
-            <button
-              className="close-modal-btn"
-              onClick={() => setIsDeleteModalOpen(false)}
-            >
-              Cancelar
-            </button>
-          </div>
-
-          {confirmDelete && (
-            <div className="confirm-overlay">
-              <div className="confirm-content">
-                <p>¿Está seguro? Esta acción no se puede deshacer.</p>
-                {deleteError && <p className="error-message">{deleteError}</p>}
-                <button className="confirm-delete-btn" onClick={handleDelete}>
-                  Confirmar
+              <div className="modal-buttons"> {/* Added modal-buttons wrapper */}
+                <button
+                  className="btn btn-error" /* Changed class */
+                  onClick={() => setConfirmDelete(true)}
+                >
+                  Eliminar
                 </button>
                 <button
-                  className="close-modal-btn"
-                  onClick={() => setConfirmDelete(false)}
+                  type="button"
+                  className="btn btn-secondary" /* Changed class */
+                  onClick={() => setIsDeleteModalOpen(false)}
                 >
                   Cancelar
                 </button>
+              </div>
+          </div>
+
+          {confirmDelete && (
+              <div className="confirm-overlay"> {/* This should also become modal-overlay */}
+                <div className="modal-content confirm-content"> {/* confirm-content can be a modifier class */}
+                <p>¿Está seguro? Esta acción no se puede deshacer.</p>
+                {deleteError && <p className="error-message">{deleteError}</p>}
+                  <div className="modal-buttons"> {/* Added modal-buttons wrapper */}
+                    <button className="btn btn-error" onClick={handleDelete}> {/* Changed class */}
+                      Confirmar
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-secondary" /* Changed class */
+                      onClick={() => setConfirmDelete(false)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
               </div>
             </div>
           )}

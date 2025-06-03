@@ -228,94 +228,26 @@
 */
 
 /* Fallback styling for modal buttons if not using global .btn classes in HTML */
-/* It's highly recommended to use classes like .btn .btn-success, .btn .btn-secondary, .btn .btn-error in HTML markup */
+/* These are now redundant as JSX was updated to use .btn .btn-type classes. */
+/* Removing them to rely on global styles from index.css */
 
-.form-container { /* Basic styling if a .form-container is used within a modal */
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-md);
-}
+/* .form-container {} // Basic styling if a .form-container is used within a modal - already has display:flex from previous */
 
-.submit-btn {
-  /* Defaults to .btn-success styling from index.css if class="btn btn-success submit-btn" is used */
-  /* Direct styling fallback: */
-  background-color: var(--success-color);
-  color: var(--text-color-on-success);
-  border: 1px solid var(--success-color);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--border-radius-sm);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: var(--transition-base);
-  text-align: center;
+/* Removed .submit-btn, .close-modal-btn, .confirm-delete-btn specific styles here */
+/* They will now get styles from .btn, .btn-success, .btn-secondary, .btn-error in index.css */
+
+
+/* Styles for conditionally styled rows and icons */
+.expired-row td { /* Target td cells for background and text color */
+  background-color: var(--error-color-lightest) !important; /* Use !important if other hover effects might override */
+  color: var(--error-color-dark) !important; /* Ensure text is readable on light red */
 }
-.submit-btn:hover {
-  background-color: var(--success-color-dark);
-  border-color: var(--success-color-dark);
-  transform: translateY(-1px);
-}
-.submit-btn:active {
-  background-color: var(--success-color-darker);
-  border-color: var(--success-color-darker);
-  transform: translateY(0);
-}
-.submit-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--success-color-alpha);
+.expired-row:hover td { /* Maintain a distinct hover for expired rows if needed */
+    background-color: var(--error-color-light) !important; /* Define --error-color-light if needed, or slightly darker than lightest */
 }
 
-.close-modal-btn {
-  /* Defaults to .btn-secondary styling from index.css if class="btn btn-secondary close-modal-btn" is used */
-  /* Direct styling fallback: */
-  background-color: var(--secondary-color);
-  color: var(--text-color-on-primary); /* Assuming white text on secondary */
-  border: 1px solid var(--secondary-color);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--border-radius-sm);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: var(--transition-base);
-  text-align: center;
-}
-.close-modal-btn:hover {
-  background-color: var(--secondary-color-dark);
-  border-color: var(--secondary-color-dark);
-  transform: translateY(-1px);
-}
-.close-modal-btn:active {
-  background-color: var(--secondary-color-darker);
-  border-color: var(--secondary-color-darker);
-  transform: translateY(0);
-}
-.close-modal-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--secondary-color-alpha); /* Define --secondary-color-alpha in index.css */
-}
-
-.confirm-delete-btn {
-  /* Defaults to .btn-error styling from index.css if class="btn btn-error confirm-delete-btn" is used */
-  /* Direct styling fallback: */
-  background-color: var(--error-color);
-  color: var(--text-color-on-error);
-  border: 1px solid var(--error-color);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  border-radius: var(--border-radius-sm);
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: var(--transition-base);
-  text-align: center;
-}
-.confirm-delete-btn:hover {
-  background-color: var(--error-color-dark);
-  border-color: var(--error-color-dark);
-  transform: translateY(-1px);
-}
-.confirm-delete-btn:active {
-  background-color: var(--error-color-darker);
-  border-color: var(--error-color-darker);
-  transform: translateY(0);
-}
-.confirm-delete-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px var(--error-color-alpha);
+.expired-warning-icon {
+  margin-left: var(--spacing-xs);
+  color: var(--error-color); /* Make icon color match error text or a strong warning color */
+  font-weight: var(--font-weight-bold);
 }

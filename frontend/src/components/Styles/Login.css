@@ -100,16 +100,15 @@
 }
 
 .submit-btn:hover {
-  background-color: darken(var(--success-color), 10%); /* Needs a SASS function or manual darker shade */
-  /* Let's define a hover color or use a utility. For now, a slightly darker green. */
-  /* If --success-color is #28a745, darken could be #218838 */
-  background-color: #218838; /* Fallback, ideally define a --success-hover-color */
-  transform: scale(1.02); /* Keep subtle transform if desired */
+  background-color: var(--success-color-dark); /* Use global variable */
+  border-color: var(--success-color-dark); /* Assuming button might have a border styled with its bg color */
+  transform: scale(1.03) translateY(-1px); /* Use global hover transform */
 }
 
 .submit-btn:active {
-  transform: scale(0.98); /* Keep subtle transform if desired */
-  background-color: #1e7e34; /* Even darker for active */
+  background-color: var(--success-color-darker); /* Use global variable */
+  border-color: var(--success-color-darker);
+  transform: scale(0.98); /* Use global active transform */
 }
 
 .submit-btn:focus {

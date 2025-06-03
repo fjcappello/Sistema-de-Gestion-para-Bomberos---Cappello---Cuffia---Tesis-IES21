@@ -156,6 +156,51 @@
   background-color: var(--primary-color-dark);
   border-color: var(--primary-color-dark);
 }
+
+/* Styles for inline styles migrated from EmergenciesTable.js */
+.emergencies-table .td-nowrap {
+  white-space: nowrap;
+}
+
+.emergencies-table .td-truncate {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emergencies-table .td-no-data {
+  text-align: center;
+  padding: var(--spacing-lg); /* Was 1rem */
+  color: var(--text-color-secondary); /* Was #555 */
+  font-style: italic;
+}
+
+.modal-title-custom { /* For modal titles that need specific styling not covered by global modal-content h3 */
+  margin: 0 0 var(--spacing-md) 0 !important; /* Was 1rem, override if needed */
+  padding: var(--spacing-lg) var(--spacing-lg) 0 !important; /* Was 1.5rem, override if needed */
+  color: var(--text-color-primary) !important; /* Was #333 */
+  font-size: var(--font-size-xl) !important; /* Was 1.25rem, make it larger like other modal titles */
+  /* border-bottom: none !important; /* Optional: if this specific title shouldn't have a border */
+}
+
+.form-row-flex {
+  display: flex;
+  gap: var(--spacing-md); /* Was 0.75rem */
+}
+.form-row-flex > * { /* Ensure items in flex row can grow */
+  flex-grow: 1;
+}
+
+
+.textarea-parte-escrito,
+.textarea-bitacora {
+  width: 100%;
+  margin-bottom: var(--spacing-md); /* Was 1rem */
+  resize: vertical; /* Allow vertical resize, was none for some */
+  min-height: 100px; /* Ensure a decent default size */
+  /* Inherits other textarea styles from global */
+}
 .pagination button:disabled {
   background-color: var(--border-color);
   border-color: var(--border-color);

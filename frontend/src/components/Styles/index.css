@@ -103,6 +103,8 @@
 
   --success-color-lightest: #d1e7dd; /* Very light green for success messages */
   --error-color-lightest: #f8d7da; /* Very light red for error messages */
+  --error-color-light: #f1c0c5; /* Slightly darker than lightest, for hover on error rows */
+
 
   /* Transitions */
   --transition-base: all 0.2s ease-in-out;
@@ -123,6 +125,13 @@
       transform: translateY(0);
     }
   }
+
+  /* Z-indexes */
+  --z-index-navbar: 1000;
+  --z-index-dropdown: 1060; /* For autocomplete, custom selects over modals */
+  --z-index-modal-backdrop: 1050;
+  --z-index-modal-content: 1051;
+  --z-index-tooltip: 1070;
 }
 
 /* CSS Reset */

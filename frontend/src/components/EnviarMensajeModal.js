@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import "./Styles/BandejaEntrada.css";
+/* import "./Styles/BandejaEntrada.css"; // Removed import */
 import "./Styles/EnviarMensajeModal.css";
 
 function EnviarMensajeModal({ onClose, onSent }) {

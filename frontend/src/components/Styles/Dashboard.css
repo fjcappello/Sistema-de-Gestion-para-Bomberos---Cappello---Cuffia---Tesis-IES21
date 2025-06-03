@@ -7,16 +7,18 @@
 }
 
 .bienvenida-usuario {
-  display: block; /* Explicit display type */
-  width: 100%; /* Ensure it takes full width as a flex item */
-  box-sizing: border-box; /* Ensure padding/border don't add to width */
-  text-align: right;
-  font-size: var(--font-size-md); /* Was 1rem */
-  color: var(--text-color-primary); /* Was #1a1a1a */
-  font-weight: var(--font-weight-medium); /* Was 500 */
-  margin: 0 0 var(--spacing-lg) 0; /* Adjusted: Top 0, RL 0 (text-align handles alignment), Bottom spacing-lg */
-  padding: var(--spacing-sm) var(--spacing-md); /* Added some padding for breathing room */
-  /* background-color: var(--surface-alt-color); Optional: for slight distinction */
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center; /* Changed from right to center by default */
+  font-size: var(--font-size-lg); /* Increased font size for banner */
+  color: var(--text-color-primary);
+  font-weight: var(--font-weight-bold); /* Made it bolder for emphasis */
+  margin: 0 0 var(--spacing-lg) 0; /* Bottom margin to separate from grid */
+  padding: var(--spacing-md); /* Uniform padding */
+  background-color: var(--surface-color); /* Banner background */
+  border-bottom: 1px solid var(--border-color); /* Separator line */
+  box-shadow: var(--shadow-sm); /* Subtle shadow */
 }
 
 /* Generic Card Styles - Apply to .ingresos-egresos-card, .dashboard-card, .clima-card, .moviles-card */
@@ -305,10 +307,10 @@
   }
 
   .bienvenida-usuario {
-    text-align: center;
-    margin-right: 0; /* Explicitly keep 0 or adjust as needed */
-    margin-left: 0; /* Ensure centered text is not affected by L/R margins */
-    /* margin-bottom: var(--spacing-lg); Already set */
+    /* text-align: center; Already default */
+    /* margin-right: 0; Already default due to width 100% and text-align center */
+    /* margin-left: 0; Already default */
+    font-size: var(--font-size-md); /* Slightly smaller on medium screens if needed */
   }
 }
 
@@ -343,9 +345,9 @@
   }
 
   .bienvenida-usuario {
-    font-size: var(--font-size-sm); /* Was 0.9rem */
-    /* margin-bottom: var(--spacing-md); Already set by default or medium screen */
-    padding: var(--spacing-xs) var(--spacing-sm); /* Adjust padding for smaller screens */
+    font-size: var(--font-size-md); /* Was --font-size-sm, making it consistent with medium screen */
+    padding: var(--spacing-sm); /* Adjust padding for smaller screens */
+    /* margin-bottom is var(--spacing-lg) by default, can be overridden to var(--spacing-md) if too much on mobile */
   }
 
   .dashboard-card-base h3,

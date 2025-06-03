@@ -21,10 +21,16 @@
   border-radius: var(--border-radius-md); /* Was 4px, use md for dropdowns */
   box-shadow: var(--shadow-md); /* Was custom, use md shadow */
   background-color: var(--background-color); /* Ensure it has a background */
-  /* position: absolute; /* Typically these are absolutely positioned relative to the input */
-  /* width: 100%; /* And match the width of the input */
-  z-index: 1060; /* Ensure suggestions are above other content, including modals (1050) */
+  position: absolute; /* Position relative to the parent of the input field */
+  background-color: var(--background-color); /* Ensure it has a background, was --surface-color */
+  border: 1px solid var(--border-color);
+  border-top: none; /* Optional: if it sits directly under input without top border */
+  border-radius: 0 0 var(--border-radius-md) var(--border-radius-md); /* Match bottom of input */
+  box-shadow: var(--shadow-md); /* Was --shadow-2 */
+  z-index: var(--z-index-dropdown); /* Use variable, was 1060 */
+  width: 100%; /* Make it full width of its offset parent */
   animation: suggestionFadeIn 0.2s ease-out;
+  margin-top: -1px; /* Align with bottom of input if input has 1px border */
 }
 
 .lista-sugerencias li {
@@ -61,4 +67,42 @@
 
 .lista-sugerencias::-webkit-scrollbar-thumb:hover {
   background: var(--text-color-secondary); /* Darker thumb on hover */
+}
+
+/* Chip Styles for selected recipients */
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs); /* Reduced padding slightly */
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-sm);
+  cursor: text; /* Make it behave like a text input area */
+  min-height: 38px; /* Approx height of an input field */
+}
+
+.chip {
+  background-color: var(--primary-color);
+  color: var(--text-color-on-primary);
+  padding: var(--spacing-xxs) var(--spacing-sm); /* Adjusted padding */
+  border-radius: var(--border-radius-pill);
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-sm); /* Was 0.9em */
+  line-height: 1.2; /* Adjust line height for better vertical centering of text */
+}
+
+.chip button { /* If chips have a remove button */
+  background: none;
+  border: none;
+  color: var(--text-color-on-primary);
+  margin-left: var(--spacing-xs);
+  cursor: pointer;
+  font-size: var(--font-size-md); /* Was 1.1em, adjusted for consistency */
+  padding: 0; /* Reset padding */
+  line-height: 1; /* Ensure 'x' is centered */
+}
+.chip button:hover {
+  opacity: 0.75;
 }
