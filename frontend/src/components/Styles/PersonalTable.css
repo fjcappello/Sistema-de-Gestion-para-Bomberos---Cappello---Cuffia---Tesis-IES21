@@ -1,231 +1,321 @@
+/* Main Container */
 .table-container {
-  padding: 1rem;
+  padding: var(--spacing-lg); /* Was 1rem */
+  max-width: 1200px; /* Add a max-width for very large screens */
+  margin: var(--spacing-lg) auto; /* Center container */
+  background-color: var(--surface-color); /* Add a background */
+  border-radius: var(--border-radius-lg); /* Add radius */
+  box-shadow: var(--shadow-md); /* Add shadow */
 }
 
-/* Data Grid */
-.personal-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
-}
-
-.personal-table th, .personal-table td {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-.personal-table th {
-  background-color: #ff3333; 
-  color: white;
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 1rem;
-}
-
-.pagination button {
-  padding: 0.5rem 1rem;
-  margin: 0 0.25rem;
-  cursor: pointer;
-  background-color: #4CAF50; 
-  color: white;
-  border: none;
-  border-radius: 4px;
-}
-
-.pagination button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
-}
-
-/* boton de agregar personal */
-.add-person-btn {
-  margin-top: 1rem;
-  padding: 0.75rem 1.5rem;
-  background-color: green;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.add-person-btn:hover {
-  background-color: #cc0000;
-}
-
-/* boton de eliminar personal */
-.delete-person-btn {
-  margin-top: 1rem;
-  margin-left: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background-color: red;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.delete-person-btn:hover {
-  background-color: #b30000;
-}
-
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 2rem;
-  width: 90%;
-  max-width: 500px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.form-container input,
-.form-container select,
-.form-container textarea {
-  width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.submit-btn {
-  background-color: #4CAF50;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.submit-btn:hover {
-  background-color: #45a049;
-}
-
-.close-modal-btn {
-  margin-top: 1rem;
-  background-color: #ff3333;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-}
-
-.close-modal-btn:hover {
-  background-color: #cc0000;
-}
-
-/* confirmacion de eliminacion */
-.confirm-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1100;
-}
-
-.confirm-content {
-  background: white;
-  padding: 2rem;
-  width: 90%;
-  max-width: 400px;
-  border-radius: 8px;
+/* Page Title (Assuming one would exist) */
+.personal-table-title {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--primary-color);
   text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-bottom: var(--spacing-lg);
 }
 
-.confirm-delete-btn {
-  background-color: red;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-right: 0.5rem;
-}
-
-.confirm-delete-btn:hover {
-  background-color: #b30000;
-}
-
-.error-message {
-  color: red;
-  margin-top: 1rem;
-}
-
-.edit-btn {
-  padding: 0.5rem 1rem;
-  background-color: #ffa500;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-.edit-btn:hover {
-  background-color: #cc8400;
-}
 
 /* Filtros */
 .filtros-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: var(--spacing-md); /* Was 0.5rem */
+  margin-bottom: var(--spacing-lg); /* Was 1rem */
+  padding: var(--spacing-lg);
+  background-color: var(--surface-alt-color);
+  border-radius: var(--border-radius-md);
 }
 
 .filtro-input,
 .filtro-select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.9rem;
+  /* Inherits from global input/select styles */
+  padding: var(--spacing-xs) var(--spacing-sm); /* Slightly smaller for filters */
+  font-size: var(--font-size-sm); /* Smaller font for filters */
+  flex-grow: 1;
+  min-width: 180px; /* Min width for filter inputs */
 }
 
+.filtro-checkbox-container { /* Wrapper for checkbox and label */
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--text-color-primary);
+}
 .filtro-checkbox {
-  margin-left: 0.5rem;
-  transform: scale(1.2);
+  /* Basic styling for checkbox, browser defaults are often fine */
+  transform: scale(1.1); /* Was 1.2, slightly smaller */
+  accent-color: var(--primary-color); /* Modern way to color checkboxes */
 }
 
+
+/* Table */
+.personal-table-wrapper { /* Added wrapper for shadow, radius, overflow */
+  width: 100%;
+  overflow-x: auto;
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-lg); /* Was 1rem */
+}
+.personal-table {
+  width: 100%;
+  border-collapse: collapse; /* Global */
+}
+
+.personal-table th,
+.personal-table td {
+  padding: var(--spacing-md); /* Was 0.75rem */
+  border-bottom: 1px solid var(--border-color); /* Was #ddd */
+  text-align: left; /* Global */
+}
+
+.personal-table th {
+  background-color: var(--primary-color); /* Was #ff3333 (red) */
+  color: var(--text-color-on-primary);
+  font-weight: var(--font-weight-bold); /* Global */
+}
+.personal-table tr:nth-child(even) {
+    background-color: var(--surface-alt-color);
+}
+.personal-table tr:hover {
+  background-color: var(--primary-color-lightest);
+}
+
+
+/* Action Buttons (Add, Delete Person) */
+.table-actions-bar { /* Container for add/delete buttons above table */
+    display: flex;
+    justify-content: flex-end; /* Align to right */
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+}
+
+.add-person-btn,
+.delete-person-btn,
+.edit-btn { /* Common styles for action buttons */
+  /* Base from global .btn */
+  padding: var(--spacing-sm) var(--spacing-lg); /* Was 0.75rem 1.5rem */
+  /* font-weight, border, border-radius, cursor, transition from global */
+  margin-top: 0; /* Remove specific margin-top if in .table-actions-bar */
+}
+
+.add-person-btn { /* Should use .btn-success */
+  background-color: var(--success-color); /* Was green */
+  color: var(--text-color-on-success);
+  border-color: var(--success-color);
+}
+.add-person-btn:hover {
+  background-color: var(--success-color-dark); /* Was #cc0000 (red) - inconsistent */
+  border-color: var(--success-color-dark);
+}
+
+.delete-person-btn { /* Should use .btn-error */
+  background-color: var(--error-color); /* Was red */
+  color: var(--text-color-on-error);
+  border-color: var(--error-color);
+  margin-left: 0; /* Remove specific margin-left */
+}
+.delete-person-btn:hover {
+  background-color: var(--error-color-dark); /* Was #b30000 */
+  border-color: var(--error-color-dark);
+}
+
+.edit-btn { /* Should use .btn-warning or .btn-secondary */
+  background-color: var(--warning-color); /* Was #ffa500 (orange) */
+  color: var(--text-color-on-warning, #000); /* Define --text-color-on-warning */
+  border-color: var(--warning-color);
+}
+.edit-btn:hover {
+  background-color: var(--warning-color-dark); /* Define --warning-color-dark */
+  border-color: var(--warning-color-dark);
+}
+
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--spacing-lg); /* Was 1rem */
+  gap: var(--spacing-sm); /* Was variable with margin */
+}
+
+.pagination button {
+  /* Use global .btn .btn-primary styles */
+  background-color: var(--primary-color); /* Was #4CAF50 (green) */
+  color: var(--text-color-on-primary);
+  border: 1px solid var(--primary-color);
+  padding: var(--spacing-xs) var(--spacing-md); /* Was 0.5rem 1rem */
+  margin: 0; /* Remove individual margins */
+}
+.pagination button:hover:not(:disabled) {
+  background-color: var(--primary-color-dark);
+  border-color: var(--primary-color-dark);
+}
+.pagination button:disabled {
+  background-color: var(--border-color); /* Was #ccc */
+  border-color: var(--border-color);
+  color: var(--text-color-muted);
+  /* Global disabled styles */
+}
+
+
+/* Modal & Confirmation Modal (Consolidated) */
+/* Use global .modal-overlay and .modal-content classes in HTML */
+/* .confirm-overlay can be the same as .modal-overlay */
+/* .confirm-content can be a .modal-content with specific styles if needed */
+
+.confirm-content { /* Specific styles for confirmation dialog */
+  /* Inherits from .modal-content */
+  max-width: 450px; /* Was 400px, slightly larger */
+  text-align: center; /* Keep if centered text is desired */
+}
+.confirm-content h3 { /* If confirmation has a title */
+    font-size: var(--font-size-lg);
+    margin-bottom: var(--spacing-sm);
+    color: var(--text-color-primary);
+}
+.confirm-content p { /* Message in confirmation */
+    font-size: var(--font-size-md);
+    color: var(--text-color-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+
+/* Form elements within modals */
+/* .form-container input, .form-container select, .form-container textarea
+   should inherit global styles. Remove these specific overrides. */
+
+/* Modal Buttons */
+/* .submit-btn, .close-modal-btn, .confirm-delete-btn should use global button classes */
+/* e.g., <button class="btn btn-success submit-btn"> */
+/* <button class="btn btn-secondary close-modal-btn"> */
+/* <button class="btn btn-error confirm-delete-btn"> */
+
+
+.error-message {
+  color: var(--error-color); /* Was red */
+  margin-top: var(--spacing-sm); /* Was 1rem */
+  font-size: var(--font-size-sm);
+  text-align: center; /* Or left, depending on context */
+}
+
+
+/* Responsive adjustments for filters */
 @media (max-width: 600px) {
   .filtros-container {
     flex-direction: column;
-    gap: 0.75rem;
+    gap: var(--spacing-md); /* Was 0.75rem */
+    align-items: stretch; /* Make items full width */
   }
 
   .filtro-input,
   .filtro-select {
-    width: 100%;
+    width: 100%; /* Already handled by flex-grow:1 and parent context */
   }
+}
+
+/* Add to index.css if not present:
+:root {
+  --text-color-on-warning: #212529; // Dark text for yellow warning
+  --warning-color-dark: #d39e00; // Darker yellow
+  --warning-color-alpha: rgba(255, 193, 7, 0.25);
+}
+*/
+
+/* Fallback styling for modal buttons if not using global .btn classes in HTML */
+/* It's highly recommended to use classes like .btn .btn-success, .btn .btn-secondary, .btn .btn-error in HTML markup */
+
+.form-container { /* Basic styling if a .form-container is used within a modal */
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.submit-btn {
+  /* Defaults to .btn-success styling from index.css if class="btn btn-success submit-btn" is used */
+  /* Direct styling fallback: */
+  background-color: var(--success-color);
+  color: var(--text-color-on-success);
+  border: 1px solid var(--success-color);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-align: center;
+}
+.submit-btn:hover {
+  background-color: var(--success-color-dark);
+  border-color: var(--success-color-dark);
+  transform: translateY(-1px);
+}
+.submit-btn:active {
+  background-color: var(--success-color-darker);
+  border-color: var(--success-color-darker);
+  transform: translateY(0);
+}
+.submit-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--success-color-alpha);
+}
+
+.close-modal-btn {
+  /* Defaults to .btn-secondary styling from index.css if class="btn btn-secondary close-modal-btn" is used */
+  /* Direct styling fallback: */
+  background-color: var(--secondary-color);
+  color: var(--text-color-on-primary); /* Assuming white text on secondary */
+  border: 1px solid var(--secondary-color);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-align: center;
+}
+.close-modal-btn:hover {
+  background-color: var(--secondary-color-dark);
+  border-color: var(--secondary-color-dark);
+  transform: translateY(-1px);
+}
+.close-modal-btn:active {
+  background-color: var(--secondary-color-darker);
+  border-color: var(--secondary-color-darker);
+  transform: translateY(0);
+}
+.close-modal-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--secondary-color-alpha); /* Define --secondary-color-alpha in index.css */
+}
+
+.confirm-delete-btn {
+  /* Defaults to .btn-error styling from index.css if class="btn btn-error confirm-delete-btn" is used */
+  /* Direct styling fallback: */
+  background-color: var(--error-color);
+  color: var(--text-color-on-error);
+  border: 1px solid var(--error-color);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-base);
+  text-align: center;
+}
+.confirm-delete-btn:hover {
+  background-color: var(--error-color-dark);
+  border-color: var(--error-color-dark);
+  transform: translateY(-1px);
+}
+.confirm-delete-btn:active {
+  background-color: var(--error-color-darker);
+  border-color: var(--error-color-darker);
+  transform: translateY(0);
+}
+.confirm-delete-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--error-color-alpha);
 }

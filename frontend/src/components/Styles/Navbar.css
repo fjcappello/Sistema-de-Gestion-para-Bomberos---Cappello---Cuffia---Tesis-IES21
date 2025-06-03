@@ -3,177 +3,263 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 1rem;
-  background-color: #e60000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: var(--spacing-sm) var(--spacing-lg); /* Was 0.5rem 1rem */
+  background-color: var(--primary-color); /* Was #e60000 */
+  box-shadow: var(--shadow-md); /* Was 0 2px 4px rgba(0,0,0,0.1) */
   width: 100%;
+  position: fixed; /* Make navbar fixed */
+  top: 0;
+  left: 0;
+  z-index: 1000; /* Ensure it's above other content */
+  height: var(--spacing-xxl); /* Example: 48px, adjust as needed */
 }
 
 .navbar-logo {
   display: flex;
   align-items: center;
+  height: 100%; /* Ensure logo container takes full height of navbar */
 }
 
 .navbar-logo img {
-  height: 60px;
+  height: calc(var(--spacing-xxl) - (2 * var(--spacing-xs))); /* Full height minus some padding */
   width: auto;
-  margin-right: 10px;
+  margin-right: var(--spacing-md); /* Was 10px */
 }
 
 .navbar-title {
-  font-weight: bold;
-  color: #fff;
-  font-size: 1.2rem;
-  margin-right: 20px;
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color-on-primary); /* Was #fff */
+  font-size: var(--font-size-lg); /* Was 1.2rem */
+  margin-right: var(--spacing-lg); /* Was 20px */
 }
 
 .navbar-links {
   list-style: none;
   display: flex;
-  gap: 0.5rem;
+  align-items: center; /* Align items vertically */
+  gap: var(--spacing-sm); /* Was 0.5rem */
+  height: 100%;
 }
 
 .navbar-links li {
-  display: inline;
+  display: flex; /* Use flex for vertical alignment if needed */
+  align-items: center;
   position: relative;
+  height: 100%;
 }
 
-.navbar-links a {
+.navbar-links a,
+.dropdown-btn { /* Combine styling for links and dropdown button */
   text-decoration: none;
-  color: #fff;
-  font-weight: bold;
-  padding: 0.5rem;
-  transition: color 0.3s ease;
+  color: var(--text-color-on-primary);
+  font-weight: var(--font-weight-medium); /* Was bold, medium is common for nav links */
+  padding: var(--spacing-sm) var(--spacing-md); /* Was 0.5rem */
+  transition: color var(--transition-base), background-color var(--transition-base);
+  border-radius: var(--border-radius-sm);
+  height: 100%;
+  display: flex;
+  align-items: center;
+  background-color: transparent; /* Explicitly set for hover effect */
+  border: none; /* For dropdown-btn if it was a button element */
+  cursor: pointer; /* For dropdown-btn */
+  font-family: inherit; /* For dropdown-btn if it was a button element */
+  font-size: var(--font-size-md); /* Standardize font size */
 }
 
+.navbar-links a:hover,
+.dropdown-btn:hover,
+.navbar-links a:focus, /* Added focus style */
+.dropdown-btn:focus {
+  color: var(--text-color-on-primary);
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle hover/focus background */
+  outline: none;
+}
+
+/* Underline effect for links (optional, can be removed if background hover is enough) */
 .navbar-links a::after {
   content: "";
   position: absolute;
   width: 0;
   height: 2px;
-  background-color: white;
-  bottom: 0;
-  left: 0;
-  transition: width 0.3s ease;
+  background-color: var(--text-color-on-primary); /* Was white */
+  bottom: var(--spacing-xs); /* Adjust position from bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  transition: width var(--transition-base);
 }
 
-.navbar-links a:hover::after {
-  width: 100%;
+.navbar-links a:hover::after,
+.navbar-links a:focus::after {
+  width: calc(100% - (2 * var(--spacing-md))); /* Adjust width based on padding */
 }
+
 
 /* Botón Salir */
 .logout-btn {
+  /* Inherits from global button styles, but needs specific outline look */
   background-color: transparent;
-  color: #fff;
-  border: 1px solid #fff;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.9rem;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  color: var(--text-color-on-primary);
+  border: 1px solid var(--text-color-on-primary);
+  padding: var(--spacing-xs) var(--spacing-sm); /* Was 0.3rem 0.8rem */
+  font-size: var(--font-size-sm); /* Was 0.9rem */
+  border-radius: var(--border-radius-md); /* Was 5px */
+  transition: var(--transition-base);
   cursor: pointer;
-  font-weight: bold;
+  font-weight: var(--font-weight-medium); /* Was bold */
 }
 
-.logout-btn:hover {
-  background-color: #fff;
-  color: #e60000;
+.logout-btn:hover,
+.logout-btn:focus {
+  background-color: var(--text-color-on-primary);
+  color: var(--primary-color); /* Was #e60000 */
+  outline: none;
 }
 
 /* Menú desplegable para Reportes */
 .dropdown {
   position: relative;
-}
-
-.dropdown-btn {
-  color: #fff;
-  font-weight: bold;
-  padding: 0.5rem;
-  cursor: pointer;
-  text-decoration: none;
-  transition: color 0.3s ease;
+  height: 100%;
+  display: flex; /* Ensure dropdown itself aligns items */
+  align-items: center;
 }
 
 .dropdown-menu {
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: #b30000;
-  border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  padding: 0.5rem 0;
+  background-color: var(--surface-color); /* Was #b30000 (dark red) */
+  border-radius: var(--border-radius-md); /* Was 5px */
+  box-shadow: var(--shadow-lg); /* Was 0 2px 8px rgba(0,0,0,0.15) */
+  padding: var(--spacing-sm) 0; /* Was 0.5rem 0 */
   display: none;
-  flex-direction: column; /* Organiza las opciones en columna */
-  min-width: 150px;
+  flex-direction: column;
+  min-width: 200px; /* Was 150px */
+  z-index: 1001; /* Above navbar if needed, but should be part of it */
+  border-top: 1px solid var(--border-color); /* Add a subtle separator */
 }
 
 .dropdown:hover .dropdown-menu,
-.dropdown-menu.active {
-  display: flex; /* Cambia a flex para mostrar el submenú */
+.dropdown-menu.active { /* Assuming .active class is toggled by JS for click/touch */
+  display: flex;
 }
 
 .dropdown-menu li {
-  padding: 0.5rem 1rem;
+  padding: 0; /* Remove padding from li, apply to a directly */
+  list-style: none; /* Ensure no bullets */
 }
 
 .dropdown-menu li a {
-  color: white;
+  color: var(--text-color-primary); /* Was white */
   text-decoration: none;
-  font-weight: bold;
-  display: block; /* Muestra las opciones en bloques individuales */
+  font-weight: var(--font-weight-normal); /* Was bold */
+  display: block;
+  padding: var(--spacing-sm) var(--spacing-lg); /* Was 0.5rem 1rem */
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
-.dropdown-menu li a:hover {
-  color: #e6e6e6;
+.dropdown-menu li a:hover,
+.dropdown-menu li a:focus {
+  color: var(--primary-color); /* Was #e6e6e6 */
+  background-color: var(--border-color); /* Use a light hover for surface background */
+  outline: none;
 }
 
 /* Menú hamburguesa para pantallas pequeñas */
 .hamburger {
   display: none;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 4px; /* Was 0.2rem */
   background: none;
   border: none;
   cursor: pointer;
+  padding: var(--spacing-sm); /* Add some padding for easier clicking */
 }
 
 .hamburger .line {
-  width: 20px;
-  height: 2px;
-  background-color: #fff;
+  width: 25px; /* Was 20px */
+  height: 3px; /* Was 2px */
+  background-color: var(--text-color-on-primary); /* Was #fff */
+  border-radius: 2px; /* Slightly rounded lines */
+  transition: var(--transition-base);
 }
+
+/* Hamburger animation (optional) */
+.hamburger.active .line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger.active .line:nth-child(2) {
+  opacity: 0;
+}
+.hamburger.active .line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
 
 /* Ajustes en pantallas pequeñas */
 @media (max-width: 768px) {
-  .navbar-links {
+  .navbar-links { /* Initial state for mobile: hidden */
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: var(--spacing-xxl); /* Height of the navbar */
+    right: 0;
+    background-color: var(--primary-color); /* Was #e60000 */
+    width: 100%;
+    padding: var(--spacing-sm) 0; /* Was 1rem */
+    box-shadow: var(--shadow-md); /* Was 0px 4px 8px rgba(0,0,0,0.1) */
+    height: auto; /* Override height */
+    border-top: 1px solid rgba(255,255,255,0.2); /* Separator from navbar */
+  }
+
+  .navbar-links.active { /* State when hamburger is clicked */
+    display: flex;
+  }
+
+  .navbar-links li,
+  .dropdown {
+    width: 100%;
+    height: auto; /* Override height */
+  }
+
+  .navbar-links a,
+  .dropdown-btn {
+    padding: var(--spacing-md); /* Was 0.75rem */
+    text-align: left; /* Was center, left is more standard for mobile menus */
+    width: 100%;
+    justify-content: flex-start; /* Align text to start */
+    height: auto;
+  }
+  .navbar-links a::after { /* Remove underline for mobile nav items */
     display: none;
   }
 
-  .hamburger {
-    display: flex;
-  }
-
-  .navbar-links.active {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 60px;
-    right: 0;
-    background-color: #e60000;
-    width: 100%;
-    padding: 1rem;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  }
-
-  .navbar-links.active a {
-    padding: 0.75rem;
-    text-align: center;
-  }
-
   .dropdown-menu {
-    position: relative;
-    top: 0;
-    background-color: #e60000;
+    position: static; /* Was relative, then static */
+    background-color: darken(var(--primary-color), 5%); /* Slightly darker than main mobile nav */
     width: 100%;
-    box-shadow: none;
+    box-shadow: none; /* Remove shadow for nested mobile dropdown */
+    border-radius: 0;
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  .dropdown-menu li a {
+    color: var(--text-color-on-primary); /* Text color for dark background */
+  }
+  .dropdown-menu li a:hover,
+  .dropdown-menu li a:focus {
+    background-color: rgba(255,255,255,0.1);
+    color: var(--text-color-on-primary);
+  }
+
+  .hamburger {
+    display: flex; /* Show hamburger */
+  }
+
+  .navbar-title { /* Optionally hide or shrink title on small screens */
+    font-size: var(--font-size-md);
+    margin-right: var(--spacing-sm);
+  }
+  .navbar-logo img {
+    margin-right: var(--spacing-sm);
+    height: calc(var(--spacing-xxl) - (2 * var(--spacing-md)));
   }
 }

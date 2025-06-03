@@ -1,121 +1,169 @@
 /* Estilos de ReportsPage */
 
 .reports-page {
-  padding: 2rem;
+  padding: var(--spacing-lg); /* Was 2rem */
+  max-width: 1200px; /* Added max-width */
+  margin: var(--spacing-lg) auto; /* Center page content */
+  background-color: var(--surface-color); /* Add a cohesive background */
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
-.reports-page h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
+.reports-page h2, /* Main page title */
+.reports-page .page-title { /* Alternative class if h2 is too generic */
+  font-size: var(--font-size-xl); /* Was 2rem */
+  font-weight: var(--font-weight-bold);
+  color: var(--primary-color); /* Changed from default/red */
+  margin-bottom: var(--spacing-xl); /* Was 1rem, increased for page title */
+  text-align: center; /* Center page title */
 }
 
 .filter-section {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-lg); /* Was 1rem, increased for better separation of filter groups */
   flex-wrap: wrap;
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-xl); /* Was 1rem */
+  padding: var(--spacing-lg);
+  background-color: var(--surface-alt-color);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.filter-group { /* Wrapper for label + input/select if needed */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  flex-grow: 1; /* Allow filter groups to share space */
+  min-width: 200px; /* Minimum width for a filter group */
 }
 
 .filter-section label {
-  display: flex;
-  flex-direction: column;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
+  /* display: flex; flex-direction: column; Removed, handled by .filter-group */
+  font-weight: var(--font-weight-medium); /* Was bold */
+  color: var(--text-color-secondary);
+  /* margin-bottom: 0.5rem; Handled by .filter-group gap */
 }
 
 .filter-section select,
-.filter-section input {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-top: 0.5rem;
+.filter-section input[type="date"], /* More specific */
+.filter-section input[type="text"] {
+  /* Inherits from global input/select styles */
+  /* padding, border, border-radius from global */
+  /* margin-top: 0.5rem; Handled by .filter-group gap */
+  width: 100%; /* Make input full width of its container (.filter-group) */
+}
+
+.filter-btn-container { /* Wrapper for filter button for alignment */
+  display: flex;
+  align-items: flex-end; /* Align button with bottom of inputs if heights vary */
+  flex-grow: 1; /* Take up space if needed */
+  min-width: 200px; /* Same as filter groups for alignment */
 }
 
 .filter-btn {
-  align-self: flex-start;
-  padding: 0.5rem 1rem;
-  background-color: #e60000;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-top: 1rem;
+  /* Use global .btn .btn-primary styles */
+  /* align-self: flex-start; Removed, use .filter-btn-container for alignment */
+  padding: var(--spacing-sm) var(--spacing-lg); /* Consistent button padding */
+  background-color: var(--primary-color); /* Was #e60000 (red) */
+  color: var(--text-color-on-primary); /* Was #fff */
+  /* border, cursor, border-radius, font-weight, transition from global .btn */
+  /* margin-top: 1rem; Removed, handled by flex alignment or parent gap */
+  width: 100%; /* Make button full width within its container */
 }
+/* Hover, active, focus states from global .btn-primary */
 
-.filter-btn:hover {
-  background-color: #c50000;
-  transform: scale(1.05);
-}
-
-.filter-btn:active {
-  background-color: #a80000;
-  transform: scale(0.98);
-}
 
 .chart-container {
-  margin-top: 2rem;
+  margin-top: var(--spacing-xl); /* Was 2rem */
+  padding: var(--spacing-lg);
+  background-color: var(--background-color); /* White background for charts */
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
 }
 
 .search-container {
-  margin-top: 2rem;
+  margin-top: var(--spacing-xl); /* Was 2rem */
+  padding: var(--spacing-lg);
+  background-color: var(--surface-alt-color);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  align-items: flex-end;
 }
 
 .search-container h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+  font-size: var(--font-size-lg); /* Was 1.5rem */
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color-primary);
+  margin-bottom: 0; /* Remove bottom margin as it's part of a flex layout */
+  flex-basis: 100%; /* Title takes full width */
 }
 
 .search-input {
-  padding: 0.5rem;
-  margin-right: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  /* Inherits from global input styles */
+  /* padding, border, border-radius from global */
+  margin-right: 0; /* Remove specific margin if gap is used */
+  flex-grow: 1; /* Allow search input to take available space */
+  min-width: 250px;
 }
 
 .search-btn,
 .print-btn,
 .generate-pdf-btn {
-  padding: 0.5rem 1rem;
-  background-color: #e60000;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  border-radius: 5px;
-  font-weight: bold;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  /* Use global .btn .btn-secondary or .btn-primary styles */
+  padding: var(--spacing-sm) var(--spacing-lg); /* Consistent button padding */
+  background-color: var(--secondary-color); /* Was #e60000 (red), changed to secondary */
+  color: var(--text-color-on-primary); /* Was #fff */
+  /* border, cursor, border-radius, font-weight, transition from global .btn */
 }
+/* Hover, active, focus states from global .btn-secondary */
 
-.search-btn:hover,
-.print-btn:hover,
-.generate-pdf-btn:hover {
-  background-color: #c50000;
-  transform: scale(1.05);
-}
-
-.search-btn:active,
-.print-btn:active,
-.generate-pdf-btn:active {
-  background-color: #a80000;
-  transform: scale(0.98);
-}
 
 .report-result {
-  margin-top: 2rem;
-  background-color: #f9f9f9;
-  padding: 1rem;
-  border-radius: 8px;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: var(--spacing-xl); /* Was 2rem */
+  background-color: var(--background-color); /* Was #f9f9f9, now standard bg */
+  padding: var(--spacing-lg); /* Was 1rem */
+  border-radius: var(--border-radius-lg); /* Was 8px, now larger */
+  box-shadow: var(--shadow-md); /* Was custom */
+  border: 1px solid var(--border-color); /* Added border for definition */
+}
+
+.report-result h3 { /* Headings within report results */
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color-primary);
+  margin-top: 0; /* Remove top margin if it's the first element */
+  margin-bottom: var(--spacing-md);
 }
 
 .error-message {
-  color: #e60000;
-  font-weight: bold;
-  margin-top: 1rem;
+  color: var(--error-color); /* Was #e60000 */
+  font-weight: var(--font-weight-medium); /* Was bold */
+  margin-top: var(--spacing-md); /* Was 1rem */
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--error-color-lightest); /* Define in index.css */
+  border: 1px solid var(--error-color);
+  border-radius: var(--border-radius-sm);
+  text-align: center;
 }
 
-h3 {
-  font-size: 1.5rem;
-  margin-top: 2rem;
+/* General h3 if used elsewhere for sections */
+.reports-page > h3,
+.reports-page > section > h3 { /* More specific selector for section titles */
+  font-size: var(--font-size-lg); /* Was 1.5rem */
+  font-weight: var(--font-weight-bold);
+  color: var(--text-color-primary);
+  margin-top: var(--spacing-xl); /* Was 2rem */
+  margin-bottom: var(--spacing-md);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-sm);
 }
+
+/* Add to index.css if not present:
+:root {
+  --error-color-lightest: #f8d7da; // Example for light red background
+}
+*/

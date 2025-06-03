@@ -3,13 +3,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh; /* Use min-height to be more flexible */
+  padding: var(--spacing-lg); /* Add some padding for smaller screens */
 }
 
 /* Logo */
 .logo {
-  width: 150px;
-  margin-bottom: 20px;
+  width: 150px; /* This could be a variable if logos have standard sizes */
+  margin-bottom: var(--spacing-xl); /* Example: 32px */
 }
 
 /* Formulario */
@@ -18,16 +19,19 @@
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 400px;
+  max-width: 400px; /* Keeps the form from becoming too wide on large screens */
+  padding: var(--spacing-lg);
+  background-color: var(--surface-color); /* Give form a slight background */
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .login-form input {
-  width: 100%;
-  padding: 0.75rem;
-  margin: 0.5rem 0;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+  /* width: 100%; Provided by default for block elements, or use utility if needed */
+  /* Default input styles are now in index.css */
+  /* We can override padding, margin, etc. if needed */
+  margin-bottom: var(--spacing-md); /* Spacing between inputs */
+  /* font-size: var(--font-size-md); Already set by input global style */
 }
 
 /* Contraseña y emojis  */
@@ -35,14 +39,16 @@
   display: flex;
   align-items: center;
   width: 100%;
-  margin-top: 0.5rem;
   position: relative;
+  /* margin-top: var(--spacing-xs); Removed as input has margin-bottom now */
 }
 
 /* Input de contraseña */
 .password-container input {
   flex: 1;
-  padding-right: 2.5rem;
+  /* padding-right: 2.5rem; /* approx 40px. Use a variable or fixed value */
+  padding-right: var(--spacing-xl); /* Adjust as needed for icon size */
+  margin-bottom: var(--spacing-md); /* Consistent with other inputs */
 }
 
 /* Boton visibilidad*/
@@ -50,48 +56,71 @@
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.25rem;
-  margin-left: 0.5rem;
-  color: #888;
+  font-size: var(--font-size-lg); /* Example: 20px */
+  color: var(--text-color-muted);
   position: absolute;
-  right: 10px;
+  right: var(--spacing-sm); /* Example: 12px */
+  top: 50%;
+  transform: translateY(-50%);
+  /* Adjust top position if input padding changes significantly */
+  /* Consider that the input itself has padding, so the icon should be placed relative to that.
+     The current global input padding is var(--spacing-xs) var(--spacing-sm); (8px 12px)
+     If input height is ~40px (font + padding), 50% works.
+     Let's adjust to align with the input's vertical center considering its padding.
+     Input padding is var(--spacing-xs) vertically.
+     The button itself doesn't have much height.
+  */
+  height: calc(var(--font-size-base) + 2 * var(--spacing-xs) + 2 * 1px); /* Approximate height of the input field */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0; /* Remove any default padding */
+  margin: 0; /* Remove any default margin */
 }
 
 .toggle-password-btn:focus {
   outline: none;
+  color: var(--primary-color); /* Highlight on focus */
 }
 
 /* Botón de  ingreso */
 .submit-btn {
-  padding: 0.75rem 1.5rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  /* Default button styles are in index.css */
+  /* Override for specific login button look if needed */
+  padding: var(--spacing-sm) var(--spacing-lg); /* Example: 12px 24px */
+  background-color: var(--success-color);
+  color: var(--text-color-on-success);
+  border: none; /* Already in global button reset, but explicit here */
+  border-radius: var(--border-radius-md); /* Global is md, can be more specific */
+  font-weight: var(--font-weight-bold);
+  font-size: var(--font-size-md); /* Example: 16px */
+  transition: var(--transition-base); /* Use global transition */
   width: 100%;
-  margin-top: 1rem;
+  margin-top: var(--spacing-md); /* Space above the button */
 }
 
 .submit-btn:hover {
-  background-color: #45a049;
-  transform: scale(1.02);
+  background-color: darken(var(--success-color), 10%); /* Needs a SASS function or manual darker shade */
+  /* Let's define a hover color or use a utility. For now, a slightly darker green. */
+  /* If --success-color is #28a745, darken could be #218838 */
+  background-color: #218838; /* Fallback, ideally define a --success-hover-color */
+  transform: scale(1.02); /* Keep subtle transform if desired */
 }
 
 .submit-btn:active {
-  transform: scale(0.98);
+  transform: scale(0.98); /* Keep subtle transform if desired */
+  background-color: #1e7e34; /* Even darker for active */
 }
 
 .submit-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(72, 180, 97, 0.5);
+  outline: none; /* Global style might handle this, but explicit for overrides */
+  box-shadow: 0 0 0 0.2rem rgba(var(--success-color), 0.35); /* Focus ring with success color */
 }
 
 .error-message {
-  color: red;
-  margin-top: 10px;
-  font-size: 0.9rem;
+  color: var(--error-color);
+  margin-top: var(--spacing-sm); /* Example: 12px */
+  font-size: var(--font-size-sm); /* Example: 14px */
+  text-align: center; /* Center error message */
+  width: 100%;
 }

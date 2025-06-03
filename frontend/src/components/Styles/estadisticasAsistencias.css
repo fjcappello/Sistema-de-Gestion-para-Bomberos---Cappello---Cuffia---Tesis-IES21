@@ -1,108 +1,157 @@
 .asistencia-stats-container {
-  padding: 2rem;
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  margin: 1rem auto;
+  padding: var(--spacing-lg); /* Was 2rem */
+  background-color: var(--surface-color); /* Was #fff, now consistent surface */
+  border-radius: var(--border-radius-lg); /* Was 8px */
+  box-shadow: var(--shadow-md); /* Was custom */
+  margin: var(--spacing-lg) auto; /* Was 1rem auto */
   max-width: 1200px;
 }
 
-.asistencia-title {
+.asistencia-title { /* Main page title */
   text-align: center;
-  color: #e60000;
-  margin-bottom: 1.5rem;
+  color: var(--primary-color); /* Was #e60000 (red) */
+  margin-bottom: var(--spacing-xl); /* Was 1.5rem, increased */
+  font-size: var(--font-size-xl); /* Use global heading size */
+  font-weight: var(--font-weight-bold);
 }
 
-.asistencia-promedio {
+.asistencia-promedio { /* Text for average attendance */
   text-align: center;
-  font-size: 1.1rem;
-  margin-bottom: 2rem;
+  font-size: var(--font-size-lg); /* Was 1.1rem, increased */
+  color: var(--text-color-secondary);
+  margin-bottom: var(--spacing-xl); /* Was 2rem */
 }
 
-.asistencia-section {
-  margin-bottom: 3rem;
+.asistencia-section { /* Container for chart or data section */
+  margin-bottom: var(--spacing-xl); /* Was 3rem */
+  padding: var(--spacing-lg);
+  background-color: var(--background-color); /* White background for content sections */
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
 }
 
-.asistencia-subtitle {
-  font-size: 1.2rem;
-  color: #333;
-  margin-bottom: 1rem;
+.asistencia-subtitle { /* Subtitles for sections/charts */
+  font-size: var(--font-size-lg); /* Was 1.2rem */
+  color: var(--text-color-primary); /* Was #333 */
+  margin-bottom: var(--spacing-lg); /* Was 1rem */
   text-align: center;
-}
-
-/* Responsividad */
-@media (max-width: 768px) {
-  .asistencia-title {
-    font-size: 1.5rem;
-  }
-
-  .asistencia-subtitle {
-    font-size: 1rem;
-  }
+  font-weight: var(--font-weight-medium); /* Changed from default bold */
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-sm);
 }
 
 /* Filtros de asistencia */
 .asistencia-filtros {
   display: flex;
-  gap: 1rem;
-  margin: 1rem 0 2rem;
+  gap: var(--spacing-lg); /* Was 1rem, increased for filter groups */
+  margin: var(--spacing-lg) 0 var(--spacing-xl) 0; /* Was 1rem 0 2rem */
   flex-wrap: wrap;
   justify-content: center;
+  padding: var(--spacing-lg);
+  background-color: var(--surface-alt-color);
+  border-radius: var(--border-radius-md);
 }
 
-.filtro-fecha-desde,
-.filtro-fecha-hasta,
-.filtro-personal-nombre {
+.filtro-group { /* Wrapper for each filter (label + input) */
   display: flex;
   flex-direction: column;
-  font-size: 0.9rem;
+  gap: var(--spacing-xs); /* Space between label and input */
+  font-size: var(--font-size-sm); /* Was 0.9rem */
+  color: var(--text-color-secondary);
+  min-width: 200px; /* Min width for filter groups */
+  flex-grow: 1;
+}
+.filtro-group label { /* Explicit label styling */
+    font-weight: var(--font-weight-medium);
+    color: var(--text-color-primary);
 }
 
-.filtro-fecha-desde input,
-.filtro-fecha-hasta input,
+
+.filtro-fecha-desde input[type="date"], /* More specific */
+.filtro-fecha-hasta input[type="date"],
 .filtro-personal-nombre select {
-  padding: 0.4rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-top: 0.25rem;
+  /* Inherits from global input/select styles */
+  /* padding, border, border-radius from global */
+  /* margin-top: 0.25rem; Handled by .filtro-group gap */
+  width: 100%; /* Full width within .filtro-group */
+}
+
+.asistencia-filtros-actions { /* Container for filter buttons */
+    display: flex;
+    gap: var(--spacing-md);
+    align-items: flex-end; /* Align with bottom of inputs */
+    flex-grow: 1;
+    min-width: 200px; /* Match other filter groups */
 }
 
 .asistencia-filtrar-btn,
 .asistencia-limpiar-btn {
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  margin-top: 1.5rem;
+  /* Use global .btn styles */
+  padding: var(--spacing-sm) var(--spacing-lg); /* Standardized */
+  /* border, border-radius, cursor, font-weight from global */
+  /* margin-top: 1.5rem; Removed, align within flex container */
+  flex-grow: 1; /* Allow buttons to share space */
 }
 
-.asistencia-filtrar-btn {
-  background-color: #4caf50;
-  color: white;
+.asistencia-filtrar-btn { /* Apply .btn-success */
+  background-color: var(--success-color); /* Was #4caf50 */
+  color: var(--text-color-on-success);
+  border-color: var(--success-color);
+}
+.asistencia-filtrar-btn:hover {
+  background-color: var(--success-color-dark);
+  border-color: var(--success-color-dark);
 }
 
-.asistencia-limpiar-btn {
-  background-color: #d9534f;
-  color: white;
+.asistencia-limpiar-btn { /* Apply .btn-secondary or .btn-outline-secondary */
+  background-color: var(--secondary-color); /* Was #d9534f (red-ish) */
+  color: var(--text-color-on-primary); /* Assuming white text on secondary */
+  border-color: var(--secondary-color);
+}
+.asistencia-limpiar-btn:hover {
+  background-color: var(--secondary-color-dark);
+  border-color: var(--secondary-color-dark);
 }
 
-.asistencia-exportar {
+
+.asistencia-exportar { /* Container for export button */
   text-align: center;
-  margin-bottom: 2rem;
+  margin-bottom: var(--spacing-xl); /* Was 2rem */
+  margin-top: var(--spacing-lg); /* Added top margin */
 }
 
 .asistencia-exportar-btn {
-  padding: 0.5rem 1.5rem;
-  background-color: #007bff;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  /* Use global .btn .btn-primary styles */
+  background-color: var(--primary-color); /* Was #007bff (blue) */
+  color: var(--text-color-on-primary);
+  border-color: var(--primary-color);
+  padding: var(--spacing-sm) var(--spacing-lg); /* Standardized */
+  /* font-weight, border-radius, cursor, transition from global */
+}
+.asistencia-exportar-btn:hover {
+  background-color: var(--primary-color-dark);
+  border-color: var(--primary-color-dark);
 }
 
-.asistencia-exportar-btn:hover {
-  background-color: #0056b3;
+/* Responsividad */
+@media (max-width: 768px) {
+  .asistencia-title {
+    font-size: var(--font-size-lg); /* Was 1.5rem */
+  }
+
+  .asistencia-subtitle {
+    font-size: var(--font-size-md); /* Was 1rem */
+  }
+
+  .asistencia-filtros {
+    gap: var(--spacing-md);
+    flex-direction: column; /* Stack filters on smaller screens */
+    align-items: stretch; /* Make filter groups full width */
+  }
+  .asistencia-filtros-actions {
+    flex-direction: column; /* Stack buttons */
+  }
+  .asistencia-filtros-actions button {
+    width: 100%; /* Full width buttons */
+  }
 }

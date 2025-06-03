@@ -1,167 +1,194 @@
+/* Main Container */
 .moviles-movimientos-container {
-  padding: 2rem;
+  padding: var(--spacing-lg); /* Was 2rem */
   max-width: 1000px;
-  margin: 0 auto;
-  background-color: #f8f9fa;
-  border-radius: 8px;
+  margin: var(--spacing-lg) auto; /* Added top/bottom margin */
+  background-color: var(--surface-color); /* Was #f8f9fa */
+  border-radius: var(--border-radius-lg); /* Was 8px */
+  box-shadow: var(--shadow-md);
 }
 
 .moviles-movimientos-titulo {
-  font-size: 1.6rem;
+  font-size: var(--font-size-xl); /* Was 1.6rem */
   text-align: center;
-  margin-bottom: 1.5rem;
-  color: #b30000;
+  margin-bottom: var(--spacing-lg); /* Was 1.5rem */
+  color: var(--primary-color); /* Was #b30000 (dark red) */
+  font-weight: var(--font-weight-bold);
 }
 
+/* Form elements directly in the container (if any) */
 .moviles-movimientos-select,
 .moviles-movimientos-input,
-.moviles-movimientos-multiselect {
-  display: block;
+.moviles-movimientos-multiselect { /* These should ideally be part of a .form-container */
+  /* Inherits from global input/select styles in index.css */
+  /* display: block; width: 100%; padding; margin-bottom; font-size; border; border-radius; box-sizing */
+  /* Ensure these are applied if used outside a .form-container */
   width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-sizing: border-box;
+  margin-bottom: var(--spacing-md); /* Was 1rem */
 }
 
-.moviles-movimientos-multiselect {
-  height: 120px;
+.moviles-movimientos-multiselect { /* Assuming this is a <select multiple> or custom component */
+  min-height: 120px; /* Keep specific height if needed */
+  /* padding should be consistent with other inputs/selects */
 }
 
-.submit-btn {
-  display: block;
-  width: 100%;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 0.6rem;
-  font-size: 1rem;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+/* Form container for grouped inputs (if used) */
+.form-container { /* General form container if used */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+.form-container input, /* These are too generic, covered by global */
+.form-container select,
+.form-container textarea {
+  /* Inherit global styles */
+  width: 100%; /* Ensure full width within form container */
+}
+.form-container textarea, /* Includes .modal textarea */
+.modal textarea { /* Specific to textareas in modals if different */
+  min-height: 100px; /* Was 80px, standardized a bit */
+  resize: vertical;
 }
 
-.submit-btn:hover {
-  background-color: #45a049;
+
+/* Submit Button (generic) */
+.submit-btn { /* Apply .btn .btn-success classes in HTML if possible */
+  /* display: block; width: 100%; from global .btn if made block or use utility */
+  /* background-color, color, border, padding, font-size, border-radius, font-weight, cursor, transition from global .btn-success */
+  width: 100%; /* Make submit button full width */
+  margin-top: var(--spacing-md); /* Add some space above full-width button */
 }
 
+/* Filter Section */
 .moviles-movimientos-filtros {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-md); /* Was 1rem */
   flex-wrap: wrap;
-  justify-content: space-between;
-  margin-bottom: 1.5rem;
+  justify-content: flex-start; /* Align filters to start */
+  margin-bottom: var(--spacing-lg); /* Was 1.5rem */
+  padding: var(--spacing-lg);
+  background-color: var(--surface-alt-color);
+  border-radius: var(--border-radius-md);
 }
 
-.moviles-movimientos-filtros input {
-  padding: 0.5rem;
-  font-size: 1rem;
-  flex: 1;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 180px;
+.moviles-movimientos-filtros input[type="text"], /* More specific */
+.moviles-movimientos-filtros input[type="date"],
+.moviles-movimientos-filtros select, /* Includes .filtro-select, .filtro-fecha */
+.filtro-select, /* Kept for specificity if needed, but covered by above */
+.filtro-fecha {
+  /* Inherits from global input/select styles */
+  flex: 1; /* Allow to grow */
+  min-width: 200px; /* Was 180px */
 }
 
-.moviles-movimientos-filtros button {
-  background-color: #4caf50;
-  color: white;
-  font-weight: bold;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
+.moviles-movimientos-filtros button { /* Filter apply button */
+  /* Apply .btn .btn-success or .btn-primary classes in HTML */
+  /* background-color, color, font-weight, border, padding, border-radius, cursor from global */
+  /* Example using success: */
+  background-color: var(--success-color);
+  color: var(--text-color-on-success);
+  border: 1px solid var(--success-color);
+  /* Add other .btn properties and hover/active/focus from index.css */
+  padding: var(--spacing-sm) var(--spacing-lg); /* Adjusted */
 }
 
-.moviles-movimientos-filtros button:hover {
-  background-color: #45a049;
+
+/* Table Styling */
+.moviles-movimientos-table-container { /* Added container */
+  width: 100%;
+  overflow-x: auto;
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-lg); /* Was 1rem */
 }
 
 .moviles-movimientos-tabla {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 1rem;
 }
 
 .moviles-movimientos-tabla th,
 .moviles-movimientos-tabla td {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
+  padding: var(--spacing-md); /* Was 0.75rem */
+  border-bottom: 1px solid var(--border-color); /* Was #ddd */
   text-align: left;
 }
 
 .moviles-movimientos-tabla th {
-  background-color: #ff3333;
-  color: white;
+  /* background-color from global th is var(--surface-alt-color) */
+  /* Original was red, for emphasis. Changed to primary. */
+  background-color: var(--primary-color);
+  color: var(--text-color-on-primary);
+  font-weight: var(--font-weight-bold);
 }
 
 .moviles-movimientos-tabla tr:nth-child(even) {
-  background-color: #f9f9f9;
+  background-color: var(--surface-alt-color); /* Was #f9f9f9 */
 }
 
 .moviles-movimientos-tabla tr:hover {
-  background-color: #f1f1f1;
+  background-color: var(--primary-color-lightest); /* Was #f1f1f1 */
 }
 
-.form-container input,
-.form-container select,
-.form-container textarea {
-  width: 100%;
-  padding: 0.5rem;
-  font-size: 1rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
 
-.modal textarea {
-  min-height: 80px;
-  resize: vertical;
-}
-
-.filtro-select {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 180px;
-  flex: 1;
-}
-
-.filtro-fecha {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 180px;
-  flex: 1;
-}
-
-.btn-retorno {
-  background-color: #0066cc;
-  color: white;
-  font-weight: bold;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-retorno:hover {
-  background-color: #004999;
-}
-
+/* Specific Buttons */
+.btn-retorno,
 .btn-exportar {
-  background-color: #28a745;
-  color: white;
-  font-weight: bold;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
+  /* Inherit from global .btn styles */
+  /* padding, font-weight, border, border-radius, cursor, transition etc. */
+  /* Apply specific color classes like .btn-primary, .btn-secondary, .btn-success */
 }
 
+.btn-retorno { /* Example: styled as secondary button */
+  background-color: var(--secondary-color); /* Original was blue #0066cc */
+  color: var(--text-color-on-primary); /* Assuming white text on secondary */
+  border-color: var(--secondary-color);
+}
+.btn-retorno:hover {
+  background-color: var(--secondary-color-dark);
+  border-color: var(--secondary-color-dark);
+}
+
+.btn-exportar { /* Example: styled as success button */
+  background-color: var(--success-color); /* Original was green */
+  color: var(--text-color-on-success);
+  border-color: var(--success-color);
+}
 .btn-exportar:hover {
-  background-color: #218838;
+  background-color: var(--success-color-dark);
+  border-color: var(--success-color-dark);
+}
+
+/* Ensure buttons that are not explicitly styled here but exist in HTML
+   (like a main submit button for the page, or filter apply)
+   are assigned appropriate global classes e.g. class="btn btn-primary"
+*/
+/* Styling for submit-btn if it's the main page action button */
+.submit-btn {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  background-color: var(--success-color);
+  color: var(--text-color-on-success);
+  border: 1px solid var(--success-color);
+  border-radius: var(--border-radius-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: var(--transition-base);
+  width: 100%; /* If it's a full-width button */
+}
+.submit-btn:hover {
+  background-color: var(--success-color-dark);
+  border-color: var(--success-color-dark);
+  transform: translateY(-1px);
+}
+.submit-btn:active {
+  background-color: var(--success-color-darker);
+  border-color: var(--success-color-darker);
+  transform: translateY(0);
+}
+.submit-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--success-color-alpha);
 }

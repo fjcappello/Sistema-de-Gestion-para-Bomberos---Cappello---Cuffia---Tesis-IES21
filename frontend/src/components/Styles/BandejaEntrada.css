@@ -1,143 +1,254 @@
 .bandeja-layout {
   display: flex;
-  background-color: #f9f9f9; /* Fondo más claro */
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-  align-items: stretch;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Sombra */
-  border-radius: 8px; /* Bordes redondeados */
+  background-color: var(--surface-color); /* Was #f9f9f9 */
+  overflow: hidden; /* Keep overflow hidden if the design relies on it */
+  align-items: stretch; /* Keep if sidebar and content should be same height */
+  box-shadow: var(--shadow-md); /* Was custom */
+  border-radius: var(--border-radius-lg); /* Was 8px */
+  /* font-family is inherited */
+  margin: var(--spacing-lg); /* Add some margin around the whole layout */
+}
+
+.bandeja-menu-sidebar { /* Assuming there's a container for menu items */
+  padding: var(--spacing-md);
+  background-color: var(--surface-alt-color); /* Light background for menu area */
+  border-right: 1px solid var(--border-color);
 }
 
 .menu-item {
-  font-weight: 600;
+  font-weight: var(--font-weight-medium); /* Was 600 */
   cursor: pointer;
-  padding: 0.75rem;
-  border-radius: 20px;
-  transition: all 0.3s ease; /* Transición más suave */
+  padding: var(--spacing-sm) var(--spacing-lg); /* Adjusted padding */
+  border-radius: var(--border-radius-pill); /* Was 20px, now pill shape */
+  transition: var(--transition-base);
   border: 2px solid transparent;
+  display: block; /* Make items block for full-width clicking area */
+  margin-bottom: var(--spacing-xs); /* Space between menu items */
+  text-align: center; /* Center text if pill shape */
 }
 
 .menu-item:hover {
-  border: 2px solid #e60000;
-  background-color: #fef0f0;
+  border: 2px solid var(--primary-color);
+  background-color: var(--primary-color-lightest);
+  color: var(--primary-color);
 }
 
 .menu-item.activo {
-  background-color: transparent;
-  color: #e60000;
-  border: 2px solid #e60000;
-  border-radius: 20px;
+  background-color: var(--primary-color);
+  color: var(--text-color-on-primary);
+  border: 2px solid var(--primary-color);
+  font-weight: var(--font-weight-bold);
 }
 
 .bandeja-contenido {
   flex: 1;
-  padding: 2rem;
+  padding: var(--spacing-lg); /* Was 2rem, adjusted */
   overflow-y: auto;
-  min-height: calc(100vh - 80px);
-  width: 100%; /* espacio para barra lateral fija */
+  min-height: calc(100vh - (2 * var(--spacing-lg)) - var(--spacing-xxl) - 2px); /* Adjust based on navbar and layout margin */
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: #ffffff;
-  border-radius: 8px;
+  align-items: center; /* Center content like table if it has max-width */
+  background-color: var(--background-color); /* Was #ffffff */
+  /* No specific border-radius needed if layout has it */
 }
 
 .bandeja-encabezado {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1.5rem;
+  font-size: var(--font-size-xl); /* Was 1.5rem */
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-lg); /* Was 1.5rem */
   width: 100%;
   text-align: center;
-  color: #e60000;
+  color: var(--primary-color); /* Was #e60000 */
 }
 
 .bandeja-filtros {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: var(--spacing-md); /* Was 1rem */
+  margin-bottom: var(--spacing-lg); /* Was 1.5rem */
   align-items: center;
-  justify-content: center;
+  justify-content: center; /* Center filters */
   width: 100%;
-  max-width: 1000px;
+  max-width: 1000px; /* Keep max-width for content area */
+  padding: var(--spacing-md);
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-md);
 }
 
-.bandeja-filtros input {
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 0.95rem;
+.bandeja-filtros input[type="text"],
+.bandeja-filtros input[type="date"],
+.bandeja-filtros select {
+  /* Styles for these inputs are inherited from index.css */
+  /* Override if specific styling is needed, e.g., smaller padding for filters */
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  flex-grow: 1; /* Allow inputs to grow */
+  min-width: 150px; /* Minimum width for filter inputs */
 }
 
 .nuevo-mensaje-btn {
-  padding: 0.5rem 1rem;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  font-weight: bold;
+  /* Use global .btn-success styles */
+  /* padding, background-color, color, border, border-radius, cursor, transition, font-weight from .btn-success */
 }
+/* Apply .btn-success class to the button in HTML: <button class="nuevo-mensaje-btn btn-success"> */
 
-.nuevo-mensaje-btn:hover {
-  background-color: #218838;
+
+.bandeja-tabla-container { /* Added container for shadow and overflow */
+  width: 100%;
+  max-width: 1000px; /* Max width for the table content */
+  margin: 0 auto;
+  overflow-x: auto; /* Allow horizontal scrolling on small screens */
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color); /* Add border to container */
 }
 
 .bandeja-tabla {
   width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  border: 1px solid #ddd;
-  max-width: 1000px;
-  margin: 0 auto;
+  border-collapse: collapse; /* Global style */
+  /* background-color from container */
+  /* border from container */
 }
 
 .bandeja-tabla th,
 .bandeja-tabla td {
-  padding: 0.75rem;
+  padding: var(--spacing-md); /* Was 0.75rem, standardized */
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border-color); /* Was #ddd */
+  /* th styles (bg, font-weight) from global */
+}
+.bandeja-tabla td:last-child, /* To make action buttons align nicely */
+.bandeja-tabla th:last-child {
+  text-align: right;
+}
+
+.bandeja-tabla tr:last-child td {
+  border-bottom: none; /* Remove border for last row if table is in a container */
+}
+
+.bandeja-tabla tr:hover {
+  background-color: var(--primary-color-lightest) !important; /* Override .no-leido if also hovered */
 }
 
 .no-leido {
-  font-weight: bold;
-  background-color: #fff5f5;
+  font-weight: var(--font-weight-bold);
+  background-color: var(--surface-alt-color); /* Was #fff5f5. Using a more neutral unread color */
+}
+.no-leido td:first-child::before { /* Optional: add a visual indicator for unread */
+  content: '●';
+  color: var(--primary-color);
+  margin-right: var(--spacing-xs);
+  font-size: var(--font-size-sm);
 }
 
+
 .bandeja-badge {
-  background-color: #e60000;
-  color: white;
-  font-size: 0.75rem;
-  width: 20px;
-  height: 20px;
+  background-color: var(--primary-color); /* Was #e60000 */
+  color: var(--text-color-on-primary); /* Was white */
+  font-size: var(--font-size-xs); /* Was 0.75rem */
+  width: var(--spacing-lg); /* Was 20px, now 24px */
+  height: var(--spacing-lg); /* Was 20px, now 24px */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
-  margin-left: 10px;
-  font-weight: bold;
+  border-radius: var(--border-radius-pill); /* Was 50% */
+  margin-left: var(--spacing-sm); /* Was 10px */
+  font-weight: var(--font-weight-bold);
+  line-height: 1; /* Ensure text is centered vertically */
 }
 
 .close-modal-btn {
-  padding: 0.5rem 1rem;
-  background-color: #b30000;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  /* Use global .btn-error or .btn-secondary styles */
 }
+/* Apply .btn-error class to the button in HTML: <button class="close-modal-btn btn-error"> */
 
-.close-modal-btn:hover {
-  background-color: #800000;
-}
 
-.bandeja-selector {
+.bandeja-selector { /* For view selectors like "Received", "Sent" */
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: var(--spacing-sm); /* Was 1rem, reduced for tighter buttons */
+  margin-bottom: var(--spacing-lg); /* Was 1.5rem */
   width: 100%;
-  justify-content: flex-start;
+  justify-content: flex-start; /* Or center if preferred */
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.bandeja-selector .btn-selector {
+  /* Style like an outline or subtle button */
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color-secondary);
+  transition: var(--transition-base);
+}
+.bandeja-selector .btn-selector:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: var(--primary-color-lightest);
+}
+.bandeja-selector .btn-selector.activo {
+  background-color: var(--primary-color);
+  color: var(--text-color-on-primary);
+  border-color: var(--primary-color);
+}
+
+/* Example of using button classes from index.css */
+/* Ensure the HTML for these buttons includes the base 'btn' class if you define one,
+   and then the specific class like 'btn-success' or 'btn-error'.
+   For now, assuming direct application or component-level styling.
+*/
+.nuevo-mensaje-btn {
+  /* If not using global classes from index.css directly: */
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--success-color);
+  color: var(--text-color-on-success);
+  border: 1px solid var(--success-color);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, transform 0.15s ease-in-out;
+  font-weight: var(--font-weight-medium);
+}
+.nuevo-mensaje-btn:hover {
+  background-color: var(--success-color-dark);
+  border-color: var(--success-color-dark);
+  transform: translateY(-1px);
+}
+.nuevo-mensaje-btn:active {
+  background-color: var(--success-color-darker);
+  border-color: var(--success-color-darker);
+  transform: translateY(0);
+}
+.nuevo-mensaje-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--success-color),0.25);
+}
+
+.close-modal-btn {
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: var(--error-color);
+  color: var(--text-color-on-error);
+  border: 1px solid var(--error-color);
+  border-radius: var(--border-radius-sm);
+  cursor: pointer;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, transform 0.15s ease-in-out;
+  font-weight: var(--font-weight-medium);
+}
+.close-modal-btn:hover {
+  background-color: var(--error-color-dark);
+  border-color: var(--error-color-dark);
+  transform: translateY(-1px);
+}
+.close-modal-btn:active {
+  background-color: var(--error-color-darker);
+  border-color: var(--error-color-darker);
+  transform: translateY(0);
+}
+.close-modal-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(var(--error-color),0.25);
 }

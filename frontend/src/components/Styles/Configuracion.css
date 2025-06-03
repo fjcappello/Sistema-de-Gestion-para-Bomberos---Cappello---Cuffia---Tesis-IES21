@@ -1,92 +1,176 @@
 .configuracion-layout {
   display: flex;
-  background-color: #f9f9f9;
-  font-family: Arial, sans-serif;
+  background-color: var(--surface-color); /* Was #f9f9f9 */
   overflow: hidden;
   align-items: stretch;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  box-shadow: var(--shadow-md); /* Was custom */
+  border-radius: var(--border-radius-lg); /* Was 8px */
+  /* font-family is inherited */
+  margin: var(--spacing-lg); /* Add margin around the layout */
 }
 
 .configuracion-contenido {
   flex: 1;
-  padding: 2rem;
+  padding: var(--spacing-lg); /* Was 2rem */
   overflow-y: auto;
-  min-height: calc(100vh - 80px);
+  min-height: calc(100vh - (2 * var(--spacing-lg)) - var(--spacing-xxl) - 2px); /* Adjust based on navbar and layout margin */
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: #ffffff;
-  border-radius: 8px;
+  align-items: center; /* Center content like table if it has max-width */
+  background-color: var(--background-color); /* Was #ffffff */
+}
+
+.configuracion-encabezado { /* Added for consistency if there's a title */
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-lg);
+  width: 100%;
+  text-align: center;
+  color: var(--primary-color);
 }
 
 .configuracion-selector {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  flex-wrap: wrap; /* Allow wrapping for many selectors */
+  gap: var(--spacing-sm); /* Was 1rem */
+  margin-bottom: var(--spacing-lg); /* Was 1.5rem */
   width: 100%;
-  justify-content: flex-start;
+  justify-content: center; /* Center selectors */
+  max-width: 1000px; /* Consistent max-width for content area */
+  /* border-bottom: 1px solid var(--border-color); /* Optional: separator for tabs */
+  /* padding-bottom: var(--spacing-md); */
 }
+
+.configuracion-selector .btn-selector {
+  padding: var(--spacing-sm) var(--spacing-lg); /* Slightly larger for main selectors */
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  color: var(--text-color-secondary);
+  transition: var(--transition-base);
+  flex-grow: 1; /* Allow buttons to grow and fill space if few */
+  text-align: center;
+  min-width: 120px; /* Minimum width for selector buttons */
+}
+
+.configuracion-selector .btn-selector:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: var(--primary-color-lightest);
+}
+
+.configuracion-selector .btn-selector.activo {
+  background-color: var(--primary-color);
+  color: var(--text-color-on-primary);
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
 
 .configuracion-filtros {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+  gap: var(--spacing-md); /* Was 1rem */
+  margin-bottom: var(--spacing-lg); /* Was 1.5rem */
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start; /* Align filters to the start */
   width: 100%;
-  max-width: 1000px;
+  max-width: 1000px; /* Consistent max-width */
+  padding: var(--spacing-md);
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-md);
 }
 
-.configuracion-filtros input {
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 0.95rem;
+.configuracion-filtros input[type="text"],
+.configuracion-filtros input[type="date"],
+.configuracion-filtros select {
+  /* Styles for these inputs are inherited from index.css */
+  padding: var(--spacing-xs) var(--spacing-sm); /* Standard input padding */
+  font-size: var(--font-size-md); /* Standard font size */
+  flex-grow: 1;
+  min-width: 180px; /* Minimum width for filter inputs */
+}
+
+.configuracion-filtros button { /* Style for a filter apply button, for example */
+  /* Use global .btn-secondary or .btn-primary */
+}
+
+
+.configuracion-tabla-container { /* Added container for shadow and overflow */
+  width: 100%;
+  max-width: 1000px; /* Max width for the table content */
+  margin: 0 auto;
+  overflow-x: auto; /* Allow horizontal scrolling on small screens */
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color); /* Add border to container */
 }
 
 .configuracion-tabla {
   width: 100%;
-  border-collapse: collapse;
-  background-color: white;
-  border: 1px solid #ddd;
-  max-width: 1000px;
-  margin: 0 auto;
+  border-collapse: collapse; /* Global style */
 }
 
 .configuracion-tabla th,
 .configuracion-tabla td {
-  padding: 0.75rem;
+  padding: var(--spacing-md); /* Was 0.75rem, standardized */
   text-align: left;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--border-color); /* Was #ddd */
+  /* th styles (bg, font-weight) from global */
 }
+
+.configuracion-tabla tr:last-child td {
+  border-bottom: none; /* Remove border for last row */
+}
+
+.configuracion-tabla tr:hover {
+  background-color: var(--primary-color-lightest);
+}
+
+.configuracion-tabla td .action-btn { /* For edit/delete buttons in table cells */
+  padding: var(--spacing-xxs) var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  margin-right: var(--spacing-xs);
+  min-width: auto; /* Override default button min-width if any */
+}
+.configuracion-tabla td .action-btn:last-child {
+  margin-right: 0;
+}
+
 
 .paginacion {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: var(--spacing-sm); /* Was 1rem, reduced for tighter buttons */
+  margin-top: var(--spacing-lg); /* Was 1rem */
+  padding: var(--spacing-md) 0;
 }
 
 .paginacion button {
-  padding: 0.5rem 1rem;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+  /* Using global button styles, default is primary */
+  /* padding, background-color, color, border, border-radius, cursor, font-weight, transition from global */
+  min-width: auto; /* Allow pagination buttons to be smaller */
+  padding: var(--spacing-xs) var(--spacing-md); /* Adjust padding for pagination */
 }
 
-.paginacion button:hover {
-  background-color: #0056b3;
-}
+/* Hover and active states are from global button styles in index.css */
+/* Focus state also from global */
 
 .paginacion button:disabled {
-  background-color: #cccccc;
+  background-color: var(--border-color); /* Was #cccccc */
+  border-color: var(--border-color);
+  color: var(--text-color-muted);
   cursor: not-allowed;
+  transform: none; /* No transform for disabled state */
+  box-shadow: none; /* No shadow for disabled state */
+}
+
+.paginacion span { /* For current page display, etc. */
+  padding: var(--spacing-xs) var(--spacing-md);
+  font-size: var(--font-size-md);
+  color: var(--text-color-secondary);
 }

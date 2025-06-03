@@ -1,176 +1,205 @@
 .movimientos-container {
-  padding: 2rem;
-  max-width: 1000px;
-  margin: auto;
+  padding: var(--spacing-lg); /* Was 2rem */
+  max-width: 1000px; /* Or use a global max-width variable if defined */
+  margin: var(--spacing-lg) auto; /* Added top/bottom margin */
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
-.movimientos-container h2 {
+.movimientos-container h2 { /* Assuming this is the main title */
   text-align: center;
-  color: #e60000;
-  margin-bottom: 2rem;
+  color: var(--primary-color); /* Was #e60000 */
+  margin-bottom: var(--spacing-lg); /* Was 2rem */
+  font-size: var(--font-size-xl); /* Use global heading styles */
+  font-weight: var(--font-weight-bold);
 }
 
-/* Formulario */
+/* Form Styling */
 .movimientos-form {
-  background-color: #fafafa;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--surface-alt-color); /* Was #fafafa */
+  padding: var(--spacing-lg); /* Was 1rem */
+  border: 1px solid var(--border-color); /* Was #ddd */
+  border-radius: var(--border-radius-md); /* Was 8px */
+  margin-bottom: var(--spacing-xl); /* Was 2rem */
+  box-shadow: var(--shadow-sm); /* Was custom */
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  justify-content: space-between;
+  gap: var(--spacing-md); /* Was 1rem */
+  align-items: flex-end; /* Align items to bottom for varied heights */
+  /* justify-content: space-between; Can make items spread too far, consider flex-start or centering */
+  justify-content: flex-start;
 }
 
 .movimientos-form select,
-.movimientos-form input {
-  padding: 0.5rem;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 30%;
-  min-width: 180px;
+.movimientos-form input[type="text"], /* More specific */
+.movimientos-form input[type="date"] {
+  /* Inherits from global input/select styles */
+  /* padding, font-size, border, border-radius from global */
+  /* width: 30%; Removed, let flexbox handle sizing or use utility classes */
+  min-width: 200px; /* Was 180px */
+  flex-grow: 1; /* Allow elements to grow */
 }
 
-/* Botones */
+/* Form Buttons */
 .movimientos-form .btn {
-  padding: 0.5rem 1rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  color: white;
-  transition: background-color 0.3s ease;
+  /* Base styles from global .btn */
+  /* padding, font-weight, border, border-radius, cursor, color, transition from global */
+  /* Specific styles for ingreso/egreso */
 }
 
-.movimientos-form .btn.ingreso {
-  background-color: #4caf50;
+.movimientos-form .btn.ingreso { /* Should use .btn-success class */
+  background-color: var(--success-color); /* Was #4caf50 */
+  border-color: var(--success-color);
+  color: var(--text-color-on-success);
 }
-
 .movimientos-form .btn.ingreso:hover {
-  background-color: #45a049;
+  background-color: var(--success-color-dark);
+  border-color: var(--success-color-dark);
 }
 
-.movimientos-form .btn.egreso {
-  background-color: #ff3333;
+.movimientos-form .btn.egreso { /* Should use .btn-error class for red */
+  background-color: var(--error-color); /* Was #ff3333 */
+  border-color: var(--error-color);
+  color: var(--text-color-on-error);
 }
-
 .movimientos-form .btn.egreso:hover {
-  background-color: #cc0000;
+  background-color: var(--error-color-dark);
+  border-color: var(--error-color-dark);
+}
+
+
+/* Table Styling */
+.movimientos-table-container { /* Added container */
+  width: 100%;
+  overflow-x: auto;
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  margin-top: var(--spacing-xl); /* Was 2rem */
 }
 
 .movimientos-table {
   width: 100%;
-  border-collapse: collapse;
-  margin-top: 2rem;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-collapse: collapse; /* Global */
 }
 
 .movimientos-table th,
 .movimientos-table td {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  text-align: center;
+  padding: var(--spacing-md); /* Was 0.75rem */
+  border-bottom: 1px solid var(--border-color); /* Was #ddd */
+  text-align: center; /* Keep if centered content is desired, else text-align: left from global */
 }
 
 .movimientos-table th {
-  background-color: #e60000;
-  color: white;
-  font-weight: bold;
+  background-color: var(--primary-color); /* Was #e60000 */
+  color: var(--text-color-on-primary);
+  font-weight: var(--font-weight-bold); /* Global */
 }
 
 .movimientos-table td {
-  color: #333;
+  color: var(--text-color-primary); /* Was #333 */
+}
+.movimientos-table tr:nth-child(even) td { /* Apply to td to not override th */
+    background-color: var(--surface-alt-color);
+}
+.movimientos-table tr:hover td { /* Apply to td */
+    background-color: var(--primary-color-lightest);
 }
 
-.movimientos-table tbody tr td[colspan="5"] {
+
+.movimientos-table tbody tr td[colspan="5"] { /* Or actual colspan */
   text-align: center;
-  padding: 1rem;
-  color: #555;
+  padding: var(--spacing-lg); /* Was 1rem */
+  color: var(--text-color-secondary); /* Was #555 */
   font-style: italic;
 }
 
-.btn.eliminar {
-  background-color: #b30000;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.btn.eliminar { /* Should use .btn-error class */
+  background-color: var(--error-color); /* Was #b30000 */
+  border-color: var(--error-color);
+  color: var(--text-color-on-error);
+  /* padding, border-radius, font-weight, cursor, transition from global .btn */
 }
-
 .btn.eliminar:hover {
-  background-color: #800000;
+  background-color: var(--error-color-dark);
+  border-color: var(--error-color-dark);
 }
 
+/* Pagination Styling */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1.5rem;
-  gap: 1rem;
+  margin-top: var(--spacing-lg); /* Was 1.5rem */
+  gap: var(--spacing-sm); /* Was 1rem */
 }
 
 .pagination button {
-  padding: 0.5rem 1rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  /* Using global button styles, default is primary */
+  background-color: var(--primary-color); /* Was #4caf50 (green), changed to primary */
+  color: var(--text-color-on-primary);
+  border: 1px solid var(--primary-color);
+  /* Other styles from global button */
+  padding: var(--spacing-xs) var(--spacing-md);
 }
-
+.pagination button:hover:not(:disabled) {
+  background-color: var(--primary-color-dark);
+  border-color: var(--primary-color-dark);
+}
 .pagination button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  background-color: var(--border-color);
+  border-color: var(--border-color);
+  color: var(--text-color-muted);
+  /* Other disabled styles from global button */
 }
 
-.sidebar-layout {
+
+/* Sidebar Layout (Local to this component, consider global layout system if available) */
+.sidebar-layout { /* This seems to be a container for sidebar + main content view */
   display: flex;
-  gap: 1rem;
-  padding: 0 2rem;
+  gap: var(--spacing-lg); /* Was 1rem */
+  padding: 0 var(--spacing-lg); /* Was 0 2rem */
+  margin-top: var(--spacing-xl); /* Added margin if this is a distinct section */
 }
 
 .sidebar {
-  min-width: 200px;
-  background-color: #f2f2f2;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  min-width: 220px; /* Was 200px */
+  flex-basis: 220px; /* Set a base width */
+  flex-shrink: 0; /* Prevent shrinking */
+  background-color: var(--surface-alt-color); /* Was #f2f2f2 */
+  padding: var(--spacing-lg); /* Was 1rem */
+  border-radius: var(--border-radius-md); /* Was 8px */
+  border: 1px solid var(--border-color); /* Was #ddd */
+  box-shadow: var(--shadow-sm); /* Was custom */
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-top: 30px;
+  gap: var(--spacing-md); /* Was 1rem */
+  /* margin-top: 30px; Can be removed if .sidebar-layout has margin */
+  align-self: flex-start; /* Align to top if content is taller */
 }
 
-.sidebar button {
-  padding: 0.75rem 1rem;
-  background-color: #4caf50;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.sidebar button { /* Buttons within the sidebar */
+  /* Should use global .btn and .btn-secondary or .btn-outline-primary */
+  /* Example as secondary: */
+  background-color: var(--secondary-color); /* Was #4caf50 (green) */
+  color: var(--text-color-on-primary); /* Assuming white text on secondary */
+  border: 1px solid var(--secondary-color);
+  width: 100%; /* Make sidebar buttons full width */
+  /* Other global .btn styles */
 }
-
 .sidebar button:hover {
-  background-color: #45a049;
+  background-color: var(--secondary-color-dark);
+  border-color: var(--secondary-color-dark);
+}
+.sidebar button.activo { /* Active state for sidebar button */
+  background-color: var(--primary-color); /* Use primary color for active */
+  border-color: var(--primary-color);
+  color: var(--text-color-on-primary);
 }
 
-.sidebar button.activo {
-  background-color: #388e3c;
-}
-
-.contenido-principal {
-  padding-left: 10rem;
+.contenido-principal { /* Main content area next to sidebar */
+  flex-grow: 1;
+  /* padding-left: 10rem; This created a large fixed gap, remove or use margin on sidebar */
 }

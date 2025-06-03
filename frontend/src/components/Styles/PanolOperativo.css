@@ -1,347 +1,221 @@
-.moviles-registro-container {
-  padding: 2rem;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+/* Main Container */
+.panol-operativo-container { /* Renamed from .moviles-registro-container */
+  padding: var(--spacing-lg);
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-lg);
   max-width: 1200px;
-  margin: 0 auto;
+  margin: var(--spacing-lg) auto;
+  box-shadow: var(--shadow-md);
 }
 
-.moviles-registro-titulo {
-  font-size: 1.8rem;
-  color: #b30000;
+.panol-operativo-titulo { /* Renamed from .moviles-registro-titulo */
+  font-size: var(--font-size-xl);
+  color: var(--primary-color); /* Was #b30000 */
   text-align: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: var(--spacing-lg);
+  font-weight: var(--font-weight-bold);
 }
 
-.moviles-registro-formulario {
+/* Common Form Styling (for .panol-operativo-formulario, .filtros, etc.) */
+.form-section-container { /* Re-using common class defined in previous refactors */
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
   justify-content: center;
+  padding: var(--spacing-lg);
+  background-color: var(--surface-alt-color);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
 }
 
-.moviles-registro-formulario input,
-.moviles-registro-formulario select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 180px;
+.form-section-container input[type="text"],
+.form-section-container input[type="date"],
+.form-section-container input[type="number"],
+.form-section-container select {
+  /* Inherits from global input/select styles in index.css */
+  min-width: 200px;
+  flex-grow: 1;
 }
 
-.moviles-registro-formulario button {
-  background-color: #b30000;
-  color: white;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+.form-section-container button {
+  /* Buttons should use global classes like .btn-primary, .btn-success, .btn-error */
 }
 
-.moviles-registro-formulario button:hover {
-  background-color: #800000;
+/* Specific form layouts */
+.panol-operativo-formulario { /* Renamed */
+  composes: form-section-container;
+}
+.filtros { /* Keep if used, apply .form-section-container styles */
+  composes: form-section-container;
+  justify-content: flex-start;
+}
+.panol-operativo-editar-form { /* Renamed */
+  composes: form-section-container;
+  background-color: var(--warning-color-lightest);
+}
+.panol-operativo-agregar-form { /* Renamed, example grid layout */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: var(--spacing-md) var(--spacing-lg);
+  padding: var(--spacing-lg);
+  background-color: var(--surface-alt-color);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-xl);
+}
+.panol-operativo-agregar-form label {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-color-secondary);
+  margin-bottom: var(--spacing-xs);
+  display: block;
+}
+.panol-operativo-agregar-form input,
+.panol-operativo-agregar-form select {
+  width: 100%;
+}
+.panol-operativo-agregar-form .col-span-2 {
+  grid-column: span 2;
+}
+.form-buttons-agregar {
+  grid-column: span 2;
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-lg);
 }
 
-.moviles-registro-tabla {
+
+/* Table Styling */
+.panol-operativo-table-container { /* Renamed container */
+  width: 100%;
+  overflow-x: auto;
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  margin-bottom: var(--spacing-xl);
+}
+
+.panol-operativo-tabla { /* Renamed */
   width: 100%;
   border-collapse: collapse;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.moviles-registro-tabla th,
-.moviles-registro-tabla td {
-  border: 1px solid #ddd;
-  padding: 0.75rem;
+.panol-operativo-tabla th,
+.panol-operativo-tabla td {
+  border-bottom: 1px solid var(--border-color);
+  padding: var(--spacing-md);
   text-align: left;
 }
-
-.moviles-registro-tabla th {
-  background-color: #ff3333;
-  color: white;
+.panol-operativo-tabla th {
+  background-color: var(--primary-color); /* Was #ff3333 */
+  color: var(--text-color-on-primary);
+  font-weight: var(--font-weight-bold); /* Global */
+}
+.panol-operativo-tabla tr:nth-child(even) {
+  background-color: var(--surface-alt-color);
+}
+.panol-operativo-tabla tr:hover {
+  background-color: var(--primary-color-lightest);
+}
+.panol-operativo-tabla td .action-btn {
+  padding: var(--spacing-xxs) var(--spacing-xs);
+  font-size: var(--font-size-sm);
+  margin-right: var(--spacing-xs);
 }
 
-.moviles-registro-tabla tr:nth-child(even) {
-  background-color: #f2f2f2;
-}
 
-/* Estilos para filtros */
-.filtros {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-}
-
-.filtros input,
-.filtros select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 160px;
-}
-
-.filtros button {
-  background-color: #ff3333;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.filtros button:hover {
-  background-color: #cc0000;
-}
-
-/* Estilos para paginación */
+/* Pagination Styling */
 .paginacion {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-lg);
 }
 
 .paginacion button {
-  background-color: #b30000;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  background-color: var(--primary-color); /* Was #b30000 */
+  color: var(--text-color-on-primary);
+  border: 1px solid var(--primary-color);
+  padding: var(--spacing-xs) var(--spacing-md);
+  /* Other global .btn styles */
 }
-
+.paginacion button:hover:not(:disabled) {
+  background-color: var(--primary-color-dark);
+  border-color: var(--primary-color-dark);
+}
 .paginacion button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  background-color: var(--border-color);
+  border-color: var(--border-color);
+  color: var(--text-color-muted);
+  /* Other global disabled styles */
 }
 
-.moviles-registro-editar-form {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  padding: 1rem;
-  background-color: #fff8e1;
-  border: 1px solid #ddd;
-  border-radius: 6px;
-}
 
-.moviles-registro-editar-form input,
-.moviles-registro-editar-form select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  min-width: 160px;
-}
+/* Modal Styling (should use global .modal-overlay and .modal-content) */
+/* .modal, .modal h2, .modal label etc. here are duplicates and should be removed
+   in favor of global modal and form component styling. */
 
-.moviles-registro-editar-form button {
-  background-color: #4caf50;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+/* Specific Buttons */
+.agregar-movil-button { /* Assuming this is "Add Item" or similar */
+  /* Should use .btn .btn-primary or .btn-success */
+  background-color: var(--primary-color); /* Was #ff3333 */
+  color: var(--text-color-on-primary);
+  border: 1px solid var(--primary-color);
+  /* Add other global button properties from index.css */
+  padding: var(--spacing-sm) var(--spacing-lg);
 }
-
-.moviles-registro-editar-form button:hover {
-  background-color: #388e3c;
-}
-
-.agregar-movil-button {
-  background-color: #ff3333;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
 .agregar-movil-button:hover {
-  background-color: #cc0000;
+  background-color: var(--primary-color-dark);
+  border-color: var(--primary-color-dark);
 }
 
-/* Estilos para modales flotantes */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.modal {
-  background-color: #ffffff;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 450px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-/* Estilos para modales flotantes */
-.modal h2 {
-  text-align: center;
-  color: #b30000;
-  margin-bottom: 1rem;
-}
-
-.modal label {
-  font-weight: bold;
-  align-self: flex-start;
-}
-
-.modal input,
-.modal select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.modal button {
-  background-color: #4caf50;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
+.boton-accion-mod { /* Custom action button, e.g., "Modify" */
+  display: block; /* Or inline-block */
+  padding: var(--spacing-xs) var(--spacing-sm); /* Was 6px 10px */
+  font-size: var(--font-size-sm); /* Was 14px */
+  margin-bottom: var(--spacing-xs); /* Was 6px */
+  border: 1px solid var(--primary-color); /* Example: primary outline */
+  border-radius: var(--border-radius-sm); /* Was 5px */
+  background-color: transparent; /* Example: outline */
+  color: var(--primary-color); /* Example: primary outline */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: var(--transition-base);
+  width: auto; /* Was 100px, let content define or set a min-width */
+  min-width: 100px;
+  text-align: center;
+}
+.boton-accion-mod:hover {
+  background-color: var(--primary-color); /* Was #2980b9 (blue) */
+  color: var(--text-color-on-primary);
+  border-color: var(--primary-color);
+}
+/* Assuming .boton-accion-foto is similar */
+.boton-accion-foto {
+    composes: boton-accion-mod; /* If it shares exact same style */
+    /* Or style separately if different */
 }
 
-.modal button:hover {
-  background-color: #388e3c;
+
+/* Modal for Photo Display */
+.modal-foto img { /* Styles for an image within a modal */
+  max-width: 100%;
+  max-height: 80vh; /* Keep constraint */
+  object-fit: contain;
+  border-radius: var(--border-radius-md); /* Add radius to image if it's directly in modal */
+  display: block; /* Remove extra space below image */
+  margin: 0 auto; /* Center image if modal content is wider */
 }
 
-.moviles-registro-agregar-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem 2rem;
-  padding: 1rem;
-}
 
-.moviles-registro-agregar-form label {
-  font-weight: bold;
-}
-
-.moviles-registro-agregar-form input,
-.moviles-registro-agregar-form select {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.moviles-registro-agregar-form .col-span-2 {
-  grid-column: span 2;
-}
-
-.form-buttons-agregar {
-  grid-column: span 2;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.moviles-registro-agregar-form {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1rem 2rem;
-  padding: 1rem;
-}
-
-.moviles-registro-agregar-form label {
-  grid-column: span 2;
-  font-weight: bold;
-  margin-bottom: -0.5rem;
-}
-
-.moviles-registro-agregar-form input,
-.moviles-registro-agregar-form select {
-  grid-column: span 2;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.form-buttons-agregar {
-  grid-column: span 2;
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
+/* Disabled button style (generic) */
 .editar-deshabilitado {
-  background-color: #ccc;
-  color: #666;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: not-allowed;
-}
-
-.agregar-movil-button {
-  background-color: #ff3333;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.boton-accion-mod {
-  display: block;
-  padding: 6px 10px;
-  font-size: 14px;
-  margin-bottom: 6px; /* separación vertical */
-  border: none;
-  border-radius: 5px;
-  background-color: #db3434;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-  width: 100px;
-  text-align: center;
-}
-
-.boton-accion-mod:hover,
-.boton-accion-foto:hover {
-  background-color: #2980b9;
-}
-
-.modal-foto img {
-  max-width: 100%; /* Ajusta la imagen al ancho del modal */
-  max-height: 80vh; /* Limita la altura a un 80% de la altura de la ventana */
-  object-fit: contain; /* Asegura que la imagen se ajusta proporcionalmente */
+  background-color: var(--border-color) !important;
+  color: var(--text-color-muted) !important;
+  border-color: var(--border-color) !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  box-shadow: none !important;
 }

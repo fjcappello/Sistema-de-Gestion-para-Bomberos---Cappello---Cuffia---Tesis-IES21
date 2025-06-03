@@ -1,31 +1,6 @@
-.lista-sugerencias {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  max-height: 150px;
-  overflow-y: auto;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  position: relative;
-  z-index: 10;
-}
+/* Styles for a suggestions list, typically used with autocomplete inputs */
 
-.lista-sugerencias li {
-  padding: 0.5rem;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.lista-sugerencias li:hover {
-  background-color: #f2f2f2;
-}
-
-.sugerencia-activa {
-  background-color: #e60000;
-  color: white;
-}
-@keyframes fadeIn {
+@keyframes suggestionFadeIn { /* Renamed to avoid conflict if there's another fadeIn */
   from {
     opacity: 0;
     transform: translateY(-5px);
@@ -37,5 +12,53 @@
 }
 
 .lista-sugerencias {
-  animation: fadeIn 0.2s ease-out;
+  list-style: none;
+  margin: 0; /* Reset margin */
+  padding: 0; /* Reset padding */
+  max-height: 200px; /* Was 150px, slightly more space */
+  overflow-y: auto;
+  border: 1px solid var(--border-color); /* Was #ccc */
+  border-radius: var(--border-radius-md); /* Was 4px, use md for dropdowns */
+  box-shadow: var(--shadow-md); /* Was custom, use md shadow */
+  background-color: var(--background-color); /* Ensure it has a background */
+  /* position: absolute; /* Typically these are absolutely positioned relative to the input */
+  /* width: 100%; /* And match the width of the input */
+  z-index: 1060; /* Ensure suggestions are above other content, including modals (1050) */
+  animation: suggestionFadeIn 0.2s ease-out;
+}
+
+.lista-sugerencias li {
+  padding: var(--spacing-sm) var(--spacing-md); /* Was 0.5rem, standardized */
+  cursor: pointer;
+  transition: background-color var(--transition-base), color var(--transition-base);
+  font-size: var(--font-size-md);
+  color: var(--text-color-primary);
+}
+
+.lista-sugerencias li:hover {
+  background-color: var(--primary-color-lightest); /* Was #f2f2f2 */
+  color: var(--primary-color);
+}
+
+.sugerencia-activa { /* For currently highlighted item via keyboard or hover */
+  background-color: var(--primary-color) !important; /* Ensure override */
+  color: var(--text-color-on-primary) !important;
+}
+
+/* Styling for the scrollbar within the suggestions list */
+.lista-sugerencias::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lista-sugerencias::-webkit-scrollbar-track {
+  background: var(--surface-alt-color); /* Light track */
+}
+
+.lista-sugerencias::-webkit-scrollbar-thumb {
+  background: var(--text-color-muted); /* Muted thumb */
+  border-radius: 3px;
+}
+
+.lista-sugerencias::-webkit-scrollbar-thumb:hover {
+  background: var(--text-color-secondary); /* Darker thumb on hover */
 }

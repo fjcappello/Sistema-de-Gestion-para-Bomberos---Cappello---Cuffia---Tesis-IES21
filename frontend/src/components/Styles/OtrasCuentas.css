@@ -1,100 +1,150 @@
-.configuracion-layout {
-  display: flex;
-  background-color: #f9f9f9;
-  font-family: Arial, sans-serif;
-  overflow: hidden;
-  align-items: stretch;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+/* Main Layout - Assuming this is a full page component */
+.otras-cuentas-layout { /* Renamed for clarity, was .configuracion-layout */
+  display: flex; /* If it's a flex container for sidebar/content */
+  /* Or, if it's just the main content block: */
+  padding: var(--spacing-lg);
+  margin: var(--spacing-lg) auto;
+  max-width: 1000px; /* Example max-width for content pages */
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
+  /* font-family is inherited */
 }
 
-.configuracion-contenido {
-  flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
-  min-height: calc(100vh - 80px);
-  width: 100%;
+.otras-cuentas-contenido { /* Renamed, was .configuracion-contenido */
+  flex: 1; /* If part of a flex layout */
+  padding: var(--spacing-md); /* Inner padding if layout has its own */
+  /* min-height, width: 100% are often context-dependent */
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: #ffffff;
-  border-radius: 8px;
+  align-items: center; /* Center content like forms */
+  /* background-color might not be needed if layout provides it */
 }
 
-.configuracion-filtros {
+.otras-cuentas-titulo { /* Added for consistency */
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Form/Settings Area */
+.otras-cuentas-form-section { /* Renamed, was .configuracion-filtros */
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column; /* Stack elements vertically by default */
+  gap: var(--spacing-lg); /* Increased gap for better section separation */
+  margin-bottom: var(--spacing-lg);
   width: 100%;
-  max-width: 600px;
+  max-width: 600px; /* Keep max-width for forms */
+  padding: var(--spacing-xl); /* Increased padding for a form section */
+  background-color: var(--surface-alt-color);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
 
-.configuracion-input {
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  font-size: 0.95rem;
+.otras-cuentas-form-section h3 { /* Headings within the form section */
+  font-size: var(--font-size-lg);
+  color: var(--text-color-primary);
+  margin-bottom: var(--spacing-md); /* Was 0.5rem */
+  text-align: left; /* Keep if desired */
   width: 100%;
-  max-width: 300px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: var(--spacing-sm);
 }
+
+.otras-cuentas-form-section p { /* Paragraphs/descriptions within the form */
+  margin-top: 0; /* Reset top margin if heading provides bottom margin */
+  margin-bottom: var(--spacing-md); /* Was 1rem */
+  font-size: var(--font-size-md); /* Was 0.95rem */
+  text-align: left;
+  width: 100%;
+  color: var(--text-color-secondary);
+}
+
+.input-group { /* Wrapper for label + input if needed */
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+  width: 100%;
+}
+.input-group label {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-color-primary);
+}
+
+.configuracion-input { /* Specific input class if needed for wider application */
+  /* Inherits from global input styles in index.css */
+  /* padding, border-radius, border, font-size from global */
+  width: 100%; /* Ensure full width within its container */
+  /* max-width: 300px; This can be handled by the parent container's width or grid/flex layout */
+}
+
 
 .configuracion-boton {
-  padding: 0.5rem 1rem;
-  background-color: #218838;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  /* This should use global .btn and a specific variant like .btn-success */
+  /* Example styling if applying directly: */
+  padding: var(--spacing-sm) var(--spacing-lg); /* Adjusted padding */
+  background-color: var(--success-color); /* Was #218838 (green) */
+  color: var(--text-color-on-success);
+  border: 1px solid var(--success-color);
+  border-radius: var(--border-radius-sm); /* Global */
   cursor: pointer;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
+  font-weight: var(--font-weight-medium); /* Global */
+  transition: var(--transition-base); /* Global */
+  text-align: center;
+  width: 100%; /* Make button full width within its container */
+  max-width: 300px; /* If a max width is desired for the button itself */
+  margin: var(--spacing-md) auto 0 auto; /* Center if it has max-width */
 }
-
 .configuracion-boton:hover {
-  background-color: #0056b3;
+  background-color: var(--success-color-dark); /* Inconsistent hover fixed */
+  border-color: var(--success-color-dark);
+  transform: translateY(-1px); /* Global hover effect */
+}
+/* Add :active and :focus states as per index.css button model */
+.configuracion-boton:active {
+  background-color: var(--success-color-darker);
+  border-color: var(--success-color-darker);
+  transform: translateY(0);
+}
+.configuracion-boton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--success-color-alpha); /* Global focus */
 }
 
-.usuario-row {
-  display: flex;
-  gap: 1rem;
-  width: 100%;
-  justify-content: center;
-  flex-wrap: wrap;
-}
 
+/* Row Layouts for arranging multiple elements */
+.usuario-row,
 .permisos-row {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-lg); /* Was 1rem, increased for clarity between elements */
   width: 100%;
-  justify-content: center;
-  flex-wrap: wrap;
+  justify-content: flex-start; /* Align to start rather than center for form rows */
+  flex-wrap: wrap; /* Allow wrapping */
+  align-items: flex-end; /* Align baselines of inputs/buttons if heights vary */
+  margin-bottom: var(--spacing-md); /* Space between rows */
+}
+.usuario-row > *, /* Children take available space */
+.permisos-row > * {
+  flex-grow: 1;
+  min-width: 200px; /* Minimum width for elements in a row */
 }
 
-.configuracion-filtros > div {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
-
-.configuracion-filtros p {
-  margin-top: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
-  text-align: left;
-  width: 100%;
-  max-width: 500px;
-}
-
-.configuracion-filtros h3 {
-  width: 100%;
-  text-align: left;
-  margin-bottom: 0.5rem;
-}
 
 .mensaje-exito {
-  color: green;
-  margin-top: 8px;
-  font-weight: bold;
+  color: var(--success-color);
+  margin-top: var(--spacing-sm); /* Was 8px */
+  font-weight: var(--font-weight-bold);
+  text-align: center; /* Center success message */
+  padding: var(--spacing-sm);
+  background-color: var(--success-color-lightest); /* Define in index.css e.g. light green */
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--success-color);
+}
+
+/* Add --success-color-lightest to index.css if not already present */
+:root {
+  --success-color-lightest: #d4edda; /* Example */
 }
