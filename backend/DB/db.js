@@ -4,7 +4,7 @@ const db = mysql.createConnection({
   host: "localhost",
   user: "root",
   password: "",
-  database: "bd_sigb",
+  database: "bd_sigb_normalizada",
   port: 3306,
 });
 

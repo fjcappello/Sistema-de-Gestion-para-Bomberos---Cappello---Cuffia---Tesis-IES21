@@ -12,10 +12,12 @@ const obtenerPersonal = (req, res) => {
       DATE_FORMAT(p.fecha_ingreso, '%d-%m-%Y') AS fecha_ingreso,
       j.jerarquia AS jerarquia,
       s.nombre AS situacion,
-      p.fecha_revision_medica
+      p.fecha_revision_medica,
+      r.rol AS rol_nombre
     FROM personal p
     LEFT JOIN jerarquias j ON p.jerarquia_id = j.id
     LEFT JOIN situaciones s ON p.situacion_id = s.id
+    LEFT JOIN rol r ON p.rol_id = r.id
     ORDER BY p.legajo ASC
   `;
 
@@ -89,7 +91,7 @@ const crearPersonal = (req, res) => {
         return;
       }
 
-      const loginQuery = `INSERT INTO login (legajo, contraseña) VALUES (?, ?)`;
+      const loginQuery = `INSERT INTO login (legajo_personal, contraseña) VALUES (?, ?)`;
       db.query(loginQuery, [legajo, documento], async (err) => {
         if (err) {
           console.error("Error al crear login:", err);

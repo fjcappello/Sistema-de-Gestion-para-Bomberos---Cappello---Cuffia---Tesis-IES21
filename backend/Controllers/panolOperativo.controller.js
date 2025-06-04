@@ -8,27 +8,27 @@ const recuperarElementos = function recuperarElementos(req, res) {
   const { tipo, fincorp, fvenc, estado, texto } = req.body;
 
   let query = `SELECT 
-                    p.id_elemento, 
-                    p.elemento, 
+                    p.id AS id_elemento,
+                    p.elemento_nombre AS elemento,
                     t.tipo, 
                     m.marca, 
-                    DATE_FORMAT(p.f_incorporacion, '%Y-%m-%d') AS f_incorporacion, 
-                    DATE_FORMAT(p.f_vencimiento, '%Y-%m-%d') AS f_vencimiento, 
+                    DATE_FORMAT(p.fecha_incorporacion, '%Y-%m-%d') AS f_incorporacion,
+                    DATE_FORMAT(p.fecha_vencimiento, '%Y-%m-%d') AS f_vencimiento,
                     l.asignacion, 
-                    DATE_FORMAT(p.f_asignacion, '%Y-%m-%d') AS f_asignacion, 
+                    DATE_FORMAT(p.fecha_asignacion, '%Y-%m-%d') AS f_asignacion,
                     e.estado, 
-                    p.foto
+                    p.foto_path AS foto
                 FROM 
-                    panol AS p
+                    panol_elementos AS p
                 INNER JOIN 
-                    tipo_elemento AS t ON p.id_tipo = t.id_tipo
+                    tipos_elemento_panol AS t ON p.tipo_elemento_id = t.id
                 INNER JOIN 
-                    marca_elemento AS m ON p.id_marca = m.id_marca
+                    marcas_elemento_panol AS m ON p.marca_elemento_id = m.id
                 INNER JOIN 
-                    lugar_asignacion AS l ON l.id_asignacion = p.id_asignacion
+                    lugares_asignacion_panol AS l ON p.lugar_asignacion_id = l.id
                 INNER JOIN 
-                    estado_elemento AS e ON p.id_estado = e.id_estado
-                WHERE 1 + 1 = 2 ORDER BY id_elemento ASC
+                    estados_elemento_panol AS e ON p.estado_elemento_id = e.id
+                WHERE 1 + 1 = 2 ORDER BY p.id ASC
             `;
 
   db.query(query, (error, results) => {
@@ -47,7 +47,7 @@ const recuperarElementos = function recuperarElementos(req, res) {
 
 //Recuperar los tipos de herramientas
 const recuperarTipos = function recuperarTipos(req, res) {
-  const query = `SELECT * FROM tipo_elemento`;
+  const query = `SELECT id AS id_tipo, tipo FROM tipos_elemento_panol`;
   db.query(query, (error, results) => {
     if (error) {
       console.error("Error al recuperar los tipos de elemento:", error);
@@ -66,7 +66,7 @@ const recuperarTipos = function recuperarTipos(req, res) {
 
 //Recuperar los estados de las herramientas
 const recuperarEstados = function recuperarEstados(req, res) {
-  const query = `SELECT * FROM estado_elemento`;
+  const query = `SELECT id AS id_estado, estado FROM estados_elemento_panol`;
   db.query(query, (error, results) => {
     if (error) {
       console.error("Error al recuperar los tipos de elemento:", error);
@@ -85,7 +85,7 @@ const recuperarEstados = function recuperarEstados(req, res) {
 
 //Recuperar los tipos de herramientas
 const recuperarMarcas = function recuperarMarcas(req, res) {
-  const query = `SELECT * FROM marca_elemento`;
+  const query = `SELECT id AS id_marca, marca FROM marcas_elemento_panol`;
   db.query(query, (error, results) => {
     if (error) {
       console.error("Error al recuperar las marcas de elementos:", error);
@@ -103,7 +103,7 @@ const recuperarMarcas = function recuperarMarcas(req, res) {
 };
 
 const recuperarAsignaciones = function recuperarAsignaciones(req, res) {
-  const query = `SELECT * FROM lugar_asignacion`;
+  const query = `SELECT id AS id_asignacion, asignacion FROM lugares_asignacion_panol`;
   db.query(query, (error, results) => {
     if (error) {
       console.error("Error al recuperar las marcas de elementos:", error);
@@ -123,24 +123,24 @@ const recuperarAsignaciones = function recuperarAsignaciones(req, res) {
 //Agregar una nuevo elemento de pañol
 const agregarElemento = function agregarElemento(req, res) {
   let {
-    elemento,
-    id_tipo,
-    id_marca,
-    f_incorporacion,
-    f_vencimiento,
-    id_asignacion,
-    f_asignacion,
-    id_estado,
+    elemento, // maps to elemento_nombre
+    id_tipo, // maps to tipo_elemento_id
+    id_marca, // maps to marca_elemento_id
+    f_incorporacion, // maps to fecha_incorporacion
+    f_vencimiento, // maps to fecha_vencimiento
+    id_asignacion, // maps to lugar_asignacion_id
+    f_asignacion, // maps to fecha_asignacion
+    id_estado, // maps to estado_elemento_id
   } = req.body;
-  const query = `INSERT INTO panol (
-                        elemento, 
-                        id_tipo, 
-                        id_marca, 
-                        f_incorporacion, 
-                        f_vencimiento, 
-                        id_asignacion, 
-                        f_asignacion, 
-                        id_estado
+  const query = `INSERT INTO panol_elementos (
+                        elemento_nombre,
+                        tipo_elemento_id,
+                        marca_elemento_id,
+                        fecha_incorporacion,
+                        fecha_vencimiento,
+                        lugar_asignacion_id,
+                        fecha_asignacion,
+                        estado_elemento_id
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
   //Verificaciond e datos
   if (
@@ -198,19 +198,19 @@ const agregarElemento = function agregarElemento(req, res) {
 
 // Editar un elemento del pañol
 const editarElemento = (req, res) => {
-  const { id_elemento, id_asignacion, f_asignacion, id_estado } = req.body;
+  const { id_elemento, id_asignacion, f_asignacion, id_estado } = req.body; // id_elemento maps to id
   if (!id_elemento || !id_asignacion || !id_estado) {
     return res.status(400).json({ error: "Faltan datos requeridos" });
   }
-  let query = `UPDATE panol SET id_asignacion = ?, f_asignacion = ?, id_estado = ?`;
+  let query = `UPDATE panol_elementos SET lugar_asignacion_id = ?, fecha_asignacion = ?, estado_elemento_id = ?`;
   const parametros = [id_asignacion, f_asignacion, id_estado];
   // Si hay imagen cargada Y el estado es 3 (BAJA), se agrega foto
   if (req.file && parseInt(id_estado) === 3) {
     const foto = cargaDeFoto(req.file);
-    query += `, foto = ?`;
+    query += `, foto_path = ?`;
     parametros.push(foto);
   }
-  query += ` WHERE id_elemento = ?`;
+  query += ` WHERE id = ?`;
   parametros.push(id_elemento);
   db.query(query, parametros, (error, results) => {
     if (error) {

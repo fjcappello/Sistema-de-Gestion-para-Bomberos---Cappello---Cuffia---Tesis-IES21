@@ -5,9 +5,9 @@ const db = require("../DB/db.js");
 const getMoviles = (req, res) => {
   const query = `
     SELECT m.id, m.interno, m.marca, m.modelo, m.dominio, m.vin, m.kilometraje_inicial, m.kilometraje_actual, m.fecha_service,
-           m.estado_id, me.nombre_estado AS estado
+           m.movil_estado_id, me.nombre_estado AS estado
     FROM moviles m
-    JOIN moviles_estados me ON m.estado_id = me.id
+    JOIN moviles_estados me ON m.movil_estado_id = me.id
     ORDER BY m.interno;
   `;
   db.query(query, (err, results) => {
@@ -33,7 +33,7 @@ const addMovil = (req, res) => {
     estado_id,
   } = req.body;
   const query = `
-    INSERT INTO moviles (interno, marca, modelo, dominio, vin, kilometraje_inicial, kilometraje_actual, fecha_service, estado_id)
+    INSERT INTO moviles (interno, marca, modelo, dominio, vin, kilometraje_inicial, kilometraje_actual, fecha_service, movil_estado_id)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
   const values = [
@@ -71,8 +71,8 @@ const updateMovil = (req, res) => {
 
   const query = `
     UPDATE moviles
-    SET marca = ?, modelo = ?, dominio = ?, vin = ?, fecha_service = ?, estado_id = ?
-    WHERE interno = ? AND estado_id IN (1, 2)
+    SET marca = ?, modelo = ?, dominio = ?, vin = ?, fecha_service = ?, movil_estado_id = ?
+    WHERE interno = ? AND movil_estado_id IN (1, 2)
   `;
 
   const values = [
@@ -136,7 +136,7 @@ const editMovil = (req, res) => {
     valores.push(req.body.fecha_service);
   }
   if (req.body.estado_id !== undefined) {
-    campos.push("estado_id = ?");
+    campos.push("movil_estado_id = ?");
     valores.push(req.body.estado_id);
   }
 

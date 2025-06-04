@@ -2,7 +2,7 @@ const db = require('../DB/db.js');
 
 const registrarLog = (usuario_id, accion) => {
   db.query(
-    'INSERT INTO registro_seguridad (usuario_id, accion) VALUES (?, ?)',
+    'INSERT INTO registro_seguridad (legajo_usuario, accion) VALUES (?, ?)',
     [usuario_id, accion],
     (err) => {
       if (err) {

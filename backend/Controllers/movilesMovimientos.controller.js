@@ -16,7 +16,7 @@ const registrarSalida = (req, res) => {
       const km_salida = rows[0].kilometraje_actual;
       const fecha_salida = new Date();
       const query = `
-      INSERT INTO moviles_movimientos (movil_id, fecha_salida, chofer_id, destino, km_salida, jefe_dotacion)
+      INSERT INTO moviles_movimientos (movil_id, fecha_salida, legajo_chofer, destino, kilometraje_salida, legajo_jefe_dotacion_movil)
       VALUES (?, ?, ?, ?, ?, ?)
     `;
       db.query(
@@ -30,7 +30,7 @@ const registrarSalida = (req, res) => {
           const movimiento_id = result.insertId;
           if (Array.isArray(dotacion) && dotacion.length > 0) {
             const dotacionQuery = `
-          INSERT INTO moviles_dotacion (movimiento_id, personal_id)
+          INSERT INTO moviles_dotacion_personal (movil_movimiento_id, legajo_personal)
           VALUES ?
         `;
             const dotacionValues = dotacion.map((personal_id) => [
@@ -70,7 +70,7 @@ const registrarRetorno = (req, res) => {
 
   // Validar que el kilometraje_final no sea menor al km_salida
   db.query(
-    "SELECT km_salida FROM moviles_movimientos WHERE id = ?",
+    "SELECT kilometraje_salida FROM moviles_movimientos WHERE id = ?",
     [id],
     (err, rows) => {
       if (err || rows.length === 0) {
@@ -78,7 +78,7 @@ const registrarRetorno = (req, res) => {
           .status(500)
           .json({ error: "Error al validar kilometraje de salida" });
       }
-      const km_salida = rows[0].km_salida;
+      const km_salida = rows[0].kilometraje_salida;
       if (kilometraje_final < km_salida) {
         return res
           .status(400)
@@ -152,7 +152,7 @@ const obtenerMovilesEnSalida = (req, res) => {
     SELECT mm.id, m.interno, mm.fecha_salida, CONCAT(p.nombre, ' ', p.apellido) AS chofer, mm.destino
     FROM moviles_movimientos mm
     JOIN moviles m ON mm.movil_id = m.id
-    JOIN personal p ON mm.chofer_id = p.legajo
+    JOIN personal p ON mm.legajo_chofer = p.legajo
     WHERE mm.fecha_retorno IS NULL
     ORDER BY mm.fecha_salida DESC
   `;
@@ -174,7 +174,7 @@ const obtenerMovimientos = (req, res) => {
     SELECT mm.*, m.interno, CONCAT(p.nombre, ' ', p.apellido) AS chofer
     FROM moviles_movimientos mm
     JOIN moviles m ON mm.movil_id = m.id
-    JOIN personal p ON mm.chofer_id = p.legajo
+    JOIN personal p ON mm.legajo_chofer = p.legajo
     ORDER BY mm.fecha_salida DESC
   `;
 

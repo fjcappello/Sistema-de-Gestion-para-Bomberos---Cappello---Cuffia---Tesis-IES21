@@ -5,15 +5,15 @@ const obtenerLog = (req, res) => {
   const { usuario_id, accion, desde, hasta } = req.query;
 
   let query = `
-    SELECT b.id, b.usuario_id, CONCAT(p.nombre, ' ', p.apellido) AS usuario, b.accion, DATE_FORMAT(b.fecha, '%d/%m/%Y %H:%i:%s') AS fecha
+    SELECT b.id, b.legajo_usuario AS usuario_id, CONCAT(p.nombre, ' ', p.apellido) AS usuario, b.accion, DATE_FORMAT(b.fecha, '%d/%m/%Y %H:%i:%s') AS fecha
     FROM registro_seguridad b
-    LEFT JOIN personal p ON b.usuario_id = p.legajo
+    LEFT JOIN personal p ON b.legajo_usuario = p.legajo
     WHERE 1 = 1
   `;
   const params = [];
 
   if (usuario_id) {
-    query += " AND b.usuario_id = ?";
+    query += " AND b.legajo_usuario = ?";
     params.push(usuario_id);
   }
 

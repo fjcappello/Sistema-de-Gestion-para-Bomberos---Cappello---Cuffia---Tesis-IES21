@@ -17,18 +17,18 @@ const obtenerPartes = (req, res) => {
       p.tipo_asistencia,
       DATE_FORMAT(p.fecha, '%d-%m-%Y') AS fecha,
       CONCAT(per.nombre, ' ', per.apellido) AS jefe_dotacion,
-      e.descripcion AS estado,
+      pe.descripcion AS estado,
       p.parte_escrito
     FROM partes p
-    LEFT JOIN personal per ON p.jefe_dotacion = per.legajo
-    LEFT JOIN estado e ON p.id_estado = e.id_estado
+    LEFT JOIN personal per ON p.legajo_jefe_dotacion = per.legajo
+    LEFT JOIN parte_estados pe ON p.parte_estado_id = pe.id
     WHERE 1=1
   `;
 
   const params = [];
 
   if (jefeDotacion) {
-    query += ` AND p.jefe_dotacion = ?`;
+    query += ` AND p.legajo_jefe_dotacion = ?`;
     params.push(jefeDotacion);
   }
   if (tipoAsistencia) {
@@ -78,7 +78,7 @@ const obtenerPartePorId = (req, res) => {
       CONCAT(per.nombre, ' ', per.apellido) AS jefe_dotacion,
       p.parte_escrito
     FROM partes p
-    LEFT JOIN personal per ON p.jefe_dotacion = per.legajo
+    LEFT JOIN personal per ON p.legajo_jefe_dotacion = per.legajo
     WHERE p.id = ? OR p.numero_parte = ?
   `;
   db.query(query, [id, id], (err, results) => {
@@ -117,8 +117,8 @@ const crearParte = async (req, res) => {
     const numeroParte = `${nextParte}/${new Date().getFullYear()}`;
 
     const [result] = await db.promise().query(
-      `INSERT INTO partes (nombre_denunciante, apellido_denunciante, documento_denunciante, direccion, tipo_asistencia, jefe_dotacion, parte_escrito, fecha, numero_parte)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO partes (nombre_denunciante, apellido_denunciante, documento_denunciante, direccion, tipo_asistencia, legajo_jefe_dotacion, parte_escrito, fecha, numero_parte, parte_estado_id)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
       [
         nombre_denunciante,
         apellido_denunciante,
@@ -198,7 +198,7 @@ const obtenerReporteResumen = (req, res) => {
   const params = [];
 
   if (jefeDotacion) {
-    query += ` AND jefe_dotacion = ?`;
+     query += ` AND legajo_jefe_dotacion = ?`;
     params.push(jefeDotacion);
   }
   if (tipoAsistencia) {
@@ -235,7 +235,7 @@ const crearBitacora = (req, res) => {
       .json({ success: false, error: "Faltan datos requeridos" });
   }
   const insertQuery =
-    "INSERT INTO bitacora (id_personal, reporte) VALUES (?, ?)";
+    "INSERT INTO bitacora (legajo_personal_reporta, reporte) VALUES (?, ?)";
   db.query(insertQuery, [id_personal, reporte], (err, result) => {
     if (err) {
       console.error("Error al crear bitácora:", err);
@@ -245,7 +245,7 @@ const crearBitacora = (req, res) => {
     }
     const id_bitacora_nuevo = result.insertId;
     const updateQuery =
-      "UPDATE partes SET id_bitacora = ?, id_estado = 0 WHERE id = ?";
+      "UPDATE partes SET bitacora_id = ?, parte_estado_id = 0 WHERE id = ?";
     db.query(updateQuery, [id_bitacora_nuevo, parte_id], (err, result) => {
       if (err) {
         console.error("Error al actualizar parte:", err);
@@ -269,9 +269,9 @@ const crearBitacora = (req, res) => {
 const obtenerBitacora = (req, res) => {
   const { parte_id } = req.params;
   const query = `
-    SELECT b.id_bitacora, b.reporte
+    SELECT b.id, b.reporte
     FROM bitacora b
-    JOIN partes p ON b.id_bitacora = p.id_bitacora
+    JOIN partes p ON b.id = p.bitacora_id
     WHERE p.id = ?
   `;
   db.query(query, [parte_id], (error, results) => {
