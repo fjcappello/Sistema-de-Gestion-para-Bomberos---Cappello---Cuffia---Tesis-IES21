@@ -7,6 +7,7 @@ const {
   obtenerAsistenciaPorDia,
   obtenerAsistenciaPorMes,
   obtenerAsistenciaPorJerarquia,
+  obtenerEstadisticasFiltradas
 } = require('../Controllers/estadisticasAsistencias.controller');
 
 // Rutas
@@ -15,5 +16,6 @@ router.get('/ranking-horas', obtenerRankingHoras);
 router.get('/asistencia-dia', obtenerAsistenciaPorDia);
 router.get('/asistencia-mes', obtenerAsistenciaPorMes);
 router.get('/asistencia-jerarquia', obtenerAsistenciaPorJerarquia);
+router.get('/estadisticas_filtros', obtenerEstadisticasFiltradas);
 
 module.exports = router;

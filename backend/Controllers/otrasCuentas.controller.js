@@ -4,7 +4,7 @@ const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 //Función para traer los usuarios.
 const recuperarUsuarios = function recuperarUsuarios(req, res) {
   const query = `
-        SELECT legajo, CONCAT(nombre, " ", apellido) AS nombre, situacion_id, id_rol FROM personal`;
+        SELECT legajo, CONCAT(nombre, " ", apellido) AS nombre, situacion_id, rol_id FROM personal`;
   db.query(query, (error, results) => {
     if (error) {
       console.error("Error al recuperar usuarios:", error);
@@ -21,7 +21,7 @@ const recuperarUsuarios = function recuperarUsuarios(req, res) {
 
 //Función para traer los permisos
 const recuperarPermisos = function recuperarPermisos(req, res) {
-  const query = "SELECT id_rol, rol FROM rol";
+  const query = "SELECT id, rol FROM rol";
   db.query(query, (error, results) => {
     if (error) {
       console.error("Error al recuperar permisos:", error);
@@ -63,13 +63,13 @@ const restablecerCuenta = function restablecerCuenta(req, res) {
 
 //Función para cambiar los permisos de la cuenta
 const cambiarPermisosCuenta = function cambiarPermisosCuenta(req, res) {
-  const query = "UPDATE personal SET id_rol = ? WHERE legajo = ?;";
-  const { legajo, id_rol } = req.body;
+  const query = "UPDATE personal SET rol_id = ? WHERE legajo = ?;";
+  const { legajo, rol_id } = req.body;
 
-  if (!legajo || !id_rol) {
+  if (!legajo || !rol_id) {
     return res.status(400).json({ error: "Faltan datos requeridos." });
   }
-  db.query(query, [id_rol, legajo], (error, results) => {
+  db.query(query, [rol_id, legajo], (error, results) => {
     if (error) {
       console.error("Error en la base de datos:", error);
       return res.status(500).json({ error: "Error al actualizar permisos." });
@@ -80,7 +80,7 @@ const cambiarPermisosCuenta = function cambiarPermisosCuenta(req, res) {
     res
       .status(200)
       .json({ message: "Permisos actualizados correctamente." });
-    registrarLog(legajo, `Cambió los permisos del usuario al rol ID ${id_rol}`);
+    registrarLog(legajo, `Cambió los permisos del usuario al rol ID ${rol_id}`);
   });
 };
 

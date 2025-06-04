@@ -6,7 +6,7 @@ const obtenerMovimientos = (req, res) => {
   const query = `
     SELECT m.id, m.timestamp, m.nombre, m.apellido, m.dni, e.descripcion AS estado
     FROM movimientos_cuartel m
-    JOIN estados_movimiento e ON m.estado_id = e.id
+    JOIN estados_movimiento_cuartel e ON m.estado_movimiento_cuartel_id = e.id
     WHERE m.visible = 1
     ORDER BY m.timestamp DESC
   `;
@@ -21,16 +21,16 @@ const obtenerMovimientos = (req, res) => {
 
 // Registrar nuevo movimiento
 const registrarMovimiento = (req, res) => {
-  const { id_personal, nombre, apellido, dni, estado_id } = req.body;
+  const { legajo_personal, nombre, apellido, dni, estado_movimiento_cuartel_id } = req.body;
 
   const query = `
-    INSERT INTO movimientos_cuartel (id_personal, nombre, apellido, dni, estado_id)
+    INSERT INTO movimientos_cuartel (legajo_personal, nombre, apellido, dni, estado_movimiento_cuartel_id)
     VALUES (?, ?, ?, ?, ?)
   `;
 
   db.query(
     query,
-    [id_personal || null, nombre, apellido, dni, estado_id],
+    [legajo_personal || null, nombre, apellido, dni, estado_movimiento_cuartel_id],
     async (err, result) => {
       if (err) {
         console.error("Error al registrar movimiento:", err);
@@ -38,9 +38,9 @@ const registrarMovimiento = (req, res) => {
       }
 
       registrarLog(
-        id_personal || 0,
+        legajo_personal || 0,
         `Registro de movimiento: se registró un ${
-          estado_id === 1 ? "ingreso" : "egreso"
+          estado_movimiento_cuartel_id === 1 ? "ingreso" : "egreso"
         } para ${nombre} ${apellido} (${dni})`
       );
 

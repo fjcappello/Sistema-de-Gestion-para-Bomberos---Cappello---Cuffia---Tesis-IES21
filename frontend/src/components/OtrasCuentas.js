@@ -106,7 +106,7 @@ function OtrasCuentas() {
             >
               <option value="">-- Selecciona Permiso --</option>
               {permisos.map((permiso) => (
-                <option key={permiso.id_rol} value={permiso.id_rol.toString()}>
+                <option key={permiso?.id_rol} value={permiso?.id_rol?.toString() || ""}>
                   {permiso.rol}
                 </option>
               ))}

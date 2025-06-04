@@ -5,7 +5,7 @@ const db = require("../DB/db.js");
 const getMoviles = (req, res) => {
   const query = `
     SELECT m.id, m.interno, m.marca, m.modelo, m.dominio, m.vin, m.kilometraje_inicial, m.kilometraje_actual, m.fecha_service,
-           m.movil_estado_id, me.nombre_estado AS estado
+           m.movil_estado_id, me.nombre_estado AS nombre_estado
     FROM moviles m
     JOIN moviles_estados me ON m.movil_estado_id = me.id
     ORDER BY m.interno;
@@ -110,7 +110,7 @@ const updateMovil = (req, res) => {
 
 // Obtener todos los estados de móviles
 const getEstadosMoviles = (req, res) => {
-  const query = "SELECT id, nombre_estado AS nombre FROM moviles_estados";
+  const query = "SELECT id, nombre_estado FROM moviles_estados";
   db.query(query, (err, results) => {
     if (err) {
       console.error("Error al obtener estados de móviles:", err);

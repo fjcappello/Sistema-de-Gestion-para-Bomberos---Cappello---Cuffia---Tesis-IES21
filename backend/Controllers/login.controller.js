@@ -9,14 +9,15 @@ const loginUsuario = function (req, res) {
   const query = `
     SELECT CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo, l.primer_ingreso, l.contraseña AS clave, r.rol AS nombre_rol
     FROM personal p
-    INNER JOIN login l ON p.legajo = l.legajo
-    LEFT JOIN rol r ON p.id_rol = r.id_rol
+    INNER JOIN login l ON p.legajo = l.legajo_personal
+    LEFT JOIN rol r ON p.rol_id = r.id
     WHERE p.legajo = ? AND p.situacion_id = 1;
   `;
 
   db.query(query, [legajo], async (err, results) => {
     if (err) {
       console.error('Error en el servidor al intentar iniciar sesión:', err);
+      console.log(query);
       return res.status(500).json({ success: false, error: 'Error en el servidor' });
     }
 
@@ -73,28 +74,35 @@ const cambiarPassword = function (req, res) {
     return res.status(400).json({ success: false, error: 'Faltan datos: legajo y password son requeridos' });
   }
 
-  bcryptjs.hash(nuevaPassword, 10, (errHash, hash) => {
-    if (errHash) {
-      console.error('Error al hashear la nueva contraseña:', errHash);
-      return res.status(500).json({ success: false, error: 'Error interno' });
+  const checkQuery = 'SELECT legajo FROM personal WHERE legajo = ? LIMIT 1';
+  db.query(checkQuery, [legajo], (errCheck, checkResult) => {
+    if (errCheck || checkResult.length === 0) {
+      return res.status(404).json({ success: false, error: 'Legajo no válido o no encontrado' });
     }
 
-    const query = `
-      UPDATE login SET contraseña = ?, primer_ingreso = false WHERE legajo = ?
-    `;
-
-    db.query(query, [hash, legajo], (err, result) => {
-      if (err) {
-        console.error('Error al cambiar la contraseña:', err);
-        return res.status(500).json({ success: false, error: 'Error al cambiar la contraseña' });
+    bcryptjs.hash(nuevaPassword, 10, (errHash, hash) => {
+      if (errHash) {
+        console.error('Error al hashear la nueva contraseña:', errHash);
+        return res.status(500).json({ success: false, error: 'Error interno' });
       }
 
-      registrarLog(
-        legajo,
-        `Cambio de contraseña: El usuario ${legajo} cambió su contraseña`
-      );
+      const query = `
+        UPDATE login SET contraseña = ?, primer_ingreso = false WHERE legajo_personal = ?
+      `;
 
-      return res.status(202).json({ success: true, message: 'Contraseña actualizada correctamente' });
+      db.query(query, [hash, legajo], (err, result) => {
+        if (err) {
+          console.error('Error al cambiar la contraseña:', err);
+          return res.status(500).json({ success: false, error: 'Error al cambiar la contraseña' });
+        }
+
+        registrarLog(
+          legajo,
+          `Cambio de contraseña: El usuario ${legajo} cambió su contraseña`
+        );
+
+        return res.status(202).json({ success: true, message: 'Contraseña actualizada correctamente' });
+      });
     });
   });
 };

@@ -45,7 +45,7 @@ router.get("/estadisticas_filtros", (req, res) => {
   }
 
   if (jefe_dotacion) {
-    condiciones.push("jefe_dotacion = ?");
+    condiciones.push("legajo_jefe_dotacion = ?");
     valores.push(jefe_dotacion);
   }
 

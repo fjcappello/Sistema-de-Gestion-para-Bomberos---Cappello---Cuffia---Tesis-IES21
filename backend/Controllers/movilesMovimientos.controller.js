@@ -2,7 +2,7 @@ const db = require("../DB/db.js");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 const registrarSalida = (req, res) => {
-  const { movil_id, chofer_id, destino, jefe_dotacion, dotacion } = req.body;
+  const { movil_id, legajo_chofer, destino, legajo_jefe_dotacion_movil, dotacion } = req.body;
 
   db.query(
     "SELECT kilometraje_actual FROM moviles WHERE id = ?",
@@ -21,7 +21,7 @@ const registrarSalida = (req, res) => {
     `;
       db.query(
         query,
-        [movil_id, fecha_salida, chofer_id, destino, km_salida, jefe_dotacion],
+        [movil_id, fecha_salida, legajo_chofer, destino, km_salida, legajo_jefe_dotacion_movil],
         (err, result) => {
           if (err) {
             console.error("Error al registrar salida:", err);
@@ -33,9 +33,9 @@ const registrarSalida = (req, res) => {
           INSERT INTO moviles_dotacion_personal (movil_movimiento_id, legajo_personal)
           VALUES ?
         `;
-            const dotacionValues = dotacion.map((personal_id) => [
+            const dotacionValues = dotacion.map((legajo_personal) => [
               movimiento_id,
-              personal_id,
+              legajo_personal,
             ]);
             db.query(dotacionQuery, [dotacionValues], (err2) => {
               if (err2) {
@@ -46,14 +46,14 @@ const registrarSalida = (req, res) => {
               }
               res.json({ success: "Salida registrada", movimiento_id });
               registrarLog(
-                jefe_dotacion,
+                legajo_jefe_dotacion_movil,
                 `Registró salida de móvil ID ${movil_id} hacia "${destino}"`
               );
             });
           } else {
             res.json({ success: "Salida registrada", movimiento_id });
             registrarLog(
-              jefe_dotacion,
+              legajo_jefe_dotacion_movil,
               `Registró salida de móvil ID ${movil_id} hacia "${destino}"`
             );
           }

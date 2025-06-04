@@ -7,9 +7,9 @@ const obtenerMensajesRecibidos = (req, res) => {
   const query = `
     SELECT m.id, CONCAT(p.nombre, ' ', p.apellido) AS remitente, m.asunto, m.cuerpo, m.fecha_envio, md.leido
     FROM mensajes m
-    JOIN personal p ON m.remitente_id = p.legajo
+    JOIN personal p ON m.legajo_remitente = p.legajo
     JOIN mensaje_destinatarios md ON m.id = md.mensaje_id
-    WHERE md.destinatario_id = ?
+    WHERE md.legajo_destinatario = ?
     ORDER BY m.fecha_envio DESC
   `;
   db.query(query, [legajo], (err, results) => {
@@ -29,8 +29,8 @@ const obtenerMensajesEnviados = (req, res) => {
     SELECT m.id, CONCAT(p.nombre, ' ', p.apellido) AS destinatarios, m.asunto, m.cuerpo, m.fecha_envio
     FROM mensajes m
     JOIN mensaje_destinatarios md ON m.id = md.mensaje_id
-    JOIN personal p ON md.destinatario_id = p.legajo
-    WHERE m.remitente_id = ?
+    JOIN personal p ON md.legajo_destinatario = p.legajo
+    WHERE m.legajo_remitente = ?
     GROUP BY m.id
     ORDER BY m.fecha_envio DESC
   `;
@@ -46,24 +46,24 @@ const obtenerMensajesEnviados = (req, res) => {
 
 // Enviar mensaje
 const enviarMensaje = (req, res) => {
-  const { remitente_id, destinatarios, asunto, cuerpo } = req.body;
+  const { legajo_remitente, destinatarios, asunto, cuerpo } = req.body;
 
-  const query = `INSERT INTO mensajes (remitente_id, asunto, cuerpo) VALUES (?, ?, ?)`;
+  const query = `INSERT INTO mensajes (legajo_remitente, asunto, cuerpo) VALUES (?, ?, ?)`;
 
-  db.query(query, [remitente_id, asunto, cuerpo], async (err, result) => {
+  db.query(query, [legajo_remitente, asunto, cuerpo], async (err, result) => {
     if (err) {
       console.error("Error al enviar mensaje:", err);
       res.status(500).json({ error: "Error en el servidor" });
     } else {
       const mensajeId = result.insertId;
 
-      const destinatarioQueries = destinatarios.map((destinatario_id) => {
+      const destinatarioQueries = destinatarios.map((legajo_destinatario) => {
         return new Promise((resolve, reject) => {
           const insertQuery = `
-            INSERT INTO mensaje_destinatarios (mensaje_id, destinatario_id)
+            INSERT INTO mensaje_destinatarios (mensaje_id, legajo_destinatario)
             VALUES (?, ?)
           `;
-          db.query(insertQuery, [mensajeId, destinatario_id], (err) => {
+          db.query(insertQuery, [mensajeId, legajo_destinatario], (err) => {
             if (err) reject(err);
             else resolve();
           });
@@ -73,7 +73,7 @@ const enviarMensaje = (req, res) => {
       try {
         await Promise.all(destinatarioQueries);
         registrarLog(
-          remitente_id,
+          legajo_remitente,
           `Envío de mensaje: asunto "${asunto}" enviado a ${destinatarios.length} destinatario(s)`
         );
         res.json({ success: true, message: "Mensaje enviado" });
@@ -88,17 +88,17 @@ const enviarMensaje = (req, res) => {
 // Marcar como leído
 const marcarMensajeLeido = async (req, res) => {
   const { id } = req.params;
-  const { destinatario_id } = req.body;
+  const { legajo_destinatario } = req.body;
 
-  const query = `UPDATE mensaje_destinatarios SET leido = 1 WHERE mensaje_id = ? AND destinatario_id = ?`;
+  const query = `UPDATE mensaje_destinatarios SET leido = 1 WHERE mensaje_id = ? AND legajo_destinatario = ?`;
 
-  db.query(query, [id, destinatario_id], async (err) => {
+  db.query(query, [id, legajo_destinatario], async (err) => {
     if (err) {
       console.error("Error al marcar mensaje como leído:", err);
       res.status(500).json({ error: "Error en el servidor" });
     } else {
       registrarLog(
-        destinatario_id,
+        legajo_destinatario,
         `Lectura de mensaje: mensaje ID ${id} marcado como leído`
       );
       res.json({ success: true });

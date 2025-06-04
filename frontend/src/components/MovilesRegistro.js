@@ -41,9 +41,10 @@ function MovilesRegistro() {
       const response = await axios.get("http://localhost:3001/moviles");
       const movilesConEstado = response.data.map((movil) => ({
         ...movil,
-        estado_id: parseInt(movil.estado_id), // Asegurarse de que estado_id sea un entero
+        estado_id: parseInt(movil.movil_estado_id),
       }));
       setMoviles(movilesConEstado);
+      console.log("Datos de móviles:", movilesConEstado);
     } catch (error) {
       console.error("Error al obtener móviles:", error);
     }
@@ -108,6 +109,7 @@ function MovilesRegistro() {
 
   const formatFecha = (fecha) => {
     const date = new Date(fecha);
+    if (isNaN(date)) return "Sin fecha";
     return `${date.getDate().toString().padStart(2, "0")}-${(
       date.getMonth() + 1
     )
@@ -168,6 +170,12 @@ function MovilesRegistro() {
       cambios.estado_id = editFormData.estado_id;
     }
 
+    // Validación para prevenir movil_estado_id nulo
+    if (!cambios.estado_id) {
+      alert("Debes seleccionar un estado para el móvil.");
+      return;
+    }
+
     if (Object.keys(cambios).length === 0) {
       alert("No se realizaron cambios.");
       return;
@@ -221,7 +229,7 @@ function MovilesRegistro() {
           <option value="">Filtrar por Estado</option>
           {estados.map((estado) => (
             <option key={estado.id} value={estado.id}>
-              {estado.nombre}
+              {estado.nombre_estado}
             </option>
           ))}
         </select>
@@ -276,7 +284,7 @@ function MovilesRegistro() {
                   const estado = estados.find(
                     (e) => e.id === parseInt(movil.estado_id)
                   );
-                  return estado ? estado.nombre : `ID: ${movil.estado_id}`;
+                  return estado ? estado.nombre_estado : `ID: ${movil.estado_id}`;
                 })()}
               </td>
               {["Administrador", "Jefatura"].includes(usuario?.rol) && (
@@ -362,7 +370,7 @@ function MovilesRegistro() {
               >
                 {estados.map((estado) => (
                   <option key={estado.id} value={estado.id}>
-                    {estado.nombre}
+                    {estado.nombre_estado}
                   </option>
                 ))}
               </select>
@@ -450,7 +458,7 @@ function MovilesRegistro() {
                 <option value="">Seleccione un estado</option>
                 {estados.map((estado) => (
                   <option key={estado.id} value={estado.id}>
-                    {estado.nombre}
+                    {estado.nombre_estado}
                   </option>
                 ))}
               </select>

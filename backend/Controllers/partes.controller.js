@@ -228,15 +228,15 @@ const obtenerReporteResumen = (req, res) => {
 
 // Crear bitácora asociada a una emergencia
 const crearBitacora = (req, res) => {
-  const { id_personal, reporte, parte_id } = req.body;
-  if (!id_personal || !reporte || !parte_id) {
+  const { legajo_personal, reporte, parte_id } = req.body;
+  if (!legajo_personal || !reporte || !parte_id) {
     return res
       .status(400)
       .json({ success: false, error: "Faltan datos requeridos" });
   }
   const insertQuery =
     "INSERT INTO bitacora (legajo_personal_reporta, reporte) VALUES (?, ?)";
-  db.query(insertQuery, [id_personal, reporte], (err, result) => {
+  db.query(insertQuery, [legajo_personal, reporte], (err, result) => {
     if (err) {
       console.error("Error al crear bitácora:", err);
       return res
@@ -253,8 +253,8 @@ const crearBitacora = (req, res) => {
           .status(500)
           .json({ success: false, error: "Error al actualizar parte" });
       }
-      if (id_personal) {
-        registrarLog(id_personal, `Creó una bitácora asociada al parte ID ${parte_id}`);
+      if (legajo_personal) {
+        registrarLog(legajo_personal, `Creó una bitácora asociada al parte ID ${parte_id}`);
       }
       res.json({
         success: true,

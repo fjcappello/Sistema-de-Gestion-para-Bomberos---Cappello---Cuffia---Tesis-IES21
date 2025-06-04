@@ -186,8 +186,8 @@ const agregarElemento = function agregarElemento(req, res) {
           message: "No se pudo agregar correctamente el nuevo elemento.",
         });
     }
-    if (req.query.usuario_id) {
-      registrarLog(req.query.usuario_id, `Agregó un nuevo elemento al pañol: ${elemento}`);
+    if (req.query.legajo_usuario) {
+      registrarLog(req.query.legajo_usuario, `Agregó un nuevo elemento al pañol: ${elemento}`);
     }
     return res.status(200).json({
       message: "Elemento agregado correctamente",
@@ -222,8 +222,8 @@ const editarElemento = (req, res) => {
     if (results.affectedRows === 0) {
       return res.status(404).json({ message: "Elemento no encontrado" });
     }
-    if (req.query.usuario_id) {
-      registrarLog(req.query.usuario_id, `Editó el elemento del pañol ID ${id_elemento}`);
+    if (req.query.legajo_usuario) {
+      registrarLog(req.query.legajo_usuario, `Editó el elemento del pañol ID ${id_elemento}`);
     }
     return res
       .status(200)

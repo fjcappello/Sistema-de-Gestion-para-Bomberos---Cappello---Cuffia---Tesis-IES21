@@ -33,9 +33,9 @@ const db = require("../DB/db.js");
 
 const generarToken = function (legajo, callback) {
   const query = `
-    SELECT p.legajo, p.id_rol, r.rol 
+    SELECT p.legajo, p.rol_id AS id_rol, r.rol 
     FROM personal AS p 
-    INNER JOIN rol AS r ON p.id_rol = r.id_rol
+    INNER JOIN rol AS r ON p.rol_id = r.id
     WHERE p.legajo = ? AND p.situacion_id = 1;
   `;
 
