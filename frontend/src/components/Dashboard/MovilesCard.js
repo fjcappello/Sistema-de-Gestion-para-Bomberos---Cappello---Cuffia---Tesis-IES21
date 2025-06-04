@@ -1,25 +1,74 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../Styles/Dashboard.css";
+import Modal from "./ModalCards";
 
 function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
   const [movimientos, setMovimientos] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [tipoMovimiento, setTipoMovimiento] = useState(null);
+  const [formData, setFormData] = useState({
+    movil_id: "",
+    chofer: "",
+    destino: "",
+    kilometraje: "",
+    novedades: "",
+  });
+
+  const cargarUltimosMovimientos = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:3001/moviles_movimientos"
+      );
+      const datos = response.data.slice(-4).reverse(); // últimos 4 movimientos
+      setMovimientos(datos);
+    } catch (error) {
+      console.error("Error al cargar movimientos recientes:", error);
+    }
+  };
 
   useEffect(() => {
-    const cargarUltimosMovimientos = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:3001/moviles_movimientos"
-        );
-        const datos = response.data.slice(-4).reverse(); // últimos 4 movimientos
-        setMovimientos(datos);
-      } catch (error) {
-        console.error("Error al cargar movimientos recientes:", error);
-      }
-    };
-
     cargarUltimosMovimientos();
   }, []);
+
+  // Nueva función para manejar el registro
+  const handleRegistro = async () => {
+    try {
+      if (tipoMovimiento === "salida") {
+        if (!formData.movil_id || !formData.chofer || !formData.destino) {
+          alert("Complete todos los campos para registrar una salida.");
+          return;
+        }
+        await axios.post("http://localhost:3001/moviles/salida", {
+          movil_id: formData.movil_id,
+          chofer: formData.chofer,
+          destino: formData.destino,
+        });
+      } else {
+        if (!formData.movil_id || !formData.kilometraje) {
+          alert("Complete todos los campos para registrar un retorno.");
+          return;
+        }
+        await axios.post("http://localhost:3001/moviles/retorno", {
+          movil_id: formData.movil_id,
+          kilometraje: formData.kilometraje,
+          novedades: formData.novedades,
+        });
+      }
+      await cargarUltimosMovimientos();
+      setIsModalOpen(false);
+      setFormData({
+        movil_id: "",
+        chofer: "",
+        destino: "",
+        kilometraje: "",
+        novedades: "",
+      });
+    } catch (error) {
+      console.error("Error al registrar movimiento:", error);
+      alert("Ocurrió un error al registrar el movimiento");
+    }
+  };
 
   return (
     <div className="moviles-card">
@@ -59,10 +108,92 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
         </tbody>
       </table>
       <div style={{ marginTop: "10px" }}>
-        <a href="/moviles/movimientos" className="btn btn-moviles-card">
-          Ir a gestión de móviles
-        </a>
+        <button
+          className="btn btn-moviles-card"
+          onClick={() => {
+            setTipoMovimiento("salida");
+            setIsModalOpen(true);
+          }}
+        >
+          Marcar salida
+        </button>
+        <button
+          className="btn btn-moviles-card"
+          onClick={() => {
+            setTipoMovimiento("retorno");
+            setIsModalOpen(true);
+          }}
+        >
+          Marcar retorno
+        </button>
       </div>
+      {isModalOpen && (
+        <Modal>
+          <h4>
+            {tipoMovimiento === "salida"
+              ? "Registrar Salida"
+              : "Registrar Retorno"}
+          </h4>
+          {tipoMovimiento === "salida" ? (
+            <>
+              <input
+                type="text"
+                placeholder="ID del móvil"
+                value={formData.movil_id}
+                onChange={(e) =>
+                  setFormData({ ...formData, movil_id: e.target.value })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Chofer"
+                value={formData.chofer}
+                onChange={(e) =>
+                  setFormData({ ...formData, chofer: e.target.value })
+                }
+              />
+              <input
+                type="text"
+                placeholder="Destino"
+                value={formData.destino}
+                onChange={(e) =>
+                  setFormData({ ...formData, destino: e.target.value })
+                }
+              />
+            </>
+          ) : (
+            <>
+              <input
+                type="text"
+                placeholder="ID del móvil"
+                value={formData.movil_id}
+                onChange={(e) =>
+                  setFormData({ ...formData, movil_id: e.target.value })
+                }
+              />
+              <input
+                type="number"
+                placeholder="Kilometraje actual"
+                value={formData.kilometraje}
+                onChange={(e) =>
+                  setFormData({ ...formData, kilometraje: e.target.value })
+                }
+              />
+              <textarea
+                placeholder="Novedades"
+                value={formData.novedades}
+                onChange={(e) =>
+                  setFormData({ ...formData, novedades: e.target.value })
+                }
+              />
+            </>
+          )}
+          <div className="modal-buttons">
+            <button onClick={handleRegistro}>Registrar</button>
+            <button onClick={() => setIsModalOpen(false)}>Cancelar</button>
+          </div>
+        </Modal>
+      )}
     </div>
   );
 }

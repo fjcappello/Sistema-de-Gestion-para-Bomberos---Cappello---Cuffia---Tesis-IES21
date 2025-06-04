@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../Styles/Dashboard.css";
+import Modal from "./ModalCards.js";
 
 function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -104,88 +105,86 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
       <button onClick={() => setIsModalOpen(true)}>Registrar Movimiento</button>
 
       {isModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h4>Registrar Movimiento</h4>
-            <select
-              className="persona-select"
-              value={selectedId}
-              onChange={handleSelectPersona}
+        <Modal>
+          <h4>Registrar Movimiento</h4>
+          <select
+            className="persona-select"
+            value={selectedId}
+            onChange={handleSelectPersona}
+          >
+            <option value="">Ingreso Manual</option>
+            {personal.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.nombre_completo}
+              </option>
+            ))}
+          </select>
+          <br />
+          <br />
+          <input
+            type="text"
+            name="nombre"
+            placeholder="Nombre"
+            value={formData.nombre}
+            onChange={(e) => {
+              const letras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/;
+              if (!selectedId && letras.test(e.target.value)) {
+                handleChange(e);
+              }
+            }}
+            disabled={!!selectedId}
+          />
+          <input
+            type="text"
+            name="apellido"
+            placeholder="Apellido"
+            value={formData.apellido}
+            onChange={(e) => {
+              const letras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/;
+              if (!selectedId && letras.test(e.target.value)) {
+                handleChange(e);
+              }
+            }}
+            disabled={!!selectedId}
+          />
+          <input
+            type="text"
+            name="dni"
+            placeholder="DNI"
+            value={formData.dni}
+            onChange={(e) => {
+              const numeros = /^[0-9]*$/;
+              if (
+                !selectedId &&
+                numeros.test(e.target.value) &&
+                e.target.value.length <= 8
+              ) {
+                handleChange(e);
+              }
+            }}
+            disabled={!!selectedId}
+          />
+          <br />
+          <br />
+          <div className="modal-buttons">
+            <button onClick={() => handleRegistro(1)}>Marcar Ingreso</button>
+            <button onClick={() => handleRegistro(2)}>Marcar Egreso</button>
+            <button
+              onClick={() => {
+                setFormData({
+                  nombre: "",
+                  apellido: "",
+                  dni: "",
+                  estado_id: "",
+                });
+                setSelectedId("");
+                setIsModalOpen(false);
+              }}
             >
-              <option value="">Ingreso Manual</option>
-              {personal.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.nombre_completo}
-                </option>
-              ))}
-            </select>
-            <br />
-            <br />
-            <input
-              type="text"
-              name="nombre"
-              placeholder="Nombre"
-              value={formData.nombre}
-              onChange={(e) => {
-                const letras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/;
-                if (!selectedId && letras.test(e.target.value)) {
-                  handleChange(e);
-                }
-              }}
-              disabled={!!selectedId}
-            />
-            <input
-              type="text"
-              name="apellido"
-              placeholder="Apellido"
-              value={formData.apellido}
-              onChange={(e) => {
-                const letras = /^[A-Za-zÁÉÍÓÚáéíóúÑñ\s]*$/;
-                if (!selectedId && letras.test(e.target.value)) {
-                  handleChange(e);
-                }
-              }}
-              disabled={!!selectedId}
-            />
-            <input
-              type="text"
-              name="dni"
-              placeholder="DNI"
-              value={formData.dni}
-              onChange={(e) => {
-                const numeros = /^[0-9]*$/;
-                if (
-                  !selectedId &&
-                  numeros.test(e.target.value) &&
-                  e.target.value.length <= 8
-                ) {
-                  handleChange(e);
-                }
-              }}
-              disabled={!!selectedId}
-            />
-            <br />
-            <br />
-            <div className="modal-buttons">
-              <button onClick={() => handleRegistro(1)}>Marcar Ingreso</button>
-              <button onClick={() => handleRegistro(2)}>Marcar Egreso</button>
-              <button
-                onClick={() => {
-                  setFormData({
-                    nombre: "",
-                    apellido: "",
-                    dni: "",
-                    estado_id: "",
-                  });
-                  setSelectedId("");
-                  setIsModalOpen(false);
-                }}
-              >
-                Cancelar
-              </button>
-            </div>
+              Cancelar
+            </button>
           </div>
-        </div>
+        </Modal>
       )}
     </div>
   );
