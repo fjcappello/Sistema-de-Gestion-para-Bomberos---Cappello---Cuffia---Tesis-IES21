@@ -75,8 +75,8 @@ function EmergenciesTable() {
       const response = await axios.get(
         "http://localhost:3001/partesemergencias"
       );
-      setEmergencies(response.data);
-      setFilteredEmergencies(response.data);
+      setEmergencies(response.data.map((e) => ({ ...e, expandido: false })));
+      setFilteredEmergencies(response.data.map((e) => ({ ...e, expandido: false })));
     } catch (error) {
       console.error("Error al obtener emergencias:", error);
     }
@@ -417,15 +417,21 @@ function EmergenciesTable() {
                 <td>{emergencia.tipo_asistencia}</td>
                 <td>{emergencia.jefe_dotacion}</td>
                 <td
-                  title={emergencia.parte_escrito}
-                  style={{
-                    maxWidth: "200px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
+                  style={{ maxWidth: "200px", cursor: "pointer", whiteSpace: "pre-wrap" }}
+                  onClick={() => {
+                    setFilteredEmergencies((prev) =>
+                      prev.map((e) =>
+                        e.parte_id === emergencia.parte_id
+                          ? { ...e, expandido: !e.expandido }
+                          : e
+                      )
+                    );
                   }}
+                  title="Clic para ver completo"
                 >
-                  {emergencia.parte_escrito.length > 40
+                  {emergencia.expandido
+                    ? emergencia.parte_escrito
+                    : emergencia.parte_escrito.length > 40
                     ? `${emergencia.parte_escrito.substring(0, 40)}...`
                     : emergencia.parte_escrito}
                 </td>
