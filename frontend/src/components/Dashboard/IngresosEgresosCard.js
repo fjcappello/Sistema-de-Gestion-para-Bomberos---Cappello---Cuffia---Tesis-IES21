@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import "../Styles/Dashboard.css";
 import Modal from "./ModalCards.js";
 
-function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
+function IngresosEgresosCard({ movimientos = [] }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     nombre: "",
@@ -12,6 +12,7 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
   });
   const [personal, setPersonal] = useState([]);
   const [selectedId, setSelectedId] = useState("");
+  const [movimientosActualizados, setMovimientosActualizados] = useState([]);
 
   useEffect(() => {
     const fetchPersonal = async () => {
@@ -51,19 +52,69 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
     }
   };
 
-  const handleRegistro = (estado_id) => {
-    if (!formData.nombre || !formData.apellido || !formData.dni || !estado_id) {
+  const handleRegistro = async (estado_id) => {
+    if (!formData.nombre || !formData.apellido || !formData.dni) {
       alert("Complete todos los campos");
       return;
     }
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    onRegistrar({ ...formData, estado_id, usuario_id: usuario?.legajo });
-    setFormData({ nombre: "", apellido: "", dni: "", estado_id: "" });
-    setSelectedId("");
-    setIsModalOpen(false);
+
+    try {
+      const response = await fetch("http://localhost:3001/movimientos_cuartel");
+      const movimientos = await response.json();
+
+      const movimientosPersona = movimientos
+        .filter((m) => {
+          if (selectedId) return m.dni === formData.dni;
+          return (
+            m.nombre === formData.nombre &&
+            m.apellido === formData.apellido &&
+            m.dni === formData.dni
+          );
+        })
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+      const ultimo = movimientosPersona[0];
+      if (
+        ultimo &&
+        ((estado_id === 1 && ultimo.estado === "Ingreso") ||
+         (estado_id === 2 && ultimo.estado === "Egreso"))
+      ) {
+        const estadoTexto = estado_id === 1 ? "ingresada" : "egresada";
+        alert(`La persona ya se encuentra ${estadoTexto}.`);
+        return;
+      }
+
+      const payload = {
+        id_personal: selectedId || null,
+        nombre: formData.nombre,
+        apellido: formData.apellido,
+        dni: formData.dni,
+        estado_movimiento_cuartel_id: estado_id,
+      };
+
+      await fetch("http://localhost:3001/movimientos_cuartel", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      const actualizados = await fetch("http://localhost:3001/movimientos_cuartel").then((r) => r.json());
+      setMovimientosActualizados(actualizados);
+
+      setFormData({ nombre: "", apellido: "", dni: "", estado_id: "" });
+      setSelectedId("");
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error al registrar movimiento:", error);
+    }
   };
 
-  const ultimosMovimientos = movimientos.slice(0, 4);
+  const ultimosMovimientos = (movimientosActualizados.length > 0 ? movimientosActualizados : movimientos)
+    .filter((m) => m.visible !== 0)
+    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+    .slice(0, 4);
 
   return (
     <div className="ingresos-egresos-card">

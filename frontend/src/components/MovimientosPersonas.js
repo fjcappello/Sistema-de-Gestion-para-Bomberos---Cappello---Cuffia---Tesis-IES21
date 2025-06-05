@@ -99,11 +99,10 @@ function MovimientosPersonas() {
         return;
       }
 
-      const personaKey =
-        selectedId || `${formData.nombre}-${formData.apellido}-${formData.dni}`;
+      const personaKey = selectedId || `${formData.nombre}-${formData.apellido}-${formData.dni}`;
       const movimientosPersona = movimientos
         .filter((m) => {
-          if (selectedId) return m.dni === personaKey;
+          if (selectedId) return m.dni === formData.dni;
           return (
             m.nombre === formData.nombre &&
             m.apellido === formData.apellido &&
@@ -116,7 +115,7 @@ function MovimientosPersonas() {
       if (
         ultimo &&
         ((estado_id === 1 && ultimo.estado === "Ingreso") ||
-          (estado_id === 2 && ultimo.estado === "Egreso"))
+         (estado_id === 2 && ultimo.estado === "Egreso"))
       ) {
         const estadoTexto = estado_id === 1 ? "ingresada" : "egresada";
         alert(`La persona ya se encuentra ${estadoTexto}.`);
@@ -128,8 +127,9 @@ function MovimientosPersonas() {
         nombre: formData.nombre,
         apellido: formData.apellido,
         dni: formData.dni,
-        estado_id,
+        estado_movimiento_cuartel_id: estado_id,
       };
+
       await axios.post("http://localhost:3001/movimientos_cuartel", payload);
       fetchMovimientos();
       setSelectedId("");

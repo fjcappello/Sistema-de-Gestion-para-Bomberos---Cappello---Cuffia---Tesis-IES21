@@ -14,13 +14,17 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
     kilometraje: "",
     novedades: "",
   });
+  const [movilesDisponibles, setMovilesDisponibles] = useState([]);
+  const [choferesDisponibles, setChoferesDisponibles] = useState([]);
 
   const cargarUltimosMovimientos = async () => {
     try {
       const response = await axios.get(
         "http://localhost:3001/moviles_movimientos"
       );
-      const datos = response.data.slice(-4).reverse(); // últimos 4 movimientos
+      const datos = response.data
+        .sort((a, b) => new Date(b.fecha_salida) - new Date(a.fecha_salida))
+        .slice(0, 4);
       setMovimientos(datos);
     } catch (error) {
       console.error("Error al cargar movimientos recientes:", error);
@@ -29,6 +33,11 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
 
   useEffect(() => {
     cargarUltimosMovimientos();
+    axios.get("http://localhost:3001/moviles").then((res) => {
+      const enServicio = res.data.filter((movil) => movil.movil_estado_id === 1);
+      setMovilesDisponibles(enServicio);
+    });
+    axios.get("http://localhost:3001/personal").then((res) => setChoferesDisponibles(res.data));
   }, []);
 
   // Nueva función para manejar el registro
@@ -39,9 +48,9 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
           alert("Complete todos los campos para registrar una salida.");
           return;
         }
-        await axios.post("http://localhost:3001/moviles/salida", {
+        await axios.post("http://localhost:3001/moviles_salida", {
           movil_id: formData.movil_id,
-          chofer: formData.chofer,
+          legajo_chofer: formData.chofer,
           destino: formData.destino,
         });
       } else {
@@ -49,11 +58,11 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
           alert("Complete todos los campos para registrar un retorno.");
           return;
         }
-        await axios.post("http://localhost:3001/moviles/retorno", {
-          movil_id: formData.movil_id,
-          kilometraje: formData.kilometraje,
+        await axios.put(`http://localhost:3001/moviles_retorno/${formData.movil_id}`, {
+          kilometraje_final: formData.kilometraje,
           novedades: formData.novedades,
         });
+        await cargarUltimosMovimientos();
       }
       await cargarUltimosMovimientos();
       setIsModalOpen(false);
@@ -136,22 +145,32 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
           </h4>
           {tipoMovimiento === "salida" ? (
             <>
-              <input
-                type="text"
-                placeholder="ID del móvil"
+              <select
                 value={formData.movil_id}
                 onChange={(e) =>
                   setFormData({ ...formData, movil_id: e.target.value })
                 }
-              />
-              <input
-                type="text"
-                placeholder="Chofer"
+              >
+                <option value="">Seleccione un móvil</option>
+                {movilesDisponibles.map((movil) => (
+                  <option key={movil.id} value={movil.id}>
+                    {movil.interno} - {movil.marca} {movil.modelo}
+                  </option>
+                ))}
+              </select>
+              <select
                 value={formData.chofer}
                 onChange={(e) =>
                   setFormData({ ...formData, chofer: e.target.value })
                 }
-              />
+              >
+                <option value="">Seleccione un chofer</option>
+                {choferesDisponibles.map((p) => (
+                  <option key={p.legajo} value={p.legajo}>
+                    {p.nombre_completo || `${p.nombre} ${p.apellido}`}
+                  </option>
+                ))}
+              </select>
               <input
                 type="text"
                 placeholder="Destino"
@@ -163,14 +182,21 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
             </>
           ) : (
             <>
-              <input
-                type="text"
-                placeholder="ID del móvil"
+              <select
                 value={formData.movil_id}
                 onChange={(e) =>
                   setFormData({ ...formData, movil_id: e.target.value })
                 }
-              />
+              >
+                <option value="">Seleccione un móvil en salida</option>
+                {movimientos
+                  .filter((m) => !m.fecha_retorno)
+                  .map((m) => (
+                    <option key={m.id} value={m.movil_id}>
+                      {m.interno}
+                    </option>
+                  ))}
+              </select>
               <input
                 type="number"
                 placeholder="Kilometraje actual"
