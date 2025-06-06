@@ -59,7 +59,7 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
         </tbody>
       </table>
       <div style={{ marginTop: "10px" }}>
-        <a href="/moviles/movimientos" className="btn btn-moviles-card">
+        <a href="/reportes/movimientos-moviles" className="btn btn-moviles-card">
           Ir a gestión de móviles
         </a>
       </div>
