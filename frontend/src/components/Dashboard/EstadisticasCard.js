@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../../api';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -18,7 +18,7 @@ function EstadisticasCard() {
 
   const fetchEstadisticas = async () => {
     try {
-      const response = await axios.get('http://localhost:3001/estadisticas', {
+      const response = await api.get('/estadisticas', {
         params: { dias: periodo },
       });
       setData(response.data);

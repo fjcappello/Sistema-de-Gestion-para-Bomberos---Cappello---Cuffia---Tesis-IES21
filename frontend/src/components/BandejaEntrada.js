@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { api } from "../api";
 import EnviarMensajeModal from "./EnviarMensajeModal";
 import BandejaSalida from "./BandejaSalida";
 import "./Styles/BandejaEntrada.css";
@@ -22,7 +23,7 @@ function BandejaEntrada() {
   const fetchMensajes = () => {
     if (legajo) {
       axios
-        .get(`http://localhost:3001/mensajes/recibidos/${legajo}`)
+        .get(`${api}/mensajes/recibidos/${legajo}`)
         .then((res) => setMensajes(res.data))
         .catch((err) => console.error("Error al obtener mensajes", err));
     }
@@ -34,7 +35,7 @@ function BandejaEntrada() {
 
   const marcarComoLeido = async (id) => {
     try {
-      await axios.put(`http://localhost:3001/mensajes/marcar-leido/${id}`, {
+      await axios.put(`${api}/mensajes/marcar-leido/${id}`, {
         destinatario_id: legajo,
       });
       setMensajes((prev) =>

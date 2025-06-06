@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/MovimientosPersonas.css";
 import { useUsuario } from "../context/UserContext";
 
@@ -27,8 +27,8 @@ function MovimientosPersonas() {
 
   const fetchPersonal = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/personal_nombres"
+      const response = await api.get(
+        "/personal_nombres"
       );
       setPersonal(response.data);
     } catch (error) {
@@ -38,8 +38,8 @@ function MovimientosPersonas() {
 
   const fetchMovimientos = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/movimientos_cuartel"
+      const response = await api.get(
+        "/movimientos_cuartel"
       );
       setMovimientos(response.data);
     } catch (error) {
@@ -130,7 +130,7 @@ function MovimientosPersonas() {
         dni: formData.dni,
         estado_id,
       };
-      await axios.post("http://localhost:3001/movimientos_cuartel", payload);
+      await api.post("/movimientos_cuartel", payload);
       fetchMovimientos();
       setSelectedId("");
       setFormData({ nombre: "", apellido: "", dni: "" });
@@ -141,8 +141,8 @@ function MovimientosPersonas() {
 
   const eliminarMovimientoLocal = async (id) => {
     try {
-      await axios.put(
-        `http://localhost:3001/movimientos_cuartel/${id}/ocultar`
+      await api.put(
+        `/movimientos_cuartel/${id}/ocultar`
       );
       fetchMovimientos();
     } catch (error) {

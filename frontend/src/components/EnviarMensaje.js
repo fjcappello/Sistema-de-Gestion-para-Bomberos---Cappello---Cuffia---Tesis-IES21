@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 
 function EnviarMensaje() {
   const [usuarios, setUsuarios] = useState([]);
@@ -11,8 +11,8 @@ function EnviarMensaje() {
   const [destinatarios, setDestinatarios] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/personal-nombres")
+    api
+      .get("/personal-nombres")
       .then((res) => setUsuarios(res.data))
       .catch((err) => console.error("Error al obtener usuarios", err));
 
@@ -45,7 +45,7 @@ function EnviarMensaje() {
         ...formData,
         destinatarios,
       };
-      await axios.post("http://localhost:3001/mensajes", finalFormData);
+      await api.post("/mensajes", finalFormData);
       alert("Mensaje enviado");
       setFormData((prev) => ({
         ...prev,

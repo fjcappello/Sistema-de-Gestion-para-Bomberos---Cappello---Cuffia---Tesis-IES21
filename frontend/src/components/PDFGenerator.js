@@ -25,7 +25,7 @@ function PDFGenerator({ partData, onClose }) {
       setLoading(true);
       try {
         const response = await axios.get(
-          `http://localhost:3001/bitacora/${partData.parte_id}`
+          `${import.meta.env.VITE_API_URL}/bitacora/${partData.parte_id}`
         );
         if (response.data.success && response.data.data) {
           const reportes = response.data.data.map((entry) => entry.reporte);

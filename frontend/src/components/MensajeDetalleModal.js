@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/BandejaEntrada.css";
 
 function MensajeDetalleModal({ mensaje, onClose, tipo }) {
   useEffect(() => {
     if (mensaje && mensaje.id && tipo === "recibido") {
-      axios
-        .put(`http://localhost:3001/mensajes/marcar-leido/${mensaje.id}`)
+      api
+        .put(`/mensajes/marcar-leido/${mensaje.id}`)
         .catch((err) => console.error("Error al marcar como leído:", err));
     }
   }, [mensaje, tipo]);

@@ -1,3 +1,4 @@
+import api from "../api";
 import React, { useState } from "react";
 import "../components/Styles/ModalCambioPassword.css";
 
@@ -15,13 +16,10 @@ const ModalCambioPassword = ({ legajo, onPasswordChanged }) => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:3001/cambiar-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ legajo, nuevaPassword: nueva }),
+      const { data } = await api.post("/cambiar-password", {
+        legajo,
+        nuevaPassword: nueva,
       });
-
-      const data = await response.json();
 
       if (data.success) {
         onPasswordChanged();

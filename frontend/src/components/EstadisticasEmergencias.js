@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import axios from "axios";
+import api from "../api";
 import { Bar } from "react-chartjs-2";
 import "chart.js/auto";
 import jsPDF from "jspdf";
@@ -29,9 +29,7 @@ function ReportsPage() {
 
   const fetchJefesDotacion = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/personal_nombres"
-      );
+      const response = await api.get("/personal_nombres");
       setJefesDotacion(response.data);
     } catch (err) {
       console.error("Error al cargar jefes:", err);
@@ -52,17 +50,14 @@ function ReportsPage() {
 
   const fetchReports = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/estadisticas_filtros",
-        {
-          params: {
-            jefe_dotacion: filters.jefeDotacion,
-            tipo_asistencia: filters.tipoAsistencia,
-            fecha_desde: filters.startDate,
-            fecha_hasta: filters.endDate,
-          },
-        }
-      );
+      const response = await api.get("/estadisticas_filtros", {
+        params: {
+          jefe_dotacion: filters.jefeDotacion,
+          tipo_asistencia: filters.tipoAsistencia,
+          fecha_desde: filters.startDate,
+          fecha_hasta: filters.endDate,
+        },
+      });
       const data = response.data;
 
       setChartData({

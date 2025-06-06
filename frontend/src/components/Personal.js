@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/PersonalTable.css";
 import { useUsuario } from "../context/UserContext";
 
@@ -41,7 +41,7 @@ function PersonalTable() {
 
   const fetchPersonal = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/personal");
+      const response = await api.get("/personal");
       setPersonal(response.data);
     } catch (error) {
       console.error("Error al obtener datos de personal:", error);
@@ -50,7 +50,7 @@ function PersonalTable() {
 
   const fetchJerarquias = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/jerarquias");
+      const response = await api.get("/jerarquias");
       setJerarquias(response.data);
     } catch (error) {
       console.error("Error al obtener jerarquías:", error);
@@ -59,7 +59,7 @@ function PersonalTable() {
 
   const fetchSituaciones = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/situaciones");
+      const response = await api.get("/situaciones");
       setSituaciones(response.data);
     } catch (error) {
       console.error("Error al obtener situaciones:", error);
@@ -95,10 +95,7 @@ function PersonalTable() {
     formData.situacion_id = 1; // Establecer valor fijo de 'Activo'
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/personal",
-        formData
-      );
+      const response = await api.post("/personal", formData);
       if (response.data.success) {
         alert("Personal agregado correctamente");
         setIsAddModalOpen(false);
@@ -147,8 +144,8 @@ function PersonalTable() {
     }
 
     try {
-      const response = await axios.put(
-        `http://localhost:3001/personal/${formData.legajo}`,
+      const response = await api.put(
+        `/personal/${formData.legajo}`,
         dataToUpdate
       );
 
@@ -174,8 +171,8 @@ function PersonalTable() {
     }
 
     try {
-      const response = await axios.delete(
-        `http://localhost:3001/personal/${deleteLegajo}`
+      const response = await api.delete(
+        `/personal/${deleteLegajo}`
       );
       if (response.data.success) {
         alert("Personal eliminado correctamente");

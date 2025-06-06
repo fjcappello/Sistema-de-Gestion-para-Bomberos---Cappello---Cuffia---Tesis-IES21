@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api";
 import "../Styles/Dashboard.css";
 
 function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
@@ -8,9 +8,7 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
   useEffect(() => {
     const cargarUltimosMovimientos = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3001/moviles_movimientos"
-        );
+        const response = await api.get("/moviles_movimientos");
         const datos = response.data.slice(-4).reverse(); // últimos 4 movimientos
         setMovimientos(datos);
       } catch (error) {

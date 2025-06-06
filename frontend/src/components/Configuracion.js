@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/Configuracion.css";
 
 function CambioPassword() {
@@ -18,13 +18,10 @@ function CambioPassword() {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/cambiar-password",
-        {
-          legajo: usuario.legajo,
-          nuevaPassword: nueva,
-        }
-      );
+      const response = await api.post("/cambiar-password", {
+        legajo: usuario.legajo,
+        nuevaPassword: nueva,
+      });
 
       if (response.data.success) {
         setMensaje("Contraseña actualizada con éxito.");

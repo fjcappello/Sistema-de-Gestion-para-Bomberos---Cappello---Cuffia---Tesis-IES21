@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/BandejaEntrada.css";
 
 function BandejaSalida({ onClose }) {
@@ -17,8 +17,8 @@ function BandejaSalida({ onClose }) {
 
   useEffect(() => {
     if (legajo) {
-      axios
-        .get(`http://localhost:3001/mensajes/enviados/${legajo}`)
+      api
+        .get(`/mensajes/enviados/${legajo}`)
         .then((res) => setMensajes(res.data))
         .catch((err) =>
           console.error("Error al obtener mensajes enviados", err)

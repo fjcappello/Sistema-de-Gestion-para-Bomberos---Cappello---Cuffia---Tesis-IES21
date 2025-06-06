@@ -1,6 +1,6 @@
 // MiCuenta.js
 import React, { useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/Configuracion.css"; // Manteniendo el archivo de estilos original
 
 function MiCuenta() {
@@ -20,13 +20,10 @@ function MiCuenta() {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/cambiar-password",
-        {
-          legajo: usuario.legajo,
-          nuevaPassword: nueva,
-        }
-      );
+      const response = await api.post("/cambiar-password", {
+        legajo: usuario.legajo,
+        nuevaPassword: nueva,
+      });
 
       if (response.data.success) {
         setMensaje("Contraseña actualizada con éxito.");

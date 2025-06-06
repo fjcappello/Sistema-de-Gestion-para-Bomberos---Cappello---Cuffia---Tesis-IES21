@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import * as XLSX from "xlsx";
 import "./Styles/MovimientoMoviles.css";
 
@@ -53,19 +53,17 @@ function MovimientoMoviles() {
   }, []);
 
   const cargarMoviles = async () => {
-    const response = await axios.get("http://localhost:3001/moviles");
+    const response = await api.get("/moviles");
     setMoviles(response.data.filter((m) => m.estado_id === 1));
   };
 
   const cargarPersonal = async () => {
-    const response = await axios.get("http://localhost:3001/personal");
+    const response = await api.get("/personal");
     setPersonal(response.data);
   };
 
   const cargarMovimientos = async () => {
-    const response = await axios.get(
-      "http://localhost:3001/moviles_movimientos"
-    );
+    const response = await api.get("/moviles_movimientos");
     const movimientosConMovilId = response.data.map((mov) => {
       const movil = moviles.find((m) => m.interno === mov.interno);
       return {
@@ -140,9 +138,7 @@ function MovimientoMoviles() {
     }
 
     try {
-      await axios.post("http://localhost:3001/moviles_salida", {
-        ...formSalida,
-      });
+      await api.post("/moviles_salida", { ...formSalida });
       cargarMovimientos();
       setMostrarModalSalida(false);
       setFormSalida({
@@ -161,8 +157,8 @@ function MovimientoMoviles() {
 
   const registrarRetorno = async () => {
     try {
-      await axios.put(
-        `http://localhost:3001/moviles_retorno/${movimientoSeleccionado.id}`,
+      await api.put(
+        `/moviles_retorno/${movimientoSeleccionado.id}`,
         formRetorno
       );
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import api from "../../api";
 import "../Styles/Dashboard.css";
 import Modal from "./ModalCards";
 
@@ -16,8 +17,8 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
   useEffect(() => {
     const fetchPersonal = async () => {
       try {
-        const response = await fetch("http://localhost:3001/personal_nombres");
-        const data = await response.json();
+        const response = await api.get("/personal_nombres");
+        const data = response.data;
         setPersonal(data);
       } catch (error) {
         console.error("Error al cargar personal:", error);

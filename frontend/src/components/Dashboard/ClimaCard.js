@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../api";
 
 function ClimaCard() {
   const [clima, setClima] = useState(null);
@@ -12,7 +12,7 @@ function ClimaCard() {
 
   const obtenerClima = async () => {
     try {
-      const response = await axios.get(
+      const response = await api.get(
         `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&lang=es`
       );
       setClima(response.data);

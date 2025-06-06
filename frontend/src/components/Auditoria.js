@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/Configuracion.css"; // Conservamos el estilo actual
 
 function Auditoria() {
@@ -21,10 +21,7 @@ function Auditoria() {
       if (filtros.desde) params.desde = filtros.desde;
       if (filtros.hasta) params.hasta = filtros.hasta;
 
-      const response = await axios.get(
-        "http://localhost:3001/registro_seguridad",
-        { params }
-      );
+      const response = await api.get("/registro_seguridad", { params });
       setBitacora(response.data);
     } catch (err) {
       console.error("Error al obtener bitácora:", err);

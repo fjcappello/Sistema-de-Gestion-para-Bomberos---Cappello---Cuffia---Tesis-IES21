@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useUsuario } from "../../context/UserContext";
 import "../Styles/Dashboard.css";
-import axios from "axios";
+import api from "../../api";
 
 import IngresosEgresosCard from "./IngresosEgresosCard";
 import ClimaCard from "./ClimaCard";
@@ -24,8 +24,8 @@ function Dashboard() {
   useEffect(() => {
     const fetchMovimientos = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:3001/movimientos_cuartel"
+        const response = await api.get(
+          "/movimientos_cuartel"
         );
         setMovimientos(response.data);
       } catch (error) {
@@ -40,15 +40,15 @@ function Dashboard() {
 
   const handleRegistrar = async ({ nombre, apellido, dni, estado_id }) => {
     try {
-      await axios.post("http://localhost:3001/movimientos_cuartel", {
+      await api.post("/movimientos_cuartel", {
         id_personal: null,
         nombre,
         apellido,
         dni,
         estado_id,
       });
-      const response = await axios.get(
-        "http://localhost:3001/movimientos_cuartel"
+      const response = await api.get(
+        "/movimientos_cuartel"
       );
       setMovimientos(response.data);
     } catch (error) {

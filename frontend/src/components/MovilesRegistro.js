@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/MovilesRegistro.css";
 import { useUsuario } from "../context/UserContext";
 
@@ -38,7 +38,7 @@ function MovilesRegistro() {
 
   const fetchMoviles = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/moviles");
+      const response = await api.get("/moviles");
       const movilesConEstado = response.data.map((movil) => ({
         ...movil,
         estado_id: parseInt(movil.estado_id), // Asegurarse de que estado_id sea un entero
@@ -51,7 +51,7 @@ function MovilesRegistro() {
 
   const fetchEstados = async () => {
     try {
-      const response = await axios.get("http://localhost:3001/estados_moviles");
+      const response = await api.get("/estados_moviles");
       setEstados(response.data);
     } catch (error) {
       console.error("Error al obtener estados:", error);
@@ -74,8 +74,8 @@ function MovilesRegistro() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3001/moviles_agregar",
+      const response = await api.post(
+        "/moviles_agregar",
         formData
       );
       alert("Móvil agregado correctamente");
@@ -174,8 +174,8 @@ function MovilesRegistro() {
     }
 
     try {
-      await axios.put(
-        `http://localhost:3001/moviles_editar/${editData.id}`,
+      await api.put(
+        `/moviles_editar/${editData.id}`,
         cambios
       );
       alert("Móvil editado correctamente");

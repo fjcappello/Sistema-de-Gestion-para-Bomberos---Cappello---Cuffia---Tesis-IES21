@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import axios from 'axios';
+import api from '../api';
 import * as XLSX from 'xlsx';
 import './Styles/PanolOperativo.css';
 import { useUsuario } from '../context/UserContext';
@@ -48,31 +48,31 @@ function PanolOperativo() {
 
 
   useEffect(() => {
-    axios.get('http://localhost:3001/recuperar-elementosPanol')
+    api.get("/recuperar-elementosPanol")
       .then(res => setElementos(res.data))
       .catch(error => console.error('Error cargando elementos:', error));
   }, []);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/recuperar-tiposPanol')
+    api.get("/recuperar-tiposPanol")
       .then(res => setTipos(res.data))
       .catch(error => console.error('Error cargando tipos:', error));
   }, []);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/recuperar-estadosPanol')
+    api.get("/recuperar-estadosPanol")
       .then(res => setEstados(res.data))
       .catch(error => console.error('Error cargando estados:', error));
   }, []);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/recuperar-marcasPanol')
+    api.get("/recuperar-marcasPanol")
       .then(res => setMarcas(res.data))
       .catch(error => console.error('Error cargando elementos:', error));
   }, []);
 
   useEffect(() => {
-    axios.get('http://localhost:3001/recuperar-asignacionPanol')
+    api.get("/recuperar-asignacionPanol")
       .then(res => setAsignaciones(res.data))
       .catch(error => console.error('Error cargando elementos:', error));
   }, []);
@@ -144,7 +144,7 @@ function PanolOperativo() {
 
   const crearElemento = async () => {
     try {
-      const response = await axios.post('http://localhost:3001/agregar-elementoPanol', {
+      const response = await api.post('/agregar-elementoPanol', {
         elemento: formulario.elemento,
         id_tipo: formulario.tipo,
         id_marca: formulario.marca,
@@ -156,7 +156,7 @@ function PanolOperativo() {
       });
       alert(`Se ha agregado el elemento exitosamente. Código: ${response.data.id_insertado}`);
       if (response.status === 200) {
-        const nuevosDatos = await axios.get('http://localhost:3001/recuperar-elementosPanol');
+        const nuevosDatos = await api.get('/recuperar-elementosPanol');
         setElementos(nuevosDatos.data);
         setModalAbierto(false);
         setFormulario({
@@ -238,8 +238,8 @@ function PanolOperativo() {
       if (parseInt(formulario.estado) === 3 && ImagenContenido) {
         formData.append("foto", ImagenContenido);
       }
-      const response = await axios.put(
-        `http://localhost:3001/cambiar-estadosPanol`,
+      const response = await api.put(
+        `/cambiar-estadosPanol`,
         formData,
         {
           headers: {
@@ -249,7 +249,7 @@ function PanolOperativo() {
       );
       if (response.status === 200) {
         alert("Elemento editado exitosamente.");
-        const nuevosDatos = await axios.get("http://localhost:3001/recuperar-elementosPanol");
+        const nuevosDatos = await api.get("/recuperar-elementosPanol");
         setElementos(nuevosDatos.data);
         setModalEditarAbierto(false);
         setImagenContenido("");
@@ -403,7 +403,7 @@ function PanolOperativo() {
                 <td>
                   <div>
                     <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
-                    <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`http://localhost:3001/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button>
+                    <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`${import.meta.env.VITE_API_URL}/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button>
                   </div>
                 </td>
               )}

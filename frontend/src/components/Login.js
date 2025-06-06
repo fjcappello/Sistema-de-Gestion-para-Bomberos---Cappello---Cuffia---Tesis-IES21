@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 import './Styles/Login.css';
 import { useUsuario } from '../context/UserContext';
 
@@ -13,7 +13,7 @@ function Login({ setIsAuthenticated }) {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3001/login', { legajo, password });
+      const response = await api.post('/login', { legajo, password });
       if (response.data.success) {
         const usuario = {
           legajo,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/BandejaEntrada.css";
 import "./Styles/EnviarMensajeModal.css";
 
@@ -17,8 +17,8 @@ function EnviarMensajeModal({ onClose, onSent }) {
   const [indiceSeleccionado, setIndiceSeleccionado] = useState(-1);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/personal_nombres")
+    api
+      .get("/personal_nombres")
       .then((res) => {
         console.log("Usuarios recibidos:", res.data);
         setUsuarios(res.data);
@@ -81,7 +81,7 @@ function EnviarMensajeModal({ onClose, onSent }) {
       destinatarios: destinatarios.map((d) => d.id),
     };
     try {
-      await axios.post("http://localhost:3001/mensajes/enviar", dataToSend);
+      await api.post("/mensajes/enviar", dataToSend);
       alert("✅ Mensaje enviado correctamente.");
       onSent();
       onClose();

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/EmergenciesTable.css";
 import PDFGenerator from "./PDFGenerator";
 import { useUsuario } from "../context/UserContext";
@@ -72,9 +72,7 @@ function EmergenciesTable() {
   // Fetch de datos
   const fetchEmergencies = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/partesemergencias"
-      );
+      const response = await api.get("/partesemergencias");
       setEmergencies(response.data);
       setFilteredEmergencies(response.data);
     } catch (error) {
@@ -84,9 +82,7 @@ function EmergenciesTable() {
 
   const fetchJefesDotacion = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/personal_nombres"
-      );
+      const response = await api.get("/personal_nombres");
       setJefesDotacion(response.data);
     } catch (error) {
       console.error("Error al obtener jefes de dotación:", error);
@@ -95,9 +91,7 @@ function EmergenciesTable() {
 
   const fetchTipoAsistencia = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3001/tipos_asistencia"
-      );
+      const response = await api.get("/tipos_asistencia");
       setTipoAsistenciaOptions(response.data);
     } catch (error) {
       console.error("Error al obtener tipos de asistencia:", error);
@@ -183,7 +177,7 @@ function EmergenciesTable() {
     }
     try {
       const id_personal = 1;
-      const response = await axios.post("http://localhost:3001/bitacora", {
+      const response = await api.post("/bitacora", {
         id_personal: id_personal,
         reporte: bitacoraText,
         parte_id: selectedPartId,
@@ -266,10 +260,7 @@ function EmergenciesTable() {
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3001/crearEmergencia",
-        formData
-      );
+      const response = await api.post("/crearEmergencia", formData);
       if (response.data.success) {
         alert("Emergencia agregada correctamente");
         setIsAddModalOpen(false);
@@ -300,9 +291,7 @@ function EmergenciesTable() {
       return;
     }
     try {
-      const response = await axios.delete(
-        `http://localhost:3001/eliminarEmergencia/${deleteParteId}`
-      );
+      const response = await api.delete(`/eliminarEmergencia/${deleteParteId}`);
       if (response.data.success) {
         alert("Reporte eliminado correctamente");
         setIsDeleteModalOpen(false);

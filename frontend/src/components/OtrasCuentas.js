@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api";
 import "./Styles/OtrasCuentas.css";
 
 function OtrasCuentas() {
@@ -13,15 +13,15 @@ function OtrasCuentas() {
   const [mensajePassword, setMensajePassword] = useState("");
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/usuarios")
+    api
+      .get("/usuarios")
       .then((res) => setUsuarios(res.data))
       .catch((error) => console.error("Error cargando usuarios:", error));
   }, []);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/permisos")
+    api
+      .get("/permisos")
       .then((res) => setPermisos(res.data))
       .catch((error) => console.error("Error cargando permisos:", error));
   }, []);
@@ -42,8 +42,8 @@ function OtrasCuentas() {
   }, [seleccionado, usuarios]);
 
   const manejarRestablecerPassword = () => {
-    axios
-      .put("http://localhost:3001/restablecer-cuenta", { legajo: seleccionado })
+    api
+      .put("/restablecer-cuenta", { legajo: seleccionado })
       .then(() => {
         setMensajePassword("✅ Contraseña restablecida correctamente.");
         setTimeout(() => setMensajePassword(""), 3000);
@@ -54,8 +54,8 @@ function OtrasCuentas() {
   };
 
   const manejarActualizarPermiso = () => {
-    axios
-      .put("http://localhost:3001/cambiar-permisos", {
+    api
+      .put("/cambiar-permisos", {
         legajo: seleccionado,
         id_rol: permisoSeleccionado,
       })
@@ -63,8 +63,8 @@ function OtrasCuentas() {
         setMensajePermiso("✅ Permiso actualizado correctamente.");
         setTimeout(() => setMensajePermiso(""), 3000);
 
-        axios
-          .get("http://localhost:3001/usuarios")
+        api
+          .get("/usuarios")
           .then((res) => setUsuarios(res.data))
           .catch((error) => console.error("Error recargando usuarios:", error));
       })

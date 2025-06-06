@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../services/api';
 import { Bar, Line, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -49,26 +49,26 @@ function EstadisticaAsistencia() {
 
     console.log('Solicitando estadísticas con filtros:', params);
 
-    axios.get('http://localhost:3001/ranking-asistencias', { params })
+    api.get('/ranking-asistencias', { params })
       .then(res => setRanking(res.data))
       .catch(err => console.error('Error en /ranking-asistencias', err));
 
-    axios.get('http://localhost:3001/ranking-horas', { params })
+    api.get('/ranking-horas', { params })
       .then(res => setHoras(res.data))
       .catch(err => console.error('Error en /ranking-horas', err));
 
-    axios.get('http://localhost:3001/asistencia-dia', { params })
+    api.get('/asistencia-dia', { params })
       .then(res => setPorDia(res.data))
       .catch(err => console.error('Error en /asistencia-dia', err));
 
-    axios.get('http://localhost:3001/asistencia-mes', { params })
+    api.get('/asistencia-mes', { params })
       .then(res => setPorMes(res.data))
       .catch(err => console.error('Error en /asistencia-mes', err));
   };
 
   useEffect(() => {
     fetchData();
-    axios.get('http://localhost:3001/personal/nombres')
+    api.get('/personal/nombres')
       .then(res => setListaPersonal(res.data))
       .catch(err => console.error('Error al cargar personal:', err));
     // eslint-disable-next-line
