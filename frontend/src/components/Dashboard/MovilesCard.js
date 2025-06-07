@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import api from "../../api";
+import api from "../../";
 import "../Styles/Dashboard.css";
 
 function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {

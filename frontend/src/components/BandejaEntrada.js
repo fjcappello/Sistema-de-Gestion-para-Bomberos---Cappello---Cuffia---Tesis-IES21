@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { api } from "../api";
+import  api  from "../api";
 import EnviarMensajeModal from "./EnviarMensajeModal";
 import BandejaSalida from "./BandejaSalida";
 import "./Styles/BandejaEntrada.css";
