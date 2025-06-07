@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import  api  from "../api";
+import api from "../api";
 import EnviarMensajeModal from "./EnviarMensajeModal";
 import BandejaSalida from "./BandejaSalida";
 import "./Styles/BandejaEntrada.css";
@@ -22,9 +21,12 @@ function BandejaEntrada() {
 
   const fetchMensajes = () => {
     if (legajo) {
-      axios
-        .get(`${api}/mensajes/recibidos/${legajo}`)
-        .then((res) => setMensajes(res.data))
+      api
+        .get(`/mensajes/recibidos/${legajo}`)
+        .then((res) => {
+          console.log("Mensajes recibidos:", res.data);
+          setMensajes(res.data);
+        })
         .catch((err) => console.error("Error al obtener mensajes", err));
     }
   };
@@ -35,7 +37,7 @@ function BandejaEntrada() {
 
   const marcarComoLeido = async (id) => {
     try {
-      await axios.put(`${api}/mensajes/marcar-leido/${id}`, {
+      await api.put(`/mensajes/marcar-leido/${id}`, {
         destinatario_id: legajo,
       });
       setMensajes((prev) =>
@@ -46,14 +48,18 @@ function BandejaEntrada() {
     }
   };
 
-  const mensajesFiltrados = mensajes.filter(
-    (msg) =>
-      msg.remitente.toLowerCase().includes(filtros.remitente.toLowerCase()) &&
-      msg.asunto.toLowerCase().includes(filtros.asunto.toLowerCase()) &&
-      msg.fecha_envio.includes(filtros.fecha)
-  );
+  const mensajesFiltrados = Array.isArray(mensajes)
+    ? mensajes.filter(
+        (msg) =>
+          msg.remitente.toLowerCase().includes(filtros.remitente.toLowerCase()) &&
+          msg.asunto.toLowerCase().includes(filtros.asunto.toLowerCase()) &&
+          msg.fecha_envio.includes(filtros.fecha)
+      )
+    : [];
 
-  const mensajesNoLeidos = mensajes.filter((msg) => !msg.leido).length;
+  const mensajesNoLeidos = Array.isArray(mensajes)
+    ? mensajes.filter((msg) => !msg.leido).length
+    : 0;
 
   const handleRowClick = (msg) => {
     setMensajeActivoId(msg.id);

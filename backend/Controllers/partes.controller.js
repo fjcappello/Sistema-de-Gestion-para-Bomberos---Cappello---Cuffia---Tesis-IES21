@@ -7,7 +7,7 @@ const obtenerPartes = (req, res) => {
     req.query;
 
   let query = `
-    SELECT 
+    SELECT DISTINCT
       p.id AS parte_id,
       p.numero_parte,
       p.nombre_denunciante,

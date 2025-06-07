@@ -29,8 +29,8 @@ function App() {
   const [horaActual, setHoraActual] = useState(new Date());
 
   useEffect(() => {
-    const storedAuth = localStorage.getItem('isAuthenticated');
-    const storedUsuario = localStorage.getItem('usuario');
+    const storedAuth = sessionStorage.getItem('isAuthenticated');
+    const storedUsuario = sessionStorage.getItem('usuario');
 
     if (storedAuth === 'true' && storedUsuario) {
       setIsAuthenticated(true);
@@ -57,8 +57,8 @@ function App() {
   }, []);
 
   useEffect(() => {
-    const handleBeforeUnload = () => {
-      const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+    const handleBeforeUnload = (e) => {
+      const usuarioActual = JSON.parse(sessionStorage.getItem('usuario'));
       if (usuarioActual) {
         navigator.sendBeacon(
           'http://localhost:3001/logout',
@@ -72,8 +72,11 @@ function App() {
         );
       }
 
-      localStorage.removeItem('isAuthenticated');
-      localStorage.removeItem('usuario');
+      sessionStorage.removeItem('isAuthenticated');
+      sessionStorage.removeItem('usuario');
+
+      e.preventDefault();
+      e.returnValue = '';
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -81,7 +84,7 @@ function App() {
   }, []);
 
   const handleLogout = async () => {
-    const usuarioActual = JSON.parse(localStorage.getItem('usuario'));
+    const usuarioActual = JSON.parse(sessionStorage.getItem('usuario'));
 
     if (usuarioActual) {
       try {
@@ -89,14 +92,11 @@ function App() {
           legajo: usuarioActual.legajo,
           nombreCompleto: usuarioActual.nombreCompleto,
         });
-        console.log('Logout registrado en bitácora');
-      } catch (error) {
-        console.error('Error registrando logout en bitácora:', error);
-      }
+      } catch (error) {}
     }
 
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('usuario');
+    sessionStorage.removeItem('isAuthenticated');
+    sessionStorage.removeItem('usuario');
     setUsuario(null);
     setIsAuthenticated(false);
   };
@@ -114,7 +114,7 @@ function App() {
                 nombreCompleto: `${usuario.nombre} ${usuario.apellido}`,
               };
               setUsuario(usuarioActualizado);
-              localStorage.setItem(
+              sessionStorage.setItem(
                 'usuario',
                 JSON.stringify(usuarioActualizado)
               );

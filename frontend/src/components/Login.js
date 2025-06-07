@@ -23,10 +23,6 @@ function Login({ setIsAuthenticated }) {
         };
         setIsAuthenticated(true);
         setUsuario(usuario);
-        localStorage.setItem('isAuthenticated', 'true');
-        localStorage.setItem('usuario', JSON.stringify(usuario));
-        localStorage.setItem('token', response.data.token); // 25/04/2025 agregado del token localstorage
-        console.log(response.data.token);
       } else {
         setError('Legajo o contraseña incorrectos.');
       }
@@ -48,10 +44,12 @@ function Login({ setIsAuthenticated }) {
       
       <form onSubmit={handleLogin} className="login-form">
         <input
-          type="number"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           placeholder="Legajo"
           value={legajo}
-          onChange={(e) => setLegajo(e.target.value)}
+          onChange={(e) => setLegajo(e.target.value.replace(/\D/, ""))}
           required
         />
         
