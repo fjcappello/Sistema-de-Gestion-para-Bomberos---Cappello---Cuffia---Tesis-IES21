@@ -17,8 +17,8 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
   useEffect(() => {
     const fetchPersonal = async () => {
       try {
-        const response = await api.get("/personal_nombres");
-        const data = response.data;
+        const response = await api.get("/personal/nombres");
+        const data = response.data.data;
         setPersonal(data);
       } catch (error) {
         console.error("Error al cargar personal:", error);
@@ -45,7 +45,7 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
         setFormData({
           nombre,
           apellido,
-          dni: persona.id.toString(),
+          dni: persona.dni,
           estado_id: "",
         });
       }

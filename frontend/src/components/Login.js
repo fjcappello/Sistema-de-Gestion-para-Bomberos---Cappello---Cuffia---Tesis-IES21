@@ -12,8 +12,10 @@ function Login({ setIsAuthenticated }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    console.log("Enviando datos de login:", { legajo, password });
     try {
       const response = await api.post('/login', { legajo, password });
+      console.log("Respuesta del servidor:", response);
       if (response.data.success) {
         const usuario = {
           legajo,

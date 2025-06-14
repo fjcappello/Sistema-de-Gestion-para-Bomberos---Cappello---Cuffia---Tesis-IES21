@@ -3,8 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
-//Recuperar las herramientas del pañol segun filtros
-const recuperarElementos = function recuperarElementos(req, res) {
+const recuperarElementos = async function recuperarElementos(req, res) {
   const { tipo, fincorp, fvenc, estado, texto } = req.body;
 
   let query = `SELECT 
@@ -30,98 +29,75 @@ const recuperarElementos = function recuperarElementos(req, res) {
                     estado_elemento AS e ON p.id_estado = e.id_estado
                 WHERE 1 + 1 = 2 ORDER BY id_elemento ASC
             `;
-
-  db.query(query, (error, results) => {
-    if (error) {
-      console.error("Error al recuperar los elementos del pañol:", error);
-      return res
-        .status(500)
-        .json({ error: "Error al recuperar los elementos del pañol" });
-    }
+  try {
+    const results = await db.query(query);
     if (results.length === 0) {
-      return res.status(404).json({ message: "No se encontraron elementos." });
+      return res.status(404).json({ success: false, error: "No se encontraron elementos." });
     }
-    return res.status(200).json(results);
-  });
+    return res.status(200).json({ success: true, data: results });
+  } catch (error) {
+    console.error("Error al recuperar los elementos del pañol:", error);
+    return res.status(500).json({ success: false, error: "Error al recuperar los elementos del pañol" });
+  }
 };
 
-//Recuperar los tipos de herramientas
-const recuperarTipos = function recuperarTipos(req, res) {
+const recuperarTipos = async function recuperarTipos(req, res) {
   const query = `SELECT * FROM tipo_elemento`;
-  db.query(query, (error, results) => {
-    if (error) {
-      console.error("Error al recuperar los tipos de elemento:", error);
-      return res
-        .status(500)
-        .json({ error: "Error al recuperar los tipos de elemento" });
-    }
+  try {
+    const results = await db.query(query);
     if (results.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No se encontraron tipos de elementos." });
+      return res.status(404).json({ success: false, error: "No se encontraron tipos de elementos." });
     }
-    return res.status(200).json(results);
-  });
+    return res.status(200).json({ success: true, data: results });
+  } catch (error) {
+    console.error("Error al recuperar los tipos de elemento:", error);
+    return res.status(500).json({ success: false, error: "Error al recuperar los tipos de elemento" });
+  }
 };
 
-//Recuperar los estados de las herramientas
-const recuperarEstados = function recuperarEstados(req, res) {
+const recuperarEstados = async function recuperarEstados(req, res) {
   const query = `SELECT * FROM estado_elemento`;
-  db.query(query, (error, results) => {
-    if (error) {
-      console.error("Error al recuperar los tipos de elemento:", error);
-      return res
-        .status(500)
-        .json({ error: "Error al recuperar los estados de elemento" });
-    }
+  try {
+    const results = await db.query(query);
     if (results.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No se encontraron estados de elementos." });
+      return res.status(404).json({ success: false, error: "No se encontraron estados de elementos." });
     }
-    return res.status(200).json(results);
-  });
+    return res.status(200).json({ success: true, data: results });
+  } catch (error) {
+    console.error("Error al recuperar los tipos de elemento:", error);
+    return res.status(500).json({ success: false, error: "Error al recuperar los estados de elemento" });
+  }
 };
 
-//Recuperar los tipos de herramientas
-const recuperarMarcas = function recuperarMarcas(req, res) {
+const recuperarMarcas = async function recuperarMarcas(req, res) {
   const query = `SELECT * FROM marca_elemento`;
-  db.query(query, (error, results) => {
-    if (error) {
-      console.error("Error al recuperar las marcas de elementos:", error);
-      return res
-        .status(500)
-        .json({ error: "Error al recuperar las marcas de elemento" });
-    }
+  try {
+    const results = await db.query(query);
     if (results.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No se encontraron marcas de elementos." });
+      return res.status(404).json({ success: false, error: "No se encontraron marcas de elementos." });
     }
-    return res.status(200).json(results);
-  });
+    return res.status(200).json({ success: true, data: results });
+  } catch (error) {
+    console.error("Error al recuperar las marcas de elementos:", error);
+    return res.status(500).json({ success: false, error: "Error al recuperar las marcas de elemento" });
+  }
 };
 
-const recuperarAsignaciones = function recuperarAsignaciones(req, res) {
+const recuperarAsignaciones = async function recuperarAsignaciones(req, res) {
   const query = `SELECT * FROM lugar_asignacion`;
-  db.query(query, (error, results) => {
-    if (error) {
-      console.error("Error al recuperar las marcas de elementos:", error);
-      return res
-        .status(500)
-        .json({ error: "Error al recuperar las marcas de elemento" });
-    }
+  try {
+    const results = await db.query(query);
     if (results.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No se encontraron marcas de elementos." });
+      return res.status(404).json({ success: false, error: "No se encontraron marcas de elementos." });
     }
-    return res.status(200).json(results);
-  });
+    return res.status(200).json({ success: true, data: results });
+  } catch (error) {
+    console.error("Error al recuperar las marcas de elementos:", error);
+    return res.status(500).json({ success: false, error: "Error al recuperar las marcas de elemento" });
+  }
 };
 
-//Agregar una nuevo elemento de pañol
-const agregarElemento = function agregarElemento(req, res) {
+const agregarElemento = async function agregarElemento(req, res) {
   let {
     elemento,
     id_tipo,
@@ -132,17 +108,6 @@ const agregarElemento = function agregarElemento(req, res) {
     f_asignacion,
     id_estado,
   } = req.body;
-  const query = `INSERT INTO panol (
-                        elemento, 
-                        id_tipo, 
-                        id_marca, 
-                        f_incorporacion, 
-                        f_vencimiento, 
-                        id_asignacion, 
-                        f_asignacion, 
-                        id_estado
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-  //Verificaciond e datos
   if (
     !elemento ||
     !id_tipo ||
@@ -151,14 +116,8 @@ const agregarElemento = function agregarElemento(req, res) {
     !id_asignacion ||
     !id_estado
   ) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "Faltan datos: elemento, id_tipo, id_marca, f_incorporacion, id_asignacion o id_estado",
-      });
+    return res.status(400).json({ success: false, error: "Faltan datos: elemento, id_tipo, id_marca, f_incorporacion, id_asignacion o id_estado" });
   }
-  //Verificacion y control de campos opcionales
   f_vencimiento = f_vencimiento || null;
   f_asignacion = f_asignacion || null;
 
@@ -172,39 +131,42 @@ const agregarElemento = function agregarElemento(req, res) {
     f_asignacion,
     id_estado,
   ];
-  db.query(query, parametros, (error, results) => {
-    if (error) {
-      console.error("Error al intentar crear un elemento:", error);
-      return res
-        .status(500)
-        .json({ error: "Error al intentar crear un elemento" });
-    }
+  const query = `INSERT INTO panol (
+                        elemento, 
+                        id_tipo, 
+                        id_marca, 
+                        f_incorporacion, 
+                        f_vencimiento, 
+                        id_asignacion, 
+                        f_asignacion, 
+                        id_estado
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+  try {
+    const results = await db.query(query, parametros);
     if (results.affectedRows === 0) {
-      return res
-        .status(400)
-        .json({
-          message: "No se pudo agregar correctamente el nuevo elemento.",
-        });
+      return res.status(400).json({ success: false, message: "No se pudo agregar correctamente el nuevo elemento." });
     }
     if (req.query.usuario_id) {
       registrarLog(req.query.usuario_id, `Agregó un nuevo elemento al pañol: ${elemento}`);
     }
     return res.status(200).json({
+      success: true,
       message: "Elemento agregado correctamente",
       id_insertado: results.insertId,
     });
-  });
+  } catch (error) {
+    console.error("Error al intentar crear un elemento:", error);
+    return res.status(500).json({ success: false, error: "Error al intentar crear un elemento" });
+  }
 };
 
-// Editar un elemento del pañol
-const editarElemento = (req, res) => {
+const editarElemento = async (req, res) => {
   const { id_elemento, id_asignacion, f_asignacion, id_estado } = req.body;
   if (!id_elemento || !id_asignacion || !id_estado) {
-    return res.status(400).json({ error: "Faltan datos requeridos" });
+    return res.status(400).json({ success: false, error: "Faltan datos requeridos" });
   }
   let query = `UPDATE panol SET id_asignacion = ?, f_asignacion = ?, id_estado = ?`;
   const parametros = [id_asignacion, f_asignacion, id_estado];
-  // Si hay imagen cargada Y el estado es 3 (BAJA), se agrega foto
   if (req.file && parseInt(id_estado) === 3) {
     const foto = cargaDeFoto(req.file);
     query += `, foto = ?`;
@@ -212,26 +174,21 @@ const editarElemento = (req, res) => {
   }
   query += ` WHERE id_elemento = ?`;
   parametros.push(id_elemento);
-  db.query(query, parametros, (error, results) => {
-    if (error) {
-      console.error("Error al editar el elemento:", error);
-      return res
-        .status(500)
-        .json({ error: "Error en la edición del elemento" });
-    }
+  try {
+    const results = await db.query(query, parametros);
     if (results.affectedRows === 0) {
-      return res.status(404).json({ message: "Elemento no encontrado" });
+      return res.status(404).json({ success: false, message: "Elemento no encontrado" });
     }
     if (req.query.usuario_id) {
       registrarLog(req.query.usuario_id, `Editó el elemento del pañol ID ${id_elemento}`);
     }
-    return res
-      .status(200)
-      .json({ message: "Elemento actualizado correctamente" });
-  });
+    return res.status(200).json({ success: true, message: "Elemento actualizado correctamente" });
+  } catch (error) {
+    console.error("Error al editar el elemento:", error);
+    return res.status(500).json({ success: false, error: "Error en la edición del elemento" });
+  }
 };
 
-// Función para cargar la foto y obtener la direccion
 const cargaDeFoto = function cargaDeFoto(archivo) {
   const uniqueName = `${Date.now()}-${archivo.originalname}`;
   const nuevoCamino = path.join(__dirname, "..", "..", "resources", uniqueName);

@@ -12,7 +12,7 @@ const {
 } = require("../Controllers/panolOperativo.controller.js");
 
 // Recupera los elementos del Pañol Operativo filtrados.
-router.get("/recuperar-elementosPanol", recuperarElementos);
+router.post("/recuperar-elementosPanol", recuperarElementos);
 
 // Recupera los estados de los elementos del Pañol Operativo.
 router.get("/recuperar-estadosPanol", recuperarEstados);

@@ -50,26 +50,26 @@ function EstadisticaAsistencia() {
     console.log('Solicitando estadísticas con filtros:', params);
 
     api.get('/ranking-asistencias', { params })
-      .then(res => setRanking(res.data))
+      .then(res => setRanking(res.data.data))
       .catch(err => console.error('Error en /ranking-asistencias', err));
 
     api.get('/ranking-horas', { params })
-      .then(res => setHoras(res.data))
+      .then(res => setHoras(res.data.data))
       .catch(err => console.error('Error en /ranking-horas', err));
 
     api.get('/asistencia-dia', { params })
-      .then(res => setPorDia(res.data))
+      .then(res => setPorDia(res.data.data))
       .catch(err => console.error('Error en /asistencia-dia', err));
 
     api.get('/asistencia-mes', { params })
-      .then(res => setPorMes(res.data))
+      .then(res => setPorMes(res.data.data))
       .catch(err => console.error('Error en /asistencia-mes', err));
   };
 
   useEffect(() => {
     fetchData();
     api.get('/personal/nombres')
-      .then(res => setListaPersonal(res.data))
+      .then(res => setListaPersonal(res.data.data))
       .catch(err => console.error('Error al cargar personal:', err));
     // eslint-disable-next-line
   }, []);

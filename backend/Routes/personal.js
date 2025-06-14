@@ -10,8 +10,8 @@ const {
   obtenerSituaciones,
 } = require("../Controllers/personal.controller");
 
-router.get("/personal", obtenerPersonal);
-router.get("/personal_nombres", obtenerNombres);
+router.get("/", obtenerPersonal);
+router.get("/nombres", obtenerNombres);
 router.post("/personal", crearPersonal);
 router.put("/personal/:legajo", actualizarPersonal);
 router.delete("/personal/:legajo", eliminarPersonal);

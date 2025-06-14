@@ -21,7 +21,7 @@ function EstadisticasCard() {
       const response = await api.get('/estadisticas', {
         params: { dias: periodo },
       });
-      setData(response.data);
+      setData(response.data.data);
     } catch (error) {
       console.error('Error al obtener estadísticas:', error);
     }
@@ -32,11 +32,11 @@ function EstadisticasCard() {
   }, [periodo]);
 
   const chartData = {
-    labels: data.map((item) => item.tipo_asistencia),
+    labels: Array.isArray(data) ? data.map((item) => item.tipo_asistencia) : [],
     datasets: [
       {
         label: 'Cantidad de intervenciones',
-        data: data.map((item) => item.cantidad),
+        data: Array.isArray(data) ? data.map((item) => item.cantidad) : [],
         backgroundColor: '#e60000',
       },
     ],

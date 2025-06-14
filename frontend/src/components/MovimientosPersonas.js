@@ -28,9 +28,9 @@ function MovimientosPersonas() {
   const fetchPersonal = async () => {
     try {
       const response = await api.get(
-        "/personal_nombres"
+        "/personal/nombres"
       );
-      setPersonal(response.data);
+      setPersonal(response.data.data);
     } catch (error) {
       console.error("Error al cargar personal:", error);
     }
@@ -41,7 +41,7 @@ function MovimientosPersonas() {
       const response = await api.get(
         "/movimientos_cuartel"
       );
-      setMovimientos(response.data);
+      setMovimientos(response.data.data);
     } catch (error) {
       console.error("Error al obtener movimientos:", error);
     }
@@ -65,7 +65,7 @@ function MovimientosPersonas() {
         setFormData({
           nombre: persona.nombre,
           apellido: persona.apellido,
-          dni: persona.id.toString(),
+          dni: persona.dni,
         });
       }
     }
@@ -162,14 +162,16 @@ function MovimientosPersonas() {
     setCurrentPage(1);
   };
 
-  const movimientosFiltrados = movimientos.filter(
-    (m) =>
-      m.nombre.toLowerCase().includes(filtrosAplicados.nombre.toLowerCase()) &&
-      m.apellido
-        .toLowerCase()
-        .includes(filtrosAplicados.apellido.toLowerCase()) &&
-      (filtrosAplicados.tipo ? m.estado === filtrosAplicados.tipo : true)
-  );
+  const movimientosFiltrados = Array.isArray(movimientos)
+    ? movimientos.filter(
+        (m) =>
+          m.nombre.toLowerCase().includes(filtrosAplicados.nombre.toLowerCase()) &&
+          m.apellido
+            .toLowerCase()
+            .includes(filtrosAplicados.apellido.toLowerCase()) &&
+          (filtrosAplicados.tipo ? m.estado === filtrosAplicados.tipo : true)
+      )
+    : [];
 
   const totalPages = Math.ceil(movimientosFiltrados.length / ITEMS_PER_PAGE);
   const currentMovimientos = movimientosFiltrados.slice(

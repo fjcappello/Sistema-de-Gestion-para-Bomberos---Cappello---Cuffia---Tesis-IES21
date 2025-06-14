@@ -1,7 +1,7 @@
 const db = require("../DB/db.js");
 
 // Obtener registros de bitácora con filtros opcionales
-const obtenerLog = (req, res) => {
+const obtenerLog = async (req, res) => {
   const { usuario_id, accion, desde, hasta } = req.query;
 
   let query = `
@@ -34,14 +34,13 @@ const obtenerLog = (req, res) => {
 
   query += " ORDER BY b.fecha DESC";
 
-  db.query(query, params, (err, results) => {
-    if (err) {
-      console.error("Error al obtener la bitácora:", err);
-      res.status(500).json({ error: "Error al consultar la bitácora" });
-    } else {
-      res.json(results);
-    }
-  });
+  try {
+    const [results] = await db.query(query, params);
+    res.status(200).json({ success: true, data: results });
+  } catch (err) {
+    console.error("Error al obtener la bitácora:", err);
+    res.status(500).json({ success: false, error: "Error al consultar la bitácora" });
+  }
 };
 
 module.exports = {

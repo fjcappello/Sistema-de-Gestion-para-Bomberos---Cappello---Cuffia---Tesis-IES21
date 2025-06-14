@@ -9,7 +9,7 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
     const cargarUltimosMovimientos = async () => {
       try {
         const response = await api.get("/moviles_movimientos");
-        const datos = response.data.slice(-4).reverse(); // últimos 4 movimientos
+        const datos = response.data.data.slice(-4).reverse(); // últimos 4 movimientos
         setMovimientos(datos);
       } catch (error) {
         console.error("Error al cargar movimientos recientes:", error);

@@ -18,10 +18,10 @@ function EnviarMensajeModal({ onClose, onSent }) {
 
   useEffect(() => {
     api
-      .get("/personal_nombres")
+      .get("/personal/nombres")
       .then((res) => {
-        console.log("Usuarios recibidos:", res.data);
-        setUsuarios(res.data);
+        console.log("Usuarios recibidos:", res.data.data);
+        setUsuarios(res.data.data);
       })
       .catch((err) => console.error("Error al obtener usuarios", err));
   }, []);

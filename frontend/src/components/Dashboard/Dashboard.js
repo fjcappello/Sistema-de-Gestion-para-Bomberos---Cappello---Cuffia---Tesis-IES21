@@ -27,7 +27,7 @@ function Dashboard() {
         const response = await api.get(
           "/movimientos_cuartel"
         );
-        setMovimientos(response.data);
+        setMovimientos(response.data.data);
       } catch (error) {
         console.error("Error al obtener movimientos:", error);
       }
@@ -50,7 +50,7 @@ function Dashboard() {
       const response = await api.get(
         "/movimientos_cuartel"
       );
-      setMovimientos(response.data);
+      setMovimientos(response.data.data);
     } catch (error) {
       console.error("Error al registrar movimiento:", error);
     }

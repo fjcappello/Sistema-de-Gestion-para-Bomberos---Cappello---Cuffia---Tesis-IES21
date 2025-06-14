@@ -42,7 +42,7 @@ function PersonalTable() {
   const fetchPersonal = async () => {
     try {
       const response = await api.get("/personal");
-      setPersonal(response.data);
+      setPersonal(response.data.data);
     } catch (error) {
       console.error("Error al obtener datos de personal:", error);
     }
@@ -51,7 +51,7 @@ function PersonalTable() {
   const fetchJerarquias = async () => {
     try {
       const response = await api.get("/jerarquias");
-      setJerarquias(response.data);
+      setJerarquias(response.data.data);
     } catch (error) {
       console.error("Error al obtener jerarquías:", error);
     }
@@ -60,7 +60,7 @@ function PersonalTable() {
   const fetchSituaciones = async () => {
     try {
       const response = await api.get("/situaciones");
-      setSituaciones(response.data);
+      setSituaciones(response.data.data);
     } catch (error) {
       console.error("Error al obtener situaciones:", error);
     }

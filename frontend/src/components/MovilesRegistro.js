@@ -39,9 +39,9 @@ function MovilesRegistro() {
   const fetchMoviles = async () => {
     try {
       const response = await api.get("/moviles");
-      const movilesConEstado = response.data.map((movil) => ({
+      const movilesConEstado = response.data.data.map((movil) => ({
         ...movil,
-        estado_id: parseInt(movil.estado_id), // Asegurarse de que estado_id sea un entero
+        estado_id: parseInt(movil.estado_id),
       }));
       setMoviles(movilesConEstado);
     } catch (error) {
@@ -52,7 +52,7 @@ function MovilesRegistro() {
   const fetchEstados = async () => {
     try {
       const response = await api.get("/estados_moviles");
-      setEstados(response.data);
+      setEstados(response.data.data);
     } catch (error) {
       console.error("Error al obtener estados:", error);
     }
@@ -78,9 +78,13 @@ function MovilesRegistro() {
         "/moviles_agregar",
         formData
       );
-      alert("Móvil agregado correctamente");
-      setIsAddModalOpen(false);
-      fetchMoviles();
+      if (response.data.success) {
+        alert(response.data.message || "Móvil agregado correctamente");
+        setIsAddModalOpen(false);
+        fetchMoviles();
+      } else {
+        alert(response.data.message || "Error al agregar móvil");
+      }
     } catch (error) {
       console.error("Error al agregar móvil:", error);
       alert("Error al agregar móvil");
@@ -174,13 +178,17 @@ function MovilesRegistro() {
     }
 
     try {
-      await api.put(
+      const response = await api.put(
         `/moviles_editar/${editData.id}`,
         cambios
       );
-      alert("Móvil editado correctamente");
-      setEditData(null);
-      fetchMoviles();
+      if (response.data.success) {
+        alert(response.data.message || "Móvil editado correctamente");
+        setEditData(null);
+        fetchMoviles();
+      } else {
+        alert(response.data.message || "Error al editar móvil");
+      }
     } catch (error) {
       console.error("Error al editar móvil:", error);
       alert("Error al editar móvil");

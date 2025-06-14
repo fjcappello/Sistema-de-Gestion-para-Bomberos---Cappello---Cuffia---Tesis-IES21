@@ -11,7 +11,6 @@ function PDFGenerator({ partData, onClose }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Cargar logo
     fetch("/images/logo.png")
       .then((response) => response.blob())
       .then((blob) => {
@@ -20,14 +19,13 @@ function PDFGenerator({ partData, onClose }) {
         reader.readAsDataURL(blob);
       });
 
-    // Obtener bitácora
     const fetchBitacora = async () => {
       setLoading(true);
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/bitacora/${partData.parte_id}`
         );
-        if (response.data.success && response.data.data) {
+        if (response.data.success && Array.isArray(response.data.data)) {
           const reportes = response.data.data.map((entry) => entry.reporte);
           setBitacoraContent(reportes.join("\n\n---\n\n"));
         }
@@ -48,15 +46,13 @@ function PDFGenerator({ partData, onClose }) {
     const margin = 15;
     const logoHeight = 30;
     const logoWidth = 30;
-    const headerY = 25; // Posición vertical base para alineación
+    const headerY = 25;
 
-    // Logo - Centrado verticalmente con texto
     if (logoDataURI) {
       const logoY = headerY - logoHeight / 2 + 5;
       doc.addImage(logoDataURI, "PNG", margin, logoY, logoWidth, logoHeight);
     }
 
-    // Encabezados alineados con logo
     doc.setFontSize(18);
     doc.setTextColor(40, 40, 40);
     const titleY = headerY + 5;
@@ -70,7 +66,6 @@ function PDFGenerator({ partData, onClose }) {
       align: "center",
     });
 
-    // Tabla de datos
     doc.autoTable({
       startY: subtitleY + 20,
       margin: { left: margin, right: margin },
@@ -97,11 +92,9 @@ function PDFGenerator({ partData, onClose }) {
       },
     });
 
-    // Bitácora con manejo multipágina
     if (bitacoraContent) {
       let currentY = doc.lastAutoTable.finalY + 15;
 
-      // Verificar espacio para el título
       if (currentY > doc.internal.pageSize.getHeight() - 50) {
         doc.addPage();
         currentY = 20;
@@ -112,14 +105,12 @@ function PDFGenerator({ partData, onClose }) {
       doc.text("Bitácora de la Emergencia", margin, currentY);
       currentY += 10;
 
-      // Configuración de texto
       doc.setFontSize(11);
       doc.setTextColor(50, 50, 50);
       const lineHeight = 7;
       const maxWidth = pageWidth - margin * 2;
       const lines = doc.splitTextToSize(bitacoraContent, maxWidth);
 
-      // Imprimir línea por línea con control de páginas
       for (let i = 0; i < lines.length; i++) {
         if (currentY > doc.internal.pageSize.getHeight() - 20) {
           doc.addPage();
@@ -130,7 +121,6 @@ function PDFGenerator({ partData, onClose }) {
       }
     }
 
-    // Firma en nueva página si es necesario
     let signatureY = doc.lastAutoTable.finalY + (bitacoraContent ? 50 : 30);
     if (signatureY > doc.internal.pageSize.getHeight() - 30) {
       doc.addPage();
@@ -147,9 +137,8 @@ function PDFGenerator({ partData, onClose }) {
       align: "center",
     });
 
-    // Pie de página
     const footerText = `Generado por ${
-      usuario?.nombreCompleto || "Sistema"
+      usuario?.nombre || "Sistema"
     } el ${new Date().toLocaleDateString()}`;
     doc.setFontSize(9);
     doc.text(footerText, margin, doc.internal.pageSize.getHeight() - 10);

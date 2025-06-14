@@ -1,3 +1,4 @@
+require('dotenv').config();
 const jwt = require('jsonwebtoken');
 
 const verificarToken = (req, res, next) => {
@@ -13,7 +14,7 @@ const verificarToken = (req, res, next) => {
     return res.status(401).json({ success: false, error: 'Token no válido' });
   }
 
-  jwt.verify(token, 'Esperanto3012', (err, decoded) => {
+  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return res.status(403).json({ success: false, error: 'Token inválido o expirado' });
     }

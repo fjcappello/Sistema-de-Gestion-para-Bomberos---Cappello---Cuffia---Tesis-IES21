@@ -47,41 +47,46 @@ function PanolOperativo() {
   const [fotoUrl, setFotoUrl] = useState('');
 
 
-  useEffect(() => {
-    api.get("/recuperar-elementosPanol")
-      .then(res => setElementos(res.data))
-      .catch(error => console.error('Error cargando elementos:', error));
-  }, []);
+useEffect(() => {
+  api.post("/panol/recuperar-elementosPanol", { tipo: "" })
+    .then(res => {
+      const datosPlanos = res.data.data.flat();
+      console.log("Elementos recibidos aplanados:", datosPlanos);
+      setElementos(datosPlanos);
+    })
+    .catch(error => console.error('Error cargando elementos:', error));
+}, []);
 
-  useEffect(() => {
-    api.get("/recuperar-tiposPanol")
-      .then(res => setTipos(res.data))
-      .catch(error => console.error('Error cargando tipos:', error));
-  }, []);
+useEffect(() => {
+  api.get("/panol/recuperar-tiposPanol")
+    .then(res => setTipos(res.data.data))
+    .catch(error => console.error('Error cargando tipos:', error));
+}, []);
 
-  useEffect(() => {
-    api.get("/recuperar-estadosPanol")
-      .then(res => setEstados(res.data))
-      .catch(error => console.error('Error cargando estados:', error));
-  }, []);
+useEffect(() => {
+  api.get("/panol/recuperar-estadosPanol")
+    .then(res => setEstados(res.data.data))
+    .catch(error => console.error('Error cargando estados:', error));
+}, []);
 
-  useEffect(() => {
-    api.get("/recuperar-marcasPanol")
-      .then(res => setMarcas(res.data))
-      .catch(error => console.error('Error cargando elementos:', error));
-  }, []);
+useEffect(() => {
+  api.get("/panol/recuperar-marcasPanol")
+    .then(res => setMarcas(res.data.data))
+    .catch(error => console.error('Error cargando elementos:', error));
+}, []);
 
-  useEffect(() => {
-    api.get("/recuperar-asignacionPanol")
-      .then(res => setAsignaciones(res.data))
-      .catch(error => console.error('Error cargando elementos:', error));
-  }, []);
+useEffect(() => {
+  api.get("/panol/recuperar-asignacionPanol")
+    .then(res => setAsignaciones(res.data.data))
+    .catch(error => console.error('Error cargando elementos:', error));
+}, []);
 
   const elementosFiltrados = useMemo(() => {
-    return elementos.filter(el => {
+    const filtrados = elementos.filter(el => {
+      const idElementoStr = el?.id_elemento ? el.id_elemento.toString() : '';
       const textoMatch =
-        el.id_elemento.toString().includes(textoFiltro.toLowerCase()) ||
-        el.elemento.toLowerCase().includes(textoFiltro.toLowerCase());
+        idElementoStr.includes(textoFiltro.toLowerCase()) ||
+        (el.elemento ? el.elemento.toLowerCase().includes(textoFiltro.toLowerCase()) : false);
 
       const tipoMatch = tipoSeleccionado === '' || el.tipo === tipoSeleccionado;
       const estadoMatch = estadoSeleccionado === '' || el.estado === estadoSeleccionado;
@@ -104,6 +109,8 @@ function PanolOperativo() {
         venciHastaOk
       );
     });
+    console.log('Elementos filtrados:', filtrados);
+    return filtrados;
   }, [
     elementos,
     textoFiltro,
@@ -120,7 +127,9 @@ function PanolOperativo() {
   const elementosPaginados = useMemo(() => {
     const inicio = (paginaActual - 1) * elementosPorPagina;
     const fin = inicio + elementosPorPagina;
-    return elementosFiltrados.slice(inicio, fin);
+    const paginados = elementosFiltrados.slice(inicio, fin);
+    console.log('Elementos paginados:', paginados);
+    return paginados;
   }, [paginaActual, elementosFiltrados]);
 
   const irPaginaAnterior = () => {
@@ -156,8 +165,8 @@ function PanolOperativo() {
       });
       alert(`Se ha agregado el elemento exitosamente. Código: ${response.data.id_insertado}`);
       if (response.status === 200) {
-        const nuevosDatos = await api.get('/recuperar-elementosPanol');
-        setElementos(nuevosDatos.data);
+        const nuevosDatos = await api.get('/panol/recuperar-elementosPanol');
+        setElementos(nuevosDatos.data.data);
         setModalAbierto(false);
         setFormulario({
           elemento: '',
@@ -249,8 +258,8 @@ function PanolOperativo() {
       );
       if (response.status === 200) {
         alert("Elemento editado exitosamente.");
-        const nuevosDatos = await api.get("/recuperar-elementosPanol");
-        setElementos(nuevosDatos.data);
+        const nuevosDatos = await api.get("/panol/recuperar-elementosPanol");
+        setElementos(nuevosDatos.data.data);
         setModalEditarAbierto(false);
         setImagenContenido("");
         setImagenActiva(false);
@@ -297,7 +306,7 @@ function PanolOperativo() {
         >
           <option value="">Selecciona Tipo</option>
           {tipos.map((tipo) => (
-            <option key={tipo.tipo} value={tipo.tipo}>
+            <option key={tipo.id_tipo} value={tipo.tipo}>
               {tipo.tipo}
             </option>
           ))}
@@ -312,7 +321,7 @@ function PanolOperativo() {
         >
           <option value="">Selecciona Estado</option>
           {estados.map((estado) => (
-            <option key={estado.estado} value={estado.estado}>
+            <option key={estado.id_estado} value={estado.estado}>
               {estado.estado}
             </option>
           ))}
@@ -388,27 +397,35 @@ function PanolOperativo() {
           </tr>
         </thead>
         <tbody>
-          {elementosPaginados.map((el) => (
-            <tr key={el.id_elemento}>
-              <td>{el.id_elemento}</td>
-              <td>{el.elemento}</td>
-              <td>{el.tipo}</td>
-              <td>{el.marca}</td>
-              <td>{el.f_incorporacion}</td>
-              <td>{el.f_vencimiento}</td>
-              <td>{el.asignacion}</td>
-              <td>{el.f_asignacion}</td>
-              <td>{el.estado}</td>
-              {["Administrador", "Jefatura"].includes(usuario?.rol) && (
-                <td>
-                  <div>
-                    <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
-                    <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`${import.meta.env.VITE_API_URL}/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button>
-                  </div>
-                </td>
-              )}
+          {(Array.isArray(elementosPaginados) && elementosPaginados.length > 0) ? (
+            elementosPaginados.map((el) => (
+              <tr key={el.id_elemento}>
+                <td>{el.id_elemento}</td>
+                <td>{el.elemento}</td>
+                <td>{el.tipo}</td>
+                <td>{el.marca}</td>
+                <td>{el.f_incorporacion}</td>
+                <td>{el.f_vencimiento}</td>
+                <td>{el.asignacion}</td>
+                <td>{el.f_asignacion}</td>
+                <td>{el.estado}</td>
+                {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+                  <td>
+                    <div>
+                      <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
+                      <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`${import.meta.env.VITE_API_URL}/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button>
+                    </div>
+                  </td>
+                )}
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={["Administrador", "Jefatura"].includes(usuario?.rol) ? 10 : 9} style={{ textAlign: 'center' }}>
+                No hay datos para mostrar
+              </td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 

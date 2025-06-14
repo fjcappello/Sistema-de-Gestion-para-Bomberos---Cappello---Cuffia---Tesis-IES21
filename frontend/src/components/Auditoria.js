@@ -22,7 +22,7 @@ function Auditoria() {
       if (filtros.hasta) params.hasta = filtros.hasta;
 
       const response = await api.get("/registro_seguridad", { params });
-      setBitacora(response.data);
+      setBitacora(response.data.data);
     } catch (err) {
       console.error("Error al obtener bitácora:", err);
     }

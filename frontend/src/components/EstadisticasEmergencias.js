@@ -24,13 +24,16 @@ function ReportsPage() {
   useEffect(() => {
     fetchJefesDotacion();
     loadLogo();
-    fetchReports();
   }, []);
+
+  useEffect(() => {
+    fetchReports();
+  }, [filters]);
 
   const fetchJefesDotacion = async () => {
     try {
-      const response = await api.get("/personal_nombres");
-      setJefesDotacion(response.data);
+      const response = await api.get("/personal/nombres");
+      setJefesDotacion(response.data.data);
     } catch (err) {
       console.error("Error al cargar jefes:", err);
     }
@@ -58,15 +61,25 @@ function ReportsPage() {
           fecha_hasta: filters.endDate,
         },
       });
-      const data = response.data;
+
+       console.log("Datos recibidos de backend:", response.data);
+
+      const data = Array.isArray(response.data) ? response.data : [];
+
+      if (data.length === 0) {
+        setChartData({
+          labels: [],
+          datasets: [{ data: [], backgroundColor: [] }],
+        });
+        return;
+      }
 
       setChartData({
         labels: data.map((item) => item.tipo_asistencia),
         datasets: [
           {
-            label: "Intervenciones",
             data: data.map((item) => item.cantidad),
-            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
           },
         ],
       });
@@ -74,6 +87,10 @@ function ReportsPage() {
       console.error("Error al cargar reportes:", error);
     }
   };
+
+  useEffect(() => {
+  console.log("Estado chartData actualizado:", chartData);
+}, [chartData]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;

@@ -15,14 +15,14 @@ function OtrasCuentas() {
   useEffect(() => {
     api
       .get("/usuarios")
-      .then((res) => setUsuarios(res.data))
+      .then((res) => setUsuarios(res.data.data))
       .catch((error) => console.error("Error cargando usuarios:", error));
   }, []);
 
   useEffect(() => {
     api
       .get("/permisos")
-      .then((res) => setPermisos(res.data))
+      .then((res) => setPermisos(res.data.data))
       .catch((error) => console.error("Error cargando permisos:", error));
   }, []);
 
@@ -65,7 +65,7 @@ function OtrasCuentas() {
 
         api
           .get("/usuarios")
-          .then((res) => setUsuarios(res.data))
+          .then((res) => setUsuarios(res.data.data))
           .catch((error) => console.error("Error recargando usuarios:", error));
       })
       .catch((error) => console.error("Error actualizando permiso:", error));
@@ -76,7 +76,6 @@ function OtrasCuentas() {
       <div className="configuracion-contenido">
         <h2>Otras Cuentas</h2>
 
-        {/* Usuario */}
         <div className="configuracion-filtros">
           <h3>Usuario</h3>
           <div className="usuario-row">
@@ -95,7 +94,6 @@ function OtrasCuentas() {
           </div>
         </div>
 
-        {/* Permisos */}
         <div className="configuracion-filtros">
           <h3>Permisos</h3>
           <div className="permisos-row">
@@ -121,7 +119,6 @@ function OtrasCuentas() {
           {mensajePermiso && <p className="mensaje-exito">{mensajePermiso}</p>}
         </div>
 
-        {/* Restablecer Contraseña */}
         <div className="configuracion-filtros">
           <h3>Reestablecer contraseña</h3>
           <p>

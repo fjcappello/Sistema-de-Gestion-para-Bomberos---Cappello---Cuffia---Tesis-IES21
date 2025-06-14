@@ -1,7 +1,7 @@
 const db = require('../DB/db.js');
 
 // Personal que más y menos asistió
-const obtenerRankingAsistencias = (req, res) => {
+const obtenerRankingAsistencias = async (req, res) => {
   let query = `
     SELECT id_personal, CONCAT(nombre, ' ', apellido) AS nombre_completo, COUNT(*) AS cantidad
     FROM movimientos_cuartel
@@ -14,14 +14,16 @@ const obtenerRankingAsistencias = (req, res) => {
     GROUP BY id_personal, nombre, apellido
     ORDER BY cantidad DESC
   `;
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error al obtener ranking' });
-    res.json(results);
-  });
+  try {
+    const [results] = await db.query(query);
+    res.json({ success: true, data: results });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Error al obtener ranking' });
+  }
 };
 
 // Personal con más y menos horas en el cuartel
-const obtenerRankingHoras = (req, res) => {
+const obtenerRankingHoras = async (req, res) => {
   let query = `
     SELECT id_personal, nombre, apellido, SUM(TIMESTAMPDIFF(MINUTE, ingreso, egreso)) / 60 AS horas_totales
     FROM (
@@ -43,14 +45,16 @@ const obtenerRankingHoras = (req, res) => {
     GROUP BY id_personal, nombre, apellido
     ORDER BY horas_totales DESC
   `;
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error al obtener horas' });
-    res.json(results);
-  });
+  try {
+    const [results] = await db.query(query);
+    res.json({ success: true, data: results });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Error al obtener horas' });
+  }
 };
 
 // Asistencia por día
-const obtenerAsistenciaPorDia = (req, res) => {
+const obtenerAsistenciaPorDia = async (req, res) => {
   let query = `
     SELECT DATE(timestamp) AS dia, COUNT(*) AS cantidad
     FROM movimientos_cuartel
@@ -63,14 +67,16 @@ const obtenerAsistenciaPorDia = (req, res) => {
     GROUP BY dia
     ORDER BY dia
   `;
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error al obtener por día' });
-    res.json(results);
-  });
+  try {
+    const [results] = await db.query(query);
+    res.json({ success: true, data: results });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Error al obtener por día' });
+  }
 };
 
 // Asistencia por mes
-const obtenerAsistenciaPorMes = (req, res) => {
+const obtenerAsistenciaPorMes = async (req, res) => {
   let query = `
     SELECT DATE_FORMAT(timestamp, '%Y-%m') AS mes, COUNT(*) AS cantidad
     FROM movimientos_cuartel
@@ -83,14 +89,16 @@ const obtenerAsistenciaPorMes = (req, res) => {
     GROUP BY mes
     ORDER BY mes
   `;
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error al obtener por mes' });
-    res.json(results);
-  });
+  try {
+    const [results] = await db.query(query);
+    res.json({ success: true, data: results });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Error al obtener por mes' });
+  }
 };
 
 // Asistencia por jerarquía
-const obtenerAsistenciaPorJerarquia = (req, res) => {
+const obtenerAsistenciaPorJerarquia = async (req, res) => {
   let query = `
     SELECT p.jerarquia, COUNT(*) AS cantidad
     FROM movimientos_cuartel m
@@ -104,10 +112,12 @@ const obtenerAsistenciaPorJerarquia = (req, res) => {
     GROUP BY p.jerarquia
     ORDER BY cantidad DESC
   `;
-  db.query(query, (err, results) => {
-    if (err) return res.status(500).json({ error: 'Error al obtener por jerarquía' });
-    res.json(results);
-  });
+  try {
+    const [results] = await db.query(query);
+    res.json({ success: true, data: results });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'Error al obtener por jerarquía' });
+  }
 };
 
 module.exports = {

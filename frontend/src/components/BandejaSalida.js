@@ -19,7 +19,7 @@ function BandejaSalida({ onClose }) {
     if (legajo) {
       api
         .get(`/mensajes/enviados/${legajo}`)
-        .then((res) => setMensajes(res.data))
+        .then((res) => setMensajes(res.data.data))
         .catch((err) =>
           console.error("Error al obtener mensajes enviados", err)
         );

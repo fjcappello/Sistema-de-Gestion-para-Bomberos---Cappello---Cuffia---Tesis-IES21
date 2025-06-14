@@ -47,32 +47,60 @@ function MovimientoMoviles() {
   const registrosPorPagina = 5;
 
   useEffect(() => {
-    cargarMovimientos();
-    cargarMoviles();
-    cargarPersonal();
+    // Cargar móviles y personal primero, luego cargar movimientos
+    const cargarTodo = async () => {
+      await cargarMoviles();
+      await cargarPersonal();
+      await cargarMovimientos();
+    };
+    cargarTodo();
   }, []);
 
   const cargarMoviles = async () => {
-    const response = await api.get("/moviles");
-    setMoviles(response.data.filter((m) => m.estado_id === 1));
+    try {
+      const response = await api.get("/moviles");
+      setMoviles(response.data.data.filter((m) => m.estado_id === 1));
+    } catch (err) {
+      alert("Error al cargar móviles");
+      setMoviles([]);
+    }
   };
 
   const cargarPersonal = async () => {
-    const response = await api.get("/personal");
-    setPersonal(response.data);
+    try {
+      const response = await api.get("/personal");
+      setPersonal(response.data.data);
+    } catch (err) {
+      alert("Error al cargar personal");
+      setPersonal([]);
+    }
   };
 
+  // Espera a que moviles esté cargado antes de mapear
   const cargarMovimientos = async () => {
-    const response = await api.get("/moviles_movimientos");
-    const movimientosConMovilId = response.data.map((mov) => {
-      const movil = moviles.find((m) => m.interno === mov.interno);
-      return {
-        ...mov,
-        movil_id: movil ? movil.id : null,
-        jefe_dotacion: mov.jefe_dotacion,
-      };
-    });
-    setMovimientos(movimientosConMovilId);
+    try {
+      const response = await api.get("/moviles_movimientos");
+      const movimientosRaw = response.data.data;
+      // Si moviles aún no está cargado, esperar a que esté disponible
+      let movilesActuales = moviles;
+      if (!movilesActuales || movilesActuales.length === 0) {
+        const movilesResp = await api.get("/moviles");
+        movilesActuales = movilesResp.data.data.filter((m) => m.estado_id === 1);
+        setMoviles(movilesActuales);
+      }
+      const movimientosConMovilId = movimientosRaw.map((mov) => {
+        const movil = movilesActuales.find((m) => m.interno === mov.interno);
+        return {
+          ...mov,
+          movil_id: movil ? movil.id : null,
+          jefe_dotacion: mov.jefe_dotacion,
+        };
+      });
+      setMovimientos(movimientosConMovilId);
+    } catch (err) {
+      alert("Error al cargar movimientos");
+      setMovimientos([]);
+    }
   };
 
   const handleFiltroChange = (e) => {
@@ -138,8 +166,12 @@ function MovimientoMoviles() {
     }
 
     try {
-      await api.post("/moviles_salida", { ...formSalida });
-      cargarMovimientos();
+      const response = await api.post("/moviles_salida", { ...formSalida });
+      if (response.data && response.data.error) {
+        alert(`Error al registrar salida: ${response.data.error}`);
+        return;
+      }
+      await cargarMovimientos();
       setMostrarModalSalida(false);
       setFormSalida({
         movil_id: "",
@@ -149,28 +181,45 @@ function MovimientoMoviles() {
         dotacion: [],
       });
       setErroresSalida({});
-      cargarMovimientos();
     } catch (err) {
-      alert("Error al registrar salida");
+      if (err.response && err.response.data && err.response.data.error) {
+        alert(`Error al registrar salida: ${err.response.data.error}`);
+      } else if (err.response) {
+        alert(
+          `Error al registrar salida: ${err.response.status} - ${
+            err.response.statusText || "Error desconocido"
+          }`
+        );
+      } else if (err.request) {
+        alert(
+          "Error al registrar salida: No se recibió respuesta del servidor."
+        );
+      } else {
+        alert(`Error desconocido al registrar salida: ${err.message}`);
+      }
     }
   };
 
   const registrarRetorno = async () => {
     try {
-      await api.put(
+      const response = await api.put(
         `/moviles_retorno/${movimientoSeleccionado.id}`,
         formRetorno
       );
-
-      cargarMovimientos();
+      if (response.data && response.data.error) {
+        alert(`Error al registrar retorno: ${response.data.error}`);
+        return;
+      }
+      await cargarMovimientos();
       setMostrarModalRetorno(false);
       setFormRetorno({ kilometraje_final: "", novedades: "" });
     } catch (err) {
-      console.error("Error real al registrar retorno:", err);
-      if (err.response) {
+      if (err.response && err.response.data && err.response.data.error) {
+        alert(`Error al registrar retorno: ${err.response.data.error}`);
+      } else if (err.response) {
         alert(
           `Error al registrar retorno: ${err.response.status} - ${
-            err.response.data?.error || err.response.statusText
+            err.response.statusText || "Error desconocido"
           }`
         );
       } else if (err.request) {
@@ -178,7 +227,7 @@ function MovimientoMoviles() {
           "Error al registrar retorno: No se recibió respuesta del servidor."
         );
       } else {
-        alert(`Error desconocido: ${err.message}`);
+        alert(`Error desconocido al registrar retorno: ${err.message}`);
       }
     }
   };

@@ -18,13 +18,15 @@ function BandejaEntrada() {
   const mensajesPorPagina = 5;
   const usuario = JSON.parse(localStorage.getItem("usuario"));
   const legajo = usuario?.legajo;
+  console.log("Legajo actual del usuario:", legajo);
 
   const fetchMensajes = () => {
     if (legajo) {
+      console.log("Realizando petición de mensajes para legajo:", legajo);
       api
         .get(`/mensajes/recibidos/${legajo}`)
         .then((res) => {
-          console.log("Mensajes recibidos:", res.data);
+          console.log("Respuesta API:", res.data);
           setMensajes(res.data);
         })
         .catch((err) => console.error("Error al obtener mensajes", err));
@@ -32,6 +34,7 @@ function BandejaEntrada() {
   };
 
   useEffect(() => {
+    console.log("useEffect ejecutado con legajo:", legajo);
     fetchMensajes();
   }, [legajo]);
 

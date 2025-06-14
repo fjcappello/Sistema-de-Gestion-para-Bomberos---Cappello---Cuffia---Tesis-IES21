@@ -1,8 +1,8 @@
-const db = require("../DB/db.js");
+const db = require("../DB/db");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 // Obtener todos los partes con filtros
-const obtenerPartes = (req, res) => {
+const obtenerPartes = async (req, res) => {
   const { jefeDotacion, tipoAsistencia, startDate, endDate, denunciante } =
     req.query;
 
@@ -52,18 +52,17 @@ const obtenerPartes = (req, res) => {
   query += ` AND p.activo = 1`;
   query += ` ORDER BY p.fecha DESC`;
 
-  db.query(query, params, (err, results) => {
-    if (err) {
-      console.error("Error al obtener datos:", err);
-      res.status(500).json({ error: "Error en el servidor" });
-    } else {
-      res.json(results);
-    }
-  });
+  try {
+    const [results] = await db.query(query, params);
+    res.status(200).json({ success: true, data: results });
+  } catch (err) {
+    console.error("Error al obtener datos:", err);
+    res.status(500).json({ success: false, error: "Error en el servidor" });
+  }
 };
 
 // Obtener parte por ID o número
-const obtenerPartePorId = (req, res) => {
+const obtenerPartePorId = async (req, res) => {
   const { id } = req.params;
   const query = `
     SELECT 
@@ -81,16 +80,17 @@ const obtenerPartePorId = (req, res) => {
     LEFT JOIN personal per ON p.jefe_dotacion = per.legajo
     WHERE p.id = ? OR p.numero_parte = ?
   `;
-  db.query(query, [id, id], (err, results) => {
-    if (err) {
-      console.error("Error al obtener el parte:", err);
-      res.status(500).json({ error: "Error en el servidor" });
-    } else if (results.length === 0) {
-      res.status(404).json(null);
+  try {
+    const [results] = await db.query(query, [id, id]);
+    if (results.length === 0) {
+      res.status(404).json({ success: false, error: "No encontrado" });
     } else {
-      res.json(results[0]);
+      res.status(200).json({ success: true, data: results[0] });
     }
-  });
+  } catch (err) {
+    console.error("Error al obtener el parte:", err);
+    res.status(500).json({ success: false, error: "Error en el servidor" });
+  }
 };
 
 // Crear nuevo parte
@@ -107,7 +107,7 @@ const crearParte = async (req, res) => {
   } = req.body;
 
   try {
-    const [rows] = await db.promise().query(`
+    const [rows] = await db.query(`
       SELECT IFNULL(MAX(CAST(SUBSTRING_INDEX(numero_parte, '/', 1) AS UNSIGNED)), 0) + 1 AS next_parte 
       FROM partes
       WHERE numero_parte LIKE CONCAT('%/', YEAR(CURDATE()))
@@ -116,7 +116,7 @@ const crearParte = async (req, res) => {
     const nextParte = rows[0]?.next_parte || 1;
     const numeroParte = `${nextParte}/${new Date().getFullYear()}`;
 
-    const [result] = await db.promise().query(
+    const [result] = await db.query(
       `INSERT INTO partes (nombre_denunciante, apellido_denunciante, documento_denunciante, direccion, tipo_asistencia, jefe_dotacion, parte_escrito, fecha, numero_parte)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
@@ -137,61 +137,58 @@ const crearParte = async (req, res) => {
       `Alta de parte de emergencia: se registró el parte ${numeroParte} denunciado por ${nombre_denunciante} ${apellido_denunciante}`
     );
 
-    res.json({
-      success: "Reporte agregado correctamente",
-      reportId: result.insertId,
+    res.status(201).json({
+      success: true,
+      message: "Creado correctamente",
+      id: result.insertId,
       numeroParte,
     });
   } catch (error) {
     console.error("Error al agregar el reporte:", error);
-    res
-      .status(500)
-      .json({ error: "Error en el servidor al agregar el reporte" });
+    res.status(500).json({ success: false, error: "Error en el servidor" });
   }
 };
 
 // Eliminar parte por ID
-const eliminarParte = (req, res) => {
+const eliminarParte = async (req, res) => {
   const { id } = req.params;
   const query = "UPDATE partes SET activo = 0 WHERE id = ?";
 
-  db.query(query, [id], async (err, result) => {
-    if (err) {
-      console.error("Error al eliminar el reporte:", err);
-      res
-        .status(500)
-        .json({ error: "Error en el servidor al eliminar el reporte" });
-    } else if (result.affectedRows === 0) {
-      res.status(404).json({ error: "Reporte no encontrado" });
+  try {
+    const [result] = await db.query(query, [id]);
+    if (result.affectedRows === 0) {
+      res.status(404).json({ success: false, error: "No encontrado" });
     } else {
       registrarLog(
         0,
         `Eliminación de parte de emergencia: se eliminó el parte con ID ${id}`
       );
-      res.json({ success: "Reporte eliminado correctamente" });
+      res.status(200).json({ success: true, message: "Reporte eliminado correctamente" });
     }
-  });
+  } catch (err) {
+    console.error("Error al eliminar el reporte:", err);
+    res.status(500).json({ success: false, error: "Error en el servidor" });
+  }
 };
 
 // Tipos de asistencia únicos
-const obtenerTiposAsistencia = (req, res) => {
+const obtenerTiposAsistencia = async (req, res) => {
   const query = `
     SELECT DISTINCT tipo_asistencia FROM partes ORDER BY tipo_asistencia ASC
   `;
 
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error al obtener tipos de asistencia:", err);
-      res.status(500).json({ error: "Error en el servidor" });
-    } else {
-      const tiposAsistencia = results.map((row) => row.tipo_asistencia);
-      res.json(tiposAsistencia);
-    }
-  });
+  try {
+    const [results] = await db.query(query);
+    const tiposAsistencia = results.map((row) => row.tipo_asistencia);
+    res.status(200).json({ success: true, data: tiposAsistencia });
+  } catch (err) {
+    console.error("Error al obtener tipos de asistencia:", err);
+    res.status(500).json({ success: false, error: "Error en el servidor" });
+  }
 };
 
 // Reporte resumen agrupado
-const obtenerReporteResumen = (req, res) => {
+const obtenerReporteResumen = async (req, res) => {
   const { jefeDotacion, tipoAsistencia, startDate, endDate } = req.query;
 
   let query = `SELECT tipo_asistencia, COUNT(*) AS cantidad FROM partes WHERE 1=1`;
@@ -216,18 +213,17 @@ const obtenerReporteResumen = (req, res) => {
 
   query += ` GROUP BY tipo_asistencia`;
 
-  db.query(query, params, (err, results) => {
-    if (err) {
-      console.error("Error al obtener reportes:", err);
-      res.status(500).json({ error: "Error en el servidor" });
-    } else {
-      res.json(results);
-    }
-  });
+  try {
+    const [results] = await db.query(query, params);
+    res.status(200).json({ success: true, data: results });
+  } catch (err) {
+    console.error("Error al obtener reportes:", err);
+    res.status(500).json({ success: false, error: "Error en el servidor" });
+  }
 };
 
 // Crear bitácora asociada a una emergencia
-const crearBitacora = (req, res) => {
+const crearBitacora = async (req, res) => {
   const { id_personal, reporte, parte_id } = req.body;
   if (!id_personal || !reporte || !parte_id) {
     return res
@@ -236,37 +232,37 @@ const crearBitacora = (req, res) => {
   }
   const insertQuery =
     "INSERT INTO bitacora (id_personal, reporte) VALUES (?, ?)";
-  db.query(insertQuery, [id_personal, reporte], (err, result) => {
-    if (err) {
-      console.error("Error al crear bitácora:", err);
-      return res
-        .status(500)
-        .json({ success: false, error: "Error al crear bitácora" });
-    }
+  try {
+    const [result] = await db.query(insertQuery, [id_personal, reporte]);
     const id_bitacora_nuevo = result.insertId;
     const updateQuery =
       "UPDATE partes SET id_bitacora = ?, id_estado = 0 WHERE id = ?";
-    db.query(updateQuery, [id_bitacora_nuevo, parte_id], (err, result) => {
-      if (err) {
-        console.error("Error al actualizar parte:", err);
-        return res
-          .status(500)
-          .json({ success: false, error: "Error al actualizar parte" });
-      }
+    try {
+      await db.query(updateQuery, [id_bitacora_nuevo, parte_id]);
       if (id_personal) {
         registrarLog(id_personal, `Creó una bitácora asociada al parte ID ${parte_id}`);
       }
-      res.json({
+      res.status(201).json({
         success: true,
         message: "Bitácora creada y parte actualizado",
         id_bitacora: id_bitacora_nuevo,
       });
-    });
-  });
+    } catch (err) {
+      console.error("Error al actualizar parte:", err);
+      res
+        .status(500)
+        .json({ success: false, error: "Error en el servidor" });
+    }
+  } catch (err) {
+    console.error("Error al crear bitácora:", err);
+    res
+      .status(500)
+      .json({ success: false, error: "Error en el servidor" });
+  }
 };
 
 // Obtener bitácora asociada a una emergencia
-const obtenerBitacora = (req, res) => {
+const obtenerBitacora = async (req, res) => {
   const { parte_id } = req.params;
   const query = `
     SELECT b.id_bitacora, b.reporte
@@ -274,19 +270,19 @@ const obtenerBitacora = (req, res) => {
     JOIN partes p ON b.id_bitacora = p.id_bitacora
     WHERE p.id = ?
   `;
-  db.query(query, [parte_id], (error, results) => {
-    if (error) {
-      console.error("Error al obtener la bitácora:", error);
-      return res.status(500).json({
-        success: false,
-        error: "Error al obtener los registros de bitácora",
-      });
-    }
-    res.json({
+  try {
+    const [results] = await db.query(query, [parte_id]);
+    res.status(200).json({
       success: true,
       data: results,
     });
-  });
+  } catch (error) {
+    console.error("Error al obtener la bitácora:", error);
+    res.status(500).json({
+      success: false,
+      error: "Error en el servidor",
+    });
+  }
 };
 
 module.exports = {

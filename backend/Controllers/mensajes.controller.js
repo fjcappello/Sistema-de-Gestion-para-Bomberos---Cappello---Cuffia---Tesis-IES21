@@ -2,7 +2,7 @@ const db = require("../DB/db.js");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 // Obtener mensajes recibidos
-const obtenerMensajesRecibidos = (req, res) => {
+const obtenerMensajesRecibidos = async (req, res) => {
   const legajo = req.params.legajo;
   const query = `
     SELECT m.id, CONCAT(p.nombre, ' ', p.apellido) AS remitente, m.asunto, m.cuerpo, m.fecha_envio, md.leido
@@ -12,18 +12,17 @@ const obtenerMensajesRecibidos = (req, res) => {
     WHERE md.destinatario_id = ?
     ORDER BY m.fecha_envio DESC
   `;
-  db.query(query, [legajo], (err, results) => {
-    if (err) {
-      console.error("Error al obtener mensajes recibidos:", err);
-      res.status(500).json({ error: "Error en el servidor" });
-    } else {
-      res.json(results);
-    }
-  });
+  try {
+    const [results] = await db.query(query, [legajo]);
+    res.status(200).json({ success: true, data: results });
+  } catch (err) {
+    console.error("Error al obtener mensajes recibidos:", err);
+    res.status(500).json({ success: false, error: "Error en el servidor" });
+  }
 };
 
 // Obtener mensajes enviados
-const obtenerMensajesEnviados = (req, res) => {
+const obtenerMensajesEnviados = async (req, res) => {
   const legajo = req.params.legajo;
   const query = `
     SELECT m.id, CONCAT(p.nombre, ' ', p.apellido) AS destinatarios, m.asunto, m.cuerpo, m.fecha_envio
@@ -34,55 +33,42 @@ const obtenerMensajesEnviados = (req, res) => {
     GROUP BY m.id
     ORDER BY m.fecha_envio DESC
   `;
-  db.query(query, [legajo], (err, results) => {
-    if (err) {
-      console.error("Error al obtener mensajes enviados:", err);
-      res.status(500).json({ error: "Error en el servidor" });
-    } else {
-      res.json(results);
-    }
-  });
+  try {
+    const [results] = await db.query(query, [legajo]);
+    res.status(200).json({ success: true, data: results });
+  } catch (err) {
+    console.error("Error al obtener mensajes enviados:", err);
+    res.status(500).json({ success: false, error: "Error en el servidor" });
+  }
 };
 
 // Enviar mensaje
-const enviarMensaje = (req, res) => {
+const enviarMensaje = async (req, res) => {
   const { remitente_id, destinatarios, asunto, cuerpo } = req.body;
 
   const query = `INSERT INTO mensajes (remitente_id, asunto, cuerpo) VALUES (?, ?, ?)`;
 
-  db.query(query, [remitente_id, asunto, cuerpo], async (err, result) => {
-    if (err) {
-      console.error("Error al enviar mensaje:", err);
-      res.status(500).json({ error: "Error en el servidor" });
-    } else {
-      const mensajeId = result.insertId;
+  try {
+    const [result] = await db.query(query, [remitente_id, asunto, cuerpo]);
+    const mensajeId = result.insertId;
 
-      const destinatarioQueries = destinatarios.map((destinatario_id) => {
-        return new Promise((resolve, reject) => {
-          const insertQuery = `
-            INSERT INTO mensaje_destinatarios (mensaje_id, destinatario_id)
-            VALUES (?, ?)
-          `;
-          db.query(insertQuery, [mensajeId, destinatario_id], (err) => {
-            if (err) reject(err);
-            else resolve();
-          });
-        });
-      });
-
-      try {
-        await Promise.all(destinatarioQueries);
-        registrarLog(
-          remitente_id,
-          `Envío de mensaje: asunto "${asunto}" enviado a ${destinatarios.length} destinatario(s)`
-        );
-        res.json({ success: true, message: "Mensaje enviado" });
-      } catch (err) {
-        console.error("Error al insertar destinatarios:", err);
-        res.status(500).json({ error: "Error en el servidor" });
-      }
+    for (const destinatario_id of destinatarios) {
+      const insertQuery = `
+        INSERT INTO mensaje_destinatarios (mensaje_id, destinatario_id)
+        VALUES (?, ?)
+      `;
+      await db.query(insertQuery, [mensajeId, destinatario_id]);
     }
-  });
+
+    registrarLog(
+      remitente_id,
+      `Envío de mensaje: asunto "${asunto}" enviado a ${destinatarios.length} destinatario(s)`
+    );
+    res.status(200).json({ success: true, message: "Mensaje enviado" });
+  } catch (err) {
+    console.error("Error al enviar mensaje:", err);
+    res.status(500).json({ success: false, error: "Error en el servidor" });
+  }
 };
 
 // Marcar como leído
@@ -92,18 +78,17 @@ const marcarMensajeLeido = async (req, res) => {
 
   const query = `UPDATE mensaje_destinatarios SET leido = 1 WHERE mensaje_id = ? AND destinatario_id = ?`;
 
-  db.query(query, [id, destinatario_id], async (err) => {
-    if (err) {
-      console.error("Error al marcar mensaje como leído:", err);
-      res.status(500).json({ error: "Error en el servidor" });
-    } else {
-      registrarLog(
-        destinatario_id,
-        `Lectura de mensaje: mensaje ID ${id} marcado como leído`
-      );
-      res.json({ success: true });
-    }
-  });
+  try {
+    await db.query(query, [id, destinatario_id]);
+    registrarLog(
+      destinatario_id,
+      `Lectura de mensaje: mensaje ID ${id} marcado como leído`
+    );
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.error("Error al marcar mensaje como leído:", err);
+    res.status(500).json({ success: false, error: "Error en el servidor" });
+  }
 };
 
 module.exports = {

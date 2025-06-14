@@ -12,8 +12,8 @@ function EnviarMensaje() {
 
   useEffect(() => {
     api
-      .get("/personal-nombres")
-      .then((res) => setUsuarios(res.data))
+      .get("/personal/nombres")
+      .then((res) => setUsuarios(res.data.data))
       .catch((err) => console.error("Error al obtener usuarios", err));
 
     const usuarioGuardado = localStorage.getItem("usuario");
@@ -29,13 +29,19 @@ function EnviarMensaje() {
 
   const handleAddDestinatario = (e) => {
     if (e.key === "Enter" && e.target.value) {
-      setDestinatarios([...destinatarios, e.target.value]);
+      const usuarioSeleccionado = usuarios.find(
+        (usuario) =>
+          usuario.nombre_completo.toLowerCase() === e.target.value.toLowerCase()
+      );
+      if (usuarioSeleccionado && !destinatarios.some(d => d.id === usuarioSeleccionado.id)) {
+        setDestinatarios([...destinatarios, usuarioSeleccionado]);
+      }
       e.target.value = "";
     }
   };
 
-  const handleRemoveDestinatario = (destinatario) => {
-    setDestinatarios(destinatarios.filter((d) => d !== destinatario));
+  const handleRemoveDestinatario = (id) => {
+    setDestinatarios(destinatarios.filter((d) => d.id !== id));
   };
 
   const handleEnviar = async (e) => {
@@ -43,7 +49,7 @@ function EnviarMensaje() {
     try {
       const finalFormData = {
         ...formData,
-        destinatarios,
+        destinatarios: destinatarios.map(d => d.id),
       };
       await api.post("/mensajes", finalFormData);
       alert("Mensaje enviado");
@@ -66,14 +72,20 @@ function EnviarMensaje() {
           type="text"
           placeholder="Agregar destinatario y presionar Enter"
           onKeyDown={handleAddDestinatario}
+          list="usuarios-list"
         />
+        <datalist id="usuarios-list">
+          {usuarios.map((usuario) => (
+            <option key={usuario.id} value={usuario.nombre_completo} />
+          ))}
+        </datalist>
         <div>
-          {destinatarios.map((destinatario, index) => (
-            <span key={index}>
-              {destinatario}{" "}
+          {destinatarios.map((destinatario) => (
+            <span key={destinatario.id}>
+              {destinatario.nombre_completo}{" "}
               <button
                 type="button"
-                onClick={() => handleRemoveDestinatario(destinatario)}
+                onClick={() => handleRemoveDestinatario(destinatario.id)}
               >
                 x
               </button>

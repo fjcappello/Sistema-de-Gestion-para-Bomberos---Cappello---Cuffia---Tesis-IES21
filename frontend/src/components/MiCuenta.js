@@ -11,7 +11,6 @@ function MiCuenta() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  // Función para cambiar la contraseña
   const cambiarPassword = async () => {
     if (nueva !== confirmar) {
       setError("Las contraseñas no coinciden.");
@@ -40,7 +39,6 @@ function MiCuenta() {
     }
   };
 
-  // Toggle para mostrar/ocultar la contraseña
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };

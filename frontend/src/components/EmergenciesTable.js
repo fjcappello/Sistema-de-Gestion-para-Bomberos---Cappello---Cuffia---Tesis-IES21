@@ -73,8 +73,8 @@ function EmergenciesTable() {
   const fetchEmergencies = async () => {
     try {
       const response = await api.get("/partesemergencias");
-      setEmergencies(response.data);
-      setFilteredEmergencies(response.data);
+      setEmergencies(response.data.data);
+      setFilteredEmergencies(response.data.data);
     } catch (error) {
       console.error("Error al obtener emergencias:", error);
     }
@@ -82,8 +82,8 @@ function EmergenciesTable() {
 
   const fetchJefesDotacion = async () => {
     try {
-      const response = await api.get("/personal_nombres");
-      setJefesDotacion(response.data);
+      const response = await api.get("/personal/nombres");
+      setJefesDotacion(response.data.data);
     } catch (error) {
       console.error("Error al obtener jefes de dotación:", error);
     }
@@ -92,7 +92,7 @@ function EmergenciesTable() {
   const fetchTipoAsistencia = async () => {
     try {
       const response = await api.get("/tipos_asistencia");
-      setTipoAsistenciaOptions(response.data);
+      setTipoAsistenciaOptions(response.data.data);
     } catch (error) {
       console.error("Error al obtener tipos de asistencia:", error);
     }

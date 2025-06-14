@@ -1,8 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../DB/db.js");
+const db = require("../DB/db");
 
-router.get("/estadisticas", (req, res) => {
+router.get("/estadisticas", async (req, res) => {
   const dias = parseInt(req.query.dias) || 30;
 
   const query = `
@@ -12,19 +12,17 @@ router.get("/estadisticas", (req, res) => {
     GROUP BY tipo_asistencia
   `;
 
-  db.query(query, [dias], (err, results) => {
-    if (err) {
-      console.error("Error al obtener estadísticas:", err);
-      return res.status(500).json({ error: "Error al obtener estadísticas" });
-    }
-
+  try {
+    const [results] = await db.query(query, [dias]);
     res.json(results);
-  });
+  } catch (err) {
+    console.error("Error al obtener estadísticas:", err);
+    res.status(500).json({ error: "Error al obtener estadísticas" });
+  }
 });
 
-router.get("/estadisticas_filtros", (req, res) => {
-  const { fecha_desde, fecha_hasta, tipo_asistencia, jefe_dotacion } =
-    req.query;
+router.get("/estadisticas_filtros", async (req, res) => {
+  const { fecha_desde, fecha_hasta, tipo_asistencia, jefe_dotacion } = req.query;
 
   let condiciones = [];
   let valores = [];
@@ -59,16 +57,13 @@ router.get("/estadisticas_filtros", (req, res) => {
     GROUP BY tipo_asistencia
   `;
 
-  db.query(query, valores, (err, results) => {
-    if (err) {
-      console.error("Error al obtener estadísticas filtradas:", err);
-      return res
-        .status(500)
-        .json({ error: "Error al obtener estadísticas filtradas" });
-    }
-
+  try {
+    const [results] = await db.query(query, valores);
     res.json(results);
-  });
+  } catch (err) {
+    console.error("Error al obtener estadísticas filtradas:", err);
+    res.status(500).json({ error: "Error al obtener estadísticas filtradas" });
+  }
 });
 
 module.exports = router;

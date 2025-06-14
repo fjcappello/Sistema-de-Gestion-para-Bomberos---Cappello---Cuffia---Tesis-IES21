@@ -1,8 +1,7 @@
 const db = require("../DB/db.js");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
-// Obtener todos los registros de personal
-const obtenerPersonal = (req, res) => {
+const obtenerPersonal = async (req, res) => {
   const query = `
     SELECT 
       p.legajo,
@@ -19,37 +18,31 @@ const obtenerPersonal = (req, res) => {
     ORDER BY p.legajo ASC
   `;
 
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error al obtener datos de personal:", err);
-      res
-        .status(500)
-        .json({ error: "Error en el servidor al obtener datos de personal" });
-    } else {
-      res.json(results);
-    }
-  });
+  try {
+    const [results] = await db.query(query);
+    res.status(200).json({ success: true, data: results });
+  } catch (err) {
+    console.error("Error al obtener datos de personal:", err);
+    res.status(500).json({ success: false, error: "Error interno del servidor" });
+  }
 };
 
-// Obtener nombres de personal
-const obtenerNombres = (req, res) => {
+const obtenerNombres = async (req, res) => {
   const query = `
     SELECT legajo AS id, nombre, apellido, CONCAT(nombre, " ", apellido) AS nombre_completo
     FROM personal
     ORDER BY nombre ASC
   `;
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error al obtener nombres de personal:", err);
-      res.status(500).json({ error: "Error en el servidor" });
-    } else {
-      res.json(results);
-    }
-  });
+  try {
+    const [results] = await db.query(query);
+    res.status(200).json({ success: true, data: results });
+  } catch (err) {
+    console.error("Error al obtener nombres de personal:", err);
+    res.status(500).json({ success: false, error: "Error interno del servidor" });
+  }
 };
 
-// Insertar nuevo personal
-const crearPersonal = (req, res) => {
+const crearPersonal = async (req, res) => {
   const {
     legajo,
     nombre,
@@ -67,50 +60,37 @@ const crearPersonal = (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  db.query(
-    personalQuery,
-    [
+  try {
+    await db.query(
+      personalQuery,
+      [
+        legajo,
+        nombre,
+        apellido,
+        documento,
+        nacimiento,
+        fecha_ingreso,
+        jerarquia_id,
+        situacion_id,
+        fecha_revision_medica,
+      ]
+    );
+
+    const loginQuery = `INSERT INTO login (legajo, contraseña) VALUES (?, ?)`;
+    await db.query(loginQuery, [legajo, documento]);
+
+    registrarLog(
       legajo,
-      nombre,
-      apellido,
-      documento,
-      nacimiento,
-      fecha_ingreso,
-      jerarquia_id,
-      situacion_id,
-      fecha_revision_medica,
-    ],
-    (err) => {
-      if (err) {
-        console.error("Error al agregar personal:", err);
-        res
-          .status(500)
-          .json({ error: "Error en el servidor al agregar personal" });
-        return;
-      }
-
-      const loginQuery = `INSERT INTO login (legajo, contraseña) VALUES (?, ?)`;
-      db.query(loginQuery, [legajo, documento], async (err) => {
-        if (err) {
-          console.error("Error al crear login:", err);
-          res
-            .status(500)
-            .json({ error: "Error en el servidor al crear login" });
-          return;
-        }
-
-        registrarLog(
-          legajo,
-          `Alta de personal: se dio de alta a ${nombre} ${apellido} (Legajo ${legajo})`
-        );
-        res.json({ success: "Personal y login creados correctamente" });
-      });
-    }
-  );
+      `Alta de personal: se dio de alta a ${nombre} ${apellido} (Legajo ${legajo})`
+    );
+    res.status(201).json({ success: true, message: "Creado correctamente" });
+  } catch (err) {
+    console.error("Error al agregar personal o crear login:", err);
+    res.status(500).json({ success: false, error: "Error interno del servidor" });
+  }
 };
 
-// Actualizar datos de personal
-const actualizarPersonal = (req, res) => {
+const actualizarPersonal = async (req, res) => {
   const { legajo } = req.params;
   const { jerarquia_id, situacion_id, fecha_revision_medica } = req.body;
 
@@ -133,78 +113,65 @@ const actualizarPersonal = (req, res) => {
   if (fields.length === 0) {
     return res
       .status(400)
-      .json({ error: "No se proporcionaron campos para actualizar" });
+      .json({ success: false, error: "No se proporcionaron campos para actualizar" });
   }
 
   values.push(legajo);
   const query = `UPDATE personal SET ${fields.join(", ")} WHERE legajo = ?`;
 
-  db.query(query, values, async (err, result) => {
-    if (err) {
-      console.error("Error al actualizar personal:", err);
-      res
-        .status(500)
-        .json({ error: "Error en el servidor al actualizar personal" });
-    } else if (result.affectedRows === 0) {
-      res.status(404).json({ error: "Personal no encontrado" });
-    } else {
-      registrarLog(
-        legajo,
-        `Modificación de personal: se actualizaron datos del legajo ${legajo}`
-      );
-      res.json({ success: true });
+  try {
+    const [result] = await db.query(query, values);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, error: "No encontrado" });
     }
-  });
+    registrarLog(
+      legajo,
+      `Modificación de personal: se actualizaron datos del legajo ${legajo}`
+    );
+    res.status(200).json({ success: true });
+  } catch (err) {
+    console.error("Error al actualizar personal:", err);
+    res.status(500).json({ success: false, error: "Error interno del servidor" });
+  }
 };
 
-// Eliminar personal
-const eliminarPersonal = (req, res) => {
+const eliminarPersonal = async (req, res) => {
   const { legajo } = req.params;
   const query = `DELETE FROM personal WHERE legajo = ?`;
 
-  db.query(query, [legajo], async (err, result) => {
-    if (err) {
-      console.error("Error al eliminar personal:", err);
-      res
-        .status(500)
-        .json({ error: "Error en el servidor al eliminar personal" });
-    } else if (result.affectedRows === 0) {
-      res.status(404).json({ error: "Personal no encontrado" });
-    } else {
-      registrarLog(legajo, `Baja de personal: se eliminó el legajo ${legajo}`);
-      res.json({ success: "Personal eliminado correctamente" });
+  try {
+    const [result] = await db.query(query, [legajo]);
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, error: "No encontrado" });
     }
-  });
+    registrarLog(legajo, `Baja de personal: se eliminó el legajo ${legajo}`);
+    res.status(200).json({ success: true, message: "Eliminado correctamente" });
+  } catch (err) {
+    console.error("Error al eliminar personal:", err);
+    res.status(500).json({ success: false, error: "Error interno del servidor" });
+  }
 };
 
-// Jerarquías
-const obtenerJerarquias = (req, res) => {
+const obtenerJerarquias = async (req, res) => {
   const query = `SELECT id, jerarquia FROM jerarquias ORDER BY jerarquia ASC`;
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error al obtener jerarquías:", err);
-      res
-        .status(500)
-        .json({ error: "Error en el servidor al obtener jerarquías" });
-    } else {
-      res.json(results);
-    }
-  });
+  try {
+    const [results] = await db.query(query);
+    res.status(200).json({ success: true, data: results });
+  } catch (err) {
+    console.error("Error al obtener jerarquías:", err);
+    res.status(500).json({ success: false, error: "Error interno del servidor" });
+  }
 };
 
-// Situaciones
-const obtenerSituaciones = (req, res) => {
+const obtenerSituaciones = async (req, res) => {
   const query = "SELECT id, nombre FROM situaciones ORDER BY nombre ASC";
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error al obtener situaciones:", err);
-      res
-        .status(500)
-        .json({ error: "Error en el servidor al obtener situaciones" });
-    } else {
-      res.json(results);
-    }
-  });
+  try {
+    const [results] = await db.query(query);
+    res.status(200).json({ success: true, data: results });
+  } catch (err) {
+    console.error("Error al obtener situaciones:", err);
+    res.status(500).json({ success: false, error: "Error interno del servidor" });
+  }
 };
 
 module.exports = {
