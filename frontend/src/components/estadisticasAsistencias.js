@@ -37,6 +37,10 @@ function EstadisticaAsistencia() {
   const [fechaDesde, setFechaDesde] = useState('');
   const [fechaHasta, setFechaHasta] = useState('');
   const [nombrePersonal, setNombrePersonal] = useState('');
+  const [legajoFilter, setLegajoFilter] = useState(''); // Nuevo estado para filtro por legajo
+  const [rankingAsistenciasMenos, setRankingAsistenciasMenos] = useState([]); // Para ranking "menos"
+  const [rankingHorasMenos, setRankingHorasMenos] = useState([]); // Para ranking "menos"
+  const [asistenciaPorJerarquia, setAsistenciaPorJerarquia] = useState([]); // Nuevo estado
   const [listaPersonal, setListaPersonal] = useState([]);
   const { usuario } = useUsuario();
 
@@ -45,17 +49,31 @@ function EstadisticaAsistencia() {
     if (fechaDesde) params.desde = fechaDesde;
     if (fechaHasta) params.hasta = fechaHasta;
     if (nombrePersonal) params.nombre = nombrePersonal;
-    params.solo_personal = true;
+    if (legajoFilter) params.legajo = legajoFilter; // Añadir legajo a los parámetros
+
+    // params.solo_personal = true; // Esta línea se elimina según cambios en backend
 
     console.log('Solicitando estadísticas con filtros:', params);
 
-    api.get('/ranking-asistencias', { params })
+    // Top 5 Asistencias
+    api.get('/ranking-asistencias', { params: { ...params, orden: 'desc', limite: 5 } })
       .then(res => setRanking(res.data))
-      .catch(err => console.error('Error en /ranking-asistencias', err));
+      .catch(err => console.error('Error en /ranking-asistencias (Top 5)', err));
 
-    api.get('/ranking-horas', { params })
+    // Bottom 5 Asistencias
+    api.get('/ranking-asistencias', { params: { ...params, orden: 'asc', limite: 5 } })
+      .then(res => setRankingAsistenciasMenos(res.data))
+      .catch(err => console.error('Error en /ranking-asistencias (Bottom 5)', err));
+
+    // Top 5 Horas
+    api.get('/ranking-horas', { params: { ...params, orden: 'desc', limite: 5 } })
       .then(res => setHoras(res.data))
-      .catch(err => console.error('Error en /ranking-horas', err));
+      .catch(err => console.error('Error en /ranking-horas (Top 5)', err));
+
+    // Bottom 5 Horas
+    api.get('/ranking-horas', { params: { ...params, orden: 'asc', limite: 5 } })
+      .then(res => setRankingHorasMenos(res.data))
+      .catch(err => console.error('Error en /ranking-horas (Bottom 5)', err));
 
     api.get('/asistencia-dia', { params })
       .then(res => setPorDia(res.data))
@@ -64,6 +82,11 @@ function EstadisticaAsistencia() {
     api.get('/asistencia-mes', { params })
       .then(res => setPorMes(res.data))
       .catch(err => console.error('Error en /asistencia-mes', err));
+
+    // Nueva llamada para Asistencia por Jerarquía
+    api.get('/asistencia-jerarquia', { params })
+      .then(res => setAsistenciaPorJerarquia(res.data))
+      .catch(err => console.error('Error en /asistencia-jerarquia', err));
   };
 
   useEffect(() => {
@@ -115,6 +138,10 @@ function EstadisticaAsistencia() {
           y += 5;
           pdf.text(`Personal: ${nombrePersonal}`, margin + 5, y);
         }
+        if (legajoFilter) { // Asegurar que legajoFilter se incluye en el PDF
+          y += 5;
+          pdf.text(`Legajo: ${legajoFilter}`, margin + 5, y);
+        }
         y += 5;
       }
 
@@ -148,11 +175,45 @@ function EstadisticaAsistencia() {
           y = margin;
         }
         const horasValor = Number(item.horas_totales);
-        pdf.text(`${item.nombre}: ${isNaN(horasValor) ? '0.00' : horasValor.toFixed(2)} horas`, margin + 5, y);
+        // Usa nombre_completo si está disponible, sino usa nombre (como fallback por si acaso)
+        const nombreParaHoras = item.nombre_completo || item.nombre;
+        pdf.text(`${nombreParaHoras}: ${isNaN(horasValor) ? '0.00' : horasValor.toFixed(2)} horas`, margin + 5, y);
+        y += 6;
+      });
+
+      // PDF - Bottom 5 Asistencias
+      y += 10;
+      if (y > 260) { pdf.addPage(); y = margin; } // Control de página antes de sección
+      pdf.setFontSize(14);
+      pdf.text('Bottom 5 Personal con Menos Asistencias', margin, y);
+      y += 8;
+      pdf.setFontSize(10);
+      pdf.text('Lista de personal con menos asistencias.', margin, y);
+      y += 8;
+      rankingAsistenciasMenos.forEach(item => {
+        if (y > 270) { pdf.addPage(); y = margin; }
+        pdf.text(`${item.nombre_completo}: ${item.cantidad} asistencias`, margin + 5, y);
+        y += 6;
+      });
+
+      // PDF - Bottom 5 Horas
+      y += 10;
+      if (y > 260) { pdf.addPage(); y = margin; } // Control de página antes de sección
+      pdf.setFontSize(14);
+      pdf.text('Bottom 5 Personal con Menos Horas en el Cuartel', margin, y);
+      y += 8;
+      pdf.setFontSize(10);
+      pdf.text('Lista de personal con menos horas totales trabajadas.', margin, y);
+      y += 8;
+      rankingHorasMenos.forEach(item => {
+        if (y > 270) { pdf.addPage(); y = margin; }
+        const horasValor = Number(item.horas_totales);
+        pdf.text(`${item.nombre_completo}: ${isNaN(horasValor) ? '0.00' : horasValor.toFixed(2)} horas`, margin + 5, y);
         y += 6;
       });
 
       y += 10;
+      if (y > 260) { pdf.addPage(); y = margin; } // Control de página antes de sección
       pdf.setFontSize(14);
       pdf.text('Asistencia por Día', margin, y);
       y += 8;
@@ -186,6 +247,33 @@ function EstadisticaAsistencia() {
         y += 6;
       });
 
+      // PDF - Asistencia por Jerarquía
+      if (y > 250) { // Check for page break before new section
+          pdf.addPage();
+          y = margin;
+      }
+      y += 10;
+      pdf.setFontSize(14);
+      pdf.text('Asistencia por Jerarquía', margin, y);
+      y += 8;
+      pdf.setFontSize(10);
+      pdf.text('Distribución de asistencias según la jerarquía del personal.', margin, y);
+      y += 8;
+
+      if (asistenciaPorJerarquia.length > 0) {
+        asistenciaPorJerarquia.forEach(item => {
+          if (y > 270) { // Check for page break within items
+            pdf.addPage();
+            y = margin;
+          }
+          pdf.text(`${item.jerarquia_nombre}: ${item.cantidad} asistencias`, margin + 5, y);
+          y += 6;
+        });
+      } else {
+        pdf.text('No hay datos disponibles.', margin + 5, y);
+        y += 6;
+      }
+
       const footerText = `Generado por: ${usuario?.nombre || 'Usuario'} - Fecha: ${new Date().toLocaleDateString()}`;
       pdf.setFontSize(8);
       pdf.text(footerText, pageWidth / 2, 290, { align: 'center' });
@@ -210,9 +298,10 @@ function EstadisticaAsistencia() {
     plugins: {
       legend: { display: true },
       tooltip: { enabled: true },
+      title: { display: true, text: 'Top 5 Asistencias' } // Título actualizado
     },
     scales: {
-      x: { title: { display: true, text: '' } },
+      x: { title: { display: true, text: 'Personal' } }, // Eje X actualizado
       y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
     },
   };
@@ -233,9 +322,10 @@ function EstadisticaAsistencia() {
     plugins: {
       legend: { display: true },
       tooltip: { enabled: true },
+      title: { display: true, text: 'Top 5 Horas en Cuartel' } // Título actualizado
     },
     scales: {
-      x: { title: { display: true, text: 'Nombre' } },
+      x: { title: { display: true, text: 'Personal' } }, // Eje X actualizado
       y: { beginAtZero: true, title: { display: true, text: 'Horas' } },
     },
   };
@@ -290,6 +380,89 @@ function EstadisticaAsistencia() {
     },
   };
 
+  // Datos y opciones para Bottom 5 Asistencias
+  const rankingAsistenciasMenosData = {
+    labels: rankingAsistenciasMenos.map(item => item.nombre_completo),
+    datasets: [
+      {
+        label: 'Cantidad de Asistencias',
+        data: rankingAsistenciasMenos.map(item => item.cantidad),
+        backgroundColor: '#ff9999', // Color diferente para Bottom 5
+      },
+    ],
+  };
+
+  const rankingAsistenciasMenosOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: true },
+      tooltip: { enabled: true },
+      title: { display: true, text: 'Bottom 5 Asistencias' }
+    },
+    scales: {
+      x: { title: { display: true, text: 'Personal' } },
+      y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
+    },
+  };
+
+  // Datos y opciones para Bottom 5 Horas
+  const rankingHorasMenosData = {
+    labels: rankingHorasMenos.map(item => item.nombre_completo), // Asumiendo nombre_completo
+    datasets: [
+      {
+        label: 'Horas Totales',
+        data: rankingHorasMenos.map(item => parseFloat(item.horas_totales) || 0),
+        backgroundColor: '#A5D6A7', // Color diferente para Bottom 5
+      },
+    ],
+  };
+
+  const rankingHorasMenosOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: true },
+      tooltip: { enabled: true },
+      title: { display: true, text: 'Bottom 5 Horas en Cuartel' }
+    },
+    scales: {
+      x: { title: { display: true, text: 'Personal' } },
+      y: { beginAtZero: true, title: { display: true, text: 'Horas' } },
+    },
+  };
+
+  // Datos y opciones para Asistencia por Jerarquía (Pie Chart)
+  const jerarquiaChartData = {
+    labels: asistenciaPorJerarquia.map(item => item.jerarquia_nombre),
+    datasets: [
+      {
+        label: 'Cantidad de Asistencias',
+        data: asistenciaPorJerarquia.map(item => item.cantidad),
+        backgroundColor: [
+          '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40',
+          '#FFCD56', '#C9CBCF', '#3FC2E0', '#F672A7', '#COFFEE', '#BADA55'
+          // Consider adding more diverse colors or a generator if many hierarchies
+        ],
+        hoverOffset: 4,
+      },
+    ],
+  };
+
+  const jerarquiaChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: 'Asistencia por Jerarquía',
+      },
+      tooltip: {
+        enabled: true,
+      },
+    },
+  };
+
   return (
     <div className="asistencia-stats-container">
       <div className="asistencia-filtros">
@@ -312,6 +485,15 @@ function EstadisticaAsistencia() {
             ))}
           </select>
         </label>
+        <label className="filtro-legajo">
+          Legajo:
+          <input
+            type="text"
+            value={legajoFilter}
+            onChange={e => setLegajoFilter(e.target.value)}
+            placeholder="Filtrar por legajo"
+          />
+        </label>
         <button className="asistencia-filtrar-btn" onClick={fetchData}>
           Aplicar Filtros
         </button>
@@ -321,6 +503,7 @@ function EstadisticaAsistencia() {
             setFechaDesde('');
             setFechaHasta('');
             setNombrePersonal('');
+            setLegajoFilter(''); // Limpiar filtro de legajo
             fetchData();
           }}
         >
@@ -347,6 +530,16 @@ function EstadisticaAsistencia() {
       </div>
 
       <div className="asistencia-section">
+        <h3 className="asistencia-subtitle">Bottom 5 Personal con Menos Asistencias</h3>
+        <Bar data={rankingAsistenciasMenosData} options={rankingAsistenciasMenosOptions} />
+      </div>
+
+      <div className="asistencia-section">
+        <h3 className="asistencia-subtitle">Bottom 5 Personal con Menos Horas en el Cuartel</h3>
+        <Bar data={rankingHorasMenosData} options={rankingHorasMenosOptions} />
+      </div>
+
+      <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Asistencia por Día</h3>
         <Line data={porDiaData} options={porDiaOptions} />
       </div>
@@ -354,6 +547,15 @@ function EstadisticaAsistencia() {
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Asistencia por Mes</h3>
         <Bar data={porMesData} options={porMesOptions} />
+      </div>
+
+      <div className="asistencia-section">
+        <h3 className="asistencia-subtitle">Asistencia por Jerarquía</h3>
+        {asistenciaPorJerarquia.length > 0 ? (
+          <Pie data={jerarquiaChartData} options={jerarquiaChartOptions} />
+        ) : (
+          <p>No hay datos de asistencia por jerarquía para los filtros seleccionados.</p>
+        )}
       </div>
     </div>
   );
