@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
 import "./Styles/BandejaEntrada.css";
+import { useUsuario } from "../context/UserContext";
 
 function BandejaSalida({ onClose }) {
+  const { usuario } = useUsuario();
+  const legajo = usuario?.legajo;
   const [mensajes, setMensajes] = useState([]);
   const [filtros, setFiltros] = useState({
     destinatarios: "",
@@ -12,8 +15,6 @@ function BandejaSalida({ onClose }) {
   const [mensajeActivoId, setMensajeActivoId] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
   const mensajesPorPagina = 5;
-  const usuario = JSON.parse(localStorage.getItem("usuario") || "{}");
-  const legajo = usuario.legajo;
 
   useEffect(() => {
     if (legajo) {

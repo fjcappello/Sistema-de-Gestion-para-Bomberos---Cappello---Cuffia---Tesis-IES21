@@ -214,7 +214,9 @@ function EmergenciesTable() {
   // Renderizado de botones según estado
   const renderReportButton = (emergencia) => {
     const activa = isEmergenciaActiva(emergencia);
-    const esJefeAsignado = emergencia.jefe_dotacion === usuario?.nombreCompleto;
+    const esJefeAsignado =
+      emergencia.jefe_dotacion === usuario?.nombreCompleto ||
+      usuario?.rol === "Jefatura";
 
     return (
       <button
@@ -260,7 +262,7 @@ function EmergenciesTable() {
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("/crearEmergencia", formData);
+      const response = await api.post("/partesemergencias", formData);
       if (response.data.success) {
         alert("Emergencia agregada correctamente");
         setIsAddModalOpen(false);
@@ -371,6 +373,15 @@ function EmergenciesTable() {
         <button onClick={handleApplyFilters} className="filter-btn">
           Aplicar Filtros
         </button>
+
+        <div style={{ marginTop: "1rem" }}>
+          <button
+            className="add-report-btn"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            Agregar Nuevo Reporte
+          </button>
+        </div>
       </div>
 
       {/* Tabla */}
@@ -459,23 +470,18 @@ function EmergenciesTable() {
         </button>
       </div>
 
-      {/* Botones de Acción Principales */}
-      <div className="action-buttons">
-        <button
-          className="add-report-btn"
-          onClick={() => setIsAddModalOpen(true)}
-        >
-          Agregar Nuevo Reporte
-        </button>
-        {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+      {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+        <div style={{ marginTop: "1rem", textAlign: "right" }}>
           <button
             className="delete-report-btn"
             onClick={() => setIsDeleteModalOpen(true)}
           >
             Eliminar Reporte
           </button>
-        )}
-      </div>
+        </div>
+      )}
+
+
 
       {/* Modal para Agregar Reporte */}
       {isAddModalOpen && (

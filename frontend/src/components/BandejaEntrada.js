@@ -3,6 +3,7 @@ import api from "../api";
 import EnviarMensajeModal from "./EnviarMensajeModal";
 import BandejaSalida from "./BandejaSalida";
 import "./Styles/BandejaEntrada.css";
+import { useUsuario } from "../context/UserContext";
 
 function BandejaEntrada() {
   const [mensajes, setMensajes] = useState([]);
@@ -15,8 +16,8 @@ function BandejaEntrada() {
   const [bandejaActiva, setBandejaActiva] = useState("entrada");
   const [mensajeActivoId, setMensajeActivoId] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
+  const { usuario } = useUsuario();
   const mensajesPorPagina = 5;
-  const usuario = JSON.parse(localStorage.getItem("usuario"));
   const legajo = usuario?.legajo;
 
   const fetchMensajes = () => {

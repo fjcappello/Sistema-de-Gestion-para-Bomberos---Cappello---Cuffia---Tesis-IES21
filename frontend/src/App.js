@@ -8,7 +8,6 @@ import Login from './components/Login';
 import './components/Styles/App.css';
 import ReportsPage from './components/EstadisticasEmergencias';
 import EstadisticaAsistencia from './components/estadisticasAsistencias';
-import EnviarMensaje from './components/EnviarMensaje';
 import BandejaEntrada from './components/BandejaEntrada';
 import EnviarMensajeModal from './components/EnviarMensajeModal';
 import ModalCambioPassword from './components/ModalCambioPassword';

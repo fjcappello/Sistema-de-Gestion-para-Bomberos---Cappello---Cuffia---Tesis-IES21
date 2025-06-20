@@ -84,15 +84,18 @@ function EstadisticaAsistencia() {
       .catch(err => console.error('Error en /asistencia-mes', err));
 
     // Nueva llamada para Asistencia por Jerarquía
-    api.get('/asistencia-jerarquia', { params })
-      .then(res => setAsistenciaPorJerarquia(res.data))
-      .catch(err => console.error('Error en /asistencia-jerarquia', err));
+    // api.get('/asistencia-jerarquia', { params })
+    //   .then(res => setAsistenciaPorJerarquia(res.data))
+    //   .catch(err => console.error('Error en /asistencia-jerarquia', err));
   };
 
   useEffect(() => {
     fetchData();
-    api.get('/personal/nombres')
-      .then(res => setListaPersonal(res.data))
+    api.get('/personal_nombres')
+      .then(res => {
+        console.log('Personal cargado:', res.data);
+        setListaPersonal(res.data);
+      })
       .catch(err => console.error('Error al cargar personal:', err));
     // eslint-disable-next-line
   }, []);
@@ -330,8 +333,9 @@ function EstadisticaAsistencia() {
     },
   };
 
+  const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sabado'];
   const porDiaData = {
-    labels: porDia.map(item => item.dia),
+    labels: porDia.map(item => diasSemana[new Date(item.dia).getDay()]),
     datasets: [
       {
         label: 'Ingresos',
@@ -357,8 +361,12 @@ function EstadisticaAsistencia() {
     },
   };
 
+  const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const porMesData = {
-    labels: porMes.map(item => item.mes),
+    labels: porMes.map(item => {
+      const [anio, mes] = item.mes.split('-'); // espera "2025-06"
+      return `${meses[parseInt(mes, 10) - 1]} ${anio}`;
+    }),
     datasets: [
       {
         label: 'Ingresos',
@@ -466,15 +474,15 @@ function EstadisticaAsistencia() {
   return (
     <div className="asistencia-stats-container">
       <div className="asistencia-filtros">
-        <label className="filtro-fecha-desde">
+        <label className="asistencia-filtro fecha-desde">
           Desde:
           <input type="date" value={fechaDesde} onChange={e => setFechaDesde(e.target.value)} />
         </label>
-        <label className="filtro-fecha-hasta">
+        <label className="asistencia-filtro fecha-hasta">
           Hasta:
           <input type="date" value={fechaHasta} onChange={e => setFechaHasta(e.target.value)} />
         </label>
-        <label className="filtro-personal-nombre">
+        <label className="asistencia-filtro personal-nombre">
           Personal:
           <select value={nombrePersonal} onChange={e => setNombrePersonal(e.target.value)}>
             <option value="">Todos</option>
@@ -485,7 +493,7 @@ function EstadisticaAsistencia() {
             ))}
           </select>
         </label>
-        <label className="filtro-legajo">
+        <label className="asistencia-filtro legajo">
           Legajo:
           <input
             type="text"
@@ -494,11 +502,11 @@ function EstadisticaAsistencia() {
             placeholder="Filtrar por legajo"
           />
         </label>
-        <button className="asistencia-filtrar-btn" onClick={fetchData}>
+        <button className="asistencia-btn filtrar" onClick={fetchData}>
           Aplicar Filtros
         </button>
         <button
-          className="asistencia-limpiar-btn"
+          className="asistencia-btn limpiar"
           onClick={() => {
             setFechaDesde('');
             setFechaHasta('');
@@ -511,8 +519,8 @@ function EstadisticaAsistencia() {
         </button>
       </div>
 
-      <div className="asistencia-exportar">
-        <button className="asistencia-exportar-btn" onClick={exportPDF}>
+      <div className="asistencia-botones-exportar">
+        <button className="asistencia-btn exportar" onClick={exportPDF}>
           Exportar PDF
         </button>
       </div>
@@ -530,12 +538,12 @@ function EstadisticaAsistencia() {
       </div>
 
       <div className="asistencia-section">
-        <h3 className="asistencia-subtitle">Bottom 5 Personal con Menos Asistencias</h3>
+        <h3 className="asistencia-subtitle">Personal con Menos Asistencias</h3>
         <Bar data={rankingAsistenciasMenosData} options={rankingAsistenciasMenosOptions} />
       </div>
 
       <div className="asistencia-section">
-        <h3 className="asistencia-subtitle">Bottom 5 Personal con Menos Horas en el Cuartel</h3>
+        <h3 className="asistencia-subtitle">Personal con Menos Horas en el Cuartel</h3>
         <Bar data={rankingHorasMenosData} options={rankingHorasMenosOptions} />
       </div>
 
@@ -549,6 +557,7 @@ function EstadisticaAsistencia() {
         <Bar data={porMesData} options={porMesOptions} />
       </div>
 
+      {/*
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Asistencia por Jerarquía</h3>
         {asistenciaPorJerarquia.length > 0 ? (
@@ -557,6 +566,7 @@ function EstadisticaAsistencia() {
           <p>No hay datos de asistencia por jerarquía para los filtros seleccionados.</p>
         )}
       </div>
+      */}
     </div>
   );
 }

@@ -2,15 +2,16 @@ import React, { useState, useEffect } from "react";
 import api from "../api";
 import "./Styles/BandejaEntrada.css";
 import "./Styles/EnviarMensajeModal.css";
+import { useUsuario } from "../context/UserContext";
 
 function EnviarMensajeModal({ onClose, onSent }) {
   const [usuarios, setUsuarios] = useState([]);
   const [destinatarios, setDestinatarios] = useState([]);
   const [inputDestinatario, setInputDestinatario] = useState("");
-  const usuarioGuardado = JSON.parse(localStorage.getItem("usuario") || "{}");
+  const { usuario } = useUsuario();
 
   const [formData, setFormData] = useState({
-    remitente_id: usuarioGuardado.legajo || "",
+    remitente_id: usuario?.legajo || "",
     asunto: "",
     cuerpo: "",
   });
