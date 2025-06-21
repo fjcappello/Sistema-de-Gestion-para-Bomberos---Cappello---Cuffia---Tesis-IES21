@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom'; // Importar NavLink
 import { useUsuario } from '../context/UserContext';
 import './Styles/Navbar.css';
 
 function Navbar({ onLogout }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [openDropdown, setOpenDropdown] = useState(''); // Para manejar un solo dropdown abierto a la vez en móvil
+  const [openDropdown, setOpenDropdown] = useState('');
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -14,12 +14,12 @@ function Navbar({ onLogout }) {
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
-    setOpenDropdown(''); // Cerrar dropdowns al cerrar el menú principal
+    setOpenDropdown('');
   };
 
   const handleLogout = async () => {
     await onLogout();
-    setMobileMenuOpen(false); // Cerrar menú móvil si está abierto
+    setMobileMenuOpen(false);
     navigate('/');
   };
 
@@ -31,7 +31,6 @@ function Navbar({ onLogout }) {
     }
   };
 
-  // Cerrar menú móvil y dropdowns si se hace clic fuera
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (navbarRef.current && !navbarRef.current.contains(event.target)) {
@@ -43,7 +42,6 @@ function Navbar({ onLogout }) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Cerrar menú móvil al cambiar de ruta
   useEffect(() => {
     setMobileMenuOpen(false);
     setOpenDropdown('');
@@ -51,7 +49,7 @@ function Navbar({ onLogout }) {
 
 
   const navItems = [
-    { path: "/", label: "Principal" },
+    { path: "/", label: "Principal", exact: true }, // Añadir exact para Principal
     { path: "/bandeja-entrada", label: "Mensajes" },
     { path: "/emergencias", label: "Emergencias" },
     {
@@ -87,8 +85,8 @@ function Navbar({ onLogout }) {
 
   return (
     <nav className="navbar" ref={navbarRef}>
-      <Link to="/" className="navbar-logo">
-        <img src="/images/logo.png" alt="Logo" className="logo-img" /> {/* Cambiado className de img */}
+      <Link to="/" className="navbar-logo"> {/* El logo principal suele ser un Link normal */}
+        <img src="/images/logo.png" alt="Logo" className="logo-img" />
         <span className="navbar-title">BOMBEROS SANTA MARIA DE PUNILLA</span>
       </Link>
 
@@ -119,17 +117,23 @@ function Navbar({ onLogout }) {
                 <ul className={`dropdown-menu ${openDropdown === item.name ? 'active' : ''}`}>
                   {item.subItems.map(subItem => (
                     <li key={subItem.path}>
-                      <Link to={subItem.path}>{subItem.label}</Link>
+                      {/* Usar NavLink para subitems para que puedan tener estilo activo */}
+                      <NavLink to={subItem.path} end={subItem.exact || false}>
+                        {subItem.label}
+                      </NavLink>
                     </li>
                   ))}
                 </ul>
               </>
             ) : (
-              <Link to={item.path}>{item.label}</Link>
+              // Usar NavLink para items principales que son enlaces directos
+              <NavLink to={item.path} end={item.exact || false}>
+                {item.label}
+              </NavLink>
             )}
           </li>
         ))}
-        <li>
+        <li className="navbar-actions"> {/* Envolver el botón de logout para consistencia en móvil si es necesario */}
           <button className="logout-btn" onClick={handleLogout}>
             Salir
           </button>

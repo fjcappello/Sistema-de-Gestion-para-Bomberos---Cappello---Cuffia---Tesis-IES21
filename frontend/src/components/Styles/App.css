@@ -18,36 +18,39 @@ main {
 .app-container {
   display: flex;
   width: 100%;
-  margin-top: 60px; /* Altura estándar del Navbar, ajustar si es variable */
-                  /* La padding-top original de 70px se maneja con el margin-top ahora */
+  margin-top: 70px; /* Nueva altura del Navbar (será 70px) */
 }
 
 .sidebar {
-  width: 230px; /* Un poco más de ancho */
-  background-color: var(--color-background); /* Fondo blanco */
+  width: 230px;
+  background-color: var(--color-background);
   border-right: var(--border-width-standard) solid var(--color-border);
   padding: var(--spacing-lg);
   position: fixed;
-  top: 60px; /* Debe coincidir con la altura del Navbar */
+  top: 70px; /* Nueva altura del Navbar */
   bottom: 0;
   left: 0;
   overflow-y: auto;
-  z-index: 900; /* Debajo de modales y navbar flotante */
+  z-index: 900;
   transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
 }
 
 .main-content {
-  margin-left: 230px; /* Debería coincidir con el width de la sidebar */
-  padding: var(--spacing-lg);
-  flex-grow: 1; /* Para que ocupe el espacio restante */
-  width: calc(100% - 230px); /* Asegurar que no se desborde */
+  margin-left: 230px;
+  /* padding: var(--spacing-lg); Se desglosa para control de padding-top */
+  padding-top: var(--spacing-lg); /* Espacio entre navbar y contenido (ej: 24px) */
+  padding-right: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+  padding-left: var(--spacing-lg);
+  flex-grow: 1;
+  width: calc(100% - 230px);
   transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
 }
 
 /* Estilos para una sidebar colapsada (ejemplo) */
 .sidebar.collapsed {
-  width: 60px; /* Ancho de la sidebar colapsada */
-  overflow: hidden; /* Ocultar texto, mostrar solo iconos */
+  width: 60px;
+  overflow: hidden;
 }
 
 .sidebar.collapsed + .main-content {
@@ -62,23 +65,23 @@ main {
   margin-bottom: var(--spacing-lg);
   flex-wrap: wrap;
   gap: var(--spacing-md);
-  padding: var(--spacing-lg); /* Más padding */
+  padding: var(--spacing-lg);
   background-color: var(--color-background);
-  border-radius: var(--border-radius-large); /* Bordes más grandes */
+  border-radius: var(--border-radius-large);
   box-shadow: var(--box-shadow-subtle);
 }
 
-.filtros-container h2 { /* Título dentro de los filtros */
+.filtros-container h2 {
   flex: 1 1 100%;
   text-align: center;
   margin-bottom: var(--spacing-md);
-  color: var(--color-primary); /* Color primario para el título */
+  color: var(--color-primary);
   font-size: var(--font-size-h3);
 }
 
 .usuario-saludo {
-  position: fixed; /* Cambiado a fixed para que no dependa del scroll del app-container */
-  top: calc(var(--spacing-sm) / 2 + 60px); /* Alineado con navbar + pequeño espacio */
+  position: fixed;
+  top: calc(70px + var(--spacing-sm)); /* Ajustado a nueva altura de navbar + espacio */
   right: var(--spacing-lg);
   font-size: var(--font-size-small);
   color: var(--color-text-secondary);
@@ -94,11 +97,10 @@ main {
 @media (max-width: 992px) { /* lg breakpoint */
   .sidebar {
     transform: translateX(-100%);
-    z-index: 1050; /* Por encima del contenido pero debajo de modales si es off-canvas */
-    /* Si el navbar es fijo y la sidebar es off-canvas, top debería ser 0 o altura del navbar */
+    z-index: 1050;
     top: 0;
-    height: 100vh; /* Ocupa toda la altura */
-    border-right: var(--border-width-standard) solid var(--color-border); /* Mantener borde */
+    height: 100vh;
+    border-right: var(--border-width-standard) solid var(--color-border);
  }
   .sidebar.open {
     transform: translateX(0);
@@ -106,21 +108,26 @@ main {
   .main-content {
     margin-left: 0;
     width: 100%;
+    /* padding-top se mantiene como se definió antes para esta vista */
   }
   .usuario-saludo {
-    /* Podría ocultarse o moverse si interfiere con el botón de menú hamburguesa */
+    /* Considerar ocultar o mover si interfiere con menú hamburguesa */
   }
 }
 
 @media (max-width: 768px) { /* md breakpoint */
   .app-container {
-    margin-top: 50px; /* Si el navbar es más pequeño en móviles */
+    margin-top: 70px; /* Asumiendo que el navbar mantiene su altura en móvil */
   }
    .sidebar {
-    top: 0; /* Si es off-canvas y el navbar es más pequeño */
+    top: 0;
   }
   .main-content {
-    padding: var(--spacing-md); /* Menos padding en móviles */
+    /* padding: var(--spacing-md); Se desglosa */
+    padding-top: var(--spacing-md); /* Espacio menor en móviles (16px) */
+    padding-right: var(--spacing-md);
+    padding-bottom: var(--spacing-md);
+    padding-left: var(--spacing-md);
   }
    .filtros-container {
     padding: var(--spacing-md);
@@ -133,15 +140,14 @@ main {
 /* Para el botón de toggle de la sidebar (ejemplo, si se añade) */
 .sidebar-toggle-btn {
   position: fixed;
-  top: 70px; /* Alineado con donde empieza la sidebar */
+  top: 75px; /* Un poco debajo del inicio del navbar */
   left: 10px;
-  z-index: 1100; /* Encima de la sidebar si está cerrada */
+  z-index: 1100;
   background-color: var(--color-primary);
   color: white;
   border: none;
   padding: var(--spacing-sm);
   border-radius: var(--border-radius-standard);
-  /* Estilos adicionales para el botón */
 }
 
 .sidebar.collapsed ~ .sidebar-toggle-btn {
@@ -150,6 +156,6 @@ main {
 
 @media (min-width: 993px) {
   .sidebar-toggle-btn {
-    display: none; /* Ocultar en pantallas grandes donde la sidebar es visible */
+    display: none;
   }
 }

@@ -4,92 +4,110 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--spacing-sm) var(--spacing-lg); /* Ajustar padding */
-  background-color: var(--color-danger); /* Color rojo original, considerar cambiar a --color-primary o un color de marca específico */
+  padding: 0 var(--spacing-lg); /* Padding horizontal, vertical se maneja por altura y alineación */
+  background-color: var(--color-danger);
   box-shadow: var(--box-shadow-subtle);
   width: 100%;
-  height: 60px; /* Altura fija para el Navbar */
-  position: fixed; /* Fijar el navbar en la parte superior */
+  height: 70px; /* Nueva altura del Navbar */
+  position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000; /* Asegurar que esté por encima de otros contenidos */
+  z-index: 1000;
 }
 
 .navbar-logo {
   display: flex;
   align-items: center;
-  text-decoration: none; /* Si el logo es un enlace */
+  text-decoration: none;
+  height: 100%; /* Para ayudar a centrar verticalmente */
 }
 
-.navbar-logo img {
-  height: 40px; /* Ajustar altura del logo */
+.navbar-logo img.logo-img { /* Clase específica para la imagen del logo */
+  height: 48px; /* Ajustar altura del logo para el nuevo navbar */
   width: auto;
-  margin-right: var(--spacing-sm);
+  margin-right: var(--spacing-md); /* Más espacio */
 }
 
 .navbar-title {
   font-weight: var(--font-weight-bold);
-  color: #fff; /* Texto blanco sobre fondo oscuro */
-  font-size: 1.25rem; /* Un poco más grande */
+  color: #fff;
+  font-size: 1.3rem; /* Ligeramente más grande */
   margin-right: var(--spacing-lg);
+  line-height: 70px; /* Alineación vertical con la altura del navbar */
 }
 
 .navbar-links {
   list-style: none;
   display: flex;
-  align-items: center; /* Alinear verticalmente los items */
-  gap: var(--spacing-sm); /* Espacio reducido entre links principales */
-  margin: 0; /* Reset de margen */
-  padding: 0; /* Reset de padding */
+  align-items: center;
+  gap: var(--spacing-md); /* Espacio entre links principales */
+  margin: 0;
+  padding: 0;
+  height: 100%; /* Para que los items puedan usar align-items o flex para centrarse */
 }
 
 .navbar-links li {
   position: relative;
+  display: flex; /* Para ayudar a centrar el contenido del li */
+  align-items: center; /* Centrar verticalmente el contenido del li */
+  height: 100%;
 }
 
 .navbar-links a,
-.navbar-links .dropdown-btn { /* Aplicar estilos también a .dropdown-btn */
+.navbar-links .dropdown-btn {
   text-decoration: none;
-  color: #fff;
-  font-weight: var(--font-weight-bold);
-  padding: var(--spacing-xs) var(--spacing-sm); /* Padding más ajustado para items */
+  color: rgba(255, 255, 255, 0.85); /* Texto un poco menos brillante por defecto */
+  font-weight: var(--font-weight-normal); /* Peso normal, se puede poner bold en active/hover */
+  font-size: 0.95rem; /* Ligeramente más pequeño para más items o más largo texto */
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--border-radius-standard);
-  transition: background-color 0.2s ease, color 0.2s ease;
-  display: block; /* Para que el padding se aplique correctamente */
+  transition: color 0.2s ease, background-color 0.2s ease, border-bottom-color 0.2s ease;
+  display: flex; /* Para centrar contenido si es necesario */
+  align-items: center;
+  height: auto; /* Ajustar altura al contenido */
+  position: relative; /* Para el pseudo-elemento del borde inferior */
+  border-bottom: 2px solid transparent; /* Borde inferior para hover/active */
 }
 
 .navbar-links a:hover,
 .navbar-links .dropdown-btn:hover,
-.navbar-links a.active, /* Estilo para el enlace activo */
+.navbar-links a.active,
 .navbar-links .dropdown-btn.active {
-  background-color: rgba(255, 255, 255, 0.15); /* Un fondo sutil al pasar el mouse o activo */
-  color: #fff;
+  color: #fff; /* Texto completamente blanco en hover/active */
+  background-color: transparent; /* Sin fondo en hover */
+  border-bottom-color: rgba(255, 255, 255, 0.9); /* Línea blanca sutil abajo */
+}
+.navbar-links a.active,
+.navbar-links .dropdown-btn.active {
+    font-weight: var(--font-weight-bold); /* Más peso si está activo */
 }
 
-/* Quitar la línea inferior, el hover es suficiente */
-/* .navbar-links a::after { ... } */
 
-.navbar-actions { /* Contenedor para botones como Salir */
+.navbar-actions {
   display: flex;
   align-items: center;
+  height: 100%;
 }
 
 .logout-btn {
-  /* Usar clases .btn y .btn-outline-light (nueva clase a definir en global.css o aquí) */
+  /* Estilo similar a los otros links */
   background-color: transparent;
-  color: #fff;
-  border: var(--border-width-standard) solid #fff;
-  padding: var(--spacing-xs) var(--spacing-md); /* Padding ajustado */
-  font-size: var(--font-size-small);
+  color: rgba(255, 255, 255, 0.85);
+  border: none; /* Sin borde por defecto */
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 0.95rem;
   border-radius: var(--border-radius-standard);
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: color 0.2s ease, background-color 0.2s ease;
   cursor: pointer;
-  font-weight: var(--font-weight-bold);
+  font-weight: var(--font-weight-normal);
+  display: flex;
+  align-items: center;
+  margin-left: var(--spacing-sm); /* Espacio respecto al último link */
 }
 
 .logout-btn:hover {
-  background-color: #fff;
-  color: var(--color-danger); /* O el color de fondo del navbar */
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1); /* Fondo muy sutil en hover */
 }
 
 /* Menú desplegable */
@@ -99,149 +117,199 @@
 
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + var(--spacing-xs)); /* Un poco separado del botón */
-  left: 0;
-  background-color: var(--color-danger); /* Mismo color que el navbar */
+  top: calc(100% - 10px); /* Ligeramente más arriba para que casi toque */
+  left: 50%; /* Centrar el dropdown */
+  transform: translateX(-50%); /* Ajuste para centrar realmente */
+  background-color: #fff; /* Fondo blanco para el dropdown */
   border-radius: var(--border-radius-standard);
-  box-shadow: var(--box-shadow-standard); /* Sombra más pronunciada */
-  padding: var(--spacing-sm) 0; /* Padding vertical, sin padding horizontal */
+  box-shadow: var(--box-shadow-standard);
+  padding: var(--spacing-sm) 0;
   display: none;
   flex-direction: column;
-  min-width: 180px; /* Ancho mínimo */
-  z-index: 1001; /* Encima del navbar */
-  border: 1px solid rgba(255,255,255,0.2); /* Borde sutil */
+  min-width: 220px; /* Ancho mínimo aumentado */
+  z-index: 1001;
+  border: 1px solid var(--color-border-light);
+}
+/* Flecha para el dropdown */
+.dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 0 8px 10px 8px;
+    border-style: solid;
+    border-color: transparent transparent #fff transparent;
 }
 
-.dropdown:hover .dropdown-menu,
-.dropdown-menu.active { /* Para control mediante JS */
+
+.dropdown:hover .dropdown-menu, /* Mostrar en hover para escritorio */
+.dropdown .dropdown-menu.active { /* Mostrar si está activo (para móvil) */
   display: flex;
 }
 
+
 .dropdown-menu li {
-  padding: 0; /* Quitar padding del li */
+  padding: 0;
   width: 100%;
 }
 
 .dropdown-menu li a {
-  color: white;
-  padding: var(--spacing-sm) var(--spacing-md); /* Padding consistente */
-  display: block; /* Para que ocupe todo el ancho */
-  font-weight: var(--font-weight-normal); /* Peso normal para items de dropdown */
-  border-radius: 0; /* Sin bordes redondeados individuales */
+  color: var(--color-text); /* Texto oscuro sobre fondo blanco */
+  padding: var(--spacing-sm) var(--spacing-lg); /* Más padding horizontal */
+  display: block;
+  font-weight: var(--font-weight-normal);
+  border-radius: 0;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  border-bottom: none; /* Asegurar que no herede el borde de los links principales */
 }
-
-.dropdown-menu li a:hover {
-  background-color: rgba(255, 255, 255, 0.1); /* Hover más sutil */
-  color: #fff;
+.dropdown-menu li a:hover,
+.dropdown-menu li a.active { /* Aplicar también a .active */
+  background-color: var(--color-background-secondary);
+  color: var(--color-primary); /* Color primario en hover/active */
+  border-bottom: none; /* Sin borde inferior en hover/active */
+  font-weight: var(--font-weight-bold); /* Hacerlo bold si está activo */
 }
 
 /* Menú hamburguesa para pantallas pequeñas */
 .hamburger-menu {
   display: none;
   flex-direction: column;
-  justify-content: space-around; /* Distribuir las líneas */
-  width: 28px; /* Tamaño del botón */
-  height: 28px;
+  justify-content: space-around;
+  width: 30px; /* Tamaño del botón */
+  height: 30px;
   background: transparent;
   border: none;
   cursor: pointer;
   padding: 0;
-  z-index: 1005; /* Encima de otros elementos del navbar */
+  z-index: 1005;
 }
 
 .hamburger-menu .line {
   display: block;
-  width: 24px; /* Ancho de las líneas */
-  height: 3px; /* Grosor de las líneas */
+  width: 28px; /* Ancho de las líneas */
+  height: 3px;
   background-color: #fff;
-  border-radius: 2px;
+  border-radius: 3px; /* Líneas más redondeadas */
   transition: all 0.3s ease-in-out;
 }
-
-/* Animación para hamburguesa -> X */
 .hamburger-menu.open .line1 {
-  transform: rotate(45deg) translate(5px, 5px);
+  transform: rotate(45deg) translate(6px, 6px); /* Ajustar traslación */
 }
 .hamburger-menu.open .line2 {
   opacity: 0;
 }
 .hamburger-menu.open .line3 {
-  transform: rotate(-45deg) translate(5px, -5px);
+  transform: rotate(-45deg) translate(6px, -6px); /* Ajustar traslación */
 }
 
 
 /* Ajustes en pantallas pequeñas */
-@media (max-width: 992px) { /* lg breakpoint, ajustar según necesidad */
+@media (max-width: 992px) { /* lg breakpoint */
+  .navbar {
+    padding: 0 var(--spacing-md); /* Menos padding horizontal en móvil */
+  }
   .navbar-links {
-    display: none; /* Ocultar links por defecto */
+    display: none;
     flex-direction: column;
     position: absolute;
-    top: 60px; /* Debajo del navbar */
-    left: 0; /* O right:0 si se prefiere alineado a la derecha */
-    background-color: var(--color-danger); /* Mismo color que el navbar */
+    top: 70px; /* Debajo del navbar */
+    left: 0;
+    background-color: var(--color-danger);
     width: 100%;
-    padding: var(--spacing-sm) 0; /* Padding vertical */
-    box-shadow: var(--box-shadow-subtle); /* Sombra para el menú desplegado */
-    border-top: 1px solid rgba(255,255,255,0.2); /* Separador */
+    padding: var(--spacing-sm) 0;
+    box-shadow: var(--box-shadow-subtle);
+    border-top: 1px solid rgba(255,255,255,0.2);
   }
 
-  .navbar-links.active { /* Cuando el menú está abierto */
+  .navbar-links.active {
     display: flex;
   }
 
   .navbar-links li {
     width: 100%;
-    text-align: center; /* Centrar texto de los enlaces */
+    text-align: left; /* Alinear texto a la izquierda en móvil */
+    height: auto; /* Altura automática para los items */
+    border-bottom: 1px solid rgba(255,255,255,0.1); /* Separador entre items */
   }
+   .navbar-links li:last-child {
+      border-bottom: none;
+  }
+
 
   .navbar-links a,
   .navbar-links .dropdown-btn {
-    padding: var(--spacing-md); /* Más padding para mejor toque */
+    padding: var(--spacing-md) var(--spacing-lg); /* Más padding para mejor toque */
     border-radius: 0;
+    width: 100%; /* Ocupar todo el ancho */
+    justify-content: flex-start; /* Alinear texto a la izquierda */
+    border-bottom: none; /* Quitar borde inferior individual, se maneja en li */
   }
   .navbar-links a:hover,
-  .navbar-links .dropdown-btn:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+  .navbar-links .dropdown-btn:hover,
+  .navbar-links a.active,
+  .navbar-links .dropdown-btn.active {
+    background-color: rgba(255, 255, 255, 0.05); /* Hover más sutil */
+    border-bottom: none; /* Sin borde inferior */
+    color: #fff;
   }
+   .navbar-links .dropdown-btn.active { /* Estilo específico para dropdown activo en móvil */
+        background-color: rgba(0,0,0, 0.1);
+   }
+
 
   .dropdown-menu {
-    position: static; /* El dropdown se comporta como parte del flujo normal */
-    background-color: transparent; /* Fondo transparente, ya está en el contenedor */
+    position: static;
+    background-color: rgba(0,0,0, 0.1); /* Fondo ligeramente más oscuro para submenú */
     box-shadow: none;
     border: none;
-    padding-left: var(--spacing-lg); /* Indentación para submenú */
+    padding-left: 0;
+    min-width: 100%;
+    border-radius: 0;
+  }
+   .dropdown-menu::before { /* Ocultar flecha en móvil */
+    display: none;
   }
   .dropdown-menu li a {
-    color: #f0f0f0; /* Un poco menos brillante para subitems */
+    color: #f0f0f0;
+    padding-left: var(--spacing-xl); /* Indentación para subitems */
   }
-  .dropdown:hover .dropdown-menu { /* Evitar que se muestre al hacer hover sobre el botón del dropdown en móvil */
-    /* display: none; */ /* Esto se manejaría con JS o :focus-within si es posible */
+  .dropdown-menu li a:hover {
+      background-color: rgba(0,0,0,0.15);
   }
-  .dropdown.open .dropdown-menu { /* Mostrar submenú si el dropdown padre está abierto */
-      display: flex;
-  }
-
 
   .hamburger-menu {
-    display: flex; /* Mostrar botón de hamburguesa */
+    display: flex;
   }
 
   .navbar-title {
-      margin-right: auto; /* Empuja el título a la izquierda y la hamburguesa a la derecha */
+      margin-right: auto;
+      font-size: 1.1rem; /* Reducir un poco en móvil */
+      line-height: 70px; /* Mantener alineación */
   }
-  .navbar-logo + .navbar-title { /* Si hay logo y título */
-    /* Ajustar si es necesario */
+  .navbar-logo img.logo-img {
+      height: 40px; /* Reducir logo en móvil */
   }
-   .logout-btn { /* El botón de logout puede ir dentro del menú hamburguesa o permanecer visible */
-      margin-left: var(--spacing-md);
+   .logout-btn {
+      width: 100%;
+      justify-content: flex-start;
+      padding: var(--spacing-md) var(--spacing-lg);
+      margin-left: 0;
+      border-radius: 0;
+   }
+   .navbar-actions { /* En móvil, el logout va dentro del menú desplegable */
+       width: 100%;
    }
 }
 
-@media (max-width: 768px) { /* md breakpoint */
-    .navbar-logo img {
-        height: 35px;
-    }
+@media (max-width: 480px) { /* xs breakpoint */
     .navbar-title {
-        font-size: 1.1rem;
+        font-size: 1rem; /* Aún más pequeño si es necesario */
+        margin-right: var(--spacing-sm); /* Menos espacio */
     }
+    .navbar-logo img.logo-img {
+      height: 35px;
+      margin-right: var(--spacing-sm);
+  }
 }
