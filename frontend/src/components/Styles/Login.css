@@ -1,97 +1,109 @@
+/* frontend/src/components/Styles/Login.css */
+
 .login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh; /* Usar min-height para asegurar que ocupa toda la pantalla */
+  padding: var(--spacing-lg);
+  background-color: var(--color-background-secondary); /* Usar color de fondo global */
 }
 
-/* Logo */
-.logo {
-  width: 150px;
-  margin-bottom: 20px;
+.login-card { /* Envolver el formulario en una "card" para mejor estética */
+  background-color: var(--color-background);
+  padding: var(--spacing-xl); /* Más padding */
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--box-shadow-standard);
+  width: 100%;
+  max-width: 400px; /* Mantener el max-width */
+  text-align: center; /* Centrar el logo si está dentro */
 }
 
-/* Formulario */
+.login-logo {
+  width: 120px; /* Ajustar tamaño si es necesario */
+  margin-bottom: var(--spacing-lg); /* Mayor separación */
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  max-width: 400px;
 }
 
-.login-form input {
+.login-form .form-group { /* Usar .form-group para espaciado */
   width: 100%;
-  padding: 0.75rem;
-  margin: 0.5rem 0;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+  margin-bottom: var(--spacing-md);
 }
 
-/* Contraseña y emojis  */
+.login-form .form-label { /* Estilo para labels si se añaden explícitamente */
+  display: block;
+  text-align: left;
+  margin-bottom: var(--spacing-xs);
+}
+
+.login-form .form-control {
+  /* Los estilos base ya están en global.css */
+  /* Se pueden añadir especificidades aquí si es necesario */
+  padding-top: var(--spacing-md); /* Hacerlos un poco más altos */
+  padding-bottom: var(--spacing-md);
+}
+
 .password-container {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-top: 0.5rem;
   position: relative;
+  width: 100%;
+  display: flex; /* Para alinear el input y el botón */
+  align-items: center;
 }
 
-/* Input de contraseña */
-.password-container input {
-  flex: 1;
-  padding-right: 2.5rem;
+.password-container .form-control {
+  padding-right: 3rem; /* Espacio para el botón de mostrar/ocultar */
 }
 
-/* Boton visibilidad*/
 .toggle-password-btn {
+  position: absolute;
+  right: var(--spacing-sm);
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 1.25rem;
-  margin-left: 0.5rem;
-  color: #888;
-  position: absolute;
-  right: 10px;
+  color: var(--color-text-secondary);
+  padding: var(--spacing-sm); /* Área de click más grande */
+  font-size: 1.25rem; /* Tamaño del icono */
+  line-height: 1; /* Para mejor alineación vertical */
 }
 
 .toggle-password-btn:focus {
   outline: none;
 }
 
-/* Botón de  ingreso */
-.submit-btn {
-  padding: 0.75rem 1.5rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 1rem;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+.toggle-password-btn:hover {
+  color: var(--color-primary);
+}
+
+.login-submit-btn { /* Renombrar para evitar colisión con .submit-btn genérico si existiera */
+  /* Usar la clase .btn y .btn-primary de global.css */
   width: 100%;
-  margin-top: 1rem;
+  margin-top: var(--spacing-md); /* Espacio antes del botón */
+  padding-top: var(--spacing-md);
+  padding-bottom: var(--spacing-md);
+  font-size: 1.1rem; /* Un poco más grande */
 }
 
-.submit-btn:hover {
-  background-color: #45a049;
-  transform: scale(1.02);
+.login-error-message {
+  color: var(--color-danger);
+  margin-top: var(--spacing-md);
+  font-size: var(--font-size-small);
+  text-align: center;
+  width: 100%;
 }
 
-.submit-btn:active {
-  transform: scale(0.98);
-}
-
-.submit-btn:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(72, 180, 97, 0.5);
-}
-
-.error-message {
-  color: red;
-  margin-top: 10px;
-  font-size: 0.9rem;
+/* Opcional: Título para la página de Login */
+.login-title {
+  font-size: var(--font-size-h2);
+  color: var(--color-text);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
 }

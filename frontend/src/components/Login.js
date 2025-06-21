@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api';
-import './Styles/Login.css';
+import './Styles/Login.css'; // Asegúrate que Login.css esté actualizado
 import { useUsuario } from '../context/UserContext';
 
 function Login({ setIsAuthenticated }) {
@@ -38,41 +38,54 @@ function Login({ setIsAuthenticated }) {
 
   return (
     <div className="login-container">
-      <img src={`${process.env.PUBLIC_URL}/images/logo.png`} alt="Logo" className="logo" />
-      <h1>SIGB</h1>
-      <h2>Inicio de Sesión</h2>
-      
-      <form onSubmit={handleLogin} className="login-form">
-        <input
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          placeholder="Legajo"
-          value={legajo}
-          onChange={(e) => setLegajo(e.target.value.replace(/\D/, ""))}
-          required
-        />
+      <div className="login-card">
+        <img src={`${process.env.PUBLIC_URL}/images/logo.png`} alt="Logo" className="login-logo" />
+        <h1 className="login-title">SIGB</h1>
+        {/* <h2>Inicio de Sesión</h2> */}
         
-        <div className="password-container">
-          <input
-            type={showPassword ? "text" : "password"}
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button
-            type="button"
-            onClick={togglePasswordVisibility}
-            className="toggle-password-btn"
-          >
-            {showPassword ? '🙈' : '👁️'}
-          </button>
-        </div>
-        
-        {error && <p className="error-message">{error}</p>}
-        <button type="submit" className="submit-btn">Ingresar al Sistema</button>
-      </form>
+        <form onSubmit={handleLogin} className="login-form">
+          <div className="form-group">
+            {/* <label htmlFor="legajo" className="form-label">Legajo</label> */}
+            <input
+              id="legajo"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              placeholder="Legajo"
+              className="form-control" // Clase global
+              value={legajo}
+              onChange={(e) => setLegajo(e.target.value.replace(/\D/, ""))}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            {/* <label htmlFor="password_login" className="form-label">Contraseña</label> */}
+            <div className="password-container"> {/* Mantiene la estructura para el botón de visibilidad */}
+              <input
+                id="password_login"
+                type={showPassword ? "text" : "password"}
+                placeholder="Contraseña"
+                className="form-control" // Clase global
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="toggle-password-btn"
+                aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+              >
+                {showPassword ? '🙈' : '👁️'}
+              </button>
+            </div>
+          </div>
+
+          {error && <p className="login-error-message">{error}</p>}
+          <button type="submit" className="btn btn-primary login-submit-btn">Ingresar al Sistema</button>
+        </form>
+      </div>
     </div>
   );
 }
