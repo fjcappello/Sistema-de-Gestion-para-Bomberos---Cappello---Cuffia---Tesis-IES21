@@ -97,10 +97,33 @@ function PersonalTable() {
     try {
       const response = await api.post("/personal", formData);
       if (response.data.success) {
+        {/* 
+          {/*
         alert("Personal agregado correctamente");
         setIsAddModalOpen(false);
         clearFormData();
         fetchPersonal();
+      } else {
+        alert(
+          "Error al agregar personal: " +
+            (response.data.error || "Operación fallida")
+        );
+      }
+    } catch (error) {
+      console.error("Error al intentar agregar personal:", error);
+      alert(
+        "Error en el servidor al intentar agregar personal. Verifique la conexión."
+      );
+    } */}
+        alert("Personal agregado correctamente");
+        setIsAddModalOpen(false);
+        clearFormData();
+        fetchPersonal();
+      } else if (
+        response.data.error &&
+        response.data.error.toLowerCase().includes("legajo")
+      ) {
+        alert("Ya existe un personal con ese legajo.");
       } else {
         alert(
           "Error al agregar personal: " +
@@ -455,12 +478,14 @@ function PersonalTable() {
           <button className="add-person-btn" onClick={openAddModal}>
             Agregar Nuevo Personal
           </button>
+          {/*
           <button
             className="delete-person-btn"
             onClick={() => setIsDeleteModalOpen(true)}
           >
             Eliminar Personal
           </button>
+          */}
         </>
       )}
 
