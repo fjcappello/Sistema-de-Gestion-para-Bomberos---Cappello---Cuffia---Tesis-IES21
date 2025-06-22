@@ -178,103 +178,130 @@ function MovimientosPersonas() {
   );
 
   return (
-    <div className="sidebar-layout">
-      <aside className="sidebar">
-        <button onClick={() => setVistaActiva("registrar")}>
+    <div className="movimientos-layout">
+      <aside className="movimientos-sidebar">
+        <button
+          onClick={() => setVistaActiva("registrar")}
+          className={vistaActiva === "registrar" ? "active" : ""}
+        >
           Registrar Movimiento
         </button>
-        <button onClick={() => setVistaActiva("historial")}>
+        <button
+          onClick={() => setVistaActiva("historial")}
+          className={vistaActiva === "historial" ? "active" : ""}
+        >
           Historial de Movimientos
         </button>
       </aside>
-      <main className="contenido-principal">
+      <main className="movimientos-main-content">
         {vistaActiva === "registrar" && (
           <>
             <h2>Registrar Ingreso / Egreso</h2>
             <div className="movimientos-form">
-              <select value={selectedId} onChange={handleSelectChange}>
-                <option value="">Ingreso Manual</option>
-                {personal.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.nombre_completo}
-                  </option>
-                ))}
-              </select>
-              <br />
-              <br />
-              <input
-                type="text"
-                name="nombre"
-                placeholder="Nombre"
-                value={formData.nombre}
-                onChange={handleInputChange}
-                disabled={!!selectedId}
-              />
-              <input
-                type="text"
-                name="apellido"
-                placeholder="Apellido"
-                value={formData.apellido}
-                onChange={handleInputChange}
-                disabled={!!selectedId}
-              />
-              <input
-                type="text"
-                name="dni"
-                placeholder="DNI"
-                value={formData.dni}
-                onChange={handleInputChange}
-                disabled={!!selectedId}
-              />
-              <br />
-              <br />
-              <button
-                className="btn ingreso"
-                onClick={() => registrarMovimiento(1)}
-              >
-                Marcar Ingreso
-              </button>
-              <button
-                className="btn egreso"
-                onClick={() => registrarMovimiento(2)}
-              >
-                Marcar Egreso
-              </button>
+              <div className="form-group-fluent">
+                <label htmlFor="personalSelect" className="form-label-fluent">Seleccionar Personal (Opcional)</label>
+                <select id="personalSelect" value={selectedId} onChange={handleSelectChange} className="form-control-fluent">
+                  <option value="">Ingreso Manual...</option>
+                  {personal.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.nombre_completo}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group-fluent">
+                <label htmlFor="nombreInput" className="form-label-fluent">Nombre</label>
+                <input
+                  id="nombreInput"
+                  type="text"
+                  name="nombre"
+                  placeholder="Nombre"
+                  value={formData.nombre}
+                  onChange={handleInputChange}
+                  disabled={!!selectedId}
+                  className="form-control-fluent"
+                  required={!selectedId}
+                />
+              </div>
+              <div className="form-group-fluent">
+                <label htmlFor="apellidoInput" className="form-label-fluent">Apellido</label>
+                <input
+                  id="apellidoInput"
+                  type="text"
+                  name="apellido"
+                  placeholder="Apellido"
+                  value={formData.apellido}
+                  onChange={handleInputChange}
+                  disabled={!!selectedId}
+                  className="form-control-fluent"
+                  required={!selectedId}
+                />
+              </div>
+              <div className="form-group-fluent">
+                <label htmlFor="dniInput" className="form-label-fluent">DNI</label>
+                <input
+                  id="dniInput"
+                  type="text"
+                  name="dni"
+                  placeholder="DNI"
+                  value={formData.dni}
+                  onChange={handleInputChange}
+                  disabled={!!selectedId}
+                  className="form-control-fluent"
+                  required={!selectedId}
+                />
+              </div>
+
+              <div className="movimientos-form-actions">
+                <button
+                  className="btn-fluent ingreso"
+                  onClick={() => registrarMovimiento(1)}
+                >
+                  Marcar Ingreso
+                </button>
+                <button
+                  className="btn-fluent egreso"
+                  onClick={() => registrarMovimiento(2)}
+                >
+                  Marcar Egreso
+                </button>
+              </div>
             </div>
           </>
         )}
         {vistaActiva === "historial" && (
           <>
-            <h3 style={{ marginTop: "3rem" }}>Historial de Movimientos</h3>
+            <h3>Historial de Movimientos</h3>
             <div className="filter-container">
               <input
-                className="filter-input"
+                className="form-control-fluent" // Clase Fluent
                 type="text"
                 placeholder="Filtrar por nombre"
                 value={filtroNombre}
                 onChange={(e) => setFiltroNombre(e.target.value)}
               />
               <input
-                className="filter-input"
+                className="form-control-fluent" // Clase Fluent
                 type="text"
                 placeholder="Filtrar por apellido"
                 value={filtroApellido}
                 onChange={(e) => setFiltroApellido(e.target.value)}
               />
               <select
-                className="filter-select"
+                className="form-control-fluent" // Clase Fluent
                 value={filtroTipo}
                 onChange={(e) => setFiltroTipo(e.target.value)}
               >
-                <option value="">Todos</option>
+                <option value="">Todos los Tipos</option>
                 <option value="Ingreso">Ingreso</option>
                 <option value="Egreso">Egreso</option>
               </select>
-              <button className="filter-btn" onClick={aplicarFiltros}>
+              <button className="btn-fluent" onClick={aplicarFiltros}> {/* Botón Fluent */}
                 Filtrar
               </button>
             </div>
-            <table className="movimientos-table">
+            <table className="table-fluent movimientos-table"> {/* Clase Fluent */}
               <thead>
                 <tr>
                   <th>Fecha</th>
@@ -307,7 +334,7 @@ function MovimientosPersonas() {
                       {["Administrador", "Jefatura"].includes(usuario?.rol) && (
                         <td>
                           <button
-                            className="btn eliminar"
+                            className="btn-fluent eliminar" // Clase Fluent
                             onClick={() => eliminarMovimientoLocal(m.id)}
                           >
                             Eliminar
@@ -319,7 +346,7 @@ function MovimientosPersonas() {
                 ) : (
                   <tr>
                     <td colSpan={["Administrador", "Jefatura"].includes(usuario?.rol) ? "7" : "6"}>
-                      No hay movimientos registrados
+                      No hay movimientos registrados que coincidan con los filtros.
                     </td>
                   </tr>
                 )}
@@ -330,6 +357,7 @@ function MovimientosPersonas() {
               <button
                 onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={currentPage === 1}
+                className="btn-fluent btn-fluent-outline" // Clase Fluent
               >
                 Anterior
               </button>
@@ -339,6 +367,7 @@ function MovimientosPersonas() {
               <button
                 onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
+                className="btn-fluent btn-fluent-outline" // Clase Fluent
               >
                 Siguiente
               </button>
