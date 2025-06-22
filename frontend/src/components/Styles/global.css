@@ -1,4 +1,4 @@
-/* frontend/src/components/Styles/global.css - ESTILO WINDOWS 98 */
+/* frontend/src/components/Styles/global.css - ESTILO WINDOWS 10 / FLUENT DESIGN */
 
 /* Reset básico */
 *,
@@ -10,387 +10,393 @@
 }
 
 :root {
-  /* Paleta de Colores Windows 98 */
-  --color-win98-bg: #C0C0C0; /* Gris principal de UI */
-  --color-win98-bg-darker: #A0A0A0; /* Un gris un poco más oscuro */
-  --color-win98-panel-bg: #C0C0C0; /* Fondo para paneles y botones */
-  --color-win98-window-bg: #FFFFFF; /* Fondo de áreas de contenido/ventanas */
+  /* Paleta de Colores Fluent Design */
+  --color-fluent-bg: #F3F3F3; /* Fondo general de la aplicación */
+  --color-fluent-surface: #FFFFFF; /* Para cards, modales, inputs, etc. */
+  --color-fluent-surface-hover: #FAFAFA;
+  --color-fluent-surface-selected: #EFEFEF;
 
-  --color-win98-border-shadow: #808080;   /* Sombra oscura para bordes 3D */
-  --color-win98-border-highlight: #FFFFFF; /* Luz brillante para bordes 3D */
-  --color-win98-border-highlight-soft: #DFDFDF; /* Luz suave para bordes 3D */
+  --color-fluent-accent: #0078D4; /* Azul de acento principal */
+  --color-fluent-accent-hover: #005A9E;
+  --color-fluent-accent-disabled: #A1A1A1; /* Para acento deshabilitado */
 
-  --color-win98-text: #000000;            /* Texto principal (negro) */
-  --color-win98-text-disabled: #808080;  /* Texto deshabilitado */
+  --color-fluent-text-primary: #201F1E;  /* Casi negro para texto principal */
+  --color-fluent-text-secondary: #605E5C; /* Gris para texto secundario, placeholders */
+  --color-fluent-text-on-accent: #FFFFFF; /* Texto sobre color de acento */
+  --color-fluent-text-disabled: #A1A1A1; /* Gris claro para texto deshabilitado */
+  --color-fluent-text-error: #A80000; /* Rojo oscuro para errores */
 
-  --color-win98-title-bar-active-bg: #000080; /* Azul Navy para barra de título activa */
-  --color-win98-title-bar-text: #FFFFFF;      /* Texto blanco en barra de título */
-  --color-win98-title-bar-inactive-bg: #808080; /* Gris para barra de título inactiva */
 
-  --color-win98-selected-item-bg: #000080; /* Fondo para ítems seleccionados */
-  --color-win98-selected-item-text: #FFFFFF;/* Texto para ítems seleccionados */
+  --color-fluent-border: #C8C6C4;       /* Borde estándar */
+  --color-fluent-border-light: #E1DFDD; /* Borde más claro o separador */
+  --color-fluent-focus-ring: rgba(0, 120, 212, 0.4); /* Anillo de foco azul */
 
-  /* Tipografía Windows 98 */
-  --font-family-win98: Tahoma, "MS Sans Serif", Verdana, Arial, sans-serif;
-  --font-size-win98-base: 12px; /* O 11px, 8pt aprox */
-  --font-size-win98-small: 10px;
-  --font-size-win98-h1: 18px; /* Los encabezados eran menos prominentes */
-  --font-size-win98-h2: 16px;
-  --font-size-win98-h3: 14px;
+  /* Tipografía Fluent Design */
+  --font-family-fluent: 'Segoe UI', 'Roboto', 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-size-base: 14px;
+  --font-size-small: 12px;
+  --font-size-large: 16px;
+  --font-size-xl: 18px;
+  --font-size-h1: 28px;
+  --font-size-h2: 24px;
+  --font-size-h3: 20px;
+  --font-size-h4: 16px; /* Mismo que large, pero con más peso */
 
-  /* Bordes Win98 - Usar directamente o con clases */
-  --border-win98-outset: 2px outset var(--color-win98-highlight); /* Simplificado, mejor con colores por lado */
-  --border-win98-inset: 2px inset var(--color-win98-border-shadow); /* Simplificado */
+  --font-weight-light: 300;
+  --font-weight-regular: 400;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
-  /* No se usan sombras suaves ni border-radius amplios */
+  /* Bordes y Sombras */
+  --border-radius-small: 2px;
+  --border-radius-medium: 4px;
+  --border-radius-large: 6px;
+
+  --box-shadow-xs: 0 1px 2px rgba(0,0,0,0.05);
+  --box-shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+  --box-shadow-md: 0 4px 8px rgba(0,0,0,0.12);
+  --box-shadow-lg: 0 8px 16px rgba(0,0,0,0.14);
+
+  /* Espaciado (consistente con Fluent) */
+  --spacing-xxs: 4px;
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 20px;
+  --spacing-xl: 24px;
+  --spacing-xxl: 32px;
+
+  /* Altura de elementos comunes */
+  --fluent-control-height: 32px; /* Altura estándar para inputs, botones */
+  --fluent-control-height-large: 40px;
 }
 
 body {
-  font-family: var(--font-family-win98);
-  font-size: var(--font-size-win98-base);
-  color: var(--color-win98-text);
-  background-color: var(--color-win98-bg);
-  /* Evitar antialiasing si es posible (limitado en web) */
-  -webkit-font-smoothing: none;
+  font-family: var(--font-family-fluent);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-fluent-text-primary);
+  background-color: var(--color-fluent-bg);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeSpeed; /* Puede ayudar a emular fuentes pixeladas */
-  image-rendering: pixelated; /* Para imágenes si se usan iconos pixelados */
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin-bottom: 8px; /* Menos espacio */
-  font-weight: bold; /* El peso era generalmente bold */
+  margin-top: var(--spacing-lg);
+  margin-bottom: var(--spacing-sm);
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.3;
 }
 
-h1 { font-size: var(--font-size-win98-h1); }
-h2 { font-size: var(--font-size-win98-h2); }
-h3 { font-size: var(--font-size-win98-h3); }
+h1 { font-size: var(--font-size-h1); }
+h2 { font-size: var(--font-size-h2); }
+h3 { font-size: var(--font-size-h3); }
+h4 { font-size: var(--font-size-h4); font-weight: var(--font-weight-bold); } /* H4 más bold */
 
 p {
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-md);
 }
 
 a {
-  color: #0000FF; /* Azul estándar para enlaces */
-  text-decoration: underline;
+  color: var(--color-fluent-accent);
+  text-decoration: none;
 }
 a:hover {
-  color: #FF0000; /* Rojo en hover, un clásico */
+  color: var(--color-fluent-accent-hover);
+  text-decoration: underline;
 }
-
-/* --- CLASES DE UTILIDAD ESTILO WINDOWS 98 --- */
-
-/* Panel Win98 (efecto outset) */
-.panel-win98, .btn-win98 {
-  background-color: var(--color-win98-panel-bg);
-  border: 1px solid; /* Base para los colores por lado */
-  border-top-color: var(--color-win98-border-highlight-soft);
-  border-left-color: var(--color-win98-border-highlight-soft);
-  border-right-color: var(--color-win98-border-shadow);
-  border-bottom-color: var(--color-win98-border-shadow);
-  padding: 2px; /* Padding interno pequeño */
-  box-shadow: 1px 1px 0px 0px var(--color-win98-border-highlight) inset, /* Sombra interna clara */
-              -1px -1px 0px 0px var(--color-win98-border-shadow) inset; /* Sombra interna oscura */
-
-}
-.panel-win98-inset {
-  background-color: var(--color-win98-panel-bg); /* O un gris más oscuro si es un área de input */
-  border: 1px solid;
-  border-top-color: var(--color-win98-border-shadow);
-  border-left-color: var(--color-win98-border-shadow);
-  border-right-color: var(--color-win98-border-highlight-soft);
-  border-bottom-color: var(--color-win98-border-highlight-soft);
-  padding: 2px;
-  box-shadow: 1px 1px 0px 0px var(--color-win98-border-shadow) inset,
-              -1px -1px 0px 0px var(--color-win98-border-highlight) inset;
+a:focus {
+    outline: 2px solid transparent; /* Quitar outline por defecto */
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--color-fluent-focus-ring); /* Anillo de foco */
+    border-radius: var(--border-radius-small);
 }
 
 
-/* Botón Win98 */
-.btn-win98 {
-  min-width: 75px; /* Ancho mínimo típico */
-  min-height: 23px; /* Alto mínimo típico */
-  padding: 3px 12px; /* Padding interno */
+/* --- CLASES DE UTILIDAD ESTILO FLUENT --- */
+
+/* Botones Fluent */
+.btn-fluent {
+  display: inline-flex; /* Para alinear icono y texto */
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-family-fluent);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-regular);
+  height: var(--fluent-control-height);
+  padding: 0 var(--spacing-sm); /* 12px horizontal */
+  border: 1px solid var(--color-fluent-border);
+  border-radius: var(--border-radius-medium);
+  cursor: pointer;
   text-align: center;
-  cursor: default; /* Cursor por defecto, no pointer */
   user-select: none;
-  font-size: var(--font-size-win98-base);
-  line-height: 1.4; /* Ajustar para centrar texto */
+  transition: background-color 0.1s ease-in-out, border-color 0.1s ease-in-out, color 0.1s ease-in-out;
+  background-color: var(--color-fluent-surface);
+  color: var(--color-fluent-text-primary);
+}
+.btn-fluent:hover {
+  background-color: var(--color-fluent-surface-hover);
+  border-color: var(--color-fluent-border); /* Podría oscurecerse un poco */
+}
+.btn-fluent:active {
+  background-color: var(--color-fluent-surface-selected);
+  border-color: var(--color-fluent-accent); /* Borde de acento al presionar */
+  color: var(--color-fluent-accent);
+}
+.btn-fluent:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+  border-color: var(--color-fluent-accent);
+  box-shadow: 0 0 0 2px var(--color-fluent-focus-ring);
+}
+.btn-fluent:disabled {
+  background-color: var(--color-fluent-bg); /* Fondo gris claro */
+  border-color: var(--color-fluent-border-light);
+  color: var(--color-fluent-text-disabled);
+  cursor: not-allowed;
 }
 
-.btn-win98:active, .btn-win98.active {
-  border-top-color: var(--color-win98-border-shadow);
-  border-left-color: var(--color-win98-border-shadow);
-  border-right-color: var(--color-win98-border-highlight-soft);
-  border-bottom-color: var(--color-win98-border-highlight-soft);
-  padding: 4px 11px 2px 13px; /* Simular movimiento al presionar */
-  box-shadow: 1px 1px 0px 0px var(--color-win98-border-shadow) inset, /* Sombra interna oscura */
-              -1px -1px 0px 0px var(--color-win98-border-highlight) inset; /* Sombra interna clara */
+/* Botón Primario (Acento) */
+.btn-fluent-primary {
+  background-color: var(--color-fluent-accent);
+  color: var(--color-fluent-text-on-accent);
+  border-color: var(--color-fluent-accent);
 }
-.btn-win98:focus {
-  outline: 1px dotted var(--color-win98-text); /* Outline punteado en foco */
-  outline-offset: -3px; /* Hacia adentro */
+.btn-fluent-primary:hover {
+  background-color: var(--color-fluent-accent-hover);
+  border-color: var(--color-fluent-accent-hover);
+  color: var(--color-fluent-text-on-accent);
 }
-.btn-win98:disabled {
-  color: var(--color-win98-text-disabled);
-  /* Los bordes en disabled eran más planos o usaban el color del texto disabled */
-   border-top-color: var(--color-win98-border-highlight-soft);
-   border-left-color: var(--color-win98-border-highlight-soft);
-   border-right-color: var(--color-win98-border-shadow);
-   border-bottom-color: var(--color-win98-border-shadow);
-   box-shadow: none;
+.btn-fluent-primary:active {
+  background-color: var(--color-fluent-accent-hover); /* Más oscuro aún si hay */
+  border-color: var(--color-fluent-accent);
+  color: var(--color-fluent-text-on-accent);
+}
+.btn-fluent-primary:disabled {
+  background-color: var(--color-fluent-accent-disabled);
+  border-color: var(--color-fluent-accent-disabled);
+  color: var(--color-fluent-text-on-accent);
 }
 
-/* Formularios Win98 */
-.form-control-win98,
-textarea.form-control-win98,
-select.form-control-win98 {
-  background-color: var(--color-win98-window-bg); /* Fondo blanco */
-  border: 1px solid;
-  border-top-color: var(--color-win98-border-shadow);
-  border-left-color: var(--color-win98-border-shadow);
-  border-right-color: var(--color-win98-border-highlight-soft);
-  border-bottom-color: var(--color-win98-border-highlight-soft);
-  padding: 3px 4px;
-  font-family: var(--font-family-win98);
-  font-size: var(--font-size-win98-base);
-  color: var(--color-win98-text);
-  box-shadow: 1px 1px 0px 0px var(--color-win98-border-shadow) inset; /* Sombra interna */
+/* Botón Outline */
+.btn-fluent-outline {
+    background-color: transparent;
+    color: var(--color-fluent-accent);
+    border-color: var(--color-fluent-accent);
 }
-textarea.form-control-win98 {
-    min-height: 40px;
+.btn-fluent-outline:hover {
+    background-color: rgba(0, 120, 212, 0.05); /* Fondo muy sutil de acento */
+    color: var(--color-fluent-accent-hover);
+    border-color: var(--color-fluent-accent-hover);
 }
-select.form-control-win98 {
-  appearance: none; /* Quitar apariencia nativa para estilizar flecha */
-  padding-right: 20px; /* Espacio para la flecha custom */
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D'10'%20height%3D'5'%20viewBox%3D'0%200%2010%205'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cpath%20d%3D'M0%200h10L5%205z'%20fill%3D'%23000'%2F%3E%3C%2Fsvg%3E"); /* Flecha SVG simple */
-  background-repeat: no-repeat;
-  background-position: right 5px center;
-  background-color: var(--color-win98-panel-bg); /* Selects tenían fondo gris */
-  /* Para el select, el borde es más como un botón */
-  border-top-color: var(--color-win98-border-highlight-soft);
-  border-left-color: var(--color-win98-border-highlight-soft);
-  border-right-color: var(--color-win98-border-shadow);
-  border-bottom-color: var(--color-win98-border-shadow);
-  box-shadow: 1px 1px 0px 0px var(--color-win98-border-highlight) inset,
-              -1px -1px 0px 0px var(--color-win98-border-shadow) inset;
+.btn-fluent-outline:active {
+    background-color: rgba(0, 120, 212, 0.1);
+    color: var(--color-fluent-accent);
 }
 
 
-.form-label-win98 {
+/* Formularios Fluent */
+.form-control-fluent {
   display: block;
-  margin-bottom: 3px;
-  font-size: var(--font-size-win98-base);
-}
-.form-group-win98 {
-  margin-bottom: 10px;
-}
-
-/* Checkbox y Radio Win98 (muy simplificado, requiere más trabajo para parecerse) */
-input[type="checkbox"].checkbox-win98,
-input[type="radio"].radio-win98 {
-  appearance: none;
-  width: 13px;
-  height: 13px;
-  background-color: var(--color-win98-window-bg);
-  border: 1px solid;
-  border-top-color: var(--color-win98-border-shadow);
-  border-left-color: var(--color-win98-border-shadow);
-  border-right-color: var(--color-win98-border-highlight-soft);
-  border-bottom-color: var(--color-win98-border-highlight-soft);
-  position: relative;
-  vertical-align: middle;
-  margin-right: 5px;
-  cursor: default;
-}
-input[type="checkbox"].checkbox-win98:checked::after {
-  content: '✓'; /* O un SVG de check */
-  position: absolute;
-  top: -2px; left: 1px;
-  font-size: 12px;
-  color: var(--color-win98-text);
-}
-input[type="radio"].radio-win98 {
-  border-radius: 50%;
-}
-input[type="radio"].radio-win98:checked::after {
-  content: '';
-  position: absolute;
-  top: 3px; left: 3px;
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background-color: var(--color-win98-text);
-}
-
-
-/* Contenedor principal de la aplicación (si se usa) */
-.app-win98 {
-  /* Podría tener un borde general si es una "ventana" principal */
-}
-
-/* Tablas Win98 */
-.table-win98 {
   width: 100%;
-  background-color: var(--color-win98-window-bg);
-  border-collapse: collapse; /* Colapsar bordes */
-  /* Para el efecto de tabla "hundida" */
-  border: 1px solid;
-  border-top-color: var(--color-win98-border-shadow);
-  border-left-color: var(--color-win98-border-shadow);
-  border-right-color: var(--color-win98-border-highlight-soft);
-  border-bottom-color: var(--color-win98-border-highlight-soft);
-  box-shadow: 1px 1px 0px 0px var(--color-win98-border-shadow) inset;
+  height: var(--fluent-control-height);
+  padding: var(--spacing-xs) var(--spacing-sm); /* 8px 12px */
+  font-family: var(--font-family-fluent);
+  font-size: var(--font-size-base);
+  color: var(--color-fluent-text-primary);
+  background-color: var(--color-fluent-surface);
+  border: 1px solid var(--color-fluent-border);
+  border-radius: var(--border-radius-medium);
+  transition: border-color 0.1s ease-in-out, box-shadow 0.1s ease-in-out;
 }
-.table-win98 th,
-.table-win98 td {
-  padding: 3px 5px;
-  border: 1px solid var(--color-win98-bg-darker); /* Líneas internas de la tabla */
-  text-align: left;
+.form-control-fluent:hover {
+  border-color: var(--color-fluent-text-secondary); /* Borde más oscuro en hover */
 }
-.table-win98 th {
-  background-color: var(--color-win98-panel-bg); /* Encabezados con fondo gris */
-  font-weight: normal; /* El texto no era tan bold */
-  /* Los th también tenían efecto biselado */
-  border-top-color: var(--color-win98-border-highlight-soft);
-  border-left-color: var(--color-win98-border-highlight-soft);
-  border-right-color: var(--color-win98-border-shadow);
-  border-bottom-color: var(--color-win98-border-shadow);
+.form-control-fluent:focus {
+  border-color: var(--color-fluent-accent);
+  outline: 0;
+  box-shadow: 0 0 0 2px var(--color-fluent-focus-ring);
+}
+.form-control-fluent::placeholder {
+  color: var(--color-fluent-text-secondary);
+  opacity: 0.7;
+}
+.form-control-fluent:disabled {
+  background-color: var(--color-fluent-bg);
+  border-color: var(--color-fluent-border-light);
+  color: var(--color-fluent-text-disabled);
+  cursor: not-allowed;
+}
+textarea.form-control-fluent {
+  height: auto; /* Altura automática para textarea */
+  min-height: calc(var(--fluent-control-height) * 2); /* Mínimo 2 líneas */
+}
+select.form-control-fluent {
+  appearance: none;
+  padding-right: var(--spacing-xl); /* Espacio para la flecha */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23605E5C'%3E%3Cpath d='M8 10.293l-4.146-4.147a.5.5 0 00-.708.708l4.5 4.5a.5.5 0 00.708 0l4.5-4.5a.5.5 0 00-.708-.708L8 10.293z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-xs) center;
+  background-size: 16px 16px;
 }
 
-/* --- FIN CLASES DE UTILIDAD ESTILO WINDOWS 98 --- */
-
-
-/* Comentando estilos modernos que no se usarán o se reemplazarán */
-/*
-:root {
-  --color-primary: #007BFF;
-  --color-background-secondary: #F8F9FA;
-  --border-radius-standard: 0.25rem;
-  --box-shadow-subtle: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+.form-label-fluent {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fluent-text-primary);
 }
-.btn { ... }
-.form-control { ... }
-.modal-overlay { ... }
-.card { ... }
-.alert { ... }
-.badge { ... }
-.spinner-border { ... }
-*/
-
-/* Utilidades de display responsive (pueden seguir siendo útiles) */
-.d-none { display: none !important; }
-.d-block { display: block !important; }
-.d-flex { display: flex !important; }
-/* etc. Estas pueden mantenerse si se necesitan para layout, aunque Win98 no era responsive */
-@media (min-width: 576px) { /* sm */
-  .d-sm-none { display: none !important; }
+.form-group-fluent {
+  margin-bottom: var(--spacing-md);
 }
-/* ... más media queries ... */
+
+/* Checkbox y Radio (simplificado, idealmente usar componentes React estilizados) */
+.checkbox-fluent, .radio-fluent {
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    margin-right: var(--spacing-md);
+}
+.checkbox-fluent input, .radio-fluent input {
+    margin-right: var(--spacing-xs);
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-fluent-accent); /* Usa el color de acento del navegador para el check/dot */
+}
+.checkbox-fluent input:focus, .radio-fluent input:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--color-fluent-focus-ring);
+    border-radius: var(--border-radius-small);
+}
 
 
-/* --- Estilos para Modales/Ventanas Win98 --- */
-.modal-overlay-win98 {
+/* Cards Fluent */
+.card-fluent {
+  background-color: var(--color-fluent-surface);
+  border: 1px solid var(--color-fluent-border-light);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--box-shadow-sm);
+  margin-bottom: var(--spacing-lg);
+  overflow: hidden; /* Para que el header no se salga del radius */
+}
+.card-header-fluent {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-fluent-surface); /* O un gris muy claro si se quiere diferenciar */
+  border-bottom: 1px solid var(--color-fluent-border-light);
+  font-size: var(--font-size-large);
+  font-weight: var(--font-weight-semibold);
+}
+.card-body-fluent {
+  padding: var(--spacing-lg);
+}
+.card-footer-fluent {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background-color: var(--color-fluent-bg); /* Fondo ligeramente diferente */
+  border-top: 1px solid var(--color-fluent-border-light);
+}
+
+
+/* Modales Fluent */
+.modal-overlay-fluent {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  /* En Win98 no había overlay, la ventana aparecía sobre la app */
-  /* background-color: rgba(0, 0, 0, 0.1); */
+  background-color: rgba(0,0,0,0.4); /* Overlay oscuro */
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
-  padding: 10px;
+  padding: var(--spacing-lg);
 }
-
-.modal-window-win98 {
-  background-color: var(--color-win98-panel-bg);
-  border: 1px solid;
-  border-top-color: var(--color-win98-border-highlight-soft);
-  border-left-color: var(--color-win98-border-highlight-soft);
-  border-right-color: var(--color-win98-border-shadow);
-  border-bottom-color: var(--color-win98-border-shadow);
-  box-shadow: 2px 2px 3px rgba(0,0,0,0.35); /* Sombra más marcada estilo Win98 */
-  min-width: 280px;
-  max-width: 500px;
+.modal-window-fluent {
+  background-color: var(--color-fluent-surface);
+  border-radius: var(--border-radius-large);
+  box-shadow: var(--box-shadow-lg);
+  min-width: 320px;
+  max-width: 600px;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  cursor: default;
+  max-height: calc(100vh - var(--spacing-xxl) * 2); /* Para que no ocupe toda la pantalla */
 }
-
-.modal-title-bar-win98 {
-  background-color: var(--color-win98-title-bar-active-bg);
-  color: var(--color-win98-title-bar-text);
-  padding: 2px 4px;
+.modal-header-fluent {
+  padding: var(--spacing-md) var(--spacing-lg);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 20px;
-  cursor: default; /* O 'move' si se implementa drag */
+  border-bottom: 1px solid var(--color-fluent-border-light);
 }
-
-.modal-title-win98 {
-  font-family: var(--font-family-win98);
-  font-size: var(--font-size-win98-base);
-  font-weight: bold;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-left: 2px;
+.modal-title-fluent {
+  font-size: var(--font-size-h3);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fluent-text-primary);
 }
-
-.modal-title-buttons-win98 {
-  display: flex;
+.modal-close-btn-fluent { /* Botón de cerrar en header */
+  background: none;
+  border: none;
+  font-size: 20px; /* Tamaño del icono 'x' */
+  color: var(--color-fluent-text-secondary);
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  line-height: 1;
 }
-
-.modal-title-button-win98 {
-  background-color: var(--color-win98-panel-bg);
-  border: 1px solid;
-  border-top-color: var(--color-win98-border-highlight-soft);
-  border-left-color: var(--color-win98-border-highlight-soft);
-  border-right-color: var(--color-win98-border-shadow);
-  border-bottom-color: var(--color-win98-border-shadow);
-  width: 16px;
-  height: 16px;
-  margin-left: 2px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Marlett", "Webdings", sans-serif;
-  font-size: 10px;
-  color: var(--color-win98-text);
-  cursor: default;
-  box-shadow: 1px 1px 0px 0px var(--color-win98-border-highlight) inset,
-              -1px -1px 0px 0px var(--color-win98-border-shadow) inset;
+.modal-close-btn-fluent:hover {
+  color: var(--color-fluent-text-primary);
 }
-.modal-title-button-win98:active {
-  border-top-color: var(--color-win98-border-shadow);
-  border-left-color: var(--color-win98-border-shadow);
-  border-right-color: var(--color-win98-border-highlight-soft);
-  border-bottom-color: var(--color-win98-border-highlight-soft);
-  box-shadow: 1px 1px 0px 0px var(--color-win98-border-shadow) inset,
-              -1px -1px 0px 0px var(--color-win98-border-highlight) inset;
-  padding: 1px 0 0 1px;
+.modal-body-fluent {
+  padding: var(--spacing-lg);
+  overflow-y: auto; /* Scroll si el contenido es muy largo */
+  flex-grow: 1;
 }
-.modal-close-btn-symbol::before { content: "r"; }
-
-
-.modal-body-win98 {
-  padding: 15px 12px; /* Más padding vertical */
-  background-color: var(--color-win98-panel-bg);
-  font-size: var(--font-size-win98-base);
-  min-height: 50px;
-}
-
-.modal-footer-win98 {
-  padding: 8px 12px;
-  background-color: var(--color-win98-panel-bg);
+.modal-footer-fluent {
+  padding: var(--spacing-md) var(--spacing-lg);
   display: flex;
   justify-content: flex-end;
-  gap: 6px;
-  border-top: 1px solid var(--color-win98-border-highlight-soft);
-  box-shadow: inset 0 1px 0px 0px var(--color-win98-border-shadow); /* Sombra interna sutil */
+  gap: var(--spacing-sm);
+  border-top: 1px solid var(--color-fluent-border-light);
+  background-color: var(--color-fluent-bg); /* Fondo ligeramente diferente para el footer */
 }
-/* --- Fin Estilos para Modales/Ventanas Win98 --- */
+
+
+/* Tablas Fluent */
+.table-fluent {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-fluent-surface);
+  font-size: var(--font-size-base);
+}
+.table-fluent th,
+.table-fluent td {
+  padding: var(--spacing-sm) var(--spacing-md); /* 12px 16px */
+  text-align: left;
+  border-bottom: 1px solid var(--color-fluent-border-light);
+}
+.table-fluent thead th {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fluent-text-primary);
+  background-color: var(--color-fluent-surface); /* O un gris muy claro */
+  border-bottom-width: 2px; /* Borde más grueso para cabecera */
+  border-bottom-color: var(--color-fluent-border);
+}
+.table-fluent tbody tr:hover {
+  background-color: var(--color-fluent-surface-hover);
+}
+.table-fluent tbody tr:nth-child(even) {
+    /* background-color: var(--color-fluent-bg); /* Opcional: striping sutil */
+}
+
+
+/* Utilidades de display responsive (pueden seguir siendo útiles) */
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-flex { display: flex !important; }
+/* etc. */
+@media (min-width: 576px) { /* sm */
+  .d-sm-none { display: none !important; }
+}
+/* ... más media queries ... */

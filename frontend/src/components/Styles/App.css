@@ -1,116 +1,139 @@
-/* frontend/src/components/Styles/App.css - ESTILO WINDOWS 98 */
-
-/* Los resets generales y estilos de body ahora están en global.css (versión Win98) */
+/* frontend/src/components/Styles/App.css - ESTILO FLUENT DESIGN */
 
 .App {
   display: flex;
   flex-direction: column;
-  align-items: stretch; /* Estirar para ocupar ancho */
   min-height: 100vh;
-  background-color: var(--color-win98-bg); /* Fondo gris general */
+  background-color: var(--color-fluent-bg); /* Fondo gris claro general */
 }
 
 .app-container {
   display: flex;
   width: 100%;
-  margin-top: 30px; /* Altura del Navbar Win98 */
-  flex-grow: 1; /* Para que ocupe el espacio restante */
+  margin-top: 56px; /* Nueva altura del Navbar Fluent */
+  flex-grow: 1;
 }
 
 .sidebar {
-  width: 200px; /* Ancho típico para un panel lateral */
-  background-color: var(--color-win98-panel-bg);
-  border: 1px solid; /* Base para los colores por lado */
-  border-top-color: var(--color-win98-border-highlight-soft);
-  border-left-color: var(--color-win98-border-highlight-soft);
-  border-right-color: var(--color-win98-border-shadow);
-  border-bottom-color: var(--color-win98-border-shadow);
-  padding: 5px; /* Padding interno del panel */
+  width: 240px; /* Ancho estándar para sidebar */
+  background-color: var(--color-fluent-surface); /* Fondo blanco o gris muy claro */
+  border-right: 1px solid var(--color-fluent-border-light);
+  padding: var(--spacing-lg); /* 20px */
   position: fixed;
-  top: 30px; /* Debajo del Navbar */
+  top: 56px; /* Debajo del Navbar */
   bottom: 0;
   left: 0;
   overflow-y: auto;
   z-index: 900;
-  font-size: var(--font-size-win98-base);
-  /* transition: transform 0.3s ease-in-out, width 0.3s ease-in-out; */ /* Transiciones eliminadas */
+  transition: transform 0.25s ease-in-out, width 0.25s ease-in-out;
+  font-size: var(--font-size-base);
+}
+/* Estilos para items dentro de la sidebar (ej. NavLinks) */
+.sidebar a, .sidebar button { /* Asumiendo que los items son links o botones */
+    display: block;
+    padding: var(--spacing-sm) var(--spacing-md); /* 12px 16px */
+    margin-bottom: var(--spacing-xs); /* 8px */
+    text-decoration: none;
+    color: var(--color-fluent-text-secondary);
+    border-radius: var(--border-radius-medium);
+    transition: background-color 0.15s ease, color 0.15s ease;
+    font-weight: var(--font-weight-regular);
+}
+.sidebar a:hover, .sidebar button:hover {
+    background-color: var(--color-fluent-surface-hover);
+    color: var(--color-fluent-text-primary);
+}
+.sidebar a.active, .sidebar button.active { /* Para NavLink activo o botón seleccionado */
+    background-color: var(--color-fluent-surface-selected); /* Un gris un poco más oscuro o un azul muy claro */
+    color: var(--color-fluent-accent);
+    font-weight: var(--font-weight-semibold);
 }
 
+
 .main-content {
-  margin-left: 200px; /* Ancho de la sidebar */
-  padding: 0; /* El contenido interno manejará su propio padding o será un panel */
-  background-color: var(--color-win98-window-bg); /* Fondo blanco como área de cliente */
+  margin-left: 240px; /* Ancho de la sidebar */
+  padding: var(--spacing-xl); /* 24px de padding general */
   flex-grow: 1;
-  width: calc(100% - 200px);
-  /* border-left: 1px solid var(--color-win98-border-shadow); */ /* Opcional: separador */
+  width: calc(100% - 240px);
+  transition: margin-left 0.25s ease-in-out, width 0.25s ease-in-out;
   overflow-y: auto;
 }
 
-/* Funcionalidad de sidebar colapsada (moderna, pero estilizada) */
+/* Funcionalidad de sidebar colapsada (si se implementa) */
 .sidebar.collapsed {
-  width: 40px;
-  overflow: hidden;
+  width: 60px;
+  overflow: hidden; /* Ocultar texto, mostrar solo iconos */
+}
+.sidebar.collapsed .sidebar-text { /* Asumiendo que el texto de los items tiene esta clase */
+    display: none;
 }
 .sidebar.collapsed + .main-content {
-  margin-left: 40px;
-  width: calc(100% - 40px);
+  margin-left: 60px;
+  width: calc(100% - 60px);
 }
 
 
-.filtros-container { /* Estilo "Group Box" de Win98 */
-  margin: 10px;
-  padding: 15px 10px 10px 10px; /* Padding: top, horiz, bottom */
-  border: 1px solid;
-  border-top-color: var(--color-win98-border-shadow); /* Borde hundido oscuro arriba */
-  border-left-color: var(--color-win98-border-shadow);
-  border-right-color: var(--color-win98-border-highlight-soft); /* Borde claro abajo */
-  border-bottom-color: var(--color-win98-border-highlight-soft);
-  border-radius: 0;
-  position: relative;
-  background-color: var(--color-win98-panel-bg);
+.filtros-container { /* Estilo Card Fluent */
+  background-color: var(--color-fluent-surface);
+  border-radius: var(--border-radius-large); /* 6px */
+  padding: var(--spacing-lg); /* 20px */
+  margin-bottom: var(--spacing-xl); /* 24px */
+  box-shadow: var(--box-shadow-sm);
+  /* display: flex; flex-wrap: wrap; gap: var(--spacing-md); align-items: flex-end; */ /* Para alinear filtros */
 }
 
-.filtros-container > h2 { /* Título del "Group Box" */
-  position: absolute;
-  top: -8px;
-  left: 8px;
-  background-color: var(--color-win98-panel-bg);
-  padding: 0 4px;
-  font-size: var(--font-size-win98-base);
-  font-weight: normal;
-  color: var(--color-win98-text);
-  margin: 0;
+.filtros-container > h2 { /* Título dentro del contenedor de filtros */
+  font-size: var(--font-size-h3); /* 20px */
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fluent-text-primary);
+  margin-top: 0; /* Quitar margen superior si es el primer elemento */
+  margin-bottom: var(--spacing-lg); /* Espacio debajo del título */
+  padding-bottom: var(--spacing-md); /* Espacio para línea separadora */
+  border-bottom: 1px solid var(--color-fluent-border-light); /* Separador */
+  text-align: left; /* Alinear a la izquierda */
 }
 
 .filtros-form-elements {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    align-items: center;
-    margin-top: 5px; /* Espacio para el título del group box */
+    gap: var(--spacing-md); /* 16px */
+    align-items: flex-end; /* Alinear items en la parte inferior */
+}
+.filtros-form-elements .form-group-fluent { /* Ajustar margen para filtros en línea */
+    margin-bottom: 0;
+    flex-grow: 1; /* Para que los inputs ocupen espacio */
+    min-width: 150px; /* Ancho mínimo para cada filtro */
+}
+.filtros-form-elements .btn-fluent { /* Botón de filtrar */
+    height: var(--fluent-control-height); /* Altura estándar */
+    /* flex-grow: 0; */ /* No crece */
 }
 
 
 .usuario-saludo {
   position: fixed;
-  top: 33px; /* Alineado con el borde inferior del navbar */
-  right: 5px;
-  font-size: var(--font-size-win98-small);
-  color: var(--color-win98-text);
-  background-color: var(--color-win98-panel-bg);
-  padding: 1px 4px;
-  border: 1px solid var(--color-win98-border-shadow);
-  z-index: 999;
+  top: calc( (56px - var(--fluent-control-height)) / 2 ); /* Centrado verticalmente en el navbar */
+  right: var(--spacing-lg); /* 20px */
+  font-size: var(--font-size-base);
+  color: var(--color-fluent-text-secondary);
+  background-color: transparent; /* Sin fondo, o un fondo muy sutil si es necesario */
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius-medium);
+  z-index: 1001; /* Encima del navbar si es necesario, o ajustar z-index de navbar-links */
+}
+.usuario-saludo:hover {
+    background-color: var(--color-fluent-surface-hover);
+    color: var(--color-fluent-text-primary);
 }
 
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
   .sidebar {
     transform: translateX(-100%);
-    z-index: 1050;
+    z-index: 1050; /* Encima del contenido, debajo de modales */
     top: 0;
     height: 100vh;
-    border-right: 1px solid var(--color-win98-border-shadow);
+    box-shadow: var(--box-shadow-lg); /* Sombra más pronunciada para off-canvas */
  }
   .sidebar.open {
     transform: translateX(0);
@@ -119,26 +142,51 @@
     margin-left: 0;
     width: 100%;
   }
+  /* Overlay para cuando la sidebar está abierta en móvil */
+  .sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    z-index: 1040; /* Debajo de la sidebar */
+    display: none; /* Oculto por defecto */
+  }
+  .sidebar-overlay.active {
+      display: block;
+  }
+
+}
+
+@media (max-width: 768px) {
+  .app-container {
+    margin-top: 56px; /* Mantener altura del navbar */
+  }
+  .main-content {
+    padding: var(--spacing-lg); /* 20px en móvil */
+  }
   .filtros-container {
-    margin: 5px;
-    padding: 12px 8px 8px 8px;
+    padding: var(--spacing-md); /* 16px */
+  }
+  .filtros-container > h2 {
+    font-size: var(--font-size-h4); /* 16px */
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+  }
+  .filtros-form-elements .form-group-fluent {
+      min-width: 100%; /* Filtros ocupan todo el ancho y se apilan */
+      margin-bottom: var(--spacing-sm);
+  }
+  .usuario-saludo {
+      display: none; /* Ocultar en pantallas muy pequeñas o mover al menú hamburguesa */
   }
 }
 
+/* Botón de toggle de la sidebar (si se usa fuera del navbar, sino el hamburguesa del navbar lo maneja) */
+/* Si se usa un botón separado, debería ser un .btn-fluent con un icono */
 .sidebar-toggle-btn {
-  position: fixed;
-  top: 33px;
-  left: 5px;
-  z-index: 1100;
-  /* Aplicar clase .btn-win98 directamente en el JSX */
-  /* Ajustes específicos si es necesario para tamaño */
-  padding: 1px 5px !important;
-  min-width: auto !important;
-  min-height: auto !important;
-  font-size: var(--font-size-win98-small) !important;
-  line-height: 1.2 !important;
-}
-
-@media (min-width: 769px) {
-  /* .sidebar-toggle-btn { display: none; } */ /* Depende de la lógica de JS */
+  /* Estilos si es un botón dedicado y no el del navbar */
+  /* Por ahora, asumimos que el botón hamburguesa del Navbar.js maneja esto */
+  display: none;
 }

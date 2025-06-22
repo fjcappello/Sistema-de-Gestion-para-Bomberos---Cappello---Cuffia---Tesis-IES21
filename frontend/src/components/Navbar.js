@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useUsuario } from '../context/UserContext';
-import './Styles/Navbar.css'; // Estilos Win98
+import './Styles/Navbar.css'; // Estilos Fluent Design
 
 function Navbar({ onLogout }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -43,7 +43,6 @@ function Navbar({ onLogout }) {
   }, []);
 
   useEffect(() => {
-    // Cerrar menú móvil y dropdowns al cambiar de ruta
     setMobileMenuOpen(false);
     setOpenDropdown('');
   }, [location]);
@@ -88,11 +87,9 @@ function Navbar({ onLogout }) {
     <nav className="navbar" ref={navbarRef}>
       <Link to="/" className="navbar-logo">
         <img src="/images/logo.png" alt="Logo" className="logo-img" />
-        {/* El título se oculta en CSS por ahora, pero podría mostrarse aquí si se desea */}
-        {/* <span className="navbar-title">BOMBEROS</span> */}
+        <span className="navbar-title">BOMBEROS SANTA MARIA DE PUNILLA</span>
       </Link>
 
-      {/* Botón Hamburguesa - la clase 'open' o 'active' se usa para el estado presionado si se define en CSS */}
       <button
         className={`hamburger-menu ${isMobileMenuOpen ? 'active' : ''}`}
         onClick={toggleMobileMenu}
@@ -128,13 +125,12 @@ function Navbar({ onLogout }) {
                 </ul>
               </>
             ) : (
-              <NavLink to={item.path} end={item.exact || false}>
+              <NavLink to={item.path} end={item.exact || false}> {/* Corregido: item.exact en lugar de subItem.exact */}
                 {item.label}
               </NavLink>
             )}
           </li>
         ))}
-        {/* Botón Salir como un item de menú más */}
         <li>
           <button className="logout-btn-link-style" onClick={handleLogout}>
             Salir

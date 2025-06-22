@@ -1,13 +1,13 @@
-/* frontend/src/components/Styles/Navbar.css - ESTILO WINDOWS 98 */
+/* frontend/src/components/Styles/Navbar.css - ESTILO FLUENT DESIGN */
 
 .navbar {
   display: flex;
-  align-items: center; /* Centrar verticalmente items */
-  padding: 2px 5px; /* Padding pequeño y ajustado */
-  background-color: var(--color-win98-panel-bg);
-  border-bottom: 1px solid var(--color-win98-border-shadow); /* Separador inferior */
+  align-items: center;
+  padding: 0 var(--spacing-lg); /* 20px horizontal */
+  background-color: var(--color-fluent-surface); /* Blanco */
+  border-bottom: 1px solid var(--color-fluent-border-light);
   width: 100%;
-  height: 30px; /* Altura típica de barra de menú/herramientas */
+  height: 56px; /* Altura aumentada para claridad */
   position: fixed;
   top: 0;
   left: 0;
@@ -15,121 +15,125 @@
   user-select: none;
 }
 
-.navbar-logo { /* El logo ahora es un botón/item de menú */
+.navbar-logo {
   display: flex;
   align-items: center;
   text-decoration: none;
-  padding: 2px 6px;
-  border: 1px solid transparent; /* Para hover */
-  height: 100%; /* Ocupar altura para centrar img */
-}
-.navbar-logo:hover { /* No es un botón, no necesita este efecto */
-  /* border: 1px outset var(--color-win98-border-highlight-soft);
-  background-color: var(--color-win98-bg-darker); */
+  height: 100%;
+  margin-right: var(--spacing-md); /* Espacio entre logo y título/links */
 }
 
 .navbar-logo img.logo-img {
-  height: 20px; /* Logo más pequeño, estilo icono */
+  height: 32px; /* Logo más grande */
   width: auto;
-  margin-right: 5px;
-  image-rendering: pixelated; /* Si el logo es pixel art */
+  margin-right: var(--spacing-sm); /* 12px */
 }
 
 .navbar-title {
-  display: none;
+  font-family: var(--font-family-fluent);
+  font-size: var(--font-size-xl); /* 18px */
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fluent-text-primary);
+  white-space: nowrap;
+  display: flex; /* Para centrar si es necesario */
+  align-items: center;
 }
 
 .navbar-links {
   list-style: none;
   display: flex;
-  align-items: stretch; /* Estirar items para ocupar altura */
+  align-items: stretch; /* Items ocupan toda la altura */
   margin: 0;
   padding: 0;
   height: 100%;
+  margin-left: auto; /* Empujar links a la derecha si el título está presente */
 }
 
 .navbar-links li {
   position: relative;
   display: flex;
-  align-items: center;
+  align-items: center; /* Centrar contenido de <li> */
   height: 100%;
-  margin-right: 1px; /* Pequeño espacio entre items de menú */
 }
 
-/* Estilo base para items de menú (incluye dropdown-btn y NavLink) */
-.navbar-links a, /* Esto aplica a NavLink también */
+/* Estilo base para items de menú (NavLink, dropdown-btn, logout-btn-link-style) */
+.navbar-links a,
 .navbar-links .dropdown-btn,
 .navbar-links .logout-btn-link-style {
-  font-family: var(--font-family-win98);
-  font-size: var(--font-size-win98-base);
-  color: var(--color-win98-text);
+  font-family: var(--font-family-fluent);
+  font-size: var(--font-size-base); /* 14px */
+  font-weight: var(--font-weight-regular);
+  color: var(--color-fluent-text-secondary); /* Gris secundario por defecto */
   text-decoration: none;
-  padding: 2px 8px;
-  cursor: default;
-  border: 1px solid transparent;
+  padding: 0 var(--spacing-md); /* 16px horizontal, vertical se controla por altura de li */
+  cursor: pointer; /* Cambiado a pointer */
+  border: none; /* Sin borde por defecto */
+  background-color: transparent;
   white-space: nowrap;
-  height: calc(100% - 4px);
-  line-height: calc(28px - 8px);
+  height: 100%;
   display: flex;
   align-items: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  position: relative; /* Para el indicador activo de borde inferior */
 }
+.navbar-links a::after,
+.navbar-links .dropdown-btn::after { /* Indicador de activo */
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: var(--spacing-md);
+    right: var(--spacing-md);
+    height: 2px;
+    background-color: transparent;
+    transition: background-color 0.15s ease;
+}
+
 
 .navbar-links a:hover,
 .navbar-links .dropdown-btn:hover,
-.navbar-links .logout-btn-link-style:hover,
-.navbar-links a.active,
-.navbar-links .dropdown-btn.active {
-  background-color: var(--color-win98-selected-item-bg);
-  color: var(--color-win98-selected-item-text);
-  /* No se usa borde aquí, el fondo es suficiente para indicar selección/hover */
+.navbar-links .logout-btn-link-style:hover {
+  background-color: var(--color-fluent-surface-hover);
+  color: var(--color-fluent-text-primary); /* Texto primario en hover */
 }
-.navbar-links .dropdown-btn.active { /* Cuando el dropdown está abierto */
-    /* Para emular el botón presionado de Win98 */
-    border: 1px solid;
-    border-top-color: var(--color-win98-border-shadow);
-    border-left-color: var(--color-win98-border-shadow);
-    border-right-color: var(--color-win98-border-highlight-soft);
-    border-bottom-color: var(--color-win98-border-highlight-soft);
-    padding: 3px 7px 1px 9px; /* Simular movimiento al presionar */
-    background-color: var(--color-win98-panel-bg); /* Fondo gris cuando está presionado */
-    color: var(--color-win98-text); /* Texto negro cuando está presionado */
+
+.navbar-links a.active, /* Para NavLink activo */
+.navbar-links .dropdown-btn.active { /* Para dropdown activo/abierto */
+  color: var(--color-fluent-accent);
+  font-weight: var(--font-weight-semibold);
+}
+.navbar-links a.active::after,
+.navbar-links .dropdown-btn.active::after {
+    background-color: var(--color-fluent-accent); /* Borde inferior de acento */
 }
 
 
-.logout-btn { /* Botón de logout como un botón Win98 separado, si se prefiere */
-  /* Esta clase se usaría si el botón Salir NO está dentro de navbar-links */
-  /* y se quiere que se vea como un botón estándar de Win98 */
-  /* Se usaría <button className="btn-win98 logout-btn">Salir</button> */
-  /* padding: 1px 8px !important;
-  min-width: auto !important;
-  font-size: var(--font-size-win98-small) !important; */
-  /* Por ahora, el logout se integra como un link más en .navbar-links */
-  display: none; /* Ocultar si se usa el estilo link */
+/* Estilo para el botón de logout si es un link */
+.logout-btn-link-style {
+  /* Hereda la mayoría de los estilos de 'a' y '.dropdown-btn' */
+  margin-left: var(--spacing-sm); /* Pequeño espacio si está al final */
 }
 
 
-/* Menú desplegable Win98 */
+/* Menú desplegable Fluent */
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 1px); /* Ligeramente debajo, considerar borde */
-  left: 0;
-  background-color: var(--color-win98-panel-bg);
-  border: 1px solid;
-  border-top-color: var(--color-win98-border-highlight-soft);
-  border-left-color: var(--color-win98-border-highlight-soft);
-  border-right-color: var(--color-win98-border-shadow);
-  border-bottom-color: var(--color-win98-border-shadow);
-  box-shadow: 1px 1px 1px #00000040;
-  padding: 2px;
+  top: calc(100% - 1px); /* Ligeramente superpuesto o justo debajo */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-fluent-surface);
+  border: 1px solid var(--color-fluent-border-light);
+  border-top: none; /* El borde superior lo da el navbar */
+  border-radius: 0 0 var(--border-radius-medium) var(--border-radius-medium); /* Redondeo solo abajo */
+  box-shadow: var(--box-shadow-md);
+  padding: var(--spacing-xs) 0; /* 8px vertical, 0 horizontal */
   display: none;
   flex-direction: column;
-  min-width: 180px;
+  min-width: 220px;
   z-index: 1001;
 }
-.dropdown-menu::before { display: none; }
 
-.dropdown:hover .dropdown-menu, /* Para escritorio */
-.dropdown .dropdown-menu.active { /* Para móvil con JS */
+.dropdown:hover .dropdown-menu,
+.dropdown .dropdown-menu.active { /* Para control JS en móvil */
   display: flex;
 }
 
@@ -138,81 +142,92 @@
   width: 100%;
 }
 
-.dropdown-menu li a {
-  color: var(--color-win98-text);
-  padding: 3px 20px 3px 10px;
+.dropdown-menu li a { /* NavLink dentro del dropdown */
+  color: var(--color-fluent-text-primary);
+  padding: var(--spacing-sm) var(--spacing-lg); /* 12px vertical, 20px horizontal */
   display: block;
-  font-size: var(--font-size-win98-base);
+  font-size: var(--font-size-base);
   text-decoration: none;
   white-space: nowrap;
-  border: 1px solid transparent;
+  border: none; /* Sin borde */
+  background-color: transparent;
+  transition: background-color 0.1s ease, color 0.1s ease;
 }
+.dropdown-menu li a::after { display: none !important; } /* Sin indicador de borde inferior en dropdown */
+
 .dropdown-menu li a:hover,
 .dropdown-menu li a.active {
-  background-color: var(--color-win98-selected-item-bg);
-  color: var(--color-win98-selected-item-text);
-  border: 1px solid transparent;
+  background-color: var(--color-fluent-surface-hover);
+  color: var(--color-fluent-accent);
+}
+.dropdown-menu li a.active {
+    font-weight: var(--font-weight-semibold);
 }
 
 /* Separador en dropdown */
 .dropdown-menu .separator {
   height: 1px;
-  background-color: var(--color-win98-border-shadow);
-  margin: 2px 0;
-  overflow: hidden;
-  border-bottom: 1px solid var(--color-win98-border-highlight-soft);
+  background-color: var(--color-fluent-border-light);
+  margin: var(--spacing-xs) 0;
 }
 
 
-/* Menú hamburguesa para pantallas pequeñas - Estilo Win98 */
+/* Menú hamburguesa Fluent */
 .hamburger-menu {
   display: none;
-  background-color: var(--color-win98-panel-bg);
-  border: 1px solid;
-  border-top-color: var(--color-win98-border-highlight-soft);
-  border-left-color: var(--color-win98-border-highlight-soft);
-  border-right-color: var(--color-win98-border-shadow);
-  border-bottom-color: var(--color-win98-border-shadow);
-  width: 22px;
-  height: 22px;
-  padding: 1px; /* Ajustar padding para centrar líneas */
-  cursor: default;
+  background-color: transparent;
+  border: none;
+  width: 40px;
+  height: 40px;
+  padding: var(--spacing-xs); /* 8px */
+  cursor: pointer;
   margin-left: auto;
+  border-radius: var(--border-radius-medium);
+  transition: background-color 0.15s ease;
+}
+.hamburger-menu:hover {
+    background-color: var(--color-fluent-surface-hover);
 }
 .hamburger-menu:active {
-  border-top-color: var(--color-win98-border-shadow);
-  border-left-color: var(--color-win98-border-shadow);
-  border-right-color: var(--color-win98-border-highlight-soft);
-  border-bottom-color: var(--color-win98-border-highlight-soft);
-  padding: 2px 0 0 2px; /* Simular presión */
+    background-color: var(--color-fluent-surface-selected);
 }
 .hamburger-menu .line {
   display: block;
-  width: 14px; /* Ancho de las líneas del icono */
+  width: 18px; /* Ancho de las líneas del icono */
   height: 2px;
-  background-color: var(--color-win98-text);
-  margin: 2px auto; /* Centrar líneas y espaciado */
-  transition: none;
+  background-color: var(--color-fluent-text-secondary); /* Color de las líneas */
+  margin: 4px auto; /* Espaciado y centrado */
+  border-radius: 1px;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+/* Animación a X para hamburguesa (Fluent style) */
+.hamburger-menu.active .line:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.hamburger-menu.active .line:nth-child(2) {
+  opacity: 0;
+}
+.hamburger-menu.active .line:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
 
 /* Ajustes en pantallas pequeñas */
-@media (max-width: 768px) {
+@media (max-width: 992px) { /* Ajustar breakpoint si es necesario */
+  .navbar {
+    padding: 0 var(--spacing-md); /* 16px */
+  }
   .navbar-links {
     display: none;
     flex-direction: column;
     position: absolute;
-    top: 100%;
+    top: 56px; /* Debajo del navbar */
     left: 0;
-    background-color: var(--color-win98-panel-bg);
-    width: 200px;
-    border: 1px solid;
-    border-top-color: var(--color-win98-border-highlight-soft);
-    border-left-color: var(--color-win98-border-highlight-soft);
-    border-right-color: var(--color-win98-border-shadow);
-    border-bottom-color: var(--color-win98-border-shadow);
-    box-shadow: 2px 2px 3px #00000050;
-    padding: 2px;
+    background-color: var(--color-fluent-surface);
+    width: 100%;
+    padding: var(--spacing-xs) 0;
+    box-shadow: var(--box-shadow-md);
+    border-top: 1px solid var(--color-fluent-border-light);
   }
 
   .navbar-links.active {
@@ -221,53 +236,38 @@
 
   .navbar-links li {
     width: 100%;
-    margin-right: 0;
-    height: auto;
-    border-bottom: 1px solid transparent; /* Para posible separador */
+    height: auto; /* Altura automática */
   }
-   /* .navbar-links li:last-child { border-bottom: none; } */
-
 
   .navbar-links a,
   .navbar-links .dropdown-btn,
   .navbar-links .logout-btn-link-style {
     width: 100%;
-    padding: 5px 10px;
-    border: 1px solid transparent;
-    height: auto;
-    line-height: normal;
+    padding: var(--spacing-md) var(--spacing-lg); /* 16px vertical, 20px horizontal */
+    height: 44px; /* Altura de item en móvil */
+    justify-content: flex-start; /* Alinear texto a la izquierda */
   }
-  .navbar-links a:hover,
-  .navbar-links .dropdown-btn:hover,
-  .navbar-links .logout-btn-link-style:hover,
+  .navbar-links a::after, /* Quitar borde inferior en móvil */
+  .navbar-links .dropdown-btn::after {
+      display: none;
+  }
   .navbar-links a.active,
-  .navbar-links .dropdown-btn.active { /* Hover/active en móvil */
-    background-color: var(--color-win98-selected-item-bg);
-    color: var(--color-win98-selected-item-text);
-    border: 1px solid transparent; /* No se necesita borde aquí */
-  }
-  .navbar-links .dropdown-btn.active { /* Dropdown presionado en móvil */
-    /* No se aplica el estilo de botón presionado aquí, solo el de selección */
-     padding: 5px 10px;
+  .navbar-links .dropdown-btn.active { /* Estilo activo en móvil */
+    background-color: var(--color-fluent-surface-selected); /* Fondo seleccionado */
+    color: var(--color-fluent-accent); /* Texto de acento */
   }
 
   .dropdown-menu {
     position: static;
     border: none;
     box-shadow: none;
-    padding: 0 0 0 15px;
-    background-color: transparent;
-    min-width: 100%;
-    margin-top: 1px; /* Pequeña separación */
+    padding-left: var(--spacing-lg); /* Indentación para submenú */
+    background-color: var(--color-fluent-surface-hover); /* Fondo ligeramente diferente para submenú */
+    border-radius: 0;
+    margin-top:0;
   }
   .dropdown-menu li a {
-    padding: 3px 10px;
-    color: var(--color-win98-text);
-  }
-  .dropdown-menu li a:hover,
-  .dropdown-menu li a.active {
-    background-color: var(--color-win98-selected-item-bg);
-    color: var(--color-win98-selected-item-text);
+    padding: var(--spacing-sm) var(--spacing-md);
   }
 
   .hamburger-menu {
@@ -277,14 +277,9 @@
     justify-content: center;
   }
 
-  .navbar-logo {
-    margin-right: auto;
-  }
-
-  .navbar-actions {
-      width: 100%;
-  }
-  .navbar-links .logout-btn-link-style {
-      /* Estilos ya definidos arriba para links */
+  .navbar-title {
+      margin-right: var(--spacing-sm); /* Menos espacio si el título es largo */
+      /* Ocultar título si no hay espacio: */
+      /* display: none; */
   }
 }
