@@ -55,31 +55,44 @@ function App() {
     return () => clearInterval(intervalo);
   }, []);
 
+  // Control de sesión multi-pestaña: logout solo cuando todas las pestañas cierran
   useEffect(() => {
-    const handleBeforeUnload = (e) => {
-      const usuarioActual = JSON.parse(sessionStorage.getItem('usuario'));
-      if (usuarioActual) {
-        navigator.sendBeacon(
-          'http://localhost:3001/logout',
-          new Blob(
-            [JSON.stringify({
-              legajo: usuarioActual.legajo,
-              nombreCompleto: usuarioActual.nombreCompleto,
-            })],
-            { type: 'application/json' }
-          )
-        );
-      }
+    const tabId = Math.random().toString(36).substring(2);
+    const bc = new BroadcastChannel("sigb_channel");
+    sessionStorage.setItem("sigb_tab_id", tabId);
+    localStorage.setItem(`sigb_tab_${tabId}`, Date.now().toString());
 
-      sessionStorage.removeItem('isAuthenticated');
-      sessionStorage.removeItem('usuario');
-
-      e.preventDefault();
-      e.returnValue = '';
+    const marcarActiva = () => {
+      localStorage.setItem(`sigb_tab_${tabId}`, Date.now().toString());
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    const intervalo = setInterval(marcarActiva, 2000);
+
+    bc.onmessage = (event) => {
+      if (event.data === "logout") {
+        handleLogout();
+      }
+    };
+
+    const cleanup = () => {
+      localStorage.removeItem(`sigb_tab_${tabId}`);
+      const ahora = Date.now();
+      const activos = Object.keys(localStorage)
+        .filter(k => k.startsWith("sigb_tab_"))
+        .map(k => parseInt(localStorage.getItem(k)))
+        .filter(ts => ahora - ts < 5000);
+      if (activos.length <= 1) {
+        bc.postMessage("logout");
+      }
+    };
+
+    window.addEventListener("beforeunload", cleanup);
+    return () => {
+      clearInterval(intervalo);
+      window.removeEventListener("beforeunload", cleanup);
+      cleanup();
+      bc.close();
+    };
   }, []);
 
   const handleLogout = async () => {

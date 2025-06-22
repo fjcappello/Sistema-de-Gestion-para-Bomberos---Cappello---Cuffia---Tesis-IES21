@@ -403,7 +403,7 @@ function PanolOperativo() {
                 <td>
                   <div>
                     <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
-                    <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`${import.meta.env.VITE_API_URL}/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button>
+                    <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`${process.env.REACT_APP_API_URL}/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button>
                   </div>
                 </td>
               )}

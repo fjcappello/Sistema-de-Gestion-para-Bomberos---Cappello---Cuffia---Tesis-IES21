@@ -90,3 +90,28 @@
   background-color: #cccccc;
   cursor: not-allowed;
 }
+
+.criterios-lista li {
+  color: #999;
+  transition: color 0.3s ease;
+}
+
+.criterios-lista li.valido {
+  color: green;
+  font-weight: bold;
+}
+
+.barra-fuerza {
+  height: 10px;
+  width: 100%;
+  background-color: #eee;
+  margin-top: 10px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.barra-fuerza > div {
+  height: 100%;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  border-radius: 5px;
+}

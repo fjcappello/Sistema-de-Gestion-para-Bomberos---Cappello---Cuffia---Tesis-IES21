@@ -5,7 +5,11 @@ const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 //Recuperar las herramientas del pañol segun filtros
 const recuperarElementos = function recuperarElementos(req, res) {
-  const { tipo, fincorp, fvenc, estado, texto } = req.body;
+  const tipo = req.query.tipo || null;
+  const fincorp = req.query.fincorp || null;
+  const fvenc = req.query.fvenc || null;
+  const estado = req.query.estado || null;
+  const texto = req.query.texto || null;
 
   let query = `SELECT 
                     p.id_elemento, 

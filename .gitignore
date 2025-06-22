@@ -6,6 +6,7 @@ build
 # Ignore system files
 .DS_Store
 Thumbs.db
+.vscode
 # Ignore logs and temporary files
 *.log
 *.tmp

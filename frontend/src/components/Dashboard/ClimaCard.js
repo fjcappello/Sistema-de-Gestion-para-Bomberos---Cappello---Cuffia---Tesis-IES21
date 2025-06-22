@@ -78,16 +78,64 @@ function ClimaCard() {
             Km/h
           </div>
           <div>
-            <strong>🔥 Riesgo FWI:</strong>{" "}
+            {/*Calculo FWI con cambio de unidades para el calculo*/}
+            <strong>🔥 Riesgo FWI*:</strong>{" "}
             {(() => {
-              const viento = clima.wind.speed;
-              const humedad = clima.main.humidity;
-              let fwi = (viento * 10) / (humedad + 1);
+              const T = clima.main.temp;
+              const H = clima.main.humidity;
+              const V = clima.wind.speed * 3.6;
+              const P = clima.rain?.["1h"] || 0;
+
+              let mo = 147.2 * (101.0 - 85.0) / (59.5 + 85.0);
+              if (P > 0.5) {
+                let rf = P > 1.5 ? P - 1.5 : 0;
+                let mr =
+                  mo +
+                  42.5 *
+                    rf *
+                    Math.exp(-100.0 / (251.0 - mo)) *
+                    (1 - Math.exp(-6.93 / rf));
+                mo = Math.min(mr, 250);
+              }
+              let Ed =
+                0.942 * Math.pow(H, 0.679) +
+                11 * Math.exp((H - 100) / 10) +
+                0.18 * (21.1 - T) * (1 - Math.exp(-0.115 * H));
+              let Ew =
+                0.618 * Math.pow(H, 0.753) +
+                10 * Math.exp((H - 100) / 10) +
+                0.18 * (21.1 - T) * (1 - Math.exp(-0.115 * H));
+              let ko =
+                0.424 * (1 - Math.pow(H / 100.0, 1.7)) +
+                0.0694 * Math.sqrt(V) * (1 - Math.pow(H / 100.0, 8));
+              let kd = ko * 0.581 * Math.exp(0.0365 * T);
+              mo = Ew + (mo - Ew) * Math.pow(10, -kd);
+              const FFMC = 59.5 * (250 - mo) / (147.2 + mo);
+
+              const fW = Math.exp(0.081 * V);
+              const fF = 91.9 * Math.exp(-0.1386 * mo) * (1 + Math.pow(mo, 5.31) / 4.93e7);
+              const ISI = 0.208 * fW * fF;
+
+              const DMC = (400 * Math.log(1 + (3 * T) / H)) * (1 - Math.exp(-0.1 * P));
+              const DC = T > 0 ? 0.36 * (800 * Math.exp(-0.05 * P)) : 0;
+
+              let BUI;
+              if (DMC <= 0.4 * DC) {
+                BUI = (0.8 * DMC * DC) / (DMC + 0.4 * DC);
+              } else {
+                BUI = DMC - (1 - 0.8 * DC / (DMC + 0.4 * DC));
+              }
+
+              const fD = 0.626 * Math.pow(BUI, 0.809) + 2;
+              const B_val = 0.1 * ISI * fD;
+              const FWI = B_val > 1 ? Math.exp(2.72 * Math.pow(B_val, 0.647)) : B_val;
+
               let riesgo = "Desconocido";
-              if (fwi < 1) riesgo = "Bajo";
-              else if (fwi < 3) riesgo = "Moderado";
-              else if (fwi < 6) riesgo = "Alto";
+              if (FWI < 5) riesgo = "Bajo";
+              else if (FWI < 12) riesgo = "Moderado";
+              else if (FWI < 30) riesgo = "Alto";
               else riesgo = "Extremo";
+
               return riesgo;
             })()}
           </div>
@@ -106,6 +154,8 @@ function ClimaCard() {
               minute: "2-digit",
               hour12: false,
             })}
+            <p>*El índice FWI es calculado automaticamente y puede variar según las condiciones climáticas actuales,
+            usar de referencia y no como un valor absoluto.</p>
           </div>
         </div>
       ) : (

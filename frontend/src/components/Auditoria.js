@@ -65,8 +65,18 @@ function Auditoria() {
             value={filtros.hasta}
             onChange={(e) => setFiltros({ ...filtros, hasta: e.target.value })}
           />
-          <button className="nuevo-mensaje-btn" onClick={fetchBitacora}>
-            Filtrar
+          <button
+            className="nuevo-mensaje-btn"
+            onClick={() =>
+              setFiltros({
+                usuario_id: "",
+                accion: "",
+                desde: "",
+                hasta: "",
+              })
+            }
+          >
+            Limpiar
           </button>
           <button
             className="nuevo-mensaje-btn"
