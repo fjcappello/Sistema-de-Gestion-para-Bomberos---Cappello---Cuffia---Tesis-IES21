@@ -1,109 +1,128 @@
-/* frontend/src/components/Styles/Login.css */
+/* frontend/src/components/Styles/Login.css - ESTILO WINDOWS 98 */
 
 .login-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Usar min-height para asegurar que ocupa toda la pantalla */
-  padding: var(--spacing-lg);
-  background-color: var(--color-background-secondary); /* Usar color de fondo global */
+  min-height: 100vh;
+  padding: 20px; /* Espacio alrededor del card de login */
+  background-color: var(--color-win98-bg); /* Fondo gris general */
 }
 
-.login-card { /* Envolver el formulario en una "card" para mejor estética */
-  background-color: var(--color-background);
-  padding: var(--spacing-xl); /* Más padding */
-  border-radius: var(--border-radius-large);
-  box-shadow: var(--box-shadow-standard);
+.login-card {
+  background-color: var(--color-win98-panel-bg);
+  padding: 20px;
+  /* Estilo panel Win98 */
+  border: 1px solid;
+  border-top-color: var(--color-win98-border-highlight-soft);
+  border-left-color: var(--color-win98-border-highlight-soft);
+  border-right-color: var(--color-win98-border-shadow);
+  border-bottom-color: var(--color-win98-border-shadow);
+  /* Sombra externa sutil para "elevar" el panel */
+  box-shadow: 1px 1px 2px var(--color-win98-border-shadow);
   width: 100%;
-  max-width: 400px; /* Mantener el max-width */
-  text-align: center; /* Centrar el logo si está dentro */
+  max-width: 320px; /* Ancho típico de un diálogo de login */
+  text-align: center;
 }
 
 .login-logo {
-  width: 120px; /* Ajustar tamaño si es necesario */
-  margin-bottom: var(--spacing-lg); /* Mayor separación */
+  width: 48px; /* Logo más pequeño, tipo icono de app */
+  height: 48px;
+  margin-bottom: 15px;
+  image-rendering: pixelated; /* Si se usa un logo pixelado */
 }
+
+.login-main-title { /* Título de la aplicación "SIGB" */
+  font-size: var(--font-size-win98-h1);
+  color: var(--color-win98-text);
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+.login-subtitle { /* "Inicio de Sesión" */
+  font-size: var(--font-size-win98-h3);
+  color: var(--color-win98-text);
+  margin-bottom: 20px;
+  font-weight: normal;
+}
+
 
 .login-form {
   display: flex;
   flex-direction: column;
-  align-items: center;
   width: 100%;
 }
 
-.login-form .form-group { /* Usar .form-group para espaciado */
+/* Se usa .form-group-win98 y .form-label-win98 de global.css */
+/* Si no existen, se pueden definir aquí o en global.css */
+.login-form .form-group-win98 {
   width: 100%;
-  margin-bottom: var(--spacing-md);
-}
-
-.login-form .form-label { /* Estilo para labels si se añaden explícitamente */
-  display: block;
+  margin-bottom: 12px; /* Más espacio */
   text-align: left;
-  margin-bottom: var(--spacing-xs);
 }
 
-.login-form .form-control {
-  /* Los estilos base ya están en global.css */
-  /* Se pueden añadir especificidades aquí si es necesario */
-  padding-top: var(--spacing-md); /* Hacerlos un poco más altos */
-  padding-bottom: var(--spacing-md);
+.login-form .form-label-win98 {
+  display: block;
+  margin-bottom: 4px; /* Espacio entre label e input */
+  font-size: var(--font-size-win98-base);
 }
+
 
 .password-container {
   position: relative;
   width: 100%;
-  display: flex; /* Para alinear el input y el botón */
+  display: flex;
   align-items: center;
 }
 
-.password-container .form-control {
-  padding-right: 3rem; /* Espacio para el botón de mostrar/ocultar */
+/* Los inputs usan .form-control-win98 de global.css */
+.password-container .form-control-win98 {
+  padding-right: 28px; /* Espacio para el botón de toggle */
 }
 
 .toggle-password-btn {
   position: absolute;
-  right: var(--spacing-sm);
+  right: 3px; /* Más cerca del borde del input */
   top: 50%;
   transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  padding: var(--spacing-sm); /* Área de click más grande */
-  font-size: 1.25rem; /* Tamaño del icono */
-  line-height: 1; /* Para mejor alineación vertical */
+  background-color: var(--color-win98-panel-bg);
+  border: 1px solid;
+  border-top-color: var(--color-win98-border-highlight-soft);
+  border-left-color: var(--color-win98-border-highlight-soft);
+  border-right-color: var(--color-win98-border-shadow);
+  border-bottom-color: var(--color-win98-border-shadow);
+  width: 20px; /* Botón cuadrado */
+  height: 20px;
+  font-size: 11px; /* Icono o texto más pequeño */
+  line-height: 16px; /* Ajustar para centrar */
+  text-align: center;
+  cursor: default;
+  user-select: none;
+  padding: 0; /* Sin padding interno para que el icono/texto se ajuste */
+}
+.toggle-password-btn:active {
+  border-top-color: var(--color-win98-border-shadow);
+  border-left-color: var(--color-win98-border-shadow);
+  border-right-color: var(--color-win98-border-highlight-soft);
+  border-bottom-color: var(--color-win98-border-highlight-soft);
+  padding: 1px 0 0 1px; /* Simular presión */
 }
 
-.toggle-password-btn:focus {
-  outline: none;
-}
 
-.toggle-password-btn:hover {
-  color: var(--color-primary);
-}
-
-.login-submit-btn { /* Renombrar para evitar colisión con .submit-btn genérico si existiera */
-  /* Usar la clase .btn y .btn-primary de global.css */
-  width: 100%;
-  margin-top: var(--spacing-md); /* Espacio antes del botón */
-  padding-top: var(--spacing-md);
-  padding-bottom: var(--spacing-md);
-  font-size: 1.1rem; /* Un poco más grande */
+.login-submit-btn {
+  /* Se espera que se use <button className="btn-win98 login-submit-btn"> */
+  width: auto;
+  min-width: 80px; /* Ancho mínimo para botones OK/Cancelar */
+  margin: 15px auto 5px auto; /* Centrar y espaciar */
+  display: block;
+  padding-top: 4px !important; /* Ajustar padding vertical si es necesario */
+  padding-bottom: 4px !important;
 }
 
 .login-error-message {
-  color: var(--color-danger);
-  margin-top: var(--spacing-md);
-  font-size: var(--font-size-small);
+  color: #FF0000;
+  margin-top: 10px;
+  font-size: var(--font-size-win98-base);
   text-align: center;
   width: 100%;
-}
-
-/* Opcional: Título para la página de Login */
-.login-title {
-  font-size: var(--font-size-h2);
-  color: var(--color-text);
-  margin-bottom: var(--spacing-lg);
-  text-align: center;
 }

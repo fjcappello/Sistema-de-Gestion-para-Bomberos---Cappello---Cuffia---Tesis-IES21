@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom'; // Importar NavLink
+import { NavLink, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useUsuario } from '../context/UserContext';
-import './Styles/Navbar.css';
+import './Styles/Navbar.css'; // Estilos Win98
 
 function Navbar({ onLogout }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -43,13 +43,14 @@ function Navbar({ onLogout }) {
   }, []);
 
   useEffect(() => {
+    // Cerrar menú móvil y dropdowns al cambiar de ruta
     setMobileMenuOpen(false);
     setOpenDropdown('');
   }, [location]);
 
 
   const navItems = [
-    { path: "/", label: "Principal", exact: true }, // Añadir exact para Principal
+    { path: "/", label: "Principal", exact: true },
     { path: "/bandeja-entrada", label: "Mensajes" },
     { path: "/emergencias", label: "Emergencias" },
     {
@@ -85,20 +86,22 @@ function Navbar({ onLogout }) {
 
   return (
     <nav className="navbar" ref={navbarRef}>
-      <Link to="/" className="navbar-logo"> {/* El logo principal suele ser un Link normal */}
+      <Link to="/" className="navbar-logo">
         <img src="/images/logo.png" alt="Logo" className="logo-img" />
-        <span className="navbar-title">BOMBEROS SANTA MARIA DE PUNILLA</span>
+        {/* El título se oculta en CSS por ahora, pero podría mostrarse aquí si se desea */}
+        {/* <span className="navbar-title">BOMBEROS</span> */}
       </Link>
 
+      {/* Botón Hamburguesa - la clase 'open' o 'active' se usa para el estado presionado si se define en CSS */}
       <button
-        className={`hamburger-menu ${isMobileMenuOpen ? 'open' : ''}`}
+        className={`hamburger-menu ${isMobileMenuOpen ? 'active' : ''}`}
         onClick={toggleMobileMenu}
         aria-label="Abrir menú"
         aria-expanded={isMobileMenuOpen}
       >
-        <span className="line line1"></span>
-        <span className="line line2"></span>
-        <span className="line line3"></span>
+        <span className="line"></span>
+        <span className="line"></span>
+        <span className="line"></span>
       </button>
 
       <ul className={`navbar-links ${isMobileMenuOpen ? 'active' : ''}`}>
@@ -117,7 +120,6 @@ function Navbar({ onLogout }) {
                 <ul className={`dropdown-menu ${openDropdown === item.name ? 'active' : ''}`}>
                   {item.subItems.map(subItem => (
                     <li key={subItem.path}>
-                      {/* Usar NavLink para subitems para que puedan tener estilo activo */}
                       <NavLink to={subItem.path} end={subItem.exact || false}>
                         {subItem.label}
                       </NavLink>
@@ -126,15 +128,15 @@ function Navbar({ onLogout }) {
                 </ul>
               </>
             ) : (
-              // Usar NavLink para items principales que son enlaces directos
               <NavLink to={item.path} end={item.exact || false}>
                 {item.label}
               </NavLink>
             )}
           </li>
         ))}
-        <li className="navbar-actions"> {/* Envolver el botón de logout para consistencia en móvil si es necesario */}
-          <button className="logout-btn" onClick={handleLogout}>
+        {/* Botón Salir como un item de menú más */}
+        <li>
+          <button className="logout-btn-link-style" onClick={handleLogout}>
             Salir
           </button>
         </li>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import api from '../api';
-import './Styles/Login.css'; // Asegúrate que Login.css esté actualizado
+import './Styles/Login.css'; // Estilos Win98
 import { useUsuario } from '../context/UserContext';
 
 function Login({ setIsAuthenticated }) {
@@ -40,33 +40,33 @@ function Login({ setIsAuthenticated }) {
     <div className="login-container">
       <div className="login-card">
         <img src={`${process.env.PUBLIC_URL}/images/logo.png`} alt="Logo" className="login-logo" />
-        <h1 className="login-title">SIGB</h1>
-        {/* <h2>Inicio de Sesión</h2> */}
+        <h1 className="login-main-title">SIGB</h1>
+        <h2 className="login-subtitle">Inicio de Sesión</h2>
         
         <form onSubmit={handleLogin} className="login-form">
-          <div className="form-group">
-            {/* <label htmlFor="legajo" className="form-label">Legajo</label> */}
+          <div className="form-group-win98"> {/* Clase Win98 */}
+            <label htmlFor="legajo" className="form-label-win98">Legajo:</label> {/* Label visible */}
             <input
               id="legajo"
               type="text"
               inputMode="numeric"
               pattern="[0-9]*"
-              placeholder="Legajo"
-              className="form-control" // Clase global
+              // placeholder="Legajo" // Placeholder no es muy Win98
+              className="form-control-win98" // Clase Win98
               value={legajo}
               onChange={(e) => setLegajo(e.target.value.replace(/\D/, ""))}
               required
             />
           </div>
 
-          <div className="form-group">
-            {/* <label htmlFor="password_login" className="form-label">Contraseña</label> */}
-            <div className="password-container"> {/* Mantiene la estructura para el botón de visibilidad */}
+          <div className="form-group-win98"> {/* Clase Win98 */}
+            <label htmlFor="password_login" className="form-label-win98">Contraseña:</label> {/* Label visible */}
+            <div className="password-container">
               <input
                 id="password_login"
                 type={showPassword ? "text" : "password"}
-                placeholder="Contraseña"
-                className="form-control" // Clase global
+                // placeholder="Contraseña"
+                className="form-control-win98" // Clase Win98
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -74,16 +74,21 @@ function Login({ setIsAuthenticated }) {
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
-                className="toggle-password-btn"
+                className="toggle-password-btn" // Estilizado en Login.css
                 aria-label={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                title={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"} // Tooltip Win98 style
               >
-                {showPassword ? '🙈' : '👁️'}
+                {/* Usar texto o un caracter simple en lugar de emoji para Win98 */}
+                {showPassword ? 'O' : 'V'}
               </button>
             </div>
           </div>
 
           {error && <p className="login-error-message">{error}</p>}
-          <button type="submit" className="btn btn-primary login-submit-btn">Ingresar al Sistema</button>
+          {/* Botón con clases Win98 */}
+          <button type="submit" className="btn-win98 login-submit-btn">
+            Ingresar
+          </button>
         </form>
       </div>
     </div>

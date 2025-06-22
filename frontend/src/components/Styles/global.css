@@ -1,4 +1,4 @@
-/* frontend/src/components/Styles/global.css */
+/* frontend/src/components/Styles/global.css - ESTILO WINDOWS 98 */
 
 /* Reset básico */
 *,
@@ -10,579 +10,387 @@
 }
 
 :root {
-  /* Paleta de Colores */
-  --color-primary: #007BFF;
-  --color-primary-darker: #0056b3;
-  --color-secondary: #6c757d;
-  --color-secondary-darker: #545b62;
-  --color-success: #28a745;
-  --color-success-darker: #1e7e34;
-  --color-danger: #DC3545;
-  --color-danger-darker: #c82333;
-  --color-warning: #FFC107;
-  --color-warning-darker: #d39e00;
+  /* Paleta de Colores Windows 98 */
+  --color-win98-bg: #C0C0C0; /* Gris principal de UI */
+  --color-win98-bg-darker: #A0A0A0; /* Un gris un poco más oscuro */
+  --color-win98-panel-bg: #C0C0C0; /* Fondo para paneles y botones */
+  --color-win98-window-bg: #FFFFFF; /* Fondo de áreas de contenido/ventanas */
 
-  --color-background: #FFFFFF;
-  --color-background-secondary: #F8F9FA;
+  --color-win98-border-shadow: #808080;   /* Sombra oscura para bordes 3D */
+  --color-win98-border-highlight: #FFFFFF; /* Luz brillante para bordes 3D */
+  --color-win98-border-highlight-soft: #DFDFDF; /* Luz suave para bordes 3D */
 
-  --color-text: #212529;
-  --color-text-secondary: #6c757d;
+  --color-win98-text: #000000;            /* Texto principal (negro) */
+  --color-win98-text-disabled: #808080;  /* Texto deshabilitado */
 
-  --color-border: #CED4DA;
-  --color-border-light: #E9ECEF;
+  --color-win98-title-bar-active-bg: #000080; /* Azul Navy para barra de título activa */
+  --color-win98-title-bar-text: #FFFFFF;      /* Texto blanco en barra de título */
+  --color-win98-title-bar-inactive-bg: #808080; /* Gris para barra de título inactiva */
 
-  /* Tipografía */
-  --font-family-base: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
-  --font-size-base: 16px;
-  --font-size-h1: 2.5rem;
-  --font-size-h2: 2rem;
-  --font-size-h3: 1.75rem;
-  --font-size-h4: 1.5rem;
-  --font-size-small: 0.875rem;
-  --font-weight-normal: 400;
-  --font-weight-bold: 700;
+  --color-win98-selected-item-bg: #000080; /* Fondo para ítems seleccionados */
+  --color-win98-selected-item-text: #FFFFFF;/* Texto para ítems seleccionados */
 
-  /* Espaciado */
-  --spacing-unit: 8px;
-  --spacing-xs: calc(0.5 * var(--spacing-unit)); /* 4px */
-  --spacing-sm: var(--spacing-unit);            /* 8px */
-  --spacing-md: calc(2 * var(--spacing-unit)); /* 16px */
-  --spacing-lg: calc(3 * var(--spacing-unit)); /* 24px */
-  --spacing-xl: calc(4 * var(--spacing-unit)); /* 32px */
+  /* Tipografía Windows 98 */
+  --font-family-win98: Tahoma, "MS Sans Serif", Verdana, Arial, sans-serif;
+  --font-size-win98-base: 12px; /* O 11px, 8pt aprox */
+  --font-size-win98-small: 10px;
+  --font-size-win98-h1: 18px; /* Los encabezados eran menos prominentes */
+  --font-size-win98-h2: 16px;
+  --font-size-win98-h3: 14px;
 
-  /* Bordes */
-  --border-radius-standard: 0.25rem; /* 4px */
-  --border-radius-large: 0.5rem;    /* 8px */
-  --border-width-standard: 1px;
+  /* Bordes Win98 - Usar directamente o con clases */
+  --border-win98-outset: 2px outset var(--color-win98-highlight); /* Simplificado, mejor con colores por lado */
+  --border-win98-inset: 2px inset var(--color-win98-border-shadow); /* Simplificado */
 
-  /* Sombras */
-  --box-shadow-subtle: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  --box-shadow-standard: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-
-  /* Layout */
-  --container-max-width: 1200px;
+  /* No se usan sombras suaves ni border-radius amplios */
 }
 
 body {
-  font-family: var(--font-family-base);
-  font-size: var(--font-size-base);
-  color: var(--color-text);
-  background-color: var(--color-background-secondary); /* Un fondo ligeramente gris para toda la app */
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-family-win98);
+  font-size: var(--font-size-win98-base);
+  color: var(--color-win98-text);
+  background-color: var(--color-win98-bg);
+  /* Evitar antialiasing si es posible (limitado en web) */
+  -webkit-font-smoothing: none;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed; /* Puede ayudar a emular fuentes pixeladas */
+  image-rendering: pixelated; /* Para imágenes si se usan iconos pixelados */
 }
 
 h1, h2, h3, h4, h5, h6 {
-  margin-bottom: var(--spacing-md);
-  font-weight: var(--font-weight-bold);
-  line-height: 1.2;
+  margin-bottom: 8px; /* Menos espacio */
+  font-weight: bold; /* El peso era generalmente bold */
 }
 
-h1 { font-size: var(--font-size-h1); }
-h2 { font-size: var(--font-size-h2); }
-h3 { font-size: var(--font-size-h3); }
-h4 { font-size: var(--font-size-h4); }
+h1 { font-size: var(--font-size-win98-h1); }
+h2 { font-size: var(--font-size-win98-h2); }
+h3 { font-size: var(--font-size-win98-h3); }
 
 p {
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 8px;
 }
 
 a {
-  color: var(--color-primary);
-  text-decoration: none;
-}
-
-a:hover {
-  color: var(--color-primary-darker);
+  color: #0000FF; /* Azul estándar para enlaces */
   text-decoration: underline;
 }
-
-img {
-  max-width: 100%;
-  height: auto;
+a:hover {
+  color: #FF0000; /* Rojo en hover, un clásico */
 }
 
-/* Clases de utilidad básicas */
-.container {
-  width: 100%;
-  max-width: var(--container-max-width);
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: var(--spacing-md);
-  padding-right: var(--spacing-md);
+/* --- CLASES DE UTILIDAD ESTILO WINDOWS 98 --- */
+
+/* Panel Win98 (efecto outset) */
+.panel-win98, .btn-win98 {
+  background-color: var(--color-win98-panel-bg);
+  border: 1px solid; /* Base para los colores por lado */
+  border-top-color: var(--color-win98-border-highlight-soft);
+  border-left-color: var(--color-win98-border-highlight-soft);
+  border-right-color: var(--color-win98-border-shadow);
+  border-bottom-color: var(--color-win98-border-shadow);
+  padding: 2px; /* Padding interno pequeño */
+  box-shadow: 1px 1px 0px 0px var(--color-win98-border-highlight) inset, /* Sombra interna clara */
+              -1px -1px 0px 0px var(--color-win98-border-shadow) inset; /* Sombra interna oscura */
+
+}
+.panel-win98-inset {
+  background-color: var(--color-win98-panel-bg); /* O un gris más oscuro si es un área de input */
+  border: 1px solid;
+  border-top-color: var(--color-win98-border-shadow);
+  border-left-color: var(--color-win98-border-shadow);
+  border-right-color: var(--color-win98-border-highlight-soft);
+  border-bottom-color: var(--color-win98-border-highlight-soft);
+  padding: 2px;
+  box-shadow: 1px 1px 0px 0px var(--color-win98-border-shadow) inset,
+              -1px -1px 0px 0px var(--color-win98-border-highlight) inset;
 }
 
-/* Estilos base para botones */
-.btn {
-  display: inline-block;
-  font-weight: var(--font-weight-normal);
+
+/* Botón Win98 */
+.btn-win98 {
+  min-width: 75px; /* Ancho mínimo típico */
+  min-height: 23px; /* Alto mínimo típico */
+  padding: 3px 12px; /* Padding interno */
   text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
+  cursor: default; /* Cursor por defecto, no pointer */
   user-select: none;
-  background-color: transparent;
-  border: var(--border-width-standard) solid transparent;
-  padding: var(--spacing-sm) var(--spacing-md); /* 8px 16px */
-  font-size: var(--font-size-base);
-  line-height: 1.5;
-  border-radius: var(--border-radius-standard);
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  font-size: var(--font-size-win98-base);
+  line-height: 1.4; /* Ajustar para centrar texto */
 }
 
-.btn:disabled {
-  opacity: 0.65;
-  cursor: not-allowed;
+.btn-win98:active, .btn-win98.active {
+  border-top-color: var(--color-win98-border-shadow);
+  border-left-color: var(--color-win98-border-shadow);
+  border-right-color: var(--color-win98-border-highlight-soft);
+  border-bottom-color: var(--color-win98-border-highlight-soft);
+  padding: 4px 11px 2px 13px; /* Simular movimiento al presionar */
+  box-shadow: 1px 1px 0px 0px var(--color-win98-border-shadow) inset, /* Sombra interna oscura */
+              -1px -1px 0px 0px var(--color-win98-border-highlight) inset; /* Sombra interna clara */
+}
+.btn-win98:focus {
+  outline: 1px dotted var(--color-win98-text); /* Outline punteado en foco */
+  outline-offset: -3px; /* Hacia adentro */
+}
+.btn-win98:disabled {
+  color: var(--color-win98-text-disabled);
+  /* Los bordes en disabled eran más planos o usaban el color del texto disabled */
+   border-top-color: var(--color-win98-border-highlight-soft);
+   border-left-color: var(--color-win98-border-highlight-soft);
+   border-right-color: var(--color-win98-border-shadow);
+   border-bottom-color: var(--color-win98-border-shadow);
+   box-shadow: none;
 }
 
-.btn-primary {
-  color: #fff;
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+/* Formularios Win98 */
+.form-control-win98,
+textarea.form-control-win98,
+select.form-control-win98 {
+  background-color: var(--color-win98-window-bg); /* Fondo blanco */
+  border: 1px solid;
+  border-top-color: var(--color-win98-border-shadow);
+  border-left-color: var(--color-win98-border-shadow);
+  border-right-color: var(--color-win98-border-highlight-soft);
+  border-bottom-color: var(--color-win98-border-highlight-soft);
+  padding: 3px 4px;
+  font-family: var(--font-family-win98);
+  font-size: var(--font-size-win98-base);
+  color: var(--color-win98-text);
+  box-shadow: 1px 1px 0px 0px var(--color-win98-border-shadow) inset; /* Sombra interna */
 }
-.btn-primary:hover {
-  color: #fff; /* Asegurar que el texto siga blanco en hover */
-  background-color: var(--color-primary-darker);
-  border-color: var(--color-primary-darker);
+textarea.form-control-win98 {
+    min-height: 40px;
 }
-
-.btn-secondary {
-  color: #fff;
-  background-color: var(--color-secondary);
-  border-color: var(--color-secondary);
-}
-.btn-secondary:hover {
-  color: #fff;
-  background-color: var(--color-secondary-darker);
-  border-color: var(--color-secondary-darker);
-}
-
-.btn-success {
-  color: #fff;
-  background-color: var(--color-success);
-  border-color: var(--color-success);
-}
-.btn-success:hover {
-  color: #fff;
-  background-color: var(--color-success-darker);
-  border-color: var(--color-success-darker);
-}
-
-.btn-danger {
-  color: #fff;
-  background-color: var(--color-danger);
-  border-color: var(--color-danger);
-}
-.btn-danger:hover {
-  color: #fff;
-  background-color: var(--color-danger-darker);
-  border-color: var(--color-danger-darker);
-}
-
-.btn-warning {
-  color: var(--color-text);
-  background-color: var(--color-warning);
-  border-color: var(--color-warning);
-}
-.btn-warning:hover {
-  color: var(--color-text);
-  background-color: var(--color-warning-darker);
-  border-color: var(--color-warning-darker);
-}
-
-.btn-outline-primary {
-  color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-.btn-outline-primary:hover {
-  color: #fff;
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-
-.btn-outline-secondary {
-  color: var(--color-secondary);
-  border-color: var(--color-secondary);
-}
-.btn-outline-secondary:hover {
-  color: #fff;
-  background-color: var(--color-secondary);
-  border-color: var(--color-secondary);
+select.form-control-win98 {
+  appearance: none; /* Quitar apariencia nativa para estilizar flecha */
+  padding-right: 20px; /* Espacio para la flecha custom */
+  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D'10'%20height%3D'5'%20viewBox%3D'0%200%2010%205'%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%3E%3Cpath%20d%3D'M0%200h10L5%205z'%20fill%3D'%23000'%2F%3E%3C%2Fsvg%3E"); /* Flecha SVG simple */
+  background-repeat: no-repeat;
+  background-position: right 5px center;
+  background-color: var(--color-win98-panel-bg); /* Selects tenían fondo gris */
+  /* Para el select, el borde es más como un botón */
+  border-top-color: var(--color-win98-border-highlight-soft);
+  border-left-color: var(--color-win98-border-highlight-soft);
+  border-right-color: var(--color-win98-border-shadow);
+  border-bottom-color: var(--color-win98-border-shadow);
+  box-shadow: 1px 1px 0px 0px var(--color-win98-border-highlight) inset,
+              -1px -1px 0px 0px var(--color-win98-border-shadow) inset;
 }
 
 
-/* Estilos base para formularios */
-.form-control {
+.form-label-win98 {
   display: block;
+  margin-bottom: 3px;
+  font-size: var(--font-size-win98-base);
+}
+.form-group-win98 {
+  margin-bottom: 10px;
+}
+
+/* Checkbox y Radio Win98 (muy simplificado, requiere más trabajo para parecerse) */
+input[type="checkbox"].checkbox-win98,
+input[type="radio"].radio-win98 {
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  background-color: var(--color-win98-window-bg);
+  border: 1px solid;
+  border-top-color: var(--color-win98-border-shadow);
+  border-left-color: var(--color-win98-border-shadow);
+  border-right-color: var(--color-win98-border-highlight-soft);
+  border-bottom-color: var(--color-win98-border-highlight-soft);
+  position: relative;
+  vertical-align: middle;
+  margin-right: 5px;
+  cursor: default;
+}
+input[type="checkbox"].checkbox-win98:checked::after {
+  content: '✓'; /* O un SVG de check */
+  position: absolute;
+  top: -2px; left: 1px;
+  font-size: 12px;
+  color: var(--color-win98-text);
+}
+input[type="radio"].radio-win98 {
+  border-radius: 50%;
+}
+input[type="radio"].radio-win98:checked::after {
+  content: '';
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background-color: var(--color-win98-text);
+}
+
+
+/* Contenedor principal de la aplicación (si se usa) */
+.app-win98 {
+  /* Podría tener un borde general si es una "ventana" principal */
+}
+
+/* Tablas Win98 */
+.table-win98 {
   width: 100%;
-  padding: var(--spacing-sm) var(--spacing-md); /* 8px 16px */
-  font-size: var(--font-size-base);
-  font-weight: var(--font-weight-normal);
-  line-height: 1.5;
-  color: var(--color-text);
-  background-color: var(--color-background);
-  background-clip: padding-box;
-  border: var(--border-width-standard) solid var(--color-border);
-  border-radius: var(--border-radius-standard);
-  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  background-color: var(--color-win98-window-bg);
+  border-collapse: collapse; /* Colapsar bordes */
+  /* Para el efecto de tabla "hundida" */
+  border: 1px solid;
+  border-top-color: var(--color-win98-border-shadow);
+  border-left-color: var(--color-win98-border-shadow);
+  border-right-color: var(--color-win98-border-highlight-soft);
+  border-bottom-color: var(--color-win98-border-highlight-soft);
+  box-shadow: 1px 1px 0px 0px var(--color-win98-border-shadow) inset;
+}
+.table-win98 th,
+.table-win98 td {
+  padding: 3px 5px;
+  border: 1px solid var(--color-win98-bg-darker); /* Líneas internas de la tabla */
+  text-align: left;
+}
+.table-win98 th {
+  background-color: var(--color-win98-panel-bg); /* Encabezados con fondo gris */
+  font-weight: normal; /* El texto no era tan bold */
+  /* Los th también tenían efecto biselado */
+  border-top-color: var(--color-win98-border-highlight-soft);
+  border-left-color: var(--color-win98-border-highlight-soft);
+  border-right-color: var(--color-win98-border-shadow);
+  border-bottom-color: var(--color-win98-border-shadow);
 }
 
-.form-control:focus {
-  color: var(--color-text);
-  background-color: var(--color-background);
-  border-color: var(--color-primary-darker); /* Un color más oscuro para el borde en foco */
-  outline: 0;
-  box-shadow: 0 0 0 0.2rem rgba(var(--color-primary), 0.25); /* Sombra con el color primario y opacidad */
+/* --- FIN CLASES DE UTILIDAD ESTILO WINDOWS 98 --- */
+
+
+/* Comentando estilos modernos que no se usarán o se reemplazarán */
+/*
+:root {
+  --color-primary: #007BFF;
+  --color-background-secondary: #F8F9FA;
+  --border-radius-standard: 0.25rem;
+  --box-shadow-subtle: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
+.btn { ... }
+.form-control { ... }
+.modal-overlay { ... }
+.card { ... }
+.alert { ... }
+.badge { ... }
+.spinner-border { ... }
+*/
 
-.form-label {
-  display: inline-block;
-  margin-bottom: var(--spacing-xs); /* 4px */
-  font-weight: var(--font-weight-bold);
+/* Utilidades de display responsive (pueden seguir siendo útiles) */
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-flex { display: flex !important; }
+/* etc. Estas pueden mantenerse si se necesitan para layout, aunque Win98 no era responsive */
+@media (min-width: 576px) { /* sm */
+  .d-sm-none { display: none !important; }
 }
-
-.form-group {
-  margin-bottom: var(--spacing-md); /* Espacio entre grupos de formulario */
-}
+/* ... más media queries ... */
 
 
-/* Estilos para Modales (base) */
-.modal-overlay {
+/* --- Estilos para Modales/Ventanas Win98 --- */
+.modal-overlay-win98 {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  /* En Win98 no había overlay, la ventana aparecía sobre la app */
+  /* background-color: rgba(0, 0, 0, 0.1); */
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000; /* Asegurar que esté por encima de otros contenidos */
-  padding: var(--spacing-md);
+  z-index: 1000;
+  padding: 10px;
 }
 
-.modal-content {
-  background-color: var(--color-background);
-  padding: var(--spacing-lg); /* 24px */
-  border-radius: var(--border-radius-large); /* 8px */
-  box-shadow: var(--box-shadow-standard);
-  width: 100%;
-  max-width: 500px; /* Default max-width, can be overridden */
-  max-height: 90vh;
-  overflow-y: auto;
-  position: relative; /* Para posicionar el botón de cerrar si es necesario */
+.modal-window-win98 {
+  background-color: var(--color-win98-panel-bg);
+  border: 1px solid;
+  border-top-color: var(--color-win98-border-highlight-soft);
+  border-left-color: var(--color-win98-border-highlight-soft);
+  border-right-color: var(--color-win98-border-shadow);
+  border-bottom-color: var(--color-win98-border-shadow);
+  box-shadow: 2px 2px 3px rgba(0,0,0,0.35); /* Sombra más marcada estilo Win98 */
+  min-width: 280px;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  cursor: default;
 }
 
-.modal-header {
+.modal-title-bar-win98 {
+  background-color: var(--color-win98-title-bar-active-bg);
+  color: var(--color-win98-title-bar-text);
+  padding: 2px 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-bottom: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
-  border-bottom: var(--border-width-standard) solid var(--color-border-light);
+  height: 20px;
+  cursor: default; /* O 'move' si se implementa drag */
 }
 
-.modal-title {
-  font-size: var(--font-size-h3);
-  color: var(--color-text); /* Asegurar color de texto */
-  margin-bottom: 0; /* Sobrescribir el margen de h3 */
-}
-
-.modal-body {
-  margin-bottom: var(--spacing-md);
-  color: var(--color-text-secondary); /* Texto del cuerpo un poco más claro */
-}
-
-.modal-footer {
-  display: flex;
-  justify-content: flex-end; /* Alinea botones a la derecha por defecto */
-  gap: var(--spacing-sm);
-  padding-top: var(--spacing-md);
-  border-top: var(--border-width-standard) solid var(--color-border-light);
-}
-
-/* Estilos para Tablas (base) */
-.table {
-  width: 100%;
-  margin-bottom: var(--spacing-md);
-  color: var(--color-text);
-  border-collapse: collapse; /* Asegurar que los bordes se colapsen */
-  background-color: var(--color-background); /* Fondo blanco para la tabla */
-}
-
-.table th,
-.table td {
-  padding: var(--spacing-sm) var(--spacing-md); /* Ajustar padding si es necesario 8px 16px */
-  vertical-align: top;
-  border: var(--border-width-standard) solid var(--color-border-light); /* Borde para todas las celdas */
-  text-align: left; /* Alineación estándar a la izquierda */
-}
-
-.table thead th {
-  vertical-align: bottom;
-  border-bottom-width: calc(2 * var(--border-width-standard)); /* Borde inferior más grueso para header */
-  border-bottom-color: var(--color-border);
-  background-color: var(--color-background-secondary); /* Fondo ligeramente gris para el encabezado */
-  font-weight: var(--font-weight-bold);
-}
-
-.table tbody tr:nth-of-type(odd) {
-  background-color: var(--color-background-secondary); /* Sutil striping, usando el fondo secundario */
-}
-
-.table tbody tr:hover {
-  background-color: rgba(0, 0, 0, 0.075); /* Un hover un poco más oscuro que el de Bootstrap */
-}
-
-/* Clases de utilidad para texto */
-.text-primary { color: var(--color-primary) !important; }
-.text-secondary { color: var(--color-secondary) !important; }
-.text-success { color: var(--color-success) !important; }
-.text-danger { color: var(--color-danger) !important; }
-.text-warning { color: var(--color-warning) !important; }
-.text-light { color: var(--color-background-secondary) !important; } /* Para texto sobre fondos oscuros */
-.text-dark { color: var(--color-text) !important; }
-.text-muted { color: var(--color-text-secondary) !important; }
-.text-center { text-align: center !important; }
-.text-right { text-align: right !important; }
-.text-left { text-align: left !important; }
-
-
-/* Responsive utilities */
-.d-none { display: none !important; }
-.d-block { display: block !important; }
-.d-flex { display: flex !important; }
-.d-grid { display: grid !important; }
-
-@media (min-width: 576px) { /* sm */
-  .d-sm-none { display: none !important; }
-  .d-sm-block { display: block !important; }
-  .d-sm-flex { display: flex !important; }
-  .d-sm-grid { display: grid !important; }
-}
-
-@media (min-width: 768px) { /* md */
-  .d-md-none { display: none !important; }
-  .d-md-block { display: block !important; }
-  .d-md-flex { display: flex !important; }
-  .d-md-grid { display: grid !important; }
-}
-
-@media (min-width: 992px) { /* lg */
-  .d-lg-none { display: none !important; }
-  .d-lg-block { display: block !important; }
-  .d-lg-flex { display: flex !important; }
-  .d-lg-grid { display: grid !important; }
-}
-
-@media (min-width: 1200px) { /* xl */
-  .d-xl-none { display: none !important; }
-  .d-xl-block { display: block !important; }
-  .d-xl-flex { display: flex !important; }
-  .d-xl-grid { display: grid !important; }
-}
-
-/* Card component base */
-.card {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  word-wrap: break-word;
-  background-color: var(--color-background);
-  background-clip: border-box;
-  border: var(--border-width-standard) solid var(--color-border-light);
-  border-radius: var(--border-radius-large); /* Usar borde grande para cards */
-  box-shadow: var(--box-shadow-subtle);
-  margin-bottom: var(--spacing-lg); /* Espacio por defecto debajo de las cards */
-}
-
-.card-header {
-  padding: var(--spacing-md) var(--spacing-lg);
-  margin-bottom: 0; /* Remove default margin */
-  background-color: var(--color-background-secondary);
-  border-bottom: var(--border-width-standard) solid var(--color-border-light);
-  border-top-left-radius: var(--border-radius-large);
-  border-top-right-radius: var(--border-radius-large);
-}
-.card-header:first-child {
-  border-radius: calc(var(--border-radius-large) - var(--border-width-standard)) calc(var(--border-radius-large) - var(--border-width-standard)) 0 0;
-}
-
-
-.card-body {
-  flex: 1 1 auto;
-  padding: var(--spacing-lg); /* Consistente con el header */
-}
-
-.card-title {
-  margin-bottom: var(--spacing-md); /* Usar variable de espaciado */
-  font-size: var(--font-size-h4); /* Ajustar tamaño según jerarquía */
-}
-
-.card-subtitle {
-  margin-top: calc(-1 * var(--spacing-md) / 2); /* Ajustar para que esté más cerca del título */
-  margin-bottom: var(--spacing-sm);
-  color: var(--color-text-secondary);
-}
-
-.card-text:last-child {
-  margin-bottom: 0;
-}
-
-.card-footer {
-  padding: var(--spacing-md) var(--spacing-lg);
-  background-color: var(--color-background-secondary);
-  border-top: var(--border-width-standard) solid var(--color-border-light);
-  border-bottom-left-radius: var(--border-radius-large);
-  border-bottom-right-radius: var(--border-radius-large);
-}
-.card-footer:last-child {
-    border-radius: 0 0 calc(var(--border-radius-large) - var(--border-width-standard)) calc(var(--border-radius-large) - var(--border-width-standard));
-}
-
-/* Alertas */
-.alert {
-  position: relative;
-  padding: var(--spacing-md) var(--spacing-lg);
-  margin-bottom: var(--spacing-md);
-  border: var(--border-width-standard) solid transparent;
-  border-radius: var(--border-radius-standard);
-}
-
-.alert-primary {
-  color: var(--color-primary-darker);
-  background-color: #cfe2ff; /* Color de fondo claro para alerta primaria */
-  border-color: #b6d4fe; /* Color de borde para alerta primaria */
-}
-
-.alert-secondary {
-  color: var(--color-secondary-darker);
-  background-color: #e2e3e5;
-  border-color: #d3d6d8;
-}
-
-.alert-success {
-  color: var(--color-success-darker);
-  background-color: #d1e7dd;
-  border-color: #badbcc;
-}
-
-.alert-danger {
-  color: var(--color-danger-darker);
-  background-color: #f8d7da;
-  border-color: #f5c2c7;
-}
-
-.alert-warning {
-  color: #664d03; /* Texto oscuro para mejor contraste en fondo amarillo */
-  background-color: #fff3cd;
-  border-color: #ffecb5;
-}
-
-.alert-info { /* Similar a primary, pero puede ser diferenciado si es necesario */
-  color: #055160;
-  background-color: #cff4fc;
-  border-color: #b6effb;
-}
-
-/* Badges */
-.badge {
-  display: inline-block;
-  padding: .35em .65em; /* Un poco más de padding vertical que bootstrap */
-  font-size: .75em; /* Ligeramente más pequeño */
-  font-weight: var(--font-weight-bold);
-  line-height: 1;
-  color: #fff;
-  text-align: center;
+.modal-title-win98 {
+  font-family: var(--font-family-win98);
+  font-size: var(--font-size-win98-base);
+  font-weight: bold;
   white-space: nowrap;
-  vertical-align: baseline;
-  border-radius: var(--border-radius-large); /* Más redondeado */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 2px;
 }
 
-.badge-primary { background-color: var(--color-primary); }
-.badge-secondary { background-color: var(--color-secondary); }
-.badge-success { background-color: var(--color-success); }
-.badge-danger { background-color: var(--color-danger); }
-.badge-warning { background-color: var(--color-warning); color: var(--color-text); }
-.badge-info { background-color: #0dcaf0; } /* Color info de Bootstrap */
-.badge-light { background-color: var(--color-background-secondary); color: var(--color-text); border: 1px solid var(--color-border); }
-.badge-dark { background-color: var(--color-text); }
-
-/* Para elementos de lista en menús, etc. */
-.list-group {
+.modal-title-buttons-win98 {
   display: flex;
-  flex-direction: column;
-  padding-left: 0;
-  margin-bottom: 0;
-  border-radius: var(--border-radius-standard);
 }
 
-.list-group-item {
-  position: relative;
-  display: block;
-  padding: var(--spacing-sm) var(--spacing-md);
-  color: var(--color-text);
-  text-decoration: none;
-  background-color: var(--color-background);
-  border: var(--border-width-standard) solid var(--color-border-light);
+.modal-title-button-win98 {
+  background-color: var(--color-win98-panel-bg);
+  border: 1px solid;
+  border-top-color: var(--color-win98-border-highlight-soft);
+  border-left-color: var(--color-win98-border-highlight-soft);
+  border-right-color: var(--color-win98-border-shadow);
+  border-bottom-color: var(--color-win98-border-shadow);
+  width: 16px;
+  height: 16px;
+  margin-left: 2px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Marlett", "Webdings", sans-serif;
+  font-size: 10px;
+  color: var(--color-win98-text);
+  cursor: default;
+  box-shadow: 1px 1px 0px 0px var(--color-win98-border-highlight) inset,
+              -1px -1px 0px 0px var(--color-win98-border-shadow) inset;
 }
-.list-group-item:first-child {
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
+.modal-title-button-win98:active {
+  border-top-color: var(--color-win98-border-shadow);
+  border-left-color: var(--color-win98-border-shadow);
+  border-right-color: var(--color-win98-border-highlight-soft);
+  border-bottom-color: var(--color-win98-border-highlight-soft);
+  box-shadow: 1px 1px 0px 0px var(--color-win98-border-shadow) inset,
+              -1px -1px 0px 0px var(--color-win98-border-highlight) inset;
+  padding: 1px 0 0 1px;
 }
-.list-group-item:last-child {
-  border-bottom-left-radius: inherit;
-  border-bottom-right-radius: inherit;
-}
-.list-group-item + .list-group-item {
-  border-top-width: 0; /* Evita doble borde */
-}
-.list-group-item.active {
-  z-index: 2; /* Evita que los bordes de los hermanos lo cubran */
-  color: #fff;
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
-}
-.list-group-item:hover, .list-group-item:focus {
-  z-index: 1;
-  color: var(--color-primary);
-  text-decoration: none;
-  background-color: var(--color-background-secondary);
-}
-.list-group-item-action { /* Para cuando los items son clickeables */
-  width: 100%;
-  color: #495057; /* Color de Bootstrap */
-  text-align: inherit;
-}
-.list-group-item-action:hover, .list-group-item-action:focus {
-  color: var(--color-primary);
-  background-color: #f8f9fa; /* Color de Bootstrap */
-}
-.list-group-item-action.active {
-  color: #fff;
-  background-color: var(--color-primary);
-  border-color: var(--color-primary);
+.modal-close-btn-symbol::before { content: "r"; }
+
+
+.modal-body-win98 {
+  padding: 15px 12px; /* Más padding vertical */
+  background-color: var(--color-win98-panel-bg);
+  font-size: var(--font-size-win98-base);
+  min-height: 50px;
 }
 
-/* Spinner para carga */
-.spinner-border {
-  display: inline-block;
-  width: 2rem;
-  height: 2rem;
-  vertical-align: -0.125em;
-  border: .25em solid currentColor;
-  border-right-color: transparent;
-  border-radius: 50%;
-  animation: spinner-border .75s linear infinite;
+.modal-footer-win98 {
+  padding: 8px 12px;
+  background-color: var(--color-win98-panel-bg);
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  border-top: 1px solid var(--color-win98-border-highlight-soft);
+  box-shadow: inset 0 1px 0px 0px var(--color-win98-border-shadow); /* Sombra interna sutil */
 }
-
-@keyframes spinner-border {
-  to { transform: rotate(360deg); }
-}
-
-.spinner-border-sm {
-  width: 1rem;
-  height: 1rem;
-  border-width: .2em;
-}
+/* --- Fin Estilos para Modales/Ventanas Win98 --- */

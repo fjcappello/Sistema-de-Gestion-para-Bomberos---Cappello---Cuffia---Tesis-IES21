@@ -1,106 +1,116 @@
-/* frontend/src/components/Styles/App.css */
+/* frontend/src/components/Styles/App.css - ESTILO WINDOWS 98 */
 
-/* Los resets generales y estilos de body ahora están en global.css */
-
-/* Estilo general para el contenedor principal de la App */
-main {
-  padding: var(--spacing-lg); /* Usar variable */
-  width: 100%;
-}
+/* Los resets generales y estilos de body ahora están en global.css (versión Win98) */
 
 .App {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  min-height: 100vh; /* Asegurar que la app ocupe al menos toda la altura */
+  align-items: stretch; /* Estirar para ocupar ancho */
+  min-height: 100vh;
+  background-color: var(--color-win98-bg); /* Fondo gris general */
 }
 
 .app-container {
   display: flex;
   width: 100%;
-  margin-top: 70px; /* Nueva altura del Navbar (será 70px) */
+  margin-top: 30px; /* Altura del Navbar Win98 */
+  flex-grow: 1; /* Para que ocupe el espacio restante */
 }
 
 .sidebar {
-  width: 230px;
-  background-color: var(--color-background);
-  border-right: var(--border-width-standard) solid var(--color-border);
-  padding: var(--spacing-lg);
+  width: 200px; /* Ancho típico para un panel lateral */
+  background-color: var(--color-win98-panel-bg);
+  border: 1px solid; /* Base para los colores por lado */
+  border-top-color: var(--color-win98-border-highlight-soft);
+  border-left-color: var(--color-win98-border-highlight-soft);
+  border-right-color: var(--color-win98-border-shadow);
+  border-bottom-color: var(--color-win98-border-shadow);
+  padding: 5px; /* Padding interno del panel */
   position: fixed;
-  top: 70px; /* Nueva altura del Navbar */
+  top: 30px; /* Debajo del Navbar */
   bottom: 0;
   left: 0;
   overflow-y: auto;
   z-index: 900;
-  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out;
+  font-size: var(--font-size-win98-base);
+  /* transition: transform 0.3s ease-in-out, width 0.3s ease-in-out; */ /* Transiciones eliminadas */
 }
 
 .main-content {
-  margin-left: 230px;
-  /* padding: var(--spacing-lg); Se desglosa para control de padding-top */
-  padding-top: var(--spacing-lg); /* Espacio entre navbar y contenido (ej: 24px) */
-  padding-right: var(--spacing-lg);
-  padding-bottom: var(--spacing-lg);
-  padding-left: var(--spacing-lg);
+  margin-left: 200px; /* Ancho de la sidebar */
+  padding: 0; /* El contenido interno manejará su propio padding o será un panel */
+  background-color: var(--color-win98-window-bg); /* Fondo blanco como área de cliente */
   flex-grow: 1;
-  width: calc(100% - 230px);
-  transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+  width: calc(100% - 200px);
+  /* border-left: 1px solid var(--color-win98-border-shadow); */ /* Opcional: separador */
+  overflow-y: auto;
 }
 
-/* Estilos para una sidebar colapsada (ejemplo) */
+/* Funcionalidad de sidebar colapsada (moderna, pero estilizada) */
 .sidebar.collapsed {
-  width: 60px;
+  width: 40px;
   overflow: hidden;
 }
-
 .sidebar.collapsed + .main-content {
-  margin-left: 60px;
-  width: calc(100% - 60px);
+  margin-left: 40px;
+  width: calc(100% - 40px);
 }
 
-.filtros-container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: var(--spacing-lg);
-  flex-wrap: wrap;
-  gap: var(--spacing-md);
-  padding: var(--spacing-lg);
-  background-color: var(--color-background);
-  border-radius: var(--border-radius-large);
-  box-shadow: var(--box-shadow-subtle);
+
+.filtros-container { /* Estilo "Group Box" de Win98 */
+  margin: 10px;
+  padding: 15px 10px 10px 10px; /* Padding: top, horiz, bottom */
+  border: 1px solid;
+  border-top-color: var(--color-win98-border-shadow); /* Borde hundido oscuro arriba */
+  border-left-color: var(--color-win98-border-shadow);
+  border-right-color: var(--color-win98-border-highlight-soft); /* Borde claro abajo */
+  border-bottom-color: var(--color-win98-border-highlight-soft);
+  border-radius: 0;
+  position: relative;
+  background-color: var(--color-win98-panel-bg);
 }
 
-.filtros-container h2 {
-  flex: 1 1 100%;
-  text-align: center;
-  margin-bottom: var(--spacing-md);
-  color: var(--color-primary);
-  font-size: var(--font-size-h3);
+.filtros-container > h2 { /* Título del "Group Box" */
+  position: absolute;
+  top: -8px;
+  left: 8px;
+  background-color: var(--color-win98-panel-bg);
+  padding: 0 4px;
+  font-size: var(--font-size-win98-base);
+  font-weight: normal;
+  color: var(--color-win98-text);
+  margin: 0;
 }
+
+.filtros-form-elements {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 5px; /* Espacio para el título del group box */
+}
+
 
 .usuario-saludo {
   position: fixed;
-  top: calc(70px + var(--spacing-sm)); /* Ajustado a nueva altura de navbar + espacio */
-  right: var(--spacing-lg);
-  font-size: var(--font-size-small);
-  color: var(--color-text-secondary);
-  background-color: var(--color-background);
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border-radius: var(--border-radius-standard);
-  box-shadow: var(--box-shadow-subtle);
+  top: 33px; /* Alineado con el borde inferior del navbar */
+  right: 5px;
+  font-size: var(--font-size-win98-small);
+  color: var(--color-win98-text);
+  background-color: var(--color-win98-panel-bg);
+  padding: 1px 4px;
+  border: 1px solid var(--color-win98-border-shadow);
   z-index: 999;
 }
 
 
-/* Media queries para responsividad del layout principal */
-@media (max-width: 992px) { /* lg breakpoint */
+@media (max-width: 768px) {
   .sidebar {
     transform: translateX(-100%);
     z-index: 1050;
     top: 0;
     height: 100vh;
-    border-right: var(--border-width-standard) solid var(--color-border);
+    border-right: 1px solid var(--color-win98-border-shadow);
  }
   .sidebar.open {
     transform: translateX(0);
@@ -108,54 +118,27 @@ main {
   .main-content {
     margin-left: 0;
     width: 100%;
-    /* padding-top se mantiene como se definió antes para esta vista */
   }
-  .usuario-saludo {
-    /* Considerar ocultar o mover si interfiere con menú hamburguesa */
-  }
-}
-
-@media (max-width: 768px) { /* md breakpoint */
-  .app-container {
-    margin-top: 70px; /* Asumiendo que el navbar mantiene su altura en móvil */
-  }
-   .sidebar {
-    top: 0;
-  }
-  .main-content {
-    /* padding: var(--spacing-md); Se desglosa */
-    padding-top: var(--spacing-md); /* Espacio menor en móviles (16px) */
-    padding-right: var(--spacing-md);
-    padding-bottom: var(--spacing-md);
-    padding-left: var(--spacing-md);
-  }
-   .filtros-container {
-    padding: var(--spacing-md);
-  }
-  .filtros-container h2 {
-    font-size: var(--font-size-h4);
+  .filtros-container {
+    margin: 5px;
+    padding: 12px 8px 8px 8px;
   }
 }
 
-/* Para el botón de toggle de la sidebar (ejemplo, si se añade) */
 .sidebar-toggle-btn {
   position: fixed;
-  top: 75px; /* Un poco debajo del inicio del navbar */
-  left: 10px;
+  top: 33px;
+  left: 5px;
   z-index: 1100;
-  background-color: var(--color-primary);
-  color: white;
-  border: none;
-  padding: var(--spacing-sm);
-  border-radius: var(--border-radius-standard);
+  /* Aplicar clase .btn-win98 directamente en el JSX */
+  /* Ajustes específicos si es necesario para tamaño */
+  padding: 1px 5px !important;
+  min-width: auto !important;
+  min-height: auto !important;
+  font-size: var(--font-size-win98-small) !important;
+  line-height: 1.2 !important;
 }
 
-.sidebar.collapsed ~ .sidebar-toggle-btn {
-  /* Estilos para cuando la sidebar está colapsada, e.g. mover el botón */
-}
-
-@media (min-width: 993px) {
-  .sidebar-toggle-btn {
-    display: none;
-  }
+@media (min-width: 769px) {
+  /* .sidebar-toggle-btn { display: none; } */ /* Depende de la lógica de JS */
 }
