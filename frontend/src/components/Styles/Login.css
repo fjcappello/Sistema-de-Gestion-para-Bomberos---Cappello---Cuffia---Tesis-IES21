@@ -1,13 +1,18 @@
 /* frontend/src/components/Styles/Login.css - ESTILO FLUENT DESIGN */
 
 .login-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  padding: var(--spacing-xl); /* 24px */
+  padding: var(--spacing-xl);
   background-color: var(--color-fluent-bg);
+  overflow: hidden;
 }
 
 .login-panel-fluent { /* Reemplaza login-card */

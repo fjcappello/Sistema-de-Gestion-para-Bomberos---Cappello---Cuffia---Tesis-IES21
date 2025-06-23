@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from 'react';
 import api from '../api';
 import * as XLSX from 'xlsx';
 import './Styles/PanolOperativo.css';
+import './Styles/Tablas.css';
 import { useUsuario } from '../context/UserContext';
 
 function PanolOperativo() {
@@ -372,7 +373,7 @@ function PanolOperativo() {
         </button>
       </div>
 
-      <table className="moviles-registro-tabla">
+      <table className="table-fluent">
         <thead>
           <tr>
             <th>Código</th>
@@ -389,7 +390,11 @@ function PanolOperativo() {
         </thead>
         <tbody>
           {elementosPaginados.map((el) => (
-            <tr key={el.id_elemento}>
+            <tr
+              key={el.id_elemento}
+              className={el.estado === "Baja" ? "vencida" : ""}
+              title={el.estado === "Baja" ? "Elemento dado de baja" : ""}
+            >
               <td>{el.id_elemento}</td>
               <td>{el.elemento}</td>
               <td>{el.tipo}</td>

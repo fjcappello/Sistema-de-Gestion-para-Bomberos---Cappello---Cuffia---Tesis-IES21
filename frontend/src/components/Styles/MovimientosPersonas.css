@@ -2,6 +2,7 @@
 
 /* Layout específico para MovimientosPersonas */
 .movimientos-layout {
+  padding-top: 2rem;
   display: flex;
   gap: var(--spacing-lg); /* 20px de espacio entre sidebar y contenido */
   /* Este componente se renderiza dentro del .main-content global,
@@ -10,15 +11,15 @@
 }
 
 .movimientos-sidebar {
-  min-width: 220px; /* Ancho de la sidebar local */
-  flex-basis: 220px; /* Para que no se encoja */
+  padding-top: 0; /* Quitamos el exceso que lo empujaba */
+  min-width: 220px;
+  flex-basis: 220px;
   flex-shrink: 0;
-  background-color: var(--color-fluent-surface); /* Fondo blanco o gris muy claro */
-  border-radius: var(--border-radius-large); /* 6px */
-  padding: var(--spacing-md); /* 16px */
-  box-shadow: var(--box-shadow-sm); /* Sombra sutil */
-  height: fit-content; /* Ajustar altura al contenido */
-  /* No necesita margin-top, ya que está dentro del .main-content global que ya está ajustado */
+  background-color: var(--color-fluent-surface);
+  border-radius: var(--border-radius-large);
+  padding: var(--spacing-md);
+  box-shadow: var(--box-shadow-sm);
+  height: fit-content;
 }
 
 .movimientos-sidebar button {

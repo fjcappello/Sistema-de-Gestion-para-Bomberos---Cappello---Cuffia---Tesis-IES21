@@ -7,7 +7,7 @@
   background-color: var(--color-fluent-surface); /* Blanco */
   border-bottom: 1px solid var(--color-fluent-border-light);
   width: 100%;
-  height: 56px; /* Altura aumentada para claridad */
+  height: 5rem; /* Altura aumentada para claridad */
   position: fixed;
   top: 0;
   left: 0;
@@ -24,7 +24,7 @@
 }
 
 .navbar-logo img.logo-img {
-  height: 32px; /* Logo más grande */
+  height: 60px; /* Logo más grande */
   width: auto;
   margin-right: var(--spacing-sm); /* 12px */
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
 import "./Styles/MovilesRegistro.css";
+import "./Styles/Tablas.css";
 import { useUsuario } from "../context/UserContext";
 
 function MovilesRegistro() {
@@ -240,7 +241,7 @@ function MovilesRegistro() {
         <button onClick={handleLimpiarFiltros}>Limpiar Filtros</button>
       </div>
 
-      <table className="moviles-registro-tabla">
+      <table className="table-fluent">
         <thead>
           <tr>
             <th>Interno</th>
@@ -258,11 +259,8 @@ function MovilesRegistro() {
           {paginatedMoviles.map((movil) => (
             <tr
               key={movil.id}
-              style={
-                isServiceVencido(movil.fecha_service)
-                  ? { backgroundColor: "red" }
-                  : {}
-              }
+              className={isServiceVencido(movil.fecha_service) ? "vencida" : ""}
+              title={isServiceVencido(movil.fecha_service) ? "Service vencido" : ""}
             >
               <td>{movil.interno}</td>
               <td>{movil.marca}</td>

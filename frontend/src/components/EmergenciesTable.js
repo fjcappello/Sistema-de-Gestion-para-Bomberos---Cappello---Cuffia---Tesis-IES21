@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
 import "./Styles/EmergenciesTable.css";
+import "./Styles/Tablas.css";
 import PDFGenerator from "./PDFGenerator";
 import { useUsuario } from "../context/UserContext";
 
@@ -374,7 +375,7 @@ function EmergenciesTable() {
       </div>
 
       {/* Tabla */}
-      <table className="emergencies-table">
+      <table className="table-fluent">
         <thead>
           <tr>
             <th>Parte ID</th>
