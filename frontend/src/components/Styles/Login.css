@@ -26,7 +26,7 @@
 }
 
 .login-logo {
-  width: 60px;
+  width: 10rem;
   height: auto;
   margin-bottom: var(--spacing-lg); /* 20px */
 }

@@ -188,7 +188,7 @@ function EstadisticaAsistencia() {
       y += 10;
       if (y > 260) { pdf.addPage(); y = margin; } // Control de página antes de sección
       pdf.setFontSize(14);
-      pdf.text('Bottom 5 Personal con Menos Asistencias', margin, y);
+      pdf.text('Personal con Menos Asistencias', margin, y);
       y += 8;
       pdf.setFontSize(10);
       pdf.text('Lista de personal con menos asistencias.', margin, y);
@@ -203,7 +203,7 @@ function EstadisticaAsistencia() {
       y += 10;
       if (y > 260) { pdf.addPage(); y = margin; } // Control de página antes de sección
       pdf.setFontSize(14);
-      pdf.text('Bottom 5 Personal con Menos Horas en el Cuartel', margin, y);
+      pdf.text('Personal con Menos Horas en el Cuartel', margin, y);
       y += 8;
       pdf.setFontSize(10);
       pdf.text('Lista de personal con menos horas totales trabajadas.', margin, y);
@@ -430,7 +430,7 @@ function EstadisticaAsistencia() {
     plugins: {
       legend: { display: true },
       tooltip: { enabled: true },
-      title: { display: true, text: 'Bottom 5 Horas en Cuartel' }
+      title: { display: true, text: 'Horas en Cuartel' }
     },
     scales: {
       x: { title: { display: true, text: 'Personal' } },
@@ -519,11 +519,6 @@ function EstadisticaAsistencia() {
         </button>
       </div>
 
-      <div className="asistencia-botones-exportar">
-        <button className="asistencia-btn exportar" onClick={exportPDF}>
-          Exportar PDF
-        </button>
-      </div>
 
       <h2 className="asistencia-title">Estadísticas de Asistencia</h2>
 
@@ -555,6 +550,12 @@ function EstadisticaAsistencia() {
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Asistencia por Mes</h3>
         <Bar data={porMesData} options={porMesOptions} />
+      </div>
+
+            <div className="asistencia-botones-exportar">
+        <button className="asistencia-btn exportar" onClick={exportPDF}>
+          Exportar PDF
+        </button>
       </div>
 
       {/*
