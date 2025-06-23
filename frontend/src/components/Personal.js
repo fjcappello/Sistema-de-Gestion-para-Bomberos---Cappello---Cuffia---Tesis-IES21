@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
-import "./Styles/PersonalTable.css";
+import "./Styles/PersonalTableFluent.css"; // Cambiado al nuevo archivo CSS
 import { useUsuario } from "../context/UserContext";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 7; // Aumentar items por página para diseño Fluent
 
 function PersonalTable() {
   const { usuario } = useUsuario();

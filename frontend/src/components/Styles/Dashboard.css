@@ -1,342 +1,186 @@
-.dashboard-container {
-  padding: 2rem;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  min-height: 100vh;
+/* frontend/src/components/Styles/Dashboard.css - ESTILO FLUENT DESIGN */
+
+.dashboard-container-fluent { /* Nuevo nombre para el contenedor principal */
+  padding: var(--spacing-xl); /* 24px, padding principal de la vista */
+  /* font-family ya viene de body */
   width: 100%;
   box-sizing: border-box;
+}
+
+.dashboard-header { /* Contenedor para saludo y quizás otros controles a nivel de dashboard */
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-xl); /* 24px */
 }
 
-.bienvenida-usuario {
-  text-align: right;
-  font-size: 1rem;
-  color: #1a1a1a;
-  font-weight: 500;
-  margin: 0 1rem 1.5rem 0;
+.bienvenida-usuario-fluent { /* Reemplaza .bienvenida-usuario */
+  font-size: var(--font-size-large); /* 16px */
+  color: var(--color-fluent-text-secondary);
+  font-weight: var(--font-weight-regular);
 }
-/* Ultimos Movimientos */
-.ingresos-egresos-card {
-  background: white;
-  border-radius: 8px;
-  padding: 1rem;
-  max-width: 400px;
-  margin: auto;
+.bienvenida-usuario-fluent strong {
+  color: var(--color-fluent-text-primary);
+  font-weight: var(--font-weight-semibold);
 }
 
-.ingresos-egresos-card h3 {
+.dashboard-grid-fluent { /* Reemplaza .dashboard-grid */
+  display: grid;
+  /* Intentar un layout más flexible y responsivo */
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Columnas automáticas */
+  gap: var(--spacing-lg); /* 20px */
+}
+
+/* Las tarjetas usarán .card-fluent de global.css */
+/* .dashboard-card será reemplazado por .card-fluent en el JSX */
+/* Si se necesita especificidad para tarjetas del dashboard: */
+/* .dashboard-grid-fluent .card-fluent { ... } */
+
+
+/* Estilos para contenido específico dentro de las tarjetas */
+
+/* IngresosEgresosCard */
+.ingresos-egresos-card-content .card-title-fluent { /* Asumiendo que el título tiene esta clase */
   text-align: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
 }
-
-.ingresos-egresos-card ul {
+.ingresos-egresos-card-content ul {
   list-style: none;
   padding: 0;
-  margin-bottom: 1rem;
+  margin: 0 0 var(--spacing-md) 0;
 }
-
-.ingresos-egresos-card li {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #ddd;
+.ingresos-egresos-card-content li {
+  padding: var(--spacing-xs) 0; /* 8px */
+  border-bottom: 1px solid var(--color-fluent-border-light);
+  font-size: var(--font-size-base);
+  color: var(--color-fluent-text-secondary);
 }
-
-.ingresos-egresos-card button {
-  padding: 0.5rem 1rem;
-  background-color: #e60000;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: bold;
+.ingresos-egresos-card-content li:last-child {
+  border-bottom: none;
 }
+/* Botones dentro de esta card usarán .btn-fluent */
 
-.ingresos-egresos-card button:hover {
-  background-color: #cc0000;
-}
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal-content {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  max-width: 400px;
-  width: 90%;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.modal-content input {
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
-.modal-buttons button {
-  flex: 1;
-}
-
-.persona-select {
-  width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-
-/* Added clima-card styles */
-.clima-card {
+/* ClimaCard */
+.clima-card-content { /* Contenedor del contenido específico de ClimaCard */
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
 }
-
-.clima-card .temperatura {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-  color: #1a1a1a;
+.clima-card-content .temperatura {
+  font-size: 2.8rem; /* Tamaño grande para la temperatura */
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fluent-text-primary);
+  margin-bottom: var(--spacing-xs);
 }
-
-.clima-card .temperatura[data-icon]::before {
-  content: attr(data-icon);
-  font-size: 2rem;
-  margin-right: 0.5rem;
+/* Los data-icon y colores por temperatura se pueden mantener o simplificar */
+.clima-card-content .temperatura[data-icon]::before {
+  content: attr(data-icon); /* Asumiendo que data-icon tiene el emoji/char correcto */
+  font-size: 2.5rem; /* Ajustar si es necesario */
+  margin-right: var(--spacing-sm);
   vertical-align: middle;
 }
-
-.clima-card .temperatura[data-temp^="3"],
-.clima-card .temperatura[data-temp^="4"] {
-  color: #e25822; /* caliente */
+.clima-card-content .descripcion {
+  font-size: var(--font-size-large); /* 16px */
+  color: var(--color-fluent-text-secondary);
+  margin-bottom: var(--spacing-md);
 }
-
-.clima-card .temperatura[data-temp^="1"],
-.clima-card .temperatura[data-temp^="2"] {
-  color: #0077be; /* fresco */
-}
-
-.clima-card .descripcion {
-  font-size: 1.2rem;
-  color: #666;
-  margin-bottom: 1rem;
-}
-
-.clima-card .detalle {
-  display: flex;
-  gap: 1.5rem;
-  justify-content: center;
-  font-size: 0.95rem;
-  color: #333;
-}
-
-.dashboard-grid {
+.clima-card-content .clima-details-grid { /* Reemplaza .clima-card .detalle y .clima-grid */
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: minmax(250px, auto);
-  gap: 1.5rem;
-  padding: 1rem;
+  grid-template-columns: repeat(2, auto); /* Auto-ajustar columnas */
+  gap: var(--spacing-sm) var(--spacing-lg); /* 12px vertical, 20px horizontal */
+  justify-content: center; /* Centrar el grid si no ocupa todo el ancho */
+  font-size: var(--font-size-base);
+  color: var(--color-fluent-text-primary);
+  width: 100%;
+  max-width: 300px; /* Limitar ancho del grid de detalles */
+  margin: 0 auto var(--spacing-md) auto; /* Centrar y espaciar */
+  text-align: left;
 }
-
-.dashboard-card {
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  padding: 1.5rem;
-  height: 100%;
+.clima-details-grid div { /* Cada item del grid */
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+.clima-details-grid div svg { /* Si se usan iconos SVG */
+    width: 16px; height: 16px;
+    fill: var(--color-fluent-text-secondary);
+}
+.clima-card-content .ultima-actualizacion {
+  font-size: var(--font-size-small); /* 12px */
+  color: var(--color-fluent-text-disabled);
+  text-align: right; /* O center si se prefiere */
+  width: 100%;
+  margin-top: var(--spacing-sm);
+}
+/* FWI colores - mantenerlos o usar colores de severidad Fluent (ej. amarillo, naranja, rojo) */
+.fwi-bajo { color: #107C10; /* Verde Fluent */ font-weight: var(--font-weight-semibold); }
+.fwi-moderado { color: #F7B000; /* Amarillo/Naranja Fluent */ font-weight: var(--font-weight-semibold); }
+.fwi-alto { color: #D83B01; /* Naranja oscuro Fluent */ font-weight: var(--font-weight-semibold); }
+.fwi-extremo { color: var(--color-fluent-text-error); /* Rojo error Fluent */ font-weight: var(--font-weight-semibold); }
+
+
+/* MovilesCard y EstadisticasCard */
+/* Se asumirá que usarán .card-fluent y elementos internos como títulos .card-title-fluent (si se crea),
+   tablas .table-fluent, botones .btn-fluent, etc. */
+/* Ejemplo para una tabla dentro de MovilesCard */
+.moviles-card-content .table-fluent { /* Si MovilesCard tiene una tabla */
+    margin-top: var(--spacing-md);
+}
+.moviles-card-content .btn-fluent { /* Si MovilesCard tiene un botón */
+    margin-top: var(--spacing-md);
+    display: block; /* O inline-block y centrar con text-align en el padre */
+    margin-left: auto;
+    margin-right: auto;
 }
 
-.dashboard-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
-}
 
-@media (max-width: 1024px) {
-  .dashboard-grid {
-    grid-template-columns: 1fr;
+/* Media Queries */
+@media (max-width: 1024px) { /* Ajustar breakpoints según diseño Fluent */
+  .dashboard-grid-fluent {
+    grid-template-columns: 1fr; /* Una columna en pantallas más pequeñas */
   }
-
-  .bienvenida-usuario {
-    text-align: center;
-    margin-right: 0;
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start; /* O center */
+    gap: var(--spacing-md);
+  }
+  .bienvenida-usuario-fluent {
+    text-align: left; /* O center */
+    width: 100%;
   }
 }
 
 @media (max-width: 600px) {
-  .dashboard-container {
-    padding: 1rem;
+  .dashboard-container-fluent {
+    padding: var(--spacing-lg); /* 20px */
   }
-
-  .dashboard-card {
-    padding: 1rem;
+  .dashboard-grid-fluent {
+    gap: var(--spacing-md); /* 16px */
   }
-
-  .dashboard-grid {
-    gap: 1rem;
+  /* .card-fluent ya tiene padding, no es necesario redefinir aquí a menos que sea específico */
+  .clima-card-content .temperatura {
+    font-size: 2.2rem;
   }
-
-  .bienvenida-usuario {
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+  .clima-card-content .descripcion {
+    font-size: var(--font-size-base); /* 14px */
   }
-
-  .dashboard-card h3 {
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
+  .clima-details-grid {
+    grid-template-columns: 1fr; /* Una columna para detalles del clima en pantallas muy pequeñas */
+    text-align: center;
+    gap: var(--spacing-xs);
+  }
+  .clima-details-grid div {
+      justify-content: center;
   }
 }
 
-/* Estilos para layout en dos columnas del clima */
-.clima-card .clima-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.5rem 1rem;
-  width: 100%;
-  max-width: 400px;
-  font-size: 0.95rem;
-  color: #333;
-  margin: 0 auto;
-  text-align: left;
-}
 
-/* Estilo de cada item */
-.clima-card .clima-grid div {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-/* Última actualización */
-.clima-card .ultima-actualizacion {
-  grid-column: 1 / -1;
-  font-size: 0.85rem;
-  color: #666;
-  text-align: right;
-  margin-top: 1rem;
-}
-
-/* FWI colores según nivel */
-.fwi-bajo {
-  color: green;
-  font-weight: bold;
-}
-.fwi-moderado {
-  color: orange;
-  font-weight: bold;
-}
-.fwi-alto {
-  color: orangered;
-  font-weight: bold;
-}
-.fwi-extremo {
-  color: red;
-  font-weight: bold;
-}
-
-/* Tabla Movimientos styles */
-.tabla-movimientos {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
-}
-
-.tabla-movimientos th,
-.tabla-movimientos td {
-  border: 1px solid #ddd;
-  padding: 0.5rem;
-  text-align: left;
-}
-
-.tabla-movimientos th {
-  background-color: #f5f5f5;
-  font-weight: bold;
-  color: #333;
-}
-
-.tabla-movimientos tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-.tabla-movimientos tr:hover {
-  background-color: #f1f1f1;
-}
-
-.moviles-card {
-  background: white;
-  border-radius: 8px;
-  padding: 1rem;
-  max-width: 100%;
-  overflow-x: auto;
-}
-
-.moviles-card-titulo {
-  text-align: center;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  color: #1a1a1a;
-}
-
-.moviles-card-tabla {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.moviles-card-tabla th,
-.moviles-card-tabla td {
-  border: 1px solid #ddd;
-  padding: 0.5rem;
-  font-size: 0.95rem;
-  text-align: left;
-}
-
-.moviles-card-tabla th {
-  background-color: #f5f5f5;
-  font-weight: bold;
-}
-
-.moviles-card-tabla tr:nth-child(even) {
-  background-color: #fafafa;
-}
-
-.moviles-card-tabla tr:hover {
-  background-color: #f0f0f0;
-}
-
-.btn-moviles-card {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background-color: #e60000;
-  color: white;
-  border-radius: 5px;
-  text-decoration: none;
-  font-weight: bold;
-  text-align: center;
-  margin-top: 1rem;
-}
-
-.btn-moviles-card:hover {
-  background-color: #cc0000;
-}
+/* Eliminar estilos de modal y otros elementos que ahora son globales o no aplican */
+/* .modal-overlay, .modal-content, .modal-buttons, .persona-select,
+   .ingresos-egresos-card (la clase específica), .clima-card (la clase específica),
+   .moviles-card (la clase específica), .tabla-movimientos (usar .table-fluent),
+   .moviles-card-tabla (usar .table-fluent), .btn-moviles-card (usar .btn-fluent)
+   serán eliminados o sus estilos migrados/reemplazados. */
+/* La clase .dashboard-card se reemplazará por .card-fluent en el JSX. */
