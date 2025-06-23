@@ -1,103 +1,41 @@
-/* frontend/src/components/Styles/EnviarMensajeModal.css - ESTILO FLUENT DESIGN */
-
-.form-group-fluent-destinatarios { /* Contenedor para el input y la lista de sugerencias */
-  position: relative; /* Para que la lista de sugerencias se posicione correctamente */
-  /* margin-bottom: var(--spacing-md); No es necesario si el form-group-fluent ya lo tiene */
-}
-
-.chips-input-container-fluent { /* Nuevo contenedor para chips e input */
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-xs); /* 8px */
-  padding: var(--spacing-xs);
-  border: 1px solid var(--color-fluent-border);
-  border-radius: var(--border-radius-medium);
-  background-color: var(--color-fluent-surface); /* Fondo del input */
-  min-height: var(--fluent-control-height);
-  cursor: text; /* Para que parezca un input clickeable */
-}
-.chips-input-container-fluent:focus-within { /* Estilo de foco del contenedor */
-  border-color: var(--color-fluent-accent);
-  box-shadow: 0 0 0 2px var(--color-fluent-focus-ring);
-}
-
-
-.chip-fluent {
-  background-color: var(--color-fluent-surface-selected); /* Gris claro para el chip */
-  color: var(--color-fluent-text-primary);
-  padding: var(--spacing-xxs) var(--spacing-xs); /* 4px 8px */
-  border-radius: var(--border-radius-small); /* 2px */
-  display: flex;
-  align-items: center;
-  font-size: var(--font-size-small); /* 12px */
-  height: calc(var(--fluent-control-height) - var(--spacing-sm)); /* Altura del chip similar a la línea de texto */
-  line-height: calc(var(--fluent-control-height) - var(--spacing-sm));
-}
-
-.chip-fluent button { /* Botón 'x' para remover chip */
-  background: none;
-  border: none;
-  color: var(--color-fluent-text-secondary);
-  margin-left: var(--spacing-xs);
-  padding: 0;
-  cursor: pointer;
-  font-size: 14px; /* Tamaño del 'x' */
-  line-height: 1;
-}
-.chip-fluent button:hover {
-  color: var(--color-fluent-text-error);
-}
-
-
-.input-destinatario-fluent {
-  border: none !important;
-  outline: none !important;
-  box-shadow: none !important;
-  flex-grow: 1;
-  padding: var(--spacing-xs) !important; /* Ajustar padding para que encaje */
-  background-color: transparent !important;
-  height: calc(var(--fluent-control-height) - var(--spacing-sm)) !important;
-  line-height: calc(var(--fluent-control-height) - var(--spacing-sm)) !important;
-  min-width: 120px; /* Para que siempre haya espacio para escribir */
-  font-family: var(--font-family-fluent);
-  font-size: var(--font-size-base);
-}
-.input-destinatario-fluent::placeholder {
-    color: var(--color-fluent-text-secondary);
-    opacity: 0.7;
-}
-
-
-.lista-sugerencias-fluent {
+.lista-sugerencias {
   list-style: none;
-  margin: 2px 0 0 0;
-  padding: var(--spacing-xs) 0;
-  max-height: 180px;
+  margin: 0;
+  padding: 0;
+  max-height: 150px;
   overflow-y: auto;
-  background-color: var(--color-fluent-surface);
-  border: 1px solid var(--color-fluent-border-light);
-  border-radius: var(--border-radius-medium);
-  box-shadow: var(--box-shadow-md);
-  position: absolute;
-  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
   z-index: 10;
 }
 
-.lista-sugerencias-fluent li {
-  padding: var(--spacing-sm) var(--spacing-md);
+.lista-sugerencias li {
+  padding: 0.5rem;
   cursor: pointer;
-  font-size: var(--font-size-base);
-  color: var(--color-fluent-text-primary);
-  transition: background-color 0.1s ease;
+  transition: background-color 0.2s ease;
 }
 
-.lista-sugerencias-fluent li:hover {
-  background-color: var(--color-fluent-surface-hover);
+.lista-sugerencias li:hover {
+  background-color: #f2f2f2;
 }
 
-.lista-sugerencias-fluent li.sugerencia-activa-fluent {
-  background-color: var(--color-fluent-surface-selected);
-  color: var(--color-fluent-accent);
+.sugerencia-activa {
+  background-color: #e60000;
+  color: white;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Se elimina la animación @keyframes fadeIn */
+.lista-sugerencias {
+  animation: fadeIn 0.2s ease-out;
+}
