@@ -1,176 +1,185 @@
-.movimientos-container {
-  padding: 2rem;
-  max-width: 1000px;
-  margin: auto;
+/* frontend/src/components/Styles/MovimientosPersonas.css - ESTILO FLUENT DESIGN */
+
+/* Layout específico para MovimientosPersonas */
+.movimientos-layout {
+  padding-top: 2rem;
+  display: flex;
+  gap: var(--spacing-lg); /* 20px de espacio entre sidebar y contenido */
+  /* Este componente se renderiza dentro del .main-content global,
+     por lo que no necesita padding que simule ser una página completa.
+     El padding ya lo da .main-content de App.css */
 }
 
-.movimientos-container h2 {
-  text-align: center;
-  color: #e60000;
-  margin-bottom: 2rem;
+.movimientos-sidebar {
+  padding-top: 0; /* Quitamos el exceso que lo empujaba */
+  min-width: 220px;
+  flex-basis: 220px;
+  flex-shrink: 0;
+  background-color: var(--color-fluent-surface);
+  border-radius: var(--border-radius-large);
+  padding: var(--spacing-md);
+  box-shadow: var(--box-shadow-sm);
+  height: fit-content;
 }
 
-/* Formulario */
+.movimientos-sidebar button {
+  /* Usar estilos de botones de la sidebar global de App.css o definir aquí */
+  display: block;
+  width: 100%; /* Ocupar todo el ancho de la sidebar */
+  padding: var(--spacing-sm) var(--spacing-md); /* 12px 16px */
+  margin-bottom: var(--spacing-sm); /* 12px de espacio entre botones */
+  text-align: left; /* Alinear texto a la izquierda */
+  background-color: transparent;
+  border: 1px solid transparent; /* Sin borde visible por defecto */
+  color: var(--color-fluent-text-secondary);
+  border-radius: var(--border-radius-medium);
+  font-family: var(--font-family-fluent);
+  font-size: var(--font-size-base);
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.movimientos-sidebar button:hover {
+  background-color: var(--color-fluent-surface-hover);
+  color: var(--color-fluent-text-primary);
+}
+
+.movimientos-sidebar button.active { /* Para el botón de vista activa */
+  background-color: var(--color-fluent-surface-selected); /* Un gris más oscuro o azul muy claro */
+  color: var(--color-fluent-accent);
+  font-weight: var(--font-weight-semibold);
+}
+
+.movimientos-main-content {
+  flex-grow: 1; /* Ocupar el resto del espacio */
+  /* No necesita padding-left, el gap del .movimientos-layout ya da separación */
+}
+
+/* Estilos para el contenido dentro de .movimientos-main-content */
+.movimientos-main-content h2,
+.movimientos-main-content h3 {
+  font-size: var(--font-size-h2); /* 24px */
+  color: var(--color-fluent-text-primary);
+  margin-top: 0; /* El primer título no necesita margen superior */
+  margin-bottom: var(--spacing-lg); /* 20px */
+  padding-bottom: var(--spacing-md); /* 16px */
+  border-bottom: 1px solid var(--color-fluent-border-light);
+}
+.movimientos-main-content h3 { /* Para "Historial de Movimientos" */
+    font-size: var(--font-size-h3); /* 20px */
+}
+
+
+/* Formulario de Registrar Movimiento */
 .movimientos-form {
-  background-color: #fafafa;
-  padding: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  margin-bottom: 2rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: var(--color-fluent-surface);
+  padding: var(--spacing-lg); /* 20px */
+  border-radius: var(--border-radius-large); /* 6px */
+  margin-bottom: var(--spacing-xl); /* 24px */
+  box-shadow: var(--box-shadow-sm);
+  display: grid; /* Usar grid para mejor alineación */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Columnas responsivas */
+  gap: var(--spacing-md); /* 16px de espacio */
+}
+/* Los inputs y selects usarán .form-control-fluent desde global.css */
+.movimientos-form select.form-control-fluent,
+.movimientos-form input.form-control-fluent {
+  width: 100%; /* Ocupar todo el ancho de la celda del grid */
+}
+/* Botones de Ingreso/Egreso */
+.movimientos-form .btn-fluent { /* Aplicar a botones de ingreso/egreso */
+  /* Estilos base de .btn-fluent ya están en global.css */
+  height: var(--fluent-control-height-large); /* Botones más grandes */
+  font-weight: var(--font-weight-semibold);
+  grid-column: span 1; /* Ocupar una celda */
+}
+.movimientos-form .btn-fluent.ingreso { /* Clase específica para ingreso */
+  background-color: var(--color-success); /* Usar variable de éxito si existe, o definir un verde Fluent */
+  border-color: var(--color-success);
+  color: var(--color-fluent-text-on-accent);
+}
+.movimientos-form .btn-fluent.ingreso:hover {
+  background-color: var(--color-success-darker);
+  border-color: var(--color-success-darker);
+}
+.movimientos-form .btn-fluent.egreso { /* Clase específica para egreso */
+  background-color: var(--color-fluent-text-error); /* Usar variable de error o rojo Fluent */
+  border-color: var(--color-fluent-text-error);
+  color: var(--color-fluent-text-on-accent);
+}
+.movimientos-form .btn-fluent.egreso:hover {
+  background-color: #A80000; /* Más oscuro */
+  border-color: #A80000;
+}
+/* Contenedor para los botones de acción en el formulario si se necesita agruparlos */
+.movimientos-form-actions {
+    grid-column: 1 / -1; /* Ocupar todas las columnas */
+    display: flex;
+    justify-content: flex-start; /* O flex-end */
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-sm);
+}
+
+
+/* Contenedor de Filtros para el Historial */
+.filter-container { /* Re-estilizar como Fluent */
+  background-color: var(--color-fluent-surface);
+  padding: var(--spacing-md); /* 16px */
+  border-radius: var(--border-radius-medium); /* 4px */
+  margin-bottom: var(--spacing-lg); /* 20px */
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  align-items: center;
-  justify-content: space-between;
+  gap: var(--spacing-md); /* 16px */
+  align-items: flex-end; /* Alinear al fondo */
+  /* box-shadow: var(--box-shadow-xs); */ /* Sombra muy sutil si es necesario */
+  border: 1px solid var(--color-fluent-border-light);
+}
+.filter-container .form-control-fluent { /* Aplicar a inputs y selects de filtro */
+  flex-grow: 1;
+  min-width: 180px; /* Ancho mínimo para filtros */
+}
+.filter-container .btn-fluent { /* Botón de filtrar */
+  height: var(--fluent-control-height);
 }
 
-.movimientos-form select,
-.movimientos-form input {
-  padding: 0.5rem;
-  font-size: 0.9rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  width: 30%;
-  min-width: 180px;
+
+/* Tabla de Movimientos */
+/* Usar .table-fluent de global.css */
+/* Si se necesitan ajustes específicos: */
+/* .movimientos-table { ... } */
+/* .movimientos-table th, .movimientos-table td { ... } */
+
+.movimientos-table .btn-fluent.eliminar {
+  /* Estilo para botón de eliminar en tabla */
+  background-color: transparent;
+  color: var(--color-fluent-text-error);
+  border: 1px solid transparent;
+  padding: var(--spacing-xs) var(--spacing-sm); /* Más pequeño */
+  height: auto;
+}
+.movimientos-table .btn-fluent.eliminar:hover {
+  background-color: rgba(168, 0, 0, 0.1); /* Fondo rojo muy sutil */
+  border-color: transparent;
 }
 
-/* Botones */
-.movimientos-form .btn {
-  padding: 0.5rem 1rem;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  color: white;
-  transition: background-color 0.3s ease;
-}
 
-.movimientos-form .btn.ingreso {
-  background-color: #4caf50;
-}
-
-.movimientos-form .btn.ingreso:hover {
-  background-color: #45a049;
-}
-
-.movimientos-form .btn.egreso {
-  background-color: #ff3333;
-}
-
-.movimientos-form .btn.egreso:hover {
-  background-color: #cc0000;
-}
-
-.movimientos-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 2rem;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.movimientos-table th,
-.movimientos-table td {
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  text-align: center;
-}
-
-.movimientos-table th {
-  background-color: #e60000;
-  color: white;
-  font-weight: bold;
-}
-
-.movimientos-table td {
-  color: #333;
-}
-
-.movimientos-table tbody tr td[colspan="5"] {
-  text-align: center;
-  padding: 1rem;
-  color: #555;
-  font-style: italic;
-}
-
-.btn.eliminar {
-  background-color: #b30000;
-  color: white;
-  padding: 0.5rem 1rem;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.btn.eliminar:hover {
-  background-color: #800000;
-}
-
+/* Paginación */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1.5rem;
-  gap: 1rem;
+  margin-top: var(--spacing-lg); /* 20px */
+  gap: var(--spacing-sm); /* 12px */
+  font-family: var(--font-family-fluent);
+  font-size: var(--font-size-base);
 }
-
-.pagination button {
-  padding: 0.5rem 1rem;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.pagination button { /* Usar .btn-fluent .btn-fluent-outline o similar */
+  /* Estilos base de .btn-fluent */
+  min-width: 80px; /* Ancho para Anterior/Siguiente */
 }
-
 .pagination button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+  /* Estilos de :disabled de .btn-fluent ya se aplican */
 }
-
-.sidebar-layout {
-  display: flex;
-  gap: 1rem;
-  padding: 0 2rem;
-}
-
-.sidebar {
-  min-width: 200px;
-  background-color: #f2f2f2;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 30px;
-}
-
-.sidebar button {
-  padding: 0.75rem 1rem;
-  background-color: #4caf50;
-  color: white;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.sidebar button:hover {
-  background-color: #45a049;
-}
-
-.sidebar button.activo {
-  background-color: #388e3c;
-}
-
-.contenido-principal {
-  padding-left: 10rem;
+.pagination span {
+  color: var(--color-fluent-text-secondary);
 }

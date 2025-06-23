@@ -1,179 +1,285 @@
-/* Estilos del Navbar */
+/* frontend/src/components/Styles/Navbar.css - ESTILO FLUENT DESIGN */
+
 .navbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 0.5rem 1rem;
-  background-color: #e60000;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 0 var(--spacing-lg); /* 20px horizontal */
+  background-color: var(--color-fluent-surface); /* Blanco */
+  border-bottom: 1px solid var(--color-fluent-border-light);
   width: 100%;
+  height: 5rem; /* Altura aumentada para claridad */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  user-select: none;
 }
 
 .navbar-logo {
   display: flex;
   align-items: center;
+  text-decoration: none;
+  height: 100%;
+  margin-right: var(--spacing-md); /* Espacio entre logo y título/links */
 }
 
-.navbar-logo img {
-  height: 60px;
+.navbar-logo img.logo-img {
+  height: 60px; /* Logo más grande */
   width: auto;
-  margin-right: 10px;
+  margin-right: var(--spacing-sm); /* 12px */
 }
 
 .navbar-title {
-  font-weight: bold;
-  color: #fff;
-  font-size: 1.2rem;
-  margin-right: 20px;
+  font-family: var(--font-family-fluent);
+  font-size: var(--font-size-xl); /* 18px */
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-fluent-text-primary);
+  white-space: nowrap;
+  display: flex; /* Para centrar si es necesario */
+  align-items: center;
 }
 
 .navbar-links {
   list-style: none;
   display: flex;
-  gap: 0.5rem;
+  align-items: stretch; /* Items ocupan toda la altura */
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  margin-left: auto; /* Empujar links a la derecha si el título está presente */
 }
 
 .navbar-links li {
-  display: inline;
   position: relative;
+  display: flex;
+  align-items: center; /* Centrar contenido de <li> */
+  height: 100%;
 }
 
-.navbar-links a {
+/* Estilo base para items de menú (NavLink, dropdown-btn, logout-btn-link-style) */
+.navbar-links a,
+.navbar-links .dropdown-btn,
+.navbar-links .logout-btn-link-style {
+  font-family: var(--font-family-fluent);
+  font-size: var(--font-size-base); /* 14px */
+  font-weight: var(--font-weight-regular);
+  color: var(--color-fluent-text-secondary); /* Gris secundario por defecto */
   text-decoration: none;
-  color: #fff;
-  font-weight: bold;
-  padding: 0.5rem;
-  transition: color 0.3s ease;
-}
-
-.navbar-links a::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 2px;
-  background-color: white;
-  bottom: 0;
-  left: 0;
-  transition: width 0.3s ease;
-}
-
-.navbar-links a:hover::after {
-  width: 100%;
-}
-
-/* Botón Salir */
-.logout-btn {
+  padding: 0 var(--spacing-md); /* 16px horizontal, vertical se controla por altura de li */
+  cursor: pointer; /* Cambiado a pointer */
+  border: none; /* Sin borde por defecto */
   background-color: transparent;
-  color: #fff;
-  border: 1px solid #fff;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.9rem;
-  border-radius: 5px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  cursor: pointer;
-  font-weight: bold;
+  white-space: nowrap;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  position: relative; /* Para el indicador activo de borde inferior */
+}
+.navbar-links a::after,
+.navbar-links .dropdown-btn::after { /* Indicador de activo */
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: var(--spacing-md);
+    right: var(--spacing-md);
+    height: 2px;
+    background-color: transparent;
+    transition: background-color 0.15s ease;
 }
 
-.logout-btn:hover {
-  background-color: #fff;
-  color: #e60000;
+
+.navbar-links a:hover,
+.navbar-links .dropdown-btn:hover,
+.navbar-links .logout-btn-link-style:hover {
+  background-color: var(--color-fluent-surface-hover);
+  color: var(--color-fluent-text-primary); /* Texto primario en hover */
 }
 
-/* Menú desplegable para Reportes */
-.dropdown {
-  position: relative;
+.navbar-links a.active, /* Para NavLink activo */
+.navbar-links .dropdown-btn.active { /* Para dropdown activo/abierto */
+  color: var(--color-fluent-accent);
+  font-weight: var(--font-weight-semibold);
+}
+.navbar-links a.active::after,
+.navbar-links .dropdown-btn.active::after {
+    background-color: var(--color-fluent-accent); /* Borde inferior de acento */
 }
 
-.dropdown-btn {
-  color: #fff;
-  font-weight: bold;
-  padding: 0.5rem;
-  cursor: pointer;
-  text-decoration: none;
-  transition: color 0.3s ease;
+
+/* Estilo para el botón de logout si es un link */
+.logout-btn-link-style {
+  /* Hereda la mayoría de los estilos de 'a' y '.dropdown-btn' */
+  margin-left: var(--spacing-sm); /* Pequeño espacio si está al final */
 }
 
+
+/* Menú desplegable Fluent */
 .dropdown-menu {
   position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: #b30000;
-  border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-  padding: 0.5rem 0;
+  top: calc(100% - 1px); /* Ligeramente superpuesto o justo debajo */
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-fluent-surface);
+  border: 1px solid var(--color-fluent-border-light);
+  border-top: none; /* El borde superior lo da el navbar */
+  border-radius: 0 0 var(--border-radius-medium) var(--border-radius-medium); /* Redondeo solo abajo */
+  box-shadow: var(--box-shadow-md);
+  padding: var(--spacing-xs) 0; /* 8px vertical, 0 horizontal */
   display: none;
-  flex-direction: column; /* Organiza las opciones en columna */
-  min-width: 150px;
+  flex-direction: column;
+  min-width: 220px;
+  z-index: 1001;
 }
 
 .dropdown:hover .dropdown-menu,
-.dropdown-menu.active {
-  display: flex; /* Cambia a flex para mostrar el submenú */
+.dropdown .dropdown-menu.active { /* Para control JS en móvil */
+  display: flex;
 }
 
 .dropdown-menu li {
-  padding: 0.5rem 1rem;
+  padding: 0;
+  width: 100%;
 }
 
-.dropdown-menu li a {
-  color: white;
+.dropdown-menu li a { /* NavLink dentro del dropdown */
+  color: var(--color-fluent-text-primary);
+  padding: var(--spacing-sm) var(--spacing-lg); /* 12px vertical, 20px horizontal */
+  display: block;
+  font-size: var(--font-size-base);
   text-decoration: none;
-  font-weight: bold;
-  display: block; /* Muestra las opciones en bloques individuales */
+  white-space: nowrap;
+  border: none; /* Sin borde */
+  background-color: transparent;
+  transition: background-color 0.1s ease, color 0.1s ease;
+}
+.dropdown-menu li a::after { display: none !important; } /* Sin indicador de borde inferior en dropdown */
+
+.dropdown-menu li a:hover,
+.dropdown-menu li a.active {
+  background-color: var(--color-fluent-surface-hover);
+  color: var(--color-fluent-accent);
+}
+.dropdown-menu li a.active {
+    font-weight: var(--font-weight-semibold);
 }
 
-.dropdown-menu li a:hover {
-  color: #e6e6e6;
+/* Separador en dropdown */
+.dropdown-menu .separator {
+  height: 1px;
+  background-color: var(--color-fluent-border-light);
+  margin: var(--spacing-xs) 0;
 }
 
-/* Menú hamburguesa para pantallas pequeñas */
-.hamburger {
+
+/* Menú hamburguesa Fluent */
+.hamburger-menu {
   display: none;
-  flex-direction: column;
-  gap: 0.2rem;
-  background: none;
+  background-color: transparent;
   border: none;
+  width: 40px;
+  height: 40px;
+  padding: var(--spacing-xs); /* 8px */
   cursor: pointer;
+  margin-left: auto;
+  border-radius: var(--border-radius-medium);
+  transition: background-color 0.15s ease;
+}
+.hamburger-menu:hover {
+    background-color: var(--color-fluent-surface-hover);
+}
+.hamburger-menu:active {
+    background-color: var(--color-fluent-surface-selected);
+}
+.hamburger-menu .line {
+  display: block;
+  width: 18px; /* Ancho de las líneas del icono */
+  height: 2px;
+  background-color: var(--color-fluent-text-secondary); /* Color de las líneas */
+  margin: 4px auto; /* Espaciado y centrado */
+  border-radius: 1px;
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+/* Animación a X para hamburguesa (Fluent style) */
+.hamburger-menu.active .line:nth-child(1) {
+  transform: translateY(6px) rotate(45deg);
+}
+.hamburger-menu.active .line:nth-child(2) {
+  opacity: 0;
+}
+.hamburger-menu.active .line:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg);
 }
 
-.hamburger .line {
-  width: 20px;
-  height: 2px;
-  background-color: #fff;
-}
 
 /* Ajustes en pantallas pequeñas */
-@media (max-width: 768px) {
+@media (max-width: 992px) { /* Ajustar breakpoint si es necesario */
+  .navbar {
+    padding: 0 var(--spacing-md); /* 16px */
+  }
   .navbar-links {
     display: none;
-  }
-
-  .hamburger {
-    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 56px; /* Debajo del navbar */
+    left: 0;
+    background-color: var(--color-fluent-surface);
+    width: 100%;
+    padding: var(--spacing-xs) 0;
+    box-shadow: var(--box-shadow-md);
+    border-top: 1px solid var(--color-fluent-border-light);
   }
 
   .navbar-links.active {
     display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 60px;
-    right: 0;
-    background-color: #e60000;
-    width: 100%;
-    padding: 1rem;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   }
 
-  .navbar-links.active a {
-    padding: 0.75rem;
-    text-align: center;
+  .navbar-links li {
+    width: 100%;
+    height: auto; /* Altura automática */
+  }
+
+  .navbar-links a,
+  .navbar-links .dropdown-btn,
+  .navbar-links .logout-btn-link-style {
+    width: 100%;
+    padding: var(--spacing-md) var(--spacing-lg); /* 16px vertical, 20px horizontal */
+    height: 44px; /* Altura de item en móvil */
+    justify-content: flex-start; /* Alinear texto a la izquierda */
+  }
+  .navbar-links a::after, /* Quitar borde inferior en móvil */
+  .navbar-links .dropdown-btn::after {
+      display: none;
+  }
+  .navbar-links a.active,
+  .navbar-links .dropdown-btn.active { /* Estilo activo en móvil */
+    background-color: var(--color-fluent-surface-selected); /* Fondo seleccionado */
+    color: var(--color-fluent-accent); /* Texto de acento */
   }
 
   .dropdown-menu {
-    position: relative;
-    top: 0;
-    background-color: #e60000;
-    width: 100%;
+    position: static;
+    border: none;
     box-shadow: none;
+    padding-left: var(--spacing-lg); /* Indentación para submenú */
+    background-color: var(--color-fluent-surface-hover); /* Fondo ligeramente diferente para submenú */
+    border-radius: 0;
+    margin-top:0;
+  }
+  .dropdown-menu li a {
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .hamburger-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .navbar-title {
+      margin-right: var(--spacing-sm); /* Menos espacio si el título es largo */
+      /* Ocultar título si no hay espacio: */
+      /* display: none; */
   }
 }

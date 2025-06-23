@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
 import "./Styles/PersonalTable.css";
+import "./Styles/Tablas.css";
 import { useUsuario } from "../context/UserContext";
 
 const ITEMS_PER_PAGE = 5;
@@ -377,7 +378,7 @@ function PersonalTable() {
           Solo vencidas
         </label>
       </div>
-      <table className="personal-table">
+      <table className="table-fluent">
         <thead>
           <tr>
             <th>Legajo</th>
@@ -396,19 +397,8 @@ function PersonalTable() {
             currentPersonal.map((rrhh) => (
               <tr
                 key={rrhh.legajo}
-                style={{
-                  backgroundColor: isExpired(rrhh.fecha_revision_medica)
-                    ? "red"
-                    : "white",
-                  color: isExpired(rrhh.fecha_revision_medica)
-                    ? "white"
-                    : "black",
-                }}
-                title={
-                  isExpired(rrhh.fecha_revision_medica)
-                    ? "Ficha médica vencida"
-                    : ""
-                }
+                className={isExpired(rrhh.fecha_revision_medica) ? "vencida" : ""}
+                title={isExpired(rrhh.fecha_revision_medica) ? "Ficha médica vencida" : ""}
               >
                 <td>{rrhh.legajo}</td>
                 <td>{rrhh.nombre_completo}</td>

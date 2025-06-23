@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../api";
 import * as XLSX from "xlsx";
 import "./Styles/MovimientoMoviles.css";
+import "./Styles/Tablas.css";
 
 const formatFecha = (fechaStr) => {
   const fecha = new Date(fechaStr);
@@ -272,7 +273,7 @@ function MovimientoMoviles() {
         </button>
       </div>
 
-      <table className="moviles-movimientos-tabla">
+      <table className="table-fluent">
         <thead>
           <tr>
             <th>Interno</th>

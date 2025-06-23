@@ -1,6 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import "./components/Styles/index.css";
+import "./components/Styles/global.css"; // <- NUEVA LÍNEA
 import App from "./App";
 import { UserProvider } from "./context/UserContext";
 
