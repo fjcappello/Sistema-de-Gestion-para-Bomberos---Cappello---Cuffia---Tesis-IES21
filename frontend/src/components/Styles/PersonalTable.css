@@ -87,27 +87,50 @@
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   z-index: 1000;
 }
 
 .modal-content {
   background: white;
   padding: 2rem;
-  width: 90%;
-  max-width: 500px;
+  width: 95%;
+  max-width: 1000px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  max-height: 90vh;
+  margin-top: 2rem;
+}
+
+
+.form-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-container label {
+  grid-column: span 2;
+  font-weight: bold;
+  margin-top: 0.5rem;
 }
 
 .form-container input,
 .form-container select,
 .form-container textarea {
   width: 100%;
-  padding: 0.5rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .form-container {
+    grid-template-columns: 1fr;
+  }
+
+  .form-container label {
+    grid-column: span 1;
+  }
 }
 
 .submit-btn {

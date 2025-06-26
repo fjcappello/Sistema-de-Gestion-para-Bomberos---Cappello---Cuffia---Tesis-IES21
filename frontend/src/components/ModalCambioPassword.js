@@ -3,6 +3,17 @@ import api from '../api';
 import './Styles/ModalCambioPassword.css'; // Carga estilos específicos mínimos
 // global.css se importa en App.js o index.js
 
+// Verificación de criterios de contraseña segura
+const verificarCriterios = (password) => ({
+  longitud: password.length >= 6,
+  mayuscula: /[A-Z]/.test(password),
+  minuscula: /[a-z]/.test(password),
+  numero: /[0-9]/.test(password),
+});
+
+const calcularFuerza = (criterios) =>
+  Object.values(criterios).filter(Boolean).length;
+
 // Icono de Cierre (X) simple para el modal
 const CloseIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" viewBox="0 0 16 16">
@@ -18,6 +29,10 @@ const ModalCambioPassword = ({ legajo, onPasswordChanged, closeModal }) => {
   const [success, setSuccess] = useState(""); // Para mensajes de éxito
   const [loading, setLoading] = useState(false);
 
+  const criterios = verificarCriterios(nueva);
+  const fuerza = calcularFuerza(criterios);
+  const coloresFuerza = ["#ff4d4d", "#ff944d", "#ffdb4d", "#b3ff4d"];
+
   const handleChangePassword = async (e) => {
     e.preventDefault();
     setError("");
@@ -27,20 +42,16 @@ const ModalCambioPassword = ({ legajo, onPasswordChanged, closeModal }) => {
       setError("Las nuevas contraseñas no coinciden.");
       return;
     }
-    if (nueva.length < 6) {
-      setError('La nueva contraseña debe tener al menos 6 caracteres.');
+    const criteriosCheck = verificarCriterios(nueva);
+    if (calcularFuerza(criteriosCheck) < 4) {
+      setError("La contraseña no cumple con todos los requisitos de seguridad.");
       return;
     }
 
     try {
       setLoading(true);
-      // Asumiendo que el endpoint es el mismo y que la contraseña actual NO es necesaria
-      // para este flujo específico de "primer ingreso" o "cambio obligatorio".
-      // Si se necesitara la contraseña actual, se añadiría al payload.
+
       const payload = { legajo, nuevaPassword: nueva };
-    //   if(currentPassword){ // Opcional: enviar contraseña actual si el input está presente y lleno
-    //       // payload.currentPassword = currentPassword;
-    //   }
 
       const { data } = await api.post("/cambiar-password", payload);
 
@@ -50,8 +61,7 @@ const ModalCambioPassword = ({ legajo, onPasswordChanged, closeModal }) => {
         setConfirmar("");
         setCurrentPassword("");
         if(onPasswordChanged) onPasswordChanged(); // Callback
-        // Considerar cerrar el modal automáticamente o dejar que el usuario lo haga
-        // setTimeout(closeModal, 2000);
+
       } else {
         setError(data.error || data.message || "Error al cambiar la contraseña.");
       }
@@ -62,8 +72,8 @@ const ModalCambioPassword = ({ legajo, onPasswordChanged, closeModal }) => {
     }
   };
 
-  // Propslegajo es necesario para este modal
-  if (!legajo && !closeModal) { // Si no hay legajo y no hay forma de cerrar, no renderizar para evitar un modal "muerto"
+
+  if (!legajo && !closeModal) { 
       console.warn("ModalCambioPassword renderizado sin 'legajo' o 'closeModal' props.");
       return null;
   }
@@ -74,7 +84,8 @@ const ModalCambioPassword = ({ legajo, onPasswordChanged, closeModal }) => {
       <div className="modal-window-fluent" style={{ maxWidth: '420px' }}>
         <div className="modal-header-fluent">
           <h3 className="modal-title-fluent">Cambiar Contraseña</h3>
-          {/* Solo mostrar botón de cerrar si la prop closeModal está definida */}
+
+
           {closeModal && (
             <button
               type="button"
@@ -90,24 +101,6 @@ const ModalCambioPassword = ({ legajo, onPasswordChanged, closeModal }) => {
 
         <form onSubmit={handleChangePassword}>
           <div className="modal-body-fluent">
-            {/* Si este modal es SOLO para primer ingreso, el mensaje es útil */}
-            {/* <p style={{ marginBottom: 'var(--spacing-lg)', color: 'var(--color-fluent-text-secondary)' }}>
-              Es tu primer ingreso o se requiere un cambio de contraseña.
-            </p> */}
-
-            {/* Opcional: Input para contraseña actual si el flujo lo requiere */}
-            {/* <div className="form-group-fluent">
-              <label className="form-label-fluent" htmlFor="currentPassword_modal_fluent">Contraseña Actual:</label>
-              <input
-                type="password"
-                id="currentPassword_modal_fluent"
-                className="form-control-fluent"
-                value={currentPassword}
-                onChange={(e) => setCurrentPassword(e.target.value)}
-                disabled={loading}
-                // required // Solo si es mandatorio
-              />
-            </div> */}
 
             <div className="form-group-fluent">
               <label className="form-label-fluent" htmlFor="nueva_modal_pwd_fluent">Nueva Contraseña:</label>
@@ -135,6 +128,24 @@ const ModalCambioPassword = ({ legajo, onPasswordChanged, closeModal }) => {
                 required
               />
             </div>
+
+            <div className="barra-fuerza">
+              <div
+                style={{
+                  width: `${(fuerza / 4) * 100}%`,
+                  backgroundColor: coloresFuerza[fuerza - 1] || "transparent",
+                  height: "8px",
+                  borderRadius: "4px",
+                  transition: "width 0.3s ease"
+                }}
+              />
+            </div>
+            <ul className="criterios-lista">
+              <li className={criterios.longitud ? "valido" : ""}>Al menos 6 caracteres</li>
+              <li className={criterios.mayuscula ? "valido" : ""}>Al menos una mayúscula</li>
+              <li className={criterios.minuscula ? "valido" : ""}>Al menos una minúscula</li>
+              <li className={criterios.numero ? "valido" : ""}>Al menos un número</li>
+            </ul>
 
             {error && <p className="modal-cambio-password-error">{error}</p>}
             {success && <p className="modal-cambio-password-success">{success}</p>}
