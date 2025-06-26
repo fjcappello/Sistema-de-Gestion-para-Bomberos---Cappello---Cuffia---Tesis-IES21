@@ -25,6 +25,7 @@ function PersonalTable() {
     jerarquia_id: "",
     situacion_id: "",
     fecha_revision_medica: "",
+    rol_id: "1",
   });
   const [deleteLegajo, setDeleteLegajo] = useState("");
   const [deleteError, setDeleteError] = useState("");
@@ -94,28 +95,11 @@ function PersonalTable() {
     }
 
     formData.situacion_id = 1; // Establecer valor fijo de 'Activo'
+    formData.rol_id = "1";
 
     try {
       const response = await api.post("/personal", formData);
       if (response.data.success) {
-        {/* 
-          {/*
-        alert("Personal agregado correctamente");
-        setIsAddModalOpen(false);
-        clearFormData();
-        fetchPersonal();
-      } else {
-        alert(
-          "Error al agregar personal: " +
-            (response.data.error || "Operación fallida")
-        );
-      }
-    } catch (error) {
-      console.error("Error al intentar agregar personal:", error);
-      alert(
-        "Error en el servidor al intentar agregar personal. Verifique la conexión."
-      );
-    } */}
         alert("Personal agregado correctamente");
         setIsAddModalOpen(false);
         clearFormData();
@@ -229,6 +213,7 @@ function PersonalTable() {
       jerarquia_id: "",
       situacion_id: "",
       fecha_revision_medica: "",
+      rol_id: "1",
     });
   };
 

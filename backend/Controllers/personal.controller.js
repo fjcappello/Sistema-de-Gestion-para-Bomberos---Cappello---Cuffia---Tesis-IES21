@@ -60,11 +60,12 @@ const crearPersonal = (req, res) => {
     jerarquia_id,
     situacion_id,
     fecha_revision_medica,
+    id_rol
   } = req.body;
 
   const personalQuery = `
-    INSERT INTO personal (legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO personal (legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica, id_rol)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
   db.query(
@@ -79,6 +80,7 @@ const crearPersonal = (req, res) => {
       jerarquia_id,
       situacion_id,
       fecha_revision_medica,
+      id_rol || 1
     ],
     (err) => {
       if (err) {
