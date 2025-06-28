@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import { useUsuario } from "../context/UserContext";
 import axios from "axios";
 
@@ -21,11 +21,12 @@ function PDFGenerator({ partData, onClose }) {
       });
 
     // Obtener bitácora
+    console.log("API_URL:", process.env.REACT_APP_API_URL);
     const fetchBitacora = async () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_API_URL}/bitacora/${partData.parte_id}`
+          `${process.env.REACT_APP_API_URL}/bitacora/${partData.parte_id}`
         );
         if (response.data.success && response.data.data) {
           const reportes = response.data.data.map((entry) => entry.reporte);
@@ -71,7 +72,7 @@ function PDFGenerator({ partData, onClose }) {
     });
 
     // Tabla de datos
-    doc.autoTable({
+    autoTable(doc, {
       startY: subtitleY + 20,
       margin: { left: margin, right: margin },
       head: [["Dato", "Valor"]],
