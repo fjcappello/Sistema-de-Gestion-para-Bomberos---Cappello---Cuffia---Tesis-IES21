@@ -234,7 +234,7 @@ function MovimientoMoviles() {
   };
 
   return (
-    <div className="moviles-movimientos-container">
+    <div className="table-container">
       <h2 className="table-title">Movimientos de móviles</h2>
 
       <div className="moviles-movimientos-filtros">
