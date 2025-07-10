@@ -275,9 +275,19 @@ function PanolOperativo() {
   
 
   return (
-    <div className="moviles-registro-container">
-      <h2 className="moviles-registro-titulo">Pañol Operativo</h2>
+    <div className="table-container">
+      <h2 className="table-title">Pañol Operativo</h2>
 
+      <div className="botonera_tablas">
+        {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+          <button className="add-report-btn" onClick={() => setModalAbierto(true)}>
+            Agregar elemento
+          </button>
+        )}
+        <button className="add-report-btn" onClick={exportarAExcel}>
+          Exportar a Excel
+        </button>
+      </div>
       <div className="filtros">
         <input
           type="text"
@@ -368,9 +378,6 @@ function PanolOperativo() {
         <button className="filtros-button" onClick={limpiarFiltros}>
           Limpiar filtros
         </button>
-        <button className="filtros-button" onClick={exportarAExcel}>
-          Exportar a Excel
-        </button>
       </div>
 
       <table className="table-fluent">
@@ -406,9 +413,10 @@ function PanolOperativo() {
               <td>{el.estado}</td>
               {["Administrador", "Jefatura"].includes(usuario?.rol) && (
                 <td>
-                  <div>
+                  <div className='botonera_accion_tabla'>
                     <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
-                    <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`${process.env.REACT_APP_API_URL}/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button>
+                    {/*REVISAR LO DE LA API DE LAS FOTOS*/}
+                    <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`${process.env.REACT_APP_API_URL}/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button> 
                   </div>
                 </td>
               )}
@@ -427,14 +435,6 @@ function PanolOperativo() {
         <button className="boton-paginacion" onClick={irPaginaSiguiente} disabled={paginaActual === totalPaginas}>
           Siguiente
         </button>
-      </div>
-
-      <div className="action-buttons">
-        {["Administrador", "Jefatura"].includes(usuario?.rol) && (
-          <button className="add-report-btn" onClick={() => setModalAbierto(true)}>
-            Agregar elemento
-          </button>
-        )}
       </div>
 
       {modalAbierto && (

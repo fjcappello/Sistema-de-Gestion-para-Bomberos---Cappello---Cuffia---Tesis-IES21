@@ -189,8 +189,8 @@ function MovilesRegistro() {
   };
 
   return (
-    <div className="moviles-registro-container">
-      <h2 className="moviles-registro-titulo">Registro de Móviles</h2>
+    <div className="table-container">
+      <h2 className="table-title">Registro de Móviles</h2>
 
       <div className="filtros">
         <input

@@ -69,12 +69,16 @@
 
 /* Estilos para filtros */
 .filtros {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: center;
-  margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: flex-start;
+    width: 100%;
+    align-items: center;
+    align-content: center;
+    flex-direction: row;
 }
+
 
 .filtros input,
 .filtros select {
@@ -82,6 +86,7 @@
   border: 1px solid #ccc;
   border-radius: 4px;
   min-width: 160px;
+  font-size: 0.9rem;
 }
 
 .filtros button {
@@ -97,6 +102,13 @@
 
 .filtros button:hover {
   background-color: #cc0000;
+}
+
+
+.botonera_accion_tabla {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
 }
 
 /* Estilos para paginación */

@@ -1,69 +1,39 @@
 /* Contenedor general */
 .table-container {
-  padding: 1rem;
   display: flex;
+  align-content: flex-start;
   flex-direction: column;
   align-items: center;
+  margin: 0rem 3rem;
+  gap: 1rem
 }
 
 /* Título de la tabla */
 .table-title {
   text-align: center;
-  margin-bottom: 1.5rem;
   color: #333;
   font-size: 1.8rem;
 }
 
-/* Filtros - Modificado para centrar botón con campo de texto */
-.filter-container {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  align-items: flex-end;
-  padding: 1rem;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  background-color: #f9f9f9;
-  width: 100%;
-  max-width: 1200px;
-}
-
-.filter-select,
-.filter-input {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  min-width: 150px;
-  flex-grow: 1;
-}
-
-/* Campo de búsqueda alineado con el botón */
-.search-input-container {
-  display: flex;
-  align-items: center;
-  flex-grow: 1;
-}
-
-.search-input {
-  padding: 0.5rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  flex-grow: 1;
+.botonera_tablas{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-content: center;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 1rem
 }
 
 .filter-btn {
   padding: 0.5rem 1rem;
-  background-color: #4caf50;
+  height: 100%;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s;
-  height: fit-content;
 }
 
 .filter-btn:hover {
@@ -118,15 +88,15 @@
 }
 
 /* PAGINACIÓN - VERSIÓN MODIFICADA */
+/*
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1rem;
   margin: 0;
-  margin-bottom: 2rem;
 }
-
+*/
 .pagination button {
   padding: 0.5rem 1rem;
   border: none;

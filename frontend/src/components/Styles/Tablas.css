@@ -1,10 +1,6 @@
-
-
-
 .table-fluent {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: var(--spacing-lg);
   font-family: var(--font-family-fluent);
   font-size: var(--font-size-base);
 }

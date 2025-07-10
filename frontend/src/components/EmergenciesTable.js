@@ -314,76 +314,80 @@ function EmergenciesTable() {
   return (
     <div className="table-container">
       <h2 className="table-title">Registro de Emergencias</h2>
-
-      {/* Filtros */}
-      <div className="filter-container">
-        <select
-          name="tipoAsistencia"
-          value={filters.tipoAsistencia}
-          onChange={handleFilterChange}
-          className="filter-select"
-        >
-          <option value="">Todos los tipos</option>
-          {tipoAsistenciaOptions.map((tipo) => (
-            <option key={tipo} value={tipo}>
-              {tipo}
-            </option>
-          ))}
-        </select>
-
-        <select
-          name="jefeDotacion"
-          value={filters.jefeDotacion}
-          onChange={handleFilterChange}
-          className="filter-select"
-        >
-          <option value="">Todos los jefes</option>
-          {jefesDotacion.map((jefe) => (
-            <option key={jefe.id} value={jefe.id}>
-              {jefe.nombre_completo}
-            </option>
-          ))}
-        </select>
-
-        <input
-          type="date"
-          name="startDate"
-          value={filters.startDate}
-          onChange={handleFilterChange}
-          className="filter-input"
-          placeholder="Desde"
-        />
-        <input
-          type="date"
-          name="endDate"
-          value={filters.endDate}
-          onChange={handleFilterChange}
-          className="filter-input"
-          placeholder="Hasta"
-        />
-
-        <input
-          type="text"
-          name="denunciante"
-          placeholder="Nombre del denunciante"
-          value={filters.denunciante}
-          onChange={handleFilterChange}
-          className="search-input"
-        />
-
-        <button onClick={handleApplyFilters} className="filter-btn">
-          Aplicar Filtros
-        </button>
-
-        <div style={{ marginTop: "1rem" }}>
+      <div className="botonera_tablas">
+        <div>
           <button
             className="add-report-btn"
             onClick={() => setIsAddModalOpen(true)}
+          >Agregar Nuevo Reporte
+          </button>
+        </div>  
+          {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+          <div>
+            <button
+              className="delete-report-btn"
+              onClick={() => setIsDeleteModalOpen(true)}
+            >Eliminar Reporte
+            </button>
+          </div>)}
+      </div>
+
+      {/* Filtros */}
+        <div className="filtros">
+          <select
+            name="tipoAsistencia"
+            value={filters.tipoAsistencia}
+            onChange={handleFilterChange}
           >
-            Agregar Nuevo Reporte
+            <option value="">Todos los tipos</option>
+            {tipoAsistenciaOptions.map((tipo) => (
+              <option key={tipo} value={tipo}>
+                {tipo}
+              </option>
+            ))}
+          </select>
+
+          <select
+            name="jefeDotacion"
+            value={filters.jefeDotacion}
+            onChange={handleFilterChange}
+          >
+            <option value="">Todos los jefes</option>
+            {jefesDotacion.map((jefe) => (
+              <option key={jefe.id} value={jefe.id}>
+                {jefe.nombre_completo}
+              </option>
+            ))}
+          </select>
+
+          <input
+            type="date"
+            name="startDate"
+            value={filters.startDate}
+            onChange={handleFilterChange}
+            placeholder="Desde"
+          />
+          <input
+            type="date"
+            name="endDate"
+            value={filters.endDate}
+            onChange={handleFilterChange}
+            placeholder="Hasta"
+          />
+
+          <input
+            type="text"
+            name="denunciante"
+            placeholder="Nombre del denunciante"
+            value={filters.denunciante}
+            onChange={handleFilterChange}
+          />
+
+          <button onClick={handleApplyFilters} className="filter-btn">
+            Aplicar Filtros
           </button>
         </div>
-      </div>
+
 
       {/* Tabla */}
       <table className="table-fluent">
@@ -398,7 +402,7 @@ function EmergenciesTable() {
             <th>Dirección</th>
             <th>Tipo de Asistencia</th>
             <th>Jefe de Dotación</th>
-            <th>Información adicional</th>
+            <th>Info adicional</th>
             <th>Estado</th>
             <th>Reporte escrito</th>
             <th>Acciones</th>
@@ -471,16 +475,7 @@ function EmergenciesTable() {
         </button>
       </div>
 
-      {["Administrador", "Jefatura"].includes(usuario?.rol) && (
-        <div style={{ marginTop: "1rem", textAlign: "right" }}>
-          <button
-            className="delete-report-btn"
-            onClick={() => setIsDeleteModalOpen(true)}
-          >
-            Eliminar Reporte
-          </button>
-        </div>
-      )}
+      
 
 
 

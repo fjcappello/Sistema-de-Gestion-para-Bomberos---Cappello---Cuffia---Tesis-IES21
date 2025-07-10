@@ -20,12 +20,13 @@
   color: white;
 }
 
+/* Desactivado, utilizamos de otro archivo
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: 1rem;
-}
+}*/
 
 .pagination button {
   padding: 0.5rem 1rem;

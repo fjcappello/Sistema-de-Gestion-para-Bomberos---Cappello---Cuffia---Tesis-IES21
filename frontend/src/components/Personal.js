@@ -285,7 +285,8 @@ function PersonalTable() {
 
   return (
     <div className="table-container">
-      <div className="filtros-container">
+      <h2 className="table-title">Personal</h2>
+      <div className="filtros">
         <input
           type="text"
           className="filtro-input"

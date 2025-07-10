@@ -72,7 +72,7 @@ function BandejaSalida({ onClose }) {
           onChange={(e) => setFiltros({ ...filtros, fecha: e.target.value })}
         />
         <button className="close-modal-btn" onClick={onClose}>
-          Volver a entrada
+          Limpiar Filtros
         </button>
       </div>
 

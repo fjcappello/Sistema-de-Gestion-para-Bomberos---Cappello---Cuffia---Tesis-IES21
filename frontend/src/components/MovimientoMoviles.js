@@ -235,9 +235,12 @@ function MovimientoMoviles() {
 
   return (
     <div className="moviles-movimientos-container">
-      <h2 className="moviles-movimientos-titulo">Movimientos de móviles</h2>
+      <h2 className="table-title">Movimientos de móviles</h2>
 
       <div className="moviles-movimientos-filtros">
+        <button onClick={() => setMostrarModalSalida(true)}>
+          Registrar salida
+        </button>
         <select
           name="interno"
           className="filtro-select"
@@ -265,9 +268,6 @@ function MovimientoMoviles() {
           value={filtros.fechaHasta || ""}
           onChange={handleFiltroChange}
         />
-        <button onClick={() => setMostrarModalSalida(true)}>
-          Registrar salida
-        </button>
         <button onClick={exportarAExcel} className="btn-exportar">
           Exportar a Excel
         </button>
@@ -328,7 +328,7 @@ function MovimientoMoviles() {
                       )
                     }
                   >
-                    📝 Novedades
+                    Novedades
                   </button>
                 )}
               </td>

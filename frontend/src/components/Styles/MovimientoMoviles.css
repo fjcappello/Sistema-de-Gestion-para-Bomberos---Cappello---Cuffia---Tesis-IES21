@@ -6,13 +6,6 @@
   border-radius: 8px;
 }
 
-.moviles-movimientos-titulo {
-  font-size: 1.6rem;
-  text-align: center;
-  margin-bottom: 1.5rem;
-  color: #b30000;
-}
-
 .moviles-movimientos-select,
 .moviles-movimientos-input,
 .moviles-movimientos-multiselect {

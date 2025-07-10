@@ -165,14 +165,14 @@
 
 /* Paginación */
 .pagination {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: var(--spacing-lg); /* 20px */
-  gap: var(--spacing-sm); /* 12px */
-  font-family: var(--font-family-fluent);
-  font-size: var(--font-size-base);
+    display: flex;
+    
+    gap: var(--spacing-sm);
+    font-family: var(--font-family-fluent);
+    font-size: var(--font-size-base);
+    align-items: center;
 }
+
 .pagination button { /* Usar .btn-fluent .btn-fluent-outline o similar */
   /* Estilos base de .btn-fluent */
   min-width: 80px; /* Ancho para Anterior/Siguiente */
