@@ -166,17 +166,12 @@
 /* Paginación */
 .pagination {
     display: flex;
-    
     gap: var(--spacing-sm);
     font-family: var(--font-family-fluent);
     font-size: var(--font-size-base);
     align-items: center;
 }
 
-.pagination button { /* Usar .btn-fluent .btn-fluent-outline o similar */
-  /* Estilos base de .btn-fluent */
-  min-width: 80px; /* Ancho para Anterior/Siguiente */
-}
 .pagination button:disabled {
   /* Estilos de :disabled de .btn-fluent ya se aplican */
 }

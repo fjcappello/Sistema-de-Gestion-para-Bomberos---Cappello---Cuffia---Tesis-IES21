@@ -101,10 +101,10 @@
 /* Estilos para paginación */
 .paginacion {
   display: flex;
-  justify-content: center;
+  gap: var(--spacing-sm);
+  font-family: var(--font-family-fluent);
+  font-size: var(--font-size-base);
   align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
 }
 
 .paginacion button {

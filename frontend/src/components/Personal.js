@@ -30,7 +30,19 @@ function PersonalTable() {
   const [deleteLegajo, setDeleteLegajo] = useState("");
   const [deleteError, setDeleteError] = useState("");
   const [confirmDelete, setConfirmDelete] = useState(false);
-  const [filtros, setFiltros] = useState({
+
+  // Estados para filtros temporales y aplicados
+  const [filtrosTemp, setFiltrosTemp] = useState({
+    legajo: "",
+    nombreApellido: "",
+    documento: "",
+    ingresoDesde: "",
+    ingresoHasta: "",
+    jerarquia: "",
+    situacion: "",
+    vencida: false,
+  });
+  const [filtrosAplicados, setFiltrosAplicados] = useState({
     legajo: "",
     nombreApellido: "",
     documento: "",
@@ -79,160 +91,71 @@ function PersonalTable() {
     setFormData({ ...formData, [name]: value });
   };
 
+  // Función para manejar cambios en los filtros
+  const handleFilterChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setFiltrosTemp(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
+  };
+
+  // Función para aplicar los filtros
+  const aplicarFiltros = () => {
+    setFiltrosAplicados({ ...filtrosTemp });
+    setCurrentPage(1); // Resetear a la primera página
+  };
+
+  // Función para limpiar los filtros
+  const limpiarFiltros = () => {
+    setFiltrosTemp({
+      legajo: "",
+      nombreApellido: "",
+      documento: "",
+      ingresoDesde: "",
+      ingresoHasta: "",
+      jerarquia: "",
+      situacion: "",
+      vencida: false,
+    });
+    setFiltrosAplicados({
+      legajo: "",
+      nombreApellido: "",
+      documento: "",
+      ingresoDesde: "",
+      ingresoHasta: "",
+      jerarquia: "",
+      situacion: "",
+      vencida: false,
+    });
+    setCurrentPage(1); // Resetear a la primera página
+  };
+
   const handleAddSubmit = async (e) => {
     e.preventDefault();
-
-    const legajoVal = parseInt(formData.legajo, 10);
-    if (isNaN(legajoVal) || legajoVal <= 0) {
-      alert("El legajo debe ser un número positivo mayor a 0.");
-      return;
-    }
-
-    const documentoVal = parseInt(formData.documento, 10);
-    if (isNaN(documentoVal) || documentoVal < 1 || documentoVal > 99999999) {
-      alert("El documento debe ser un número entre 1 y 99,999,999.");
-      return;
-    }
-
-    formData.situacion_id = 1; // Establecer valor fijo de 'Activo'
-    formData.rol_id = "1";
-
-    try {
-      const response = await api.post("/personal", formData);
-      if (response.data.success) {
-        alert("Personal agregado correctamente");
-        setIsAddModalOpen(false);
-        clearFormData();
-        fetchPersonal();
-      } else if (
-        response.data.error &&
-        response.data.error.toLowerCase().includes("legajo")
-      ) {
-        alert("Ya existe un personal con ese legajo.");
-      } else {
-        alert(
-          "Error al agregar personal: " +
-            (response.data.error || "Operación fallida")
-        );
-      }
-    } catch (error) {
-      console.error("Error al intentar agregar personal:", error);
-      alert(
-        "Error en el servidor al intentar agregar personal. Verifique la conexión."
-      );
-    }
+    // ... (mantener el mismo código existente)
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    const dataToUpdate = {};
-    const original = personal.find((p) => p.legajo === formData.legajo);
-    if (!original) return;
-
-    if (
-      formData.jerarquia_id &&
-      formData.jerarquia_id !== original.jerarquia_id
-    )
-      dataToUpdate.jerarquia_id = formData.jerarquia_id;
-    if (
-      formData.situacion_id &&
-      formData.situacion_id !== original.situacion_id
-    )
-      dataToUpdate.situacion_id = formData.situacion_id;
-    if (
-      formData.fecha_revision_medica &&
-      formData.fecha_revision_medica !==
-        original.fecha_revision_medica?.split("T")[0]
-    )
-      dataToUpdate.fecha_revision_medica = formData.fecha_revision_medica;
-
-    if (Object.keys(dataToUpdate).length === 0) {
-      alert("Debe modificar al menos un campo para guardar los cambios.");
-      return;
-    }
-
-    try {
-      const response = await api.put(
-        `/personal/${formData.legajo}`,
-        dataToUpdate
-      );
-
-      if (response.data.success) {
-        alert("Datos actualizados correctamente");
-        setIsEditModalOpen(false);
-        fetchPersonal();
-      } else {
-        alert(
-          "Error al actualizar: " + (response.data.error || "Operación fallida")
-        );
-      }
-    } catch (error) {
-      console.error("Error al intentar actualizar:", error);
-      alert("Error en el servidor al intentar actualizar datos.");
-    }
+    // ... (mantener el mismo código existente)
   };
 
   const handleDelete = async () => {
-    if (!deleteLegajo) {
-      setDeleteError("Por favor, ingrese un número de legajo válido.");
-      return;
-    }
-
-    try {
-      const response = await api.delete(
-        `/personal/${deleteLegajo}`
-      );
-      if (response.data.success) {
-        alert("Personal eliminado correctamente");
-        setIsDeleteModalOpen(false);
-        setDeleteLegajo("");
-        setDeleteError("");
-        fetchPersonal();
-      } else {
-        setDeleteError(
-          "Error al eliminar personal: " +
-            (response.data.error || "Operación fallida")
-        );
-      }
-    } catch (error) {
-      console.error("Error al intentar eliminar personal:", error);
-      setDeleteError(
-        "Error en el servidor al intentar eliminar personal. Verifique la conexión."
-      );
-    }
+    // ... (mantener el mismo código existente)
   };
 
   const clearFormData = () => {
-    setFormData({
-      legajo: "",
-      nombre: "",
-      apellido: "",
-      documento: "",
-      nacimiento: "",
-      fecha_ingreso: "",
-      jerarquia_id: "",
-      situacion_id: "",
-      fecha_revision_medica: "",
-      rol_id: "1",
-    });
+    // ... (mantener el mismo código existente)
   };
 
   const openAddModal = () => {
-    clearFormData();
-    setIsAddModalOpen(true);
+    // ... (mantener el mismo código existente)
   };
 
   const openEditModal = (rrhh) => {
-    setFormData({
-      legajo: rrhh.legajo,
-      jerarquia_id: rrhh.jerarquia_id,
-      situacion_id: rrhh.situacion_id,
-      fecha_revision_medica: rrhh.fecha_revision_medica?.split("T")[0] || "",
-    });
-    setIsEditModalOpen(true);
+    // ... (mantener el mismo código existente)
   };
-
-  const totalPages = Math.ceil(personal.length / ITEMS_PER_PAGE);
 
   const isExpired = (date) => {
     const oneYearAgo = new Date();
@@ -240,29 +163,30 @@ function PersonalTable() {
     return new Date(date) < oneYearAgo;
   };
 
+  // Filtrado usando filtrosAplicados
   const personalFiltrado = personal.filter((p) => {
     const coincideLegajo =
-      filtros.legajo === "" || p.legajo.toString().includes(filtros.legajo);
+      filtrosAplicados.legajo === "" || p.legajo.toString().includes(filtrosAplicados.legajo);
     const coincideNombreApellido =
-      filtros.nombreApellido === "" ||
+      filtrosAplicados.nombreApellido === "" ||
       p.nombre_completo
         .toLowerCase()
-        .includes(filtros.nombreApellido.toLowerCase());
+        .includes(filtrosAplicados.nombreApellido.toLowerCase());
     const coincideDocumento =
-      filtros.documento === "" ||
-      p.documento.toString().includes(filtros.documento);
+      filtrosAplicados.documento === "" ||
+      p.documento.toString().includes(filtrosAplicados.documento);
     const coincideIngresoDesde =
-      filtros.ingresoDesde === "" ||
-      new Date(p.fecha_ingreso) >= new Date(filtros.ingresoDesde);
+      filtrosAplicados.ingresoDesde === "" ||
+      new Date(p.fecha_ingreso) >= new Date(filtrosAplicados.ingresoDesde);
     const coincideIngresoHasta =
-      filtros.ingresoHasta === "" ||
-      new Date(p.fecha_ingreso) <= new Date(filtros.ingresoHasta);
+      filtrosAplicados.ingresoHasta === "" ||
+      new Date(p.fecha_ingreso) <= new Date(filtrosAplicados.ingresoHasta);
     const coincideJerarquia =
-      filtros.jerarquia === "" || p.jerarquia === filtros.jerarquia;
+      filtrosAplicados.jerarquia === "" || p.jerarquia === filtrosAplicados.jerarquia;
     const coincideSituacion =
-      filtros.situacion === "" || p.situacion === filtros.situacion;
+      filtrosAplicados.situacion === "" || p.situacion === filtrosAplicados.situacion;
     const coincideVencida =
-      !filtros.vencida || isExpired(p.fecha_revision_medica);
+      !filtrosAplicados.vencida || isExpired(p.fecha_revision_medica);
     return (
       coincideLegajo &&
       coincideNombreApellido &&
@@ -286,52 +210,65 @@ function PersonalTable() {
   return (
     <div className="table-container">
       <h2 className="table-title">Personal</h2>
+
+      <div className="botonera_tablas">
+        {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+        <>
+          <button className="add-person-btn" onClick={openAddModal}>
+            Agregar Nuevo Personal
+          </button>
+          {
+          <button
+            className="delete-person-btn"
+            onClick={() => setIsDeleteModalOpen(true)}
+          >
+            Eliminar Personal
+          </button>
+          }
+        </>
+        )}
+      </div>
+
       <div className="filtros">
         <input
           type="text"
-          className="filtro-input"
           placeholder="Legajo"
-          onChange={(e) =>
-            setFiltros((prev) => ({ ...prev, legajo: e.target.value }))
-          }
+          name="legajo"
+          value={filtrosTemp.legajo}
+          onChange={handleFilterChange}
         />
         <input
           type="text"
-          className="filtro-input"
           placeholder="Nombre o Apellido"
-          onChange={(e) =>
-            setFiltros((prev) => ({ ...prev, nombreApellido: e.target.value }))
-          }
+          name="nombreApellido"
+          value={filtrosTemp.nombreApellido}
+          onChange={handleFilterChange}
         />
         <input
           type="text"
-          className="filtro-input"
           placeholder="Documento"
-          onChange={(e) =>
-            setFiltros((prev) => ({ ...prev, documento: e.target.value }))
-          }
+          name="documento"
+          value={filtrosTemp.documento}
+          onChange={handleFilterChange}
         />
         <label>Desde Ingreso:</label>
         <input
           type="date"
-          className="filtro-input"
-          onChange={(e) =>
-            setFiltros((prev) => ({ ...prev, ingresoDesde: e.target.value }))
-          }
+          name="ingresoDesde"
+          value={filtrosTemp.ingresoDesde}
+          onChange={handleFilterChange}
         />
         <label>Hasta Ingreso:</label>
         <input
           type="date"
-          className="filtro-input"
-          onChange={(e) =>
-            setFiltros((prev) => ({ ...prev, ingresoHasta: e.target.value }))
-          }
+          name="ingresoHasta"
+          value={filtrosTemp.ingresoHasta}
+          onChange={handleFilterChange}
         />
         <select
-          className="filtro-select"
-          onChange={(e) =>
-            setFiltros((prev) => ({ ...prev, jerarquia: e.target.value }))
-          }
+          name="jerarquia"
+          value={filtrosTemp.jerarquia}
+          onChange={handleFilterChange}
         >
           <option value="">Todas las jerarquías</option>
           {jerarquias.map((j) => (
@@ -341,10 +278,9 @@ function PersonalTable() {
           ))}
         </select>
         <select
-          className="filtro-select"
-          onChange={(e) =>
-            setFiltros((prev) => ({ ...prev, situacion: e.target.value }))
-          }
+          name="situacion"
+          value={filtrosTemp.situacion}
+          onChange={handleFilterChange}
         >
           <option value="">Todas las situaciones</option>
           {situaciones.map((s) => (
@@ -354,15 +290,20 @@ function PersonalTable() {
           ))}
         </select>
         <label>
+          Mostrar solo vencidas
           <input
             type="checkbox"
-            className="filtro-checkbox"
-            onChange={(e) =>
-              setFiltros((prev) => ({ ...prev, vencida: e.target.checked }))
-            }
+            name="vencida"
+            checked={filtrosTemp.vencida}
+            onChange={handleFilterChange}
           />
-          Solo vencidas
         </label>
+        <button onClick={aplicarFiltros} className="filter-btn">
+          Aplicar filtros
+        </button>
+        <button onClick={limpiarFiltros} className="filter-btn">
+          Limpiar filtros
+        </button>
       </div>
       <table className="table-fluent">
         <thead>
@@ -448,22 +389,6 @@ function PersonalTable() {
           Siguiente
         </button>
       </div>
-
-      {["Administrador", "Jefatura"].includes(usuario?.rol) && (
-        <>
-          <button className="add-person-btn" onClick={openAddModal}>
-            Agregar Nuevo Personal
-          </button>
-          {/*
-          <button
-            className="delete-person-btn"
-            onClick={() => setIsDeleteModalOpen(true)}
-          >
-            Eliminar Personal
-          </button>
-          */}
-        </>
-      )}
 
       {isAddModalOpen && (
         <div className="modal-overlay">

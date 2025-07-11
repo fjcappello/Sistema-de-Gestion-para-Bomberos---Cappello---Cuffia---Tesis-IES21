@@ -63,14 +63,6 @@
   border-bottom: 1px solid #ddd;
 }
 
-.paginacion {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
 .paginacion button {
   padding: 0.5rem 1rem;
   background-color: #007bff;

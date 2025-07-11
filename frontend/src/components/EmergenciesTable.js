@@ -359,7 +359,7 @@ function EmergenciesTable() {
               </option>
             ))}
           </select>
-
+          <label>Fecha desde:</label>
           <input
             type="date"
             name="startDate"
@@ -367,6 +367,7 @@ function EmergenciesTable() {
             onChange={handleFilterChange}
             placeholder="Desde"
           />
+          <label>Fecha hasta:</label>
           <input
             type="date"
             name="endDate"

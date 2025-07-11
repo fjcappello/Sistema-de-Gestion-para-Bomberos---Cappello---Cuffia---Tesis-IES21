@@ -3,6 +3,7 @@ import api from "../api";
 import * as XLSX from "xlsx";
 import "./Styles/MovimientoMoviles.css";
 import "./Styles/Tablas.css";
+import "./Styles/MovimientosPersonas.css";
 
 const formatFecha = (fechaStr) => {
   const fecha = new Date(fechaStr);
@@ -16,11 +17,19 @@ const formatFecha = (fechaStr) => {
 
 function MovimientoMoviles() {
   const [movimientos, setMovimientos] = useState([]);
+  
   const [filtros, setFiltros] = useState({
     interno: "",
     fechaDesde: "",
     fechaHasta: "",
   });
+  
+  const [filtrosAplicados, setFiltrosAplicados] = useState({
+    interno: "",
+    fechaDesde: "",
+    fechaHasta: "",
+  });
+  
   const [mostrarModalSalida, setMostrarModalSalida] = useState(false);
   const [mostrarModalRetorno, setMostrarModalRetorno] = useState(false);
   const [moviles, setMoviles] = useState([]);
@@ -28,6 +37,9 @@ function MovimientoMoviles() {
   const [movimientoSeleccionado, setMovimientoSeleccionado] = useState(null);
   const [novedadSeleccionada, setNovedadSeleccionada] = useState(null);
   const [busquedaDotacion, setBusquedaDotacion] = useState("");
+  const [erroresSalida, setErroresSalida] = useState({});
+  const [paginaActual, setPaginaActual] = useState(1);
+  const registrosPorPagina = 5;
 
   const [formSalida, setFormSalida] = useState({
     movil_id: "",
@@ -41,11 +53,6 @@ function MovimientoMoviles() {
     kilometraje_final: "",
     novedades: "",
   });
-
-  const [erroresSalida, setErroresSalida] = useState({});
-
-  const [paginaActual, setPaginaActual] = useState(1);
-  const registrosPorPagina = 5;
 
   useEffect(() => {
     cargarMovimientos();
@@ -79,6 +86,25 @@ function MovimientoMoviles() {
   const handleFiltroChange = (e) => {
     const { name, value } = e.target;
     setFiltros((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const aplicarFiltros = () => {
+    setFiltrosAplicados({ ...filtros });
+    setPaginaActual(1);
+  };
+
+  const limpiarFiltros = () => {
+    setFiltros({
+      interno: "",
+      fechaDesde: "",
+      fechaHasta: "",
+    });
+    setFiltrosAplicados({
+      interno: "",
+      fechaDesde: "",
+      fechaHasta: "",
+    });
+    setPaginaActual(1);
   };
 
   const handleFormSalidaChange = (e) => {
@@ -186,10 +212,10 @@ function MovimientoMoviles() {
 
   const movimientosFiltrados = movimientos.filter((m) => {
     const coincideInterno =
-      filtros.interno === "" || m.interno === filtros.interno;
+      filtrosAplicados.interno === "" || m.interno === filtrosAplicados.interno;
     const fechaSalida = new Date(m.fecha_salida);
-    const desde = filtros.fechaDesde ? new Date(filtros.fechaDesde) : null;
-    const hasta = filtros.fechaHasta ? new Date(filtros.fechaHasta) : null;
+    const desde = filtrosAplicados.fechaDesde ? new Date(filtrosAplicados.fechaDesde) : null;
+    const hasta = filtrosAplicados.fechaHasta ? new Date(filtrosAplicados.fechaHasta) : null;
     const coincideFecha =
       (!desde || fechaSalida >= desde) && (!hasta || fechaSalida <= hasta);
     return coincideInterno && coincideFecha;
@@ -236,14 +262,18 @@ function MovimientoMoviles() {
   return (
     <div className="table-container">
       <h2 className="table-title">Movimientos de móviles</h2>
-
-      <div className="moviles-movimientos-filtros">
-        <button onClick={() => setMostrarModalSalida(true)}>
+      <div className="botonera_tablas">
+        <button onClick={() => setMostrarModalSalida(true)} className="add-report-btn">
           Registrar salida
         </button>
+        <button onClick={exportarAExcel} className="add-report-btn">
+          Exportar a Excel
+        </button>
+      </div>
+      
+      <div className="filtros">
         <select
           name="interno"
-          className="filtro-select"
           value={filtros.interno}
           onChange={handleFiltroChange}
         >
@@ -254,22 +284,25 @@ function MovimientoMoviles() {
             </option>
           ))}
         </select>
+        <label>Fecha desde:</label>
         <input
           type="date"
           name="fechaDesde"
-          className="filtro-fecha"
           value={filtros.fechaDesde || ""}
           onChange={handleFiltroChange}
         />
+        <label>Fecha hasta:</label>
         <input
           type="date"
           name="fechaHasta"
-          className="filtro-fecha"
           value={filtros.fechaHasta || ""}
           onChange={handleFiltroChange}
         />
-        <button onClick={exportarAExcel} className="btn-exportar">
-          Exportar a Excel
+        <button onClick={aplicarFiltros} className="filter-btn">
+          Aplicar filtros
+        </button>
+        <button onClick={limpiarFiltros} className="filter-btn">
+          Limpiar filtros
         </button>
       </div>
 
@@ -309,27 +342,31 @@ function MovimientoMoviles() {
                 {!m.fecha_retorno ||
                 m.fecha_retorno === "0000-00-00 00:00:00" ||
                 m.kilometraje_final === null ? (
-                  <button
-                    className="btn-retorno"
-                    onClick={() => {
-                      setMovimientoSeleccionado(m);
-                      setMostrarModalRetorno(true);
-                    }}
-                  >
-                    Registrar retorno
-                  </button>
-                ) : (
-                  <button
-                    className="btn-retorno"
-                    title="Ver novedades registradas"
-                    onClick={() =>
-                      setNovedadSeleccionada(
-                        m.novedades || "Sin novedades registradas"
-                      )
-                    }
-                  >
-                    Novedades
-                  </button>
+                  <div className="botonera_accion_tabla">
+                    <button
+                      className="btn-retorno"
+                      onClick={() => {
+                        setMovimientoSeleccionado(m);
+                        setMostrarModalRetorno(true);
+                      }}
+                    >
+                      Registrar retorno
+                    </button>
+                  </div>
+                  ) : (
+                    <div className="botonera_accion_tabla">
+                    <button
+                      className="btn-retorno"
+                      title="Ver novedades registradas"
+                      onClick={() =>
+                        setNovedadSeleccionada(
+                          m.novedades || "Sin novedades registradas"
+                        )
+                      }
+                    >
+                      Novedades
+                    </button>
+                  </div>
                 )}
               </td>
             </tr>
@@ -343,7 +380,7 @@ function MovimientoMoviles() {
         >
           Anterior
         </button>
-        <span>Página {paginaActual}</span>
+        <span>Página {paginaActual} de {Math.ceil(movimientosFiltrados.length / registrosPorPagina)}</span>
         <button
           onClick={() =>
             setPaginaActual((p) =>

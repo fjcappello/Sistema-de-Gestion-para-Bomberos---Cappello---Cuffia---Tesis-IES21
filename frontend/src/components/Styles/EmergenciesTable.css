@@ -100,9 +100,10 @@
 .pagination button {
   padding: 0.5rem 1rem;
   border: none;
+  min-width: 80px;
   border-radius: 4px;
   cursor: pointer;
-  background-color: #ff3333;
+  background-color: #ff0000;
   color: white;
   font-weight: bold;
   transition: background-color 0.3s;
