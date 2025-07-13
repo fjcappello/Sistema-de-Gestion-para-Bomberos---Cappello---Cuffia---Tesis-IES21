@@ -14,6 +14,13 @@ function MovilesRegistro() {
     estado_id: "",
     vencido: "",
   });
+  const [filtrosAplicados, setFiltrosAplicados] = useState({
+    interno: "",
+    marca: "",
+    dominio: "",
+    estado_id: "",
+    vencido: "",
+  });
   const [paginaActual, setPaginaActual] = useState(1);
   const [itemsPorPagina] = useState(5);
   const [formData, setFormData] = useState({
@@ -42,7 +49,7 @@ function MovilesRegistro() {
       const response = await api.get("/moviles");
       const movilesConEstado = response.data.map((movil) => ({
         ...movil,
-        estado_id: parseInt(movil.estado_id), // Asegurarse de que estado_id sea un entero
+        estado_id: parseInt(movil.estado_id),
       }));
       setMoviles(movilesConEstado);
     } catch (error) {
@@ -64,21 +71,23 @@ function MovilesRegistro() {
     fetchEstados();
   }, []);
 
+  const camposNumericos = ["kilometraje_inicial", "estado_id"];
+
   const handleChangeFormData = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: camposNumericos.includes(name)
+        ? value === "" ? "" : Number(value)
+        : value,
     }));
   };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post(
-        "/moviles_agregar",
-        formData
-      );
+      await api.post("/moviles_agregar", formData);
       alert("Móvil agregado correctamente");
       setIsAddModalOpen(false);
       fetchMoviles();
@@ -89,13 +98,20 @@ function MovilesRegistro() {
   };
 
   const handleLimpiarFiltros = () => {
-    setFiltros({
+    const filtroInicial = {
       interno: "",
       marca: "",
       dominio: "",
       estado_id: "",
       vencido: "",
-    });
+    };
+    setFiltros(filtroInicial);
+    setFiltrosAplicados(filtroInicial);
+    setPaginaActual(1);
+  };
+
+  const handleAplicarFiltros = () => {
+    setFiltrosAplicados({ ...filtros });
     setPaginaActual(1);
   };
 
@@ -122,27 +138,23 @@ function MovilesRegistro() {
     return now - date > 365 * 24 * 60 * 60 * 1000;
   };
 
-  const filterMoviles = () => {
-    return moviles.filter(
-      (movil) =>
-        movil.interno.toLowerCase().includes(filtros.interno.toLowerCase()) &&
-        movil.marca.toLowerCase().includes(filtros.marca.toLowerCase()) &&
-        movil.dominio.toLowerCase().includes(filtros.dominio.toLowerCase()) &&
-        (filtros.estado_id
-          ? movil.estado_id.toString() === filtros.estado_id
-          : true) &&
-        (filtros.vencido === "Sí"
-          ? isServiceVencido(movil.fecha_service)
-          : filtros.vencido === "No"
-          ? !isServiceVencido(movil.fecha_service)
-          : true)
-    );
-  };
+  const movilesFiltrados = moviles.filter(
+    (movil) =>
+      movil.interno.toLowerCase().includes(filtrosAplicados.interno.toLowerCase()) &&
+      movil.marca.toLowerCase().includes(filtrosAplicados.marca.toLowerCase()) &&
+      movil.dominio.toLowerCase().includes(filtrosAplicados.dominio.toLowerCase()) &&
+      (filtrosAplicados.estado_id
+        ? movil.estado_id.toString() === filtrosAplicados.estado_id
+        : true) &&
+      (filtrosAplicados.vencido === "Sí"
+        ? isServiceVencido(movil.fecha_service)
+        : filtrosAplicados.vencido === "No"
+        ? !isServiceVencido(movil.fecha_service)
+        : true)
+  );
 
-  const filteredMoviles = filterMoviles();
-
-  const totalPages = Math.ceil(filteredMoviles.length / itemsPorPagina);
-  const paginatedMoviles = filteredMoviles.slice(
+  const totalPages = Math.ceil(movilesFiltrados.length / itemsPorPagina);
+  const paginatedMoviles = movilesFiltrados.slice(
     (paginaActual - 1) * itemsPorPagina,
     paginaActual * itemsPorPagina
   );
@@ -175,10 +187,7 @@ function MovilesRegistro() {
     }
 
     try {
-      await api.put(
-        `/moviles_editar/${editData.id}`,
-        cambios
-      );
+      await api.put(`/moviles_editar/${editData.id}`, cambios);
       alert("Móvil editado correctamente");
       setEditData(null);
       fetchMoviles();
@@ -191,6 +200,12 @@ function MovilesRegistro() {
   return (
     <div className="table-container">
       <h2 className="table-title">Registro de Móviles</h2>
+
+      <div className="botonera_tablas">
+        {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+          <button className="add-report-btn" onClick={() => setIsAddModalOpen(true)}>Agregar Móvil</button>
+        )}
+      </div>
 
       <div className="filtros">
         <input
@@ -235,9 +250,7 @@ function MovilesRegistro() {
           <option value="Sí">Sí</option>
           <option value="No">No</option>
         </select>
-        {["Administrador", "Jefatura"].includes(usuario?.rol) && (
-          <button onClick={() => setIsAddModalOpen(true)}>Agregar Móvil</button>
-        )}
+        <button onClick={handleAplicarFiltros}>Aplicar Filtros</button>
         <button onClick={handleLimpiarFiltros}>Limpiar Filtros</button>
       </div>
 
@@ -271,9 +284,7 @@ function MovilesRegistro() {
               <td>{formatFecha(movil.fecha_service)}</td>
               <td>
                 {(() => {
-                  const estado = estados.find(
-                    (e) => e.id === parseInt(movil.estado_id)
-                  );
+                  const estado = estados.find((e) => e.id === parseInt(movil.estado_id));
                   return estado ? estado.nombre : `ID: ${movil.estado_id}`;
                 })()}
               </td>
@@ -289,9 +300,7 @@ function MovilesRegistro() {
                       });
                     }}
                     className={
-                      movil.estado_id === 3
-                        ? "editar-deshabilitado"
-                        : "agregar-movil-button"
+                      movil.estado_id === 3 ? "editar-deshabilitado" : "agregar-movil-button"
                     }
                     disabled={movil.estado_id === 3}
                     title={
@@ -309,7 +318,7 @@ function MovilesRegistro() {
         </tbody>
       </table>
 
-      <div className="paginacion">
+      <div className="pagination">
         <button
           onClick={() => setPaginaActual((prev) => Math.max(prev - 1, 1))}
           disabled={paginaActual === 1}
@@ -332,10 +341,7 @@ function MovilesRegistro() {
       {editData && (
         <div className="modal-overlay">
           <div className="modal">
-            <form
-              className="moviles-registro-editar-form"
-              onSubmit={handleEditSubmit}
-            >
+            <form className="moviles-registro-editar-form" onSubmit={handleEditSubmit}>
               <label>Kilometraje Actual:</label>
               <input
                 type="number"
@@ -377,10 +383,7 @@ function MovilesRegistro() {
         <div className="modal-overlay">
           <div className="modal">
             <h2>Agregar Móvil</h2>
-            <form
-              className="moviles-registro-agregar-form"
-              onSubmit={handleSubmit}
-            >
+            <form className="moviles-registro-agregar-form" onSubmit={handleSubmit}>
               <label>Interno:</label>
               <input
                 type="text"

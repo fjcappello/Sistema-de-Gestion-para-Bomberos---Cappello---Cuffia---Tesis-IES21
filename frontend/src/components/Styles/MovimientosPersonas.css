@@ -56,18 +56,7 @@
 }
 
 /* Estilos para el contenido dentro de .movimientos-main-content */
-.movimientos-main-content h2,
-.movimientos-main-content h3 {
-  font-size: var(--font-size-h2); /* 24px */
-  color: var(--color-fluent-text-primary);
-  margin-top: 0; /* El primer título no necesita margen superior */
-  margin-bottom: var(--spacing-lg); /* 20px */
-  padding-bottom: var(--spacing-md); /* 16px */
-  border-bottom: 1px solid var(--color-fluent-border-light);
-}
-.movimientos-main-content h3 { /* Para "Historial de Movimientos" */
-    font-size: var(--font-size-h3); /* 20px */
-}
+
 
 
 /* Formulario de Registrar Movimiento */
@@ -111,6 +100,7 @@
   background-color: #A80000; /* Más oscuro */
   border-color: #A80000;
 }
+
 /* Contenedor para los botones de acción en el formulario si se necesita agruparlos */
 .movimientos-form-actions {
     grid-column: 1 / -1; /* Ocupar todas las columnas */
@@ -178,3 +168,5 @@
 .pagination span {
   color: var(--color-fluent-text-secondary);
 }
+
+

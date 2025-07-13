@@ -28,7 +28,7 @@ const addMovil = (req, res) => {
     modelo,
     dominio,
     vin,
-    kilometraje,
+    kilometraje_inicial,
     fecha_service,
     estado_id,
   } = req.body;
@@ -42,8 +42,8 @@ const addMovil = (req, res) => {
     modelo,
     dominio,
     vin,
-    kilometraje,
-    kilometraje,
+    kilometraje_inicial,
+    kilometraje_inicial,
     fecha_service,
     estado_id,
   ];

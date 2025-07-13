@@ -118,20 +118,32 @@
 }
 
 /* Estilos para paginación */
-.paginacion button {
+.pagination button {
+  padding: 0.5rem 1rem;
+  border: none;
+  min-width: 80px;
+  border-radius: 4px;
+  cursor: pointer;
   background-color: #ff0000;
   color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 0.5rem 1rem;
   font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
-.paginacion button:disabled {
-  background-color: #ccc;
+.pagination button:hover:not(:disabled) {
+  background-color: #d32f2f;
+}
+
+.pagination button:disabled,
+.disabled-btn {
+  opacity: 0.6;
   cursor: not-allowed;
+  background-color: #bbbbbb;
+}
+
+.pagination span {
+  color: #555;
+  font-weight: normal;
 }
 
 .moviles-registro-editar-form {

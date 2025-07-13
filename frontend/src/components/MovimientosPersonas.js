@@ -196,7 +196,7 @@ function MovimientosPersonas() {
       <main className="movimientos-main-content">
         {vistaActiva === "registrar" && (
           <>
-            <h2>Registrar Ingreso / Egreso</h2>
+            <h2 className="table-title">Registrar Ingreso / Egreso</h2>
             <div className="movimientos-form">
               <div className="form-group-fluent">
                 <label htmlFor="personalSelect" className="form-label-fluent">Seleccionar Personal (Opcional)</label>

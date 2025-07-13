@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../api";
 import "./Styles/PersonalTable.css";
 import "./Styles/Tablas.css";
+import axios from 'axios';
 import { useUsuario } from "../context/UserContext";
 
 const ITEMS_PER_PAGE = 5;
@@ -42,6 +43,7 @@ function PersonalTable() {
     situacion: "",
     vencida: false,
   });
+  
   const [filtrosAplicados, setFiltrosAplicados] = useState({
     legajo: "",
     nombreApellido: "",
@@ -52,44 +54,6 @@ function PersonalTable() {
     situacion: "",
     vencida: false,
   });
-
-  const fetchPersonal = async () => {
-    try {
-      const response = await api.get("/personal");
-      setPersonal(response.data);
-    } catch (error) {
-      console.error("Error al obtener datos de personal:", error);
-    }
-  };
-
-  const fetchJerarquias = async () => {
-    try {
-      const response = await api.get("/jerarquias");
-      setJerarquias(response.data);
-    } catch (error) {
-      console.error("Error al obtener jerarquías:", error);
-    }
-  };
-
-  const fetchSituaciones = async () => {
-    try {
-      const response = await api.get("/situaciones");
-      setSituaciones(response.data);
-    } catch (error) {
-      console.error("Error al obtener situaciones:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchPersonal();
-    fetchJerarquias();
-    fetchSituaciones();
-  }, []);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
 
   // Función para manejar cambios en los filtros
   const handleFilterChange = (e) => {
@@ -131,30 +95,191 @@ function PersonalTable() {
     setCurrentPage(1); // Resetear a la primera página
   };
 
+  const fetchPersonal = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/personal");
+      setPersonal(response.data);
+    } catch (error) {
+      console.error("Error al obtener datos de personal:", error);
+    }
+  };
+
+  const fetchJerarquias = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/jerarquias");
+      setJerarquias(response.data);
+    } catch (error) {
+      console.error("Error al obtener jerarquías:", error);
+    }
+  };
+
+  const fetchSituaciones = async () => {
+    try {
+      const response = await axios.get("http://localhost:3001/situaciones");
+      setSituaciones(response.data);
+    } catch (error) {
+      console.error("Error al obtener situaciones:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPersonal();
+    fetchJerarquias();
+    fetchSituaciones();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
   const handleAddSubmit = async (e) => {
     e.preventDefault();
-    // ... (mantener el mismo código existente)
+
+    const legajoVal = parseInt(formData.legajo, 10);
+    if (isNaN(legajoVal) || legajoVal <= 0) {
+      alert("El legajo debe ser un número positivo mayor a 0.");
+      return;
+    }
+
+    const documentoVal = parseInt(formData.documento, 10);
+    if (isNaN(documentoVal) || documentoVal < 1 || documentoVal > 99999999) {
+      alert("El documento debe ser un número entre 1 y 99,999,999.");
+      return;
+    }
+
+    formData.situacion_id = 1; // Establecer valor fijo de 'Activo'
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3001/personal",
+        formData
+      );
+      if (response.data.success) {
+        alert("Personal agregado correctamente");
+        setIsAddModalOpen(false);
+        clearFormData();
+        fetchPersonal();
+      } else {
+        alert(
+          "Error al agregar personal: " +
+            (response.data.error || "Operación fallida")
+        );
+      }
+    } catch (error) {
+      console.error("Error al intentar agregar personal:", error);
+      alert(
+        "Error en el servidor al intentar agregar personal. Verifique la conexión."
+      );
+    }
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    // ... (mantener el mismo código existente)
+    const dataToUpdate = {};
+    const original = personal.find((p) => p.legajo === formData.legajo);
+    if (!original) return;
+
+    if (
+      formData.jerarquia_id &&
+      formData.jerarquia_id !== original.jerarquia_id
+    )
+      dataToUpdate.jerarquia_id = formData.jerarquia_id;
+    if (
+      formData.situacion_id &&
+      formData.situacion_id !== original.situacion_id
+    )
+      dataToUpdate.situacion_id = formData.situacion_id;
+    if (
+      formData.fecha_revision_medica &&
+      formData.fecha_revision_medica !==
+        original.fecha_revision_medica?.split("T")[0]
+    )
+      dataToUpdate.fecha_revision_medica = formData.fecha_revision_medica;
+
+    if (Object.keys(dataToUpdate).length === 0) {
+      alert("Debe modificar al menos un campo para guardar los cambios.");
+      return;
+    }
+
+    try {
+      const response = await axios.put(
+        `http://localhost:3001/personal/${formData.legajo}`,
+        dataToUpdate
+      );
+
+      if (response.data.success) {
+        alert("Datos actualizados correctamente");
+        setIsEditModalOpen(false);
+        fetchPersonal();
+      } else {
+        alert(
+          "Error al actualizar: " + (response.data.error || "Operación fallida")
+        );
+      }
+    } catch (error) {
+      console.error("Error al intentar actualizar:", error);
+      alert("Error en el servidor al intentar actualizar datos.");
+    }
   };
 
   const handleDelete = async () => {
-    // ... (mantener el mismo código existente)
+    if (!deleteLegajo) {
+      setDeleteError("Por favor, ingrese un número de legajo válido.");
+      return;
+    }
+
+    try {
+      const response = await axios.delete(
+        `http://localhost:3001/personal/${deleteLegajo}`
+      );
+      if (response.data.success) {
+        alert("Personal eliminado correctamente");
+        setIsDeleteModalOpen(false);
+        setDeleteLegajo("");
+        setDeleteError("");
+        fetchPersonal();
+      } else {
+        setDeleteError(
+          "Error al eliminar personal: " +
+            (response.data.error || "Operación fallida")
+        );
+      }
+    } catch (error) {
+      console.error("Error al intentar eliminar personal:", error);
+      setDeleteError(
+        "Error en el servidor al intentar eliminar personal. Verifique la conexión."
+      );
+    }
   };
 
   const clearFormData = () => {
-    // ... (mantener el mismo código existente)
+    setFormData({
+      legajo: "",
+      nombre: "",
+      apellido: "",
+      documento: "",
+      nacimiento: "",
+      fecha_ingreso: "",
+      jerarquia_id: "",
+      situacion_id: "",
+      fecha_revision_medica: "",
+    });
   };
 
   const openAddModal = () => {
-    // ... (mantener el mismo código existente)
+    clearFormData();
+    setIsAddModalOpen(true);
   };
 
   const openEditModal = (rrhh) => {
-    // ... (mantener el mismo código existente)
+    setFormData({
+      legajo: rrhh.legajo,
+      jerarquia_id: rrhh.jerarquia_id,
+      situacion_id: rrhh.situacion_id,
+      fecha_revision_medica: rrhh.fecha_revision_medica?.split("T")[0] || "",
+    });
+    setIsEditModalOpen(true);
   };
 
   const isExpired = (date) => {
@@ -214,12 +339,12 @@ function PersonalTable() {
       <div className="botonera_tablas">
         {["Administrador", "Jefatura"].includes(usuario?.rol) && (
         <>
-          <button className="add-person-btn" onClick={openAddModal}>
+          <button className="add-report-btn" onClick={openAddModal}>
             Agregar Nuevo Personal
           </button>
           {
           <button
-            className="delete-person-btn"
+            className="delete-report-btn"
             onClick={() => setIsDeleteModalOpen(true)}
           >
             Eliminar Personal

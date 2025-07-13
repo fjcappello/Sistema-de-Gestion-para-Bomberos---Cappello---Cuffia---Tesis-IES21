@@ -373,7 +373,7 @@ function MovimientoMoviles() {
           ))}
         </tbody>
       </table>
-      <div className="paginacion">
+      <div className="pagination">
         <button
           onClick={() => setPaginaActual((p) => Math.max(p - 1, 1))}
           disabled={paginaActual === 1}
