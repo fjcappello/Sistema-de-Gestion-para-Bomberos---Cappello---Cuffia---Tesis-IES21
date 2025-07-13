@@ -272,24 +272,21 @@ function MovimientosPersonas() {
         )}
         {vistaActiva === "historial" && (
           <>
-            <h3>Historial de Movimientos</h3>
-            <div className="filter-container">
+            <h2 className="table-title">Historial de asistencia</h2>
+            <div className="filtros">
               <input
-                className="form-control-fluent" // Clase Fluent
                 type="text"
                 placeholder="Filtrar por nombre"
                 value={filtroNombre}
                 onChange={(e) => setFiltroNombre(e.target.value)}
               />
               <input
-                className="form-control-fluent" // Clase Fluent
                 type="text"
                 placeholder="Filtrar por apellido"
                 value={filtroApellido}
                 onChange={(e) => setFiltroApellido(e.target.value)}
               />
               <select
-                className="form-control-fluent" // Clase Fluent
                 value={filtroTipo}
                 onChange={(e) => setFiltroTipo(e.target.value)}
               >
@@ -301,7 +298,7 @@ function MovimientosPersonas() {
                 Filtrar
               </button>
             </div>
-            <table className="table-fluent movimientos-table"> {/* Clase Fluent */}
+            <table className="table-fluent movimientos-table">
               <thead>
                 <tr>
                   <th>Fecha</th>
@@ -357,7 +354,6 @@ function MovimientosPersonas() {
               <button
                 onClick={() => setCurrentPage(currentPage - 1)}
                 disabled={currentPage === 1}
-                className="btn-fluent btn-fluent-outline" // Clase Fluent
               >
                 Anterior
               </button>
@@ -367,7 +363,6 @@ function MovimientosPersonas() {
               <button
                 onClick={() => setCurrentPage(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className="btn-fluent btn-fluent-outline" // Clase Fluent
               >
                 Siguiente
               </button>

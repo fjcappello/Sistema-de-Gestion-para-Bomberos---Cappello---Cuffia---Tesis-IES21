@@ -99,9 +99,17 @@ function BandejaEntrada() {
         </div>
 
         {bandejaActiva === "entrada" ? (
-          <>
-            <h2>Mensajes Recibidos</h2>
-            <div className="bandeja-filtros">
+          <div className="table-container">
+            <h2 className="table-title">Mensajes Recibidos</h2>
+            <div className="botonera_tablas">
+              <button
+                className="add-report-btn"
+                onClick={() => setMostrarModal(true)}
+              >
+                Nuevo Mensaje
+              </button>
+            </div>
+            <div className="filtros">
               <input
                 type="text"
                 placeholder="Filtrar por remitente"
@@ -125,12 +133,6 @@ function BandejaEntrada() {
                   setFiltros({ ...filtros, fecha: e.target.value })
                 }
               />
-              <button
-                className="nuevo-mensaje-btn"
-                onClick={() => setMostrarModal(true)}
-              >
-                Nuevo Mensaje
-              </button>
             </div>
 
             {mensajesPaginados.length === 0 ? (
@@ -165,7 +167,7 @@ function BandejaEntrada() {
                 </tbody>
               </table>
             )}
-            <div className="paginacion">
+            <div className="pagination">
               <button
                 onClick={() => setPaginaActual((prev) => Math.max(prev - 1, 1))}
                 disabled={paginaActual === 1}
@@ -190,7 +192,7 @@ function BandejaEntrada() {
                 Siguiente
               </button>
             </div>
-          </>
+          </div>
         ) : (
           <BandejaSalida onClose={() => setBandejaActiva("entrada")} />
         )}

@@ -154,7 +154,6 @@ const crearParte = async (req, res) => {
 const eliminarParte = (req, res) => {
   const { id } = req.params;
   const query = "UPDATE partes SET activo = 0 WHERE id = ?";
-
   db.query(query, [id], async (err, result) => {
     if (err) {
       console.error("Error al eliminar el reporte:", err);

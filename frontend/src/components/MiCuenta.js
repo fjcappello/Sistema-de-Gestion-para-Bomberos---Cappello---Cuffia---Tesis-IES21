@@ -90,8 +90,8 @@ function MiCuenta() {
   return (
     <div className="configuracion-layout">
       <main className="configuracion-contenido">
-        <h2>Mi cuenta</h2>
-        <h3>Cambiar contraseña</h3>
+        <h2 className="table-title">Mi cuenta</h2>
+        <p>Cambiar contraseña</p>
         <div className="configuracion-filtros">
           <div className="password-container-fluent">
             <input
@@ -120,7 +120,7 @@ function MiCuenta() {
               onChange={(e) => setConfirmar(e.target.value)}
             />
           </div>
-          <button className="nuevo-mensaje-btn" onClick={cambiarPassword}>
+          <button className="add-report-btn" onClick={cambiarPassword}>
             Guardar
           </button>
         </div>

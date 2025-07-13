@@ -45,13 +45,10 @@ function BandejaSalida({ onClose }) {
   };
 
   return (
-    <div className="bandeja-contenido">
-      <div className="bandeja-selector">
-        {/* botones o navegación futura */}
-      </div>
-      <h2>Bandeja de Salida</h2>
+    <div className="table-container">
+      <h2 className="table-title">Mensajes enviados</h2>
 
-      <div className="bandeja-filtros">
+      <div className="filtros">
         <input
           type="text"
           placeholder="Filtrar por destinatarios"
@@ -71,9 +68,8 @@ function BandejaSalida({ onClose }) {
           value={filtros.fecha}
           onChange={(e) => setFiltros({ ...filtros, fecha: e.target.value })}
         />
-        <button className="close-modal-btn" onClick={onClose}>
-          Limpiar Filtros
-        </button>
+
+        <button>Limpiar Filtros</button>
       </div>
 
       {mensajesPaginados.length === 0 ? (
@@ -115,7 +111,7 @@ function BandejaSalida({ onClose }) {
           </tbody>
         </table>
       )}
-      <div className="paginacion">
+      <div className="pagination">
         <button
           onClick={() => setPaginaActual((prev) => Math.max(prev - 1, 1))}
           disabled={paginaActual === 1}

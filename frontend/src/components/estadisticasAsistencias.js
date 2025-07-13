@@ -472,17 +472,23 @@ function EstadisticaAsistencia() {
   };
 
   return (
-    <div className="asistencia-stats-container">
-      <div className="asistencia-filtros">
-        <label className="asistencia-filtro fecha-desde">
+    <div className="table-container">
+      <h2 className="table-title">Estadísticas de Asistencia</h2>
+      <div className="botonera_tablas">
+        <button className="add-report-btn" onClick={exportPDF}>
+          Exportar PDF
+        </button>
+      </div>
+      <div className="filtros">
+        <label>
           Desde:
           <input type="date" value={fechaDesde} onChange={e => setFechaDesde(e.target.value)} />
         </label>
-        <label className="asistencia-filtro fecha-hasta">
+        <label>
           Hasta:
           <input type="date" value={fechaHasta} onChange={e => setFechaHasta(e.target.value)} />
         </label>
-        <label className="asistencia-filtro personal-nombre">
+        <label>
           Personal:
           <select value={nombrePersonal} onChange={e => setNombrePersonal(e.target.value)}>
             <option value="">Todos</option>
@@ -493,7 +499,7 @@ function EstadisticaAsistencia() {
             ))}
           </select>
         </label>
-        <label className="asistencia-filtro legajo">
+        <label>
           Legajo:
           <input
             type="text"
@@ -502,11 +508,8 @@ function EstadisticaAsistencia() {
             placeholder="Filtrar por legajo"
           />
         </label>
-        <button className="asistencia-btn filtrar" onClick={fetchData}>
-          Aplicar Filtros
-        </button>
+        <button onClick={fetchData}>Aplicar Filtros</button>
         <button
-          className="asistencia-btn limpiar"
           onClick={() => {
             setFechaDesde('');
             setFechaHasta('');
@@ -518,9 +521,11 @@ function EstadisticaAsistencia() {
           Limpiar Filtros
         </button>
       </div>
+      
+      <div className='contenedor_graficos'>
 
+      </div>
 
-      <h2 className="asistencia-title">Estadísticas de Asistencia</h2>
 
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Ranking de Asistencias</h3>
@@ -550,12 +555,6 @@ function EstadisticaAsistencia() {
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Asistencia por Mes</h3>
         <Bar data={porMesData} options={porMesOptions} />
-      </div>
-
-            <div className="asistencia-botones-exportar">
-        <button className="asistencia-btn exportar" onClick={exportPDF}>
-          Exportar PDF
-        </button>
       </div>
 
       {/*

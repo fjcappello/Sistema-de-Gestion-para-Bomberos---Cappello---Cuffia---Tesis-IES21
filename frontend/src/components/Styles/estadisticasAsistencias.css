@@ -11,12 +11,6 @@
   align-items: center;
 }
 
-.asistencia-title {
-  text-align: center;
-  color: #e60000;
-  margin-bottom: 1.5rem;
-}
-
 .asistencia-promedio {
   text-align: center;
   font-size: 1.1rem;
@@ -25,7 +19,7 @@
 
 .asistencia-section {
   margin-bottom: 3rem;
-  width: 100%;
+  width: 60%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -36,6 +30,12 @@
   color: #333;
   margin-bottom: 1rem;
   text-align: center;
+}
+
+.contenedor_graficos{
+  width: 100%;
+  display: flex;
+  justify-content:flex-start;
 }
 
 /* Responsividad */

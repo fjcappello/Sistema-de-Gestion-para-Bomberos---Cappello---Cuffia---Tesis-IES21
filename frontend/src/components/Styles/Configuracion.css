@@ -21,6 +21,11 @@
   border-radius: 8px;
 }
 
+.configuracion-contenido p{
+  margin-top: 2rem;
+  font-size: large;
+}
+
 .configuracion-selector {
   display: flex;
   gap: 1rem;
@@ -75,7 +80,7 @@
 }
 
 .criterios-lista li.valido {
-  color: green;
+  color: rgb(0, 207, 0);
   font-weight: bold;
 }
 

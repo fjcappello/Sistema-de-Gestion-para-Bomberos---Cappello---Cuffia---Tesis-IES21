@@ -13,6 +13,12 @@ function ReportsPage() {
     startDate: "",
     endDate: "",
   });
+  const [appliedFilters, setAppliedFilters] = useState({
+    jefeDotacion: "",
+    tipoAsistencia: "",
+    startDate: "",
+    endDate: "",
+  });
   const [jefesDotacion, setJefesDotacion] = useState([]);
   const [chartData, setChartData] = useState({
     labels: [],
@@ -26,6 +32,10 @@ function ReportsPage() {
     loadLogo();
     fetchReports();
   }, []);
+
+  useEffect(() => {
+    fetchReports();
+  }, [appliedFilters]);
 
   const fetchJefesDotacion = async () => {
     try {
@@ -52,10 +62,10 @@ function ReportsPage() {
     try {
       const response = await api.get("/estadisticas_filtros", {
         params: {
-          jefe_dotacion: filters.jefeDotacion,
-          tipo_asistencia: filters.tipoAsistencia,
-          fecha_desde: filters.startDate,
-          fecha_hasta: filters.endDate,
+          jefe_dotacion: appliedFilters.jefeDotacion,
+          tipo_asistencia: appliedFilters.tipoAsistencia,
+          fecha_desde: appliedFilters.startDate,
+          fecha_hasta: appliedFilters.endDate,
         },
       });
       const data = response.data;
@@ -80,6 +90,25 @@ function ReportsPage() {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
+  const aplicarFiltros = () => {
+    setAppliedFilters(filters);
+  };
+
+  const limpiarFiltros = () => {
+    setFilters({
+      jefeDotacion: "",
+      tipoAsistencia: "",
+      startDate: "",
+      endDate: "",
+    });
+    setAppliedFilters({
+      jefeDotacion: "",
+      tipoAsistencia: "",
+      startDate: "",
+      endDate: "",
+    });
+  };
+
   const generatePDF = () => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
@@ -98,19 +127,18 @@ function ReportsPage() {
     const subtitle = "Estadistica de Emergencias";
     doc.text(subtitle, pageWidth / 2, 30, { align: "center" });
 
-    // Filtros
     doc.setFontSize(12);
     const jefeSeleccionado =
-      jefesDotacion.find((j) => j.id.toString() === filters.jefeDotacion)
+      jefesDotacion.find((j) => j.id.toString() === appliedFilters.jefeDotacion)
         ?.nombre_completo || "Todos";
     doc.text(`Jefe de Dotación: ${jefeSeleccionado}`, 10, 55);
     doc.text(
-      `Tipo de Asistencia: ${filters.tipoAsistencia || "Todos"}`,
+      `Tipo de Asistencia: ${appliedFilters.tipoAsistencia || "Todos"}`,
       10,
       65
     );
-    doc.text(`Fecha Desde: ${filters.startDate || "Sin especificar"}`, 10, 75);
-    doc.text(`Fecha Hasta: ${filters.endDate || "Sin especificar"}`, 10, 85);
+    doc.text(`Fecha Desde: ${appliedFilters.startDate || "Sin especificar"}`, 10, 75);
+    doc.text(`Fecha Hasta: ${appliedFilters.endDate || "Sin especificar"}`, 10, 85);
 
     if (chartRef.current) {
       const chartCanvas = chartRef.current.canvas;
@@ -118,7 +146,6 @@ function ReportsPage() {
       doc.addImage(chartImage, "PNG", 10, 90, 180, 80);
     }
 
-    // Análisis
     doc.setFontSize(14);
     doc.text("Análisis de Datos:", 10, 180);
     doc.setFontSize(12);
@@ -147,62 +174,66 @@ function ReportsPage() {
   };
 
   return (
-    <div className="reports-page">
-      <h2>Estadistica de Emergencias</h2>
+    <div className="table-container">
+      <h2 className="table-title">Estadistica de Emergencias</h2>
+      <div className="botonera_tablas">
+        <button onClick={generatePDF} className="add-report-btn">
+          Generar PDF del Reporte
+        </button>
+      </div>
 
-      <div className="filter-section">
-        <label>
-          Jefe de Dotación:
-          <select
-            name="jefeDotacion"
-            onChange={handleFilterChange}
-            value={filters.jefeDotacion}
-          >
-            <option value="">Todos</option>
-            {jefesDotacion.map((jefe) => (
-              <option key={jefe.id} value={jefe.id}>
-                {jefe.nombre_completo}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div className="filtros">
+        <select
+          name="jefeDotacion"
+          onChange={handleFilterChange}
+          value={filters.jefeDotacion}
+        >
+          <option value="" disabled hidden>
+            Jefe de Dotación
+          </option>
+          <option value="">Todos</option>
+          {jefesDotacion.map((jefe) => (
+            <option key={jefe.id} value={jefe.id}>
+              {jefe.nombre_completo}
+            </option>
+          ))}
+        </select>
 
-        <label>
-          Tipo de Asistencia:
-          <select
-            name="tipoAsistencia"
-            onChange={handleFilterChange}
-            value={filters.tipoAsistencia}
-          >
-            <option value="">Todos</option>
-            <option value="Incendio">Incendio</option>
-            <option value="Accidente">Accidente</option>
-            <option value="Rescate">Rescate</option>
-          </select>
-        </label>
+        <select
+          name="tipoAsistencia"
+          onChange={handleFilterChange}
+          value={filters.tipoAsistencia}
+        >
+          <option value="" disabled hidden>
+            Tipo de Asistencia
+          </option>
+          <option value="">Todos</option>
+          <option value="Incendio">Incendio</option>
+          <option value="Accidente">Accidente</option>
+          <option value="Rescate">Rescate</option>
+        </select>
 
-        <label>
-          Fecha Desde:
-          <input
-            type="date"
-            name="startDate"
-            onChange={handleFilterChange}
-            value={filters.startDate}
-          />
-        </label>
+        <input
+          type="date"
+          name="startDate"
+          onChange={handleFilterChange}
+          value={filters.startDate}
+          placeholder="Fecha Desde"
+        />
 
-        <label>
-          Fecha Hasta:
-          <input
-            type="date"
-            name="endDate"
-            onChange={handleFilterChange}
-            value={filters.endDate}
-          />
-        </label>
+        <input
+          type="date"
+          name="endDate"
+          onChange={handleFilterChange}
+          value={filters.endDate}
+          placeholder="Fecha Hasta"
+        />
 
-        <button onClick={fetchReports} className="filter-btn">
+        <button onClick={aplicarFiltros} className="filter-btn">
           Aplicar Filtros
+        </button>
+        <button onClick={limpiarFiltros} className="filter-btn">
+          Limpiar filtros
         </button>
       </div>
 
@@ -214,10 +245,6 @@ function ReportsPage() {
           <p>No hay datos disponibles para mostrar.</p>
         )}
       </div>
-
-      <button onClick={generatePDF} className="generate-pdf-btn">
-        Generar PDF del Reporte
-      </button>
     </div>
   );
 }

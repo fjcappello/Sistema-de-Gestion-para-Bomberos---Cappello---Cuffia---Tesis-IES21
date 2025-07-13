@@ -74,7 +74,7 @@ function OtrasCuentas() {
   return (
     <div className="configuracion-layout">
       <div className="configuracion-contenido">
-        <h2>Otras Cuentas</h2>
+        <h2 className="table-title">Otras Cuentas</h2>
 
         {/* Usuario */}
         <div className="configuracion-filtros">
@@ -112,7 +112,7 @@ function OtrasCuentas() {
               ))}
             </select>
             <button
-              className="configuracion-boton"
+              className="add-report-btn"
               onClick={manejarActualizarPermiso}
             >
               Actualizar Permisos
@@ -129,7 +129,7 @@ function OtrasCuentas() {
             estado original.
           </p>
           <button
-            className="configuracion-boton"
+            className="add-report-btn"
             onClick={manejarRestablecerPassword}
           >
             Restablecer Contraseña
