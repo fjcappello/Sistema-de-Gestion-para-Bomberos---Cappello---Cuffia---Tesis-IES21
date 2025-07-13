@@ -32,7 +32,7 @@ const recuperarElementos = function recuperarElementos(req, res) {
                     lugar_asignacion AS l ON l.id_asignacion = p.id_asignacion
                 INNER JOIN 
                     estado_elemento AS e ON p.id_estado = e.id_estado
-                WHERE 1 + 1 = 2 ORDER BY id_elemento ASC
+                WHERE 1 + 1 = 2 ORDER BY id_elemento DESC
             `;
 
   db.query(query, (error, results) => {

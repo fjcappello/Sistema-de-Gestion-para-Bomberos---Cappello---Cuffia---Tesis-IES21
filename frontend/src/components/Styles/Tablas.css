@@ -42,5 +42,5 @@
 
 /* Asegura que las filas vencidas mantengan contraste en hover */
 .table-fluent tr.vencida:hover {
-  background-color: red; /* Rojo más claro */
+  background-color: rgb(253, 83, 83); /* Rojo más claro */
 }

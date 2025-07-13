@@ -281,7 +281,15 @@ function MovilesRegistro() {
               <td>{movil.dominio}</td>
               <td>{movil.vin}</td>
               <td>{movil.kilometraje_actual}</td>
-              <td>{formatFecha(movil.fecha_service)}</td>
+              <td>
+                {isServiceVencido(movil.fecha_service) ? (
+                  <>
+                    {formatFecha(movil.fecha_service)} ⚠️ Realizar Service
+                  </>
+                ) : (
+                  formatFecha(movil.fecha_service)
+                )}
+              </td>
               <td>
                 {(() => {
                   const estado = estados.find((e) => e.id === parseInt(movil.estado_id));
@@ -300,7 +308,7 @@ function MovilesRegistro() {
                       });
                     }}
                     className={
-                      movil.estado_id === 3 ? "editar-deshabilitado" : "agregar-movil-button"
+                      movil.estado_id === 3 ? "editar-deshabilitado" : "edit-btn"
                     }
                     disabled={movil.estado_id === 3}
                     title={
@@ -356,7 +364,6 @@ function MovilesRegistro() {
                 name="fecha_service"
                 value={editFormData.fecha_service}
                 onChange={handleEditChange}
-                min={today}
               />
               <label>Estado:</label>
               <select
@@ -438,7 +445,6 @@ function MovilesRegistro() {
                 name="fecha_service"
                 value={formData.fecha_service}
                 onChange={handleChangeFormData}
-                min={today}
                 required
               />
               <label>Estado:</label>

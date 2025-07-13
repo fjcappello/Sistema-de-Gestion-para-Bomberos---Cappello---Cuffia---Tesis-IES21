@@ -329,7 +329,7 @@ function PanolOperativo() {
           ))}
         </select>
 
-        <div className="rango-fechas">
+        
           <label>Incorporación desde:
             <input
               type="date"
@@ -350,9 +350,6 @@ function PanolOperativo() {
               }}
             />
           </label>
-        </div>
-
-        <div className="rango-fechas">
           <label>Vencimiento desde: 
             <input
               type="date"
@@ -373,11 +370,8 @@ function PanolOperativo() {
               }}
             />
           </label>
-        </div>
-
-        <button className="filtros-button" onClick={limpiarFiltros}>
-          Limpiar filtros
-        </button>
+        <button className="filtros-button" onClick={limpiarFiltros}>Aplicar filtros</button>
+        <button className="filtros-button" onClick={limpiarFiltros}>Limpiar filtros</button>
       </div>
 
       <table className="table-fluent">
@@ -414,9 +408,9 @@ function PanolOperativo() {
               {["Administrador", "Jefatura"].includes(usuario?.rol) && (
                 <td>
                   <div className='botonera_accion_tabla'>
-                    <button className="boton-accion-mod" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
+                    <button className="edit-btn" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
                     {/*REVISAR LO DE LA API DE LAS FOTOS*/}
-                    <button className="boton-accion-mod" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`${process.env.REACT_APP_API_URL}/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button> 
+                    <button className="edit-btn" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`${process.env.REACT_APP_API_URL}/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button> 
                   </div>
                 </td>
               )}
@@ -425,7 +419,7 @@ function PanolOperativo() {
         </tbody>
       </table>
 
-      <div className="paginacion">
+      <div className="pagination">
         <button className="boton-paginacion" onClick={irPaginaAnterior} disabled={paginaActual === 1}>
           Anterior
         </button>
