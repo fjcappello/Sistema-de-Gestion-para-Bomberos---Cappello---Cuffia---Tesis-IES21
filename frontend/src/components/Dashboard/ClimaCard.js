@@ -82,12 +82,13 @@ function ClimaCard() {
             {/* Calculo FWI con cambio de unidades para el calculo, aproximado ya que IDECOR no posee api propia para obtenerlo */}
             <strong>🔥 Riesgo FWI*:</strong>{" "}
             {(() => {
-              const T = clima.main.temp;
-              const H = clima.main.humidity;
-              const V = clima.wind.speed * 3.6;
-              const P = clima.rain?.["1h"] || 0;
+              const T = clima.main.temp; //Temperatura en °C
+              const H = clima.main.humidity; // Humedad relativa en %
+              const V = clima.wind.speed * 3.6; // Velocidad del viento en Km/h
+              const P = clima.rain?.["1h"] || 0; // Precipitacion en la ultima hora en mm
 
-              let mo = (147.2 * (101.0 - 85.0)) / (59.5 + 85.0);
+              let mo = (147.2 * (101.0 - 85.0)) / (59.5 + 85.0); // Calculo de la humedad en material fino sin lluvia
+              // Si hay lluvia, se ajusta la humedad
               if (P > 0.5) {
                 let rf = P > 1.5 ? P - 1.5 : 0;
                 let mr =
@@ -98,21 +99,32 @@ function ClimaCard() {
                     (1 - Math.exp(-6.93 / rf));
                 mo = Math.min(mr, 250);
               }
+
+              // Calculo valores intermedios de equilibrio de humedad
+              //humedad diurna
               let Ed =
                 0.942 * Math.pow(H, 0.679) +
                 11 * Math.exp((H - 100) / 10) +
                 0.18 * (21.1 - T) * (1 - Math.exp(-0.115 * H));
+              //humedad nocturna
               let Ew =
                 0.618 * Math.pow(H, 0.753) +
                 10 * Math.exp((H - 100) / 10) +
                 0.18 * (21.1 - T) * (1 - Math.exp(-0.115 * H));
+              // Calculo de la tasa de secado y ajuste de humedad
+
               let ko =
                 0.424 * (1 - Math.pow(H / 100.0, 1.7)) +
                 0.0694 * Math.sqrt(V) * (1 - Math.pow(H / 100.0, 8));
               let kd = ko * 0.581 * Math.exp(0.0365 * T);
               mo = Ew + (mo - Ew) * Math.pow(10, -kd);
+
+              // Calculo Fine Fuel Moisture Code, se mide la facilidad con la que se
+              // enciende el combustimbre fino
               const FFMC = (59.5 * (250 - mo)) / (147.2 + mo);
 
+              // Calculo de Initial Spread Index, mide la velocidad de propagación del fuego
+              // en condiciones de viento y humedad
               const fW = Math.exp(0.081 * V);
               const fF =
                 91.9 *
@@ -120,10 +132,12 @@ function ClimaCard() {
                 (1 + Math.pow(mo, 5.31) / 4.93e7);
               const ISI = 0.208 * fW * fF;
 
+              // Calculo de Duff Moisture Code, representa la sequedad del material grueso
               const DMC =
                 400 * Math.log(1 + (3 * T) / H) * (1 - Math.exp(-0.1 * P));
               const DC = T > 0 ? 0.36 * (800 * Math.exp(-0.05 * P)) : 0;
 
+              // Calculo de Buildup Index, mide la acumulación de combustible
               let BUI;
               if (DMC <= 0.4 * DC) {
                 BUI = (0.8 * DMC * DC) / (DMC + 0.4 * DC);
@@ -136,6 +150,7 @@ function ClimaCard() {
               const FWI =
                 B_val > 1 ? Math.exp(2.72 * Math.pow(B_val, 0.647)) : B_val;
 
+              // Dependiendo el valor del FWI, se determina el riesgo de incendio
               let riesgo = "Desconocido";
               if (FWI < 5) riesgo = "Bajo";
               else if (FWI < 12) riesgo = "Moderado";
