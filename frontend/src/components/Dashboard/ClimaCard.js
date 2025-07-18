@@ -10,6 +10,7 @@ function ClimaCard() {
   const lat = -31.2611;
   const lon = -64.4639;
 
+  /*Funcion que obtiene los datos del clima desde la API de OpenWeatherMap, la posicion se situa en la jurisdiccion del comitente */
   const obtenerClima = async () => {
     try {
       const response = await api.get(
@@ -78,7 +79,7 @@ function ClimaCard() {
             Km/h
           </div>
           <div>
-            {/*Calculo FWI con cambio de unidades para el calculo*/}
+            {/* Calculo FWI con cambio de unidades para el calculo, aproximado ya que IDECOR no posee api propia para obtenerlo */}
             <strong>🔥 Riesgo FWI*:</strong>{" "}
             {(() => {
               const T = clima.main.temp;
@@ -86,7 +87,7 @@ function ClimaCard() {
               const V = clima.wind.speed * 3.6;
               const P = clima.rain?.["1h"] || 0;
 
-              let mo = 147.2 * (101.0 - 85.0) / (59.5 + 85.0);
+              let mo = (147.2 * (101.0 - 85.0)) / (59.5 + 85.0);
               if (P > 0.5) {
                 let rf = P > 1.5 ? P - 1.5 : 0;
                 let mr =
@@ -110,25 +111,30 @@ function ClimaCard() {
                 0.0694 * Math.sqrt(V) * (1 - Math.pow(H / 100.0, 8));
               let kd = ko * 0.581 * Math.exp(0.0365 * T);
               mo = Ew + (mo - Ew) * Math.pow(10, -kd);
-              const FFMC = 59.5 * (250 - mo) / (147.2 + mo);
+              const FFMC = (59.5 * (250 - mo)) / (147.2 + mo);
 
               const fW = Math.exp(0.081 * V);
-              const fF = 91.9 * Math.exp(-0.1386 * mo) * (1 + Math.pow(mo, 5.31) / 4.93e7);
+              const fF =
+                91.9 *
+                Math.exp(-0.1386 * mo) *
+                (1 + Math.pow(mo, 5.31) / 4.93e7);
               const ISI = 0.208 * fW * fF;
 
-              const DMC = (400 * Math.log(1 + (3 * T) / H)) * (1 - Math.exp(-0.1 * P));
+              const DMC =
+                400 * Math.log(1 + (3 * T) / H) * (1 - Math.exp(-0.1 * P));
               const DC = T > 0 ? 0.36 * (800 * Math.exp(-0.05 * P)) : 0;
 
               let BUI;
               if (DMC <= 0.4 * DC) {
                 BUI = (0.8 * DMC * DC) / (DMC + 0.4 * DC);
               } else {
-                BUI = DMC - (1 - 0.8 * DC / (DMC + 0.4 * DC));
+                BUI = DMC - (1 - (0.8 * DC) / (DMC + 0.4 * DC));
               }
 
               const fD = 0.626 * Math.pow(BUI, 0.809) + 2;
               const B_val = 0.1 * ISI * fD;
-              const FWI = B_val > 1 ? Math.exp(2.72 * Math.pow(B_val, 0.647)) : B_val;
+              const FWI =
+                B_val > 1 ? Math.exp(2.72 * Math.pow(B_val, 0.647)) : B_val;
 
               let riesgo = "Desconocido";
               if (FWI < 5) riesgo = "Bajo";
@@ -154,8 +160,11 @@ function ClimaCard() {
               minute: "2-digit",
               hour12: false,
             })}
-            <p>*El índice FWI es calculado automaticamente y puede variar según las condiciones climáticas actuales,
-            usar de referencia y no como un valor absoluto.</p>
+            <p>
+              *El índice FWI es calculado automaticamente y puede variar según
+              las condiciones climáticas actuales, usar de referencia y no como
+              un valor absoluto.
+            </p>
           </div>
         </div>
       ) : (

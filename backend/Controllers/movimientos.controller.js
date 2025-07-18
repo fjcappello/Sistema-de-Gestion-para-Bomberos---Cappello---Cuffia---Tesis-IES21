@@ -1,7 +1,7 @@
 const db = require("../DB/db.js");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
-// Obtener movimientos visibles
+// Obtener movimientos visibles (no se muestran a los que se le aplico soft delete)
 const obtenerMovimientos = (req, res) => {
   const query = `
     SELECT m.id, m.timestamp, m.nombre, m.apellido, m.dni, e.descripcion AS estado

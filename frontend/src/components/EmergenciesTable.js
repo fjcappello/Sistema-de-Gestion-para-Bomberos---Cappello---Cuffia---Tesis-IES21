@@ -9,7 +9,7 @@ const ITEMS_PER_PAGE = 5;
 
 function EmergenciesTable() {
   // Estados para datos
-  // Usuario
+
   const { usuario } = useUsuario();
   const [emergencies, setEmergencies] = useState([]);
   const [filteredEmergencies, setFilteredEmergencies] = useState([]);
@@ -55,12 +55,11 @@ function EmergenciesTable() {
 
   // Determinar si una emergencia está activa
   const isEmergenciaActiva = (emergencia) => {
-    // Ajusta estas condiciones según los valores reales de tu backend
     return (
       emergencia.estado === "Activo" ||
       emergencia.estado === "En curso" ||
       emergencia.estado === "1"
-    ); // Ejemplo si usas números
+    ); 
   };
 
   // Obtener datos iniciales
@@ -259,7 +258,7 @@ function EmergenciesTable() {
     );
   };
 
-  // Función para manejar agregar emergencia
+  // Función para agregar emergencia
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -287,7 +286,7 @@ function EmergenciesTable() {
     }
   };
 
-  // Función para manejar borrado
+  // Función para borrado
   const handleDelete = async () => {
     if (!deleteParteId) {
       setDeleteError("Por favor, ingrese un ID válido.");

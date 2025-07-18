@@ -1,6 +1,7 @@
 const db = require("../DB/db.js");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
+// Registrar salida de un móvil
 const registrarSalida = (req, res) => {
   const { movil_id, chofer_id, destino, jefe_dotacion, dotacion } = req.body;
 
@@ -80,13 +81,12 @@ const registrarRetorno = (req, res) => {
       }
       const km_salida = rows[0].km_salida;
       if (kilometraje_final < km_salida) {
-        return res
-          .status(400)
-          .json({
-            error: "El kilometraje final no puede ser menor al de salida",
-          });
+        return res.status(400).json({
+          error: "El kilometraje final no puede ser menor al de salida",
+        });
       }
 
+      // Actualizar el movimiento con la fecha de retorno y el kilometraje final
       const updateMovimiento = `
       UPDATE moviles_movimientos
       SET fecha_retorno = ?, kilometraje_final = ?, novedades = ?

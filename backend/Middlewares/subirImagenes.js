@@ -1,13 +1,9 @@
-const express = require('express');
-const multer = require('multer');
+const express = require("express");
+const multer = require("multer");
 
-
-const subirImagen = multer({ dest: 'resources/' });
-
+// Configuración de multer para subir imágenes
+const subirImagen = multer({ dest: "resources/" });
 
 module.exports = {
-    subirImagen
-}
-
-
-
+  subirImagen,
+};

@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../db");
 
+// GET para obtener el conteo de asistencia en los ultimos 'n' días (por defecto usamos 30 días)
 router.get("/estadisticas", (req, res) => {
   const dias = parseInt(req.query.dias) || 30;
 
@@ -22,6 +23,7 @@ router.get("/estadisticas", (req, res) => {
   });
 });
 
+// GET que permite aplicar filtros para las estadisicas, fecha desde hasta, tipo de asistencia y jefe de dotación
 router.get("/estadisticas_filtros", (req, res) => {
   const { fecha_desde, fecha_hasta, tipo_asistencia, jefe_dotacion } =
     req.query;

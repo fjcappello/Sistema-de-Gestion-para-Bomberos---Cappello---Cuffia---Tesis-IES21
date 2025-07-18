@@ -1,7 +1,7 @@
 const db = require("../DB/db.js");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
-// Obtener todos los partes con filtros
+// Obtener todos los partes con posibilidad de filtrado por jefe de dotación, tipo de asistencia, fechas y denunciante
 const obtenerPartes = (req, res) => {
   const { jefeDotacion, tipoAsistencia, startDate, endDate, denunciante } =
     req.query;
@@ -253,7 +253,10 @@ const crearBitacora = (req, res) => {
           .json({ success: false, error: "Error al actualizar parte" });
       }
       if (id_personal) {
-        registrarLog(id_personal, `Creó una bitácora asociada al parte ID ${parte_id}`);
+        registrarLog(
+          id_personal,
+          `Creó una bitácora asociada al parte ID ${parte_id}`
+        );
       }
       res.json({
         success: true,

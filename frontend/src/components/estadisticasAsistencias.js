@@ -37,10 +37,10 @@ function EstadisticaAsistencia() {
   const [fechaDesde, setFechaDesde] = useState('');
   const [fechaHasta, setFechaHasta] = useState('');
   const [nombrePersonal, setNombrePersonal] = useState('');
-  const [legajoFilter, setLegajoFilter] = useState(''); // Nuevo estado para filtro por legajo
-  const [rankingAsistenciasMenos, setRankingAsistenciasMenos] = useState([]); // Para ranking "menos"
-  const [rankingHorasMenos, setRankingHorasMenos] = useState([]); // Para ranking "menos"
-  const [asistenciaPorJerarquia, setAsistenciaPorJerarquia] = useState([]); // Nuevo estado
+  const [legajoFilter, setLegajoFilter] = useState(''); 
+  const [rankingAsistenciasMenos, setRankingAsistenciasMenos] = useState([]); 
+  const [rankingHorasMenos, setRankingHorasMenos] = useState([]);
+  const [asistenciaPorJerarquia, setAsistenciaPorJerarquia] = useState([]);
   const [listaPersonal, setListaPersonal] = useState([]);
   const { usuario } = useUsuario();
 
@@ -49,9 +49,7 @@ function EstadisticaAsistencia() {
     if (fechaDesde) params.desde = fechaDesde;
     if (fechaHasta) params.hasta = fechaHasta;
     if (nombrePersonal) params.nombre = nombrePersonal;
-    if (legajoFilter) params.legajo = legajoFilter; // Añadir legajo a los parámetros
-
-    // params.solo_personal = true; // Esta línea se elimina según cambios en backend
+    if (legajoFilter) params.legajo = legajoFilter; 
 
     console.log('Solicitando estadísticas con filtros:', params);
 
@@ -97,7 +95,6 @@ function EstadisticaAsistencia() {
         setListaPersonal(res.data);
       })
       .catch(err => console.error('Error al cargar personal:', err));
-    // eslint-disable-next-line
   }, []);
 
   const exportPDF = () => {
@@ -141,7 +138,7 @@ function EstadisticaAsistencia() {
           y += 5;
           pdf.text(`Personal: ${nombrePersonal}`, margin + 5, y);
         }
-        if (legajoFilter) { // Asegurar que legajoFilter se incluye en el PDF
+        if (legajoFilter) { 
           y += 5;
           pdf.text(`Legajo: ${legajoFilter}`, margin + 5, y);
         }
@@ -186,7 +183,7 @@ function EstadisticaAsistencia() {
 
       // PDF - Bottom 5 Asistencias
       y += 10;
-      if (y > 260) { pdf.addPage(); y = margin; } // Control de página antes de sección
+      if (y > 260) { pdf.addPage(); y = margin; } 
       pdf.setFontSize(14);
       pdf.text('Personal con Menos Asistencias', margin, y);
       y += 8;
@@ -201,7 +198,7 @@ function EstadisticaAsistencia() {
 
       // PDF - Bottom 5 Horas
       y += 10;
-      if (y > 260) { pdf.addPage(); y = margin; } // Control de página antes de sección
+      if (y > 260) { pdf.addPage(); y = margin; } 
       pdf.setFontSize(14);
       pdf.text('Personal con Menos Horas en el Cuartel', margin, y);
       y += 8;
@@ -216,7 +213,7 @@ function EstadisticaAsistencia() {
       });
 
       y += 10;
-      if (y > 260) { pdf.addPage(); y = margin; } // Control de página antes de sección
+      if (y > 260) { pdf.addPage(); y = margin; } 
       pdf.setFontSize(14);
       pdf.text('Asistencia por Día', margin, y);
       y += 8;
@@ -251,7 +248,7 @@ function EstadisticaAsistencia() {
       });
 
       // PDF - Asistencia por Jerarquía
-      if (y > 250) { // Check for page break before new section
+      if (y > 250) { 
           pdf.addPage();
           y = margin;
       }
@@ -265,7 +262,7 @@ function EstadisticaAsistencia() {
 
       if (asistenciaPorJerarquia.length > 0) {
         asistenciaPorJerarquia.forEach(item => {
-          if (y > 270) { // Check for page break within items
+          if (y > 270) { 
             pdf.addPage();
             y = margin;
           }
@@ -301,10 +298,10 @@ function EstadisticaAsistencia() {
     plugins: {
       legend: { display: true },
       tooltip: { enabled: true },
-      title: { display: true, text: 'Top 5 Asistencias' } // Título actualizado
+      title: { display: true, text: 'Top 5 Asistencias' } 
     },
     scales: {
-      x: { title: { display: true, text: 'Personal' } }, // Eje X actualizado
+      x: { title: { display: true, text: 'Personal' } }, 
       y: { beginAtZero: true, title: { display: true, text: 'Cantidad' } },
     },
   };
@@ -325,10 +322,10 @@ function EstadisticaAsistencia() {
     plugins: {
       legend: { display: true },
       tooltip: { enabled: true },
-      title: { display: true, text: 'Top 5 Horas en Cuartel' } // Título actualizado
+      title: { display: true, text: 'Top 5 Horas en Cuartel' } 
     },
     scales: {
-      x: { title: { display: true, text: 'Personal' } }, // Eje X actualizado
+      x: { title: { display: true, text: 'Personal' } }, 
       y: { beginAtZero: true, title: { display: true, text: 'Horas' } },
     },
   };
@@ -364,7 +361,7 @@ function EstadisticaAsistencia() {
   const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   const porMesData = {
     labels: porMes.map(item => {
-      const [anio, mes] = item.mes.split('-'); // espera "2025-06"
+      const [anio, mes] = item.mes.split('-'); 
       return `${meses[parseInt(mes, 10) - 1]} ${anio}`;
     }),
     datasets: [
@@ -388,14 +385,14 @@ function EstadisticaAsistencia() {
     },
   };
 
-  // Datos y opciones para Bottom 5 Asistencias
+  // Datos y opciones para TOP 5 Asistencias
   const rankingAsistenciasMenosData = {
     labels: rankingAsistenciasMenos.map(item => item.nombre_completo),
     datasets: [
       {
         label: 'Cantidad de Asistencias',
         data: rankingAsistenciasMenos.map(item => item.cantidad),
-        backgroundColor: '#ff9999', // Color diferente para Bottom 5
+        backgroundColor: '#ff9999', 
       },
     ],
   };
@@ -413,15 +410,15 @@ function EstadisticaAsistencia() {
     },
   };
 
-  // Datos y opciones para Bottom 5 Horas
+  // Datos y opciones para TOP 5 Horas
   const rankingHorasMenosData = {
-    labels: rankingHorasMenos.map(item => item.nombre_completo), // Asumiendo nombre_completo
+    labels: rankingHorasMenos.map(item => item.nombre_completo), 
     datasets: [
       {
         label: 'Horas Totales',
         data: rankingHorasMenos.map(item => parseFloat(item.horas_totales) || 0),
-        backgroundColor: '#A5D6A7', // Color diferente para Bottom 5
-      },
+        backgroundColor: '#A5D6A7'
+      }
     ],
   };
 
@@ -438,7 +435,7 @@ function EstadisticaAsistencia() {
     },
   };
 
-  // Datos y opciones para Asistencia por Jerarquía (Pie Chart)
+  // Datos y opciones para Asistencia por Jerarquía 
   const jerarquiaChartData = {
     labels: asistenciaPorJerarquia.map(item => item.jerarquia_nombre),
     datasets: [
@@ -448,7 +445,6 @@ function EstadisticaAsistencia() {
         backgroundColor: [
           '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40',
           '#FFCD56', '#C9CBCF', '#3FC2E0', '#F672A7', '#COFFEE', '#BADA55'
-          // Consider adding more diverse colors or a generator if many hierarchies
         ],
         hoverOffset: 4,
       },
@@ -514,7 +510,7 @@ function EstadisticaAsistencia() {
             setFechaDesde('');
             setFechaHasta('');
             setNombrePersonal('');
-            setLegajoFilter(''); // Limpiar filtro de legajo
+            setLegajoFilter('');
             fetchData();
           }}
         >

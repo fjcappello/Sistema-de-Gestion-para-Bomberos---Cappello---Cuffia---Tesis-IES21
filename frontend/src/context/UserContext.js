@@ -2,6 +2,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 
 const UserContext = createContext();
 
+// Funcion para acceder al usuario autenticado 
 export function UserProvider({ children }) {
   const [usuario, setUsuario] = useState(() => {
     const usuarioGuardado = sessionStorage.getItem("usuario");
