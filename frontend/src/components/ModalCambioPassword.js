@@ -43,6 +43,7 @@ const ModalCambioPassword = ({ legajo, onPasswordChanged, closeModal }) => {
     setError("");
     setSuccess("");
 
+    // Validacion de coincidencia de contraseña y que cumpla con los criterios de seguridad
     if (nueva !== confirmar) {
       setError("Las nuevas contraseñas no coinciden.");
       return;

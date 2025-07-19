@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import api from "../api";
 import "./Styles/PersonalTable.css";
 import "./Styles/Tablas.css";
-import axios from 'axios';
+import axios from "axios";
 import { useUsuario } from "../context/UserContext";
 
 const ITEMS_PER_PAGE = 5;
@@ -43,7 +43,7 @@ function PersonalTable() {
     situacion: "",
     vencida: false,
   });
-  
+
   const [filtrosAplicados, setFiltrosAplicados] = useState({
     legajo: "",
     nombreApellido: "",
@@ -58,16 +58,16 @@ function PersonalTable() {
   // Función para manejar cambios en los filtros
   const handleFilterChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFiltrosTemp(prev => ({
+    setFiltrosTemp((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   // Función para aplicar los filtros
   const aplicarFiltros = () => {
     setFiltrosAplicados({ ...filtrosTemp });
-    setCurrentPage(1); // Resetear a la primera página
+    setCurrentPage(1);
   };
 
   // Función para limpiar los filtros
@@ -92,7 +92,7 @@ function PersonalTable() {
       situacion: "",
       vencida: false,
     });
-    setCurrentPage(1); // Resetear a la primera página
+    setCurrentPage(1);
   };
 
   const fetchPersonal = async () => {
@@ -148,7 +148,7 @@ function PersonalTable() {
       return;
     }
 
-    formData.situacion_id = 1; // Establecer valor fijo de 'Activo'
+    formData.situacion_id = 1; // Establecemos como Activo por defecto
 
     try {
       const response = await axios.post(
@@ -291,7 +291,8 @@ function PersonalTable() {
   // Filtrado usando filtrosAplicados
   const personalFiltrado = personal.filter((p) => {
     const coincideLegajo =
-      filtrosAplicados.legajo === "" || p.legajo.toString().includes(filtrosAplicados.legajo);
+      filtrosAplicados.legajo === "" ||
+      p.legajo.toString().includes(filtrosAplicados.legajo);
     const coincideNombreApellido =
       filtrosAplicados.nombreApellido === "" ||
       p.nombre_completo
@@ -307,9 +308,11 @@ function PersonalTable() {
       filtrosAplicados.ingresoHasta === "" ||
       new Date(p.fecha_ingreso) <= new Date(filtrosAplicados.ingresoHasta);
     const coincideJerarquia =
-      filtrosAplicados.jerarquia === "" || p.jerarquia === filtrosAplicados.jerarquia;
+      filtrosAplicados.jerarquia === "" ||
+      p.jerarquia === filtrosAplicados.jerarquia;
     const coincideSituacion =
-      filtrosAplicados.situacion === "" || p.situacion === filtrosAplicados.situacion;
+      filtrosAplicados.situacion === "" ||
+      p.situacion === filtrosAplicados.situacion;
     const coincideVencida =
       !filtrosAplicados.vencida || isExpired(p.fecha_revision_medica);
     return (
@@ -338,19 +341,19 @@ function PersonalTable() {
 
       <div className="botonera_tablas">
         {["Administrador", "Jefatura"].includes(usuario?.rol) && (
-        <>
-          <button className="add-report-btn" onClick={openAddModal}>
-            Agregar Nuevo Personal
-          </button>
-          {
-          <button
-            className="delete-report-btn"
-            onClick={() => setIsDeleteModalOpen(true)}
-          >
-            Eliminar Personal
-          </button>
-          }
-        </>
+          <>
+            <button className="add-report-btn" onClick={openAddModal}>
+              Agregar Nuevo Personal
+            </button>
+            {
+              <button
+                className="delete-report-btn"
+                onClick={() => setIsDeleteModalOpen(true)}
+              >
+                Eliminar Personal
+              </button>
+            }
+          </>
         )}
       </div>
 
@@ -441,16 +444,24 @@ function PersonalTable() {
             <th>Jerarquía</th>
             <th>Situación</th>
             <th>Fecha Revisión Médica</th>
-            {["Administrador", "Jefatura"].includes(usuario?.rol) && <th>Acciones</th>}
+            {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+              <th>Acciones</th>
+            )}
           </tr>
-        </thead>  
+        </thead>
         <tbody>
           {currentPersonal.length > 0 ? (
             currentPersonal.map((rrhh) => (
               <tr
                 key={rrhh.legajo}
-                className={isExpired(rrhh.fecha_revision_medica) ? "vencida" : ""}
-                title={isExpired(rrhh.fecha_revision_medica) ? "Ficha médica vencida" : ""}
+                className={
+                  isExpired(rrhh.fecha_revision_medica) ? "vencida" : ""
+                }
+                title={
+                  isExpired(rrhh.fecha_revision_medica)
+                    ? "Ficha médica vencida"
+                    : ""
+                }
               >
                 <td>{rrhh.legajo}</td>
                 <td>{rrhh.nombre_completo}</td>
@@ -474,22 +485,28 @@ function PersonalTable() {
                     </span>
                   )}
                 </td>
-            {["Administrador", "Jefatura"].includes(usuario?.rol) && (
-              <td>
-                <button
-                  className="edit-btn"
-                  title="Editar esta persona"
-                  onClick={() => openEditModal(rrhh)}
-                >
-                  Editar
-                </button>
-              </td>
-            )}
+                {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+                  <td>
+                    <button
+                      className="edit-btn"
+                      title="Editar esta persona"
+                      onClick={() => openEditModal(rrhh)}
+                    >
+                      Editar
+                    </button>
+                  </td>
+                )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={["Administrador", "Jefatura"].includes(usuario?.rol) ? "9" : "8"}>
+              <td
+                colSpan={
+                  ["Administrador", "Jefatura"].includes(usuario?.rol)
+                    ? "9"
+                    : "8"
+                }
+              >
                 No hay datos de personal disponibles
               </td>
             </tr>

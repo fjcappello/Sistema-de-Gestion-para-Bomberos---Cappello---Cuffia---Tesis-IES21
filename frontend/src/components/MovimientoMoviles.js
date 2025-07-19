@@ -5,6 +5,7 @@ import "./Styles/MovimientoMoviles.css";
 import "./Styles/Tablas.css";
 import "./Styles/MovimientosPersonas.css";
 
+// Formato de fecha
 const formatFecha = (fechaStr) => {
   const fecha = new Date(fechaStr);
   const dia = String(fecha.getDate()).padStart(2, "0");
@@ -60,6 +61,7 @@ function MovimientoMoviles() {
     cargarPersonal();
   }, []);
 
+  // Obtencion de los moviles (Activos)
   const cargarMoviles = async () => {
     const response = await api.get("/moviles");
     setMoviles(response.data.filter((m) => m.estado_id === 1));
@@ -70,6 +72,7 @@ function MovimientoMoviles() {
     setPersonal(response.data);
   };
 
+  // Asoscia movimientos con el id de movil y el personal
   const cargarMovimientos = async () => {
     const response = await api.get("/moviles_movimientos");
     const movimientosConMovilId = response.data.map((mov) => {
@@ -88,6 +91,7 @@ function MovimientoMoviles() {
     setFiltros((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Seccion de manejo de filtros, aplicando los que se completaron y reinicia la pagina
   const aplicarFiltros = () => {
     setFiltrosAplicados({ ...filtros });
     setPaginaActual(1);
@@ -124,6 +128,7 @@ function MovimientoMoviles() {
     setFormSalida((prev) => ({ ...prev, dotacion: value }));
   };
 
+  // Carga de dotacion al movil
   const agregarADotacion = () => {
     const match = personal.find((p) =>
       p.nombre_completo?.toLowerCase().includes(busquedaDotacion.toLowerCase())
@@ -137,6 +142,7 @@ function MovimientoMoviles() {
     }
   };
 
+  // Registro de salida del movil
   const registrarSalida = async () => {
     const nuevosErrores = {};
     if (!formSalida.movil_id) nuevosErrores.movil_id = true;
@@ -150,6 +156,8 @@ function MovimientoMoviles() {
       return;
     }
 
+    // Verificamos si ya existe una salida activa para el móvil
+    // Si hay una salida activa, no se puede registrar una nueva
     const salidaActiva = movimientos.some(
       (m) =>
         m.movil_id?.toString() === formSalida.movil_id &&
@@ -182,6 +190,8 @@ function MovimientoMoviles() {
     }
   };
 
+  // Registro de retorno del movil
+  // Se verifica que el kilometraje final sea mayor al de salida
   const registrarRetorno = async () => {
     try {
       await api.put(
@@ -225,6 +235,9 @@ function MovimientoMoviles() {
     (paginaActual - 1) * registrosPorPagina,
     paginaActual * registrosPorPagina
   );
+
+  // Funcion para exportar los movimientos a Excel
+  // Si hay filtros aplicados, se exportan los movimientos filtrados
 
   const exportarAExcel = () => {
     const data = movimientosFiltrados.map((m) => {

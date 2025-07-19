@@ -25,6 +25,7 @@ function MovimientosPersonas() {
   const ITEMS_PER_PAGE = 5;
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Carga de personal y movimientos, si se deja vacio habilita el ingreso manual
   const fetchPersonal = async () => {
     try {
       const response = await api.get(
@@ -90,6 +91,8 @@ function MovimientosPersonas() {
     }
   };
 
+  // Registro de movimiento, verifica si la ultima accion fue un ingreso o egreso
+  // para evitar duplicados
   const registrarMovimiento = async (estado_id) => {
     try {
       if (!formData.nombre || !formData.apellido || !formData.dni) {
@@ -139,6 +142,9 @@ function MovimientosPersonas() {
     }
   };
 
+  // Elimina un movimiento de la interfaz, no lo borra de la base de datos
+  // Se utiliza para ocultar movimientos erroneos 
+
   const eliminarMovimientoLocal = async (id) => {
     try {
       await api.put(
@@ -149,6 +155,8 @@ function MovimientosPersonas() {
       console.error("Error al ocultar movimiento:", error);
     }
   };
+
+  // Filtros
 
   const aplicarFiltros = () => {
     setFiltrosAplicados({
