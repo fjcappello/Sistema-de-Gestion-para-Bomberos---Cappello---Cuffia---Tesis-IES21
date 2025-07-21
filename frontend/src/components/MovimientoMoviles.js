@@ -142,6 +142,18 @@ function MovimientoMoviles() {
     }
   };
 
+  //Funcion de formulario para registrar una salida
+  const handleSubmitSalida = (e) => {
+  e.preventDefault(); 
+  registrarSalida();  
+  };
+
+  //Funcion de formulario para registrar un retorno
+  const handleRegistrarRetorno = (e) => {
+    e.preventDefault();
+    registrarRetorno();
+  }
+
   // Registro de salida del movil
   const registrarSalida = async () => {
     const nuevosErrores = {};
@@ -206,7 +218,7 @@ function MovimientoMoviles() {
       console.error("Error real al registrar retorno:", err);
       if (err.response) {
         alert(
-          `Error al registrar retorno: ${err.response.status} - ${
+          `Error al registrar retorno: ${
             err.response.data?.error || err.response.statusText
           }`
         );
@@ -413,157 +425,160 @@ function MovimientoMoviles() {
 
       {mostrarModalSalida && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="modal-content">
             <h3>Registrar salida</h3>
-            <select
-              name="movil_id"
-              className={erroresSalida.movil_id ? "input-error" : ""}
-              value={formSalida.movil_id}
-              onChange={handleFormSalidaChange}
-            >
-              <option value="">Seleccione móvil</option>
-              {moviles.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.interno}
-                </option>
-              ))}
-            </select>
-            <select
-              name="chofer_id"
-              className={erroresSalida.chofer_id ? "input-error" : ""}
-              value={formSalida.chofer_id}
-              onChange={handleFormSalidaChange}
-            >
-              <option value="">Seleccione chofer</option>
-              {personal.map((p) => (
-                <option key={p.legajo} value={p.legajo}>
-                  {p.nombre_completo || `Legajo ${p.legajo}`}
-                </option>
-              ))}
-            </select>
-            <select
-              name="jefe_dotacion"
-              value={formSalida.jefe_dotacion}
-              onChange={handleFormSalidaChange}
-            >
-              <option value="">Seleccione jefe de dotación</option>
-              {personal.map((p) => (
-                <option key={p.legajo} value={p.legajo}>
-                  {p.nombre_completo || `Legajo ${p.legajo}`}
-                </option>
-              ))}
-            </select>
-            <input
-              type="text"
-              name="destino"
-              className={erroresSalida.destino ? "input-error" : ""}
-              placeholder="Destino"
-              value={formSalida.destino}
-              onChange={handleFormSalidaChange}
-            />
-            <label>Seleccione dotación (opcional)</label>
-            <input
-              type="text"
-              placeholder="Buscar personal"
-              value={busquedaDotacion}
-              onChange={(e) => setBusquedaDotacion(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && agregarADotacion()}
-            />
-            {busquedaDotacion && (
-              <ul className="sugerencias-dotacion">
-                {personal
-                  .filter(
-                    (p) =>
-                      p.nombre_completo
-                        ?.toLowerCase()
-                        .includes(busquedaDotacion.toLowerCase()) &&
-                      !formSalida.dotacion.includes(p.legajo)
-                  )
-                  .slice(0, 5)
-                  .map((p) => (
-                    <li
-                      key={p.legajo}
-                      onClick={() => {
-                        setFormSalida((prev) => ({
-                          ...prev,
-                          dotacion: [...prev.dotacion, p.legajo],
-                        }));
-                        setBusquedaDotacion("");
-                      }}
-                    >
-                      {p.nombre_completo}
-                    </li>
-                  ))}
-              </ul>
-            )}
-            <button type="button" onClick={agregarADotacion}>
-              Agregar a dotación
-            </button>
-            <ul>
-              {formSalida.dotacion.map((legajo) => {
-                const persona = personal.find((p) => p.legajo === legajo);
-                return (
-                  <li key={legajo}>
-                    {persona?.nombre_completo || `Legajo ${legajo}`}
-                    <button
-                      className="btn-eliminar"
-                      onClick={() => {
-                        setFormSalida((prev) => ({
-                          ...prev,
-                          dotacion: prev.dotacion.filter((l) => l !== legajo),
-                        }));
-                      }}
-                    >
-                      ✖
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-            <div className="form-buttons-agregar">
-              <button onClick={registrarSalida}>Guardar</button>
-              <button onClick={() => setMostrarModalSalida(false)}>
-                Cancelar
+            <form className="form-container" onSubmit={handleSubmitSalida}>
+              <select
+                name="movil_id"
+                className={erroresSalida.movil_id ? "input-error" : ""}
+                value={formSalida.movil_id}
+                onChange={handleFormSalidaChange}
+              >
+                <option value="">Seleccione móvil</option>
+                {moviles.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.interno}
+                  </option>
+                ))}
+              </select>
+              <select
+                name="chofer_id"
+                className={erroresSalida.chofer_id ? "input-error" : ""}
+                value={formSalida.chofer_id}
+                onChange={handleFormSalidaChange}
+              >
+                <option value="">Seleccione chofer</option>
+                {personal.map((p) => (
+                  <option key={p.legajo} value={p.legajo}>
+                    {p.nombre_completo || `Legajo ${p.legajo}`}
+                  </option>
+                ))}
+              </select>
+              <select
+                name="jefe_dotacion"
+                value={formSalida.jefe_dotacion}
+                onChange={handleFormSalidaChange}
+              >
+                <option value="">Seleccione jefe de dotación</option>
+                {personal.map((p) => (
+                  <option key={p.legajo} value={p.legajo}>
+                    {p.nombre_completo || `Legajo ${p.legajo}`}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="text"
+                name="destino"
+                className={erroresSalida.destino ? "input-error" : ""}
+                placeholder="Destino"
+                value={formSalida.destino}
+                onChange={handleFormSalidaChange}
+              />
+              <label>Seleccione dotación (opcional)</label>
+              <input
+                type="text"
+                placeholder="Buscar personal"
+                value={busquedaDotacion}
+                onChange={(e) => setBusquedaDotacion(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && agregarADotacion()}
+              />
+              {busquedaDotacion && (
+                <ul className="sugerencias-dotacion">
+                  {personal
+                    .filter(
+                      (p) =>
+                        p.nombre_completo
+                          ?.toLowerCase()
+                          .includes(busquedaDotacion.toLowerCase()) &&
+                        !formSalida.dotacion.includes(p.legajo)
+                    )
+                    .slice(0, 5)
+                    .map((p) => (
+                      <li
+                        key={p.legajo}
+                        onClick={() => {
+                          setFormSalida((prev) => ({
+                            ...prev,
+                            dotacion: [...prev.dotacion, p.legajo],
+                          }));
+                          setBusquedaDotacion("");
+                        }}
+                      >
+                        {p.nombre_completo}
+                      </li>
+                    ))}
+                </ul>
+              )}
+              <button className="confirm-btn" type="button" onClick={agregarADotacion}>
+                Agregar a dotación
               </button>
-            </div>
+              <ul>
+                {formSalida.dotacion.map((legajo) => {
+                  const persona = personal.find((p) => p.legajo === legajo);
+                  return (
+                    <li key={legajo}>
+                      {persona?.nombre_completo || `Legajo ${legajo}`}
+                      <button
+                        className="btn-eliminar"
+                        onClick={() => {
+                          setFormSalida((prev) => ({
+                            ...prev,
+                            dotacion: prev.dotacion.filter((l) => l !== legajo),
+                          }));
+                        }}
+                      >
+                        ✖
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+              <div className="form-buttons">
+                <button className="submit-btn" type="submit">Guardar</button>
+                <button className="cancel-btn" onClick={() => setMostrarModalSalida(false)}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
 
       {mostrarModalRetorno && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="modal-content">
             <h3>Registrar retorno</h3>
-            <label>Kilometraje final</label>
-            <input
-              type="number"
-              name="kilometraje_final"
-              placeholder="Kilometraje final"
-              value={formRetorno.kilometraje_final}
-              onChange={handleFormRetornoChange}
-            />
-            <label>Novedades</label>
-            <textarea
-              name="novedades"
-              placeholder="Novedades"
-              value={formRetorno.novedades}
-              onChange={handleFormRetornoChange}
-            ></textarea>
-            <div className="form-buttons-agregar">
-              <button onClick={registrarRetorno}>Guardar</button>
-              <button onClick={() => setMostrarModalRetorno(false)}>
-                Cancelar
-              </button>
-            </div>
+            <form className="form-container" onSubmit={handleRegistrarRetorno}>
+              <input
+                type="number"
+                name="kilometraje_final"
+                placeholder="Kilometraje final"
+                value={formRetorno.kilometraje_final}
+                onChange={handleFormRetornoChange}
+              />
+              <textarea
+                name="novedades"
+                placeholder="Escriba aqui las novedades"
+                value={formRetorno.novedades}
+                onChange={handleFormRetornoChange}
+              ></textarea>
+              <div className="form-buttons">
+                <button className="submit-btn" type="submit">Guardar</button>
+                <button className="cancel-btn" onClick={() => setMostrarModalRetorno(false)}>
+                  Cancelar
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
       {novedadSeleccionada && (
         <div className="modal-overlay">
-          <div className="modal">
+          <div className="modal-content">
             <h3>Novedades</h3>
             <p>{novedadSeleccionada}</p>
-            <button
+            <div className="form-buttons">
+              <button className="cancel-btn"
               onClick={() => {
                 setNovedadSeleccionada(null);
                 cargarMovimientos();
@@ -571,6 +586,7 @@ function MovimientoMoviles() {
             >
               Cerrar
             </button>
+            </div>
           </div>
         </div>
       )}

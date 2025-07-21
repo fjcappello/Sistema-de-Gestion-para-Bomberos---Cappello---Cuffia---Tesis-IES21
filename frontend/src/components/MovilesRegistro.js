@@ -348,12 +348,14 @@ function MovilesRegistro() {
 
       {editData && (
         <div className="modal-overlay">
-          <div className="modal">
-            <form className="moviles-registro-editar-form" onSubmit={handleEditSubmit}>
-              <label>Kilometraje Actual:</label>
+          <div className="modal-content">
+            <h3>Editar móvil</h3>
+            <form className="form-container" onSubmit={handleEditSubmit}>
+              <label>Kilometraje Inicial:</label>
               <input
                 type="number"
                 name="kilometraje_actual"
+                min={0}
                 value={editFormData.kilometraje_actual}
                 onChange={handleEditChange}
                 placeholder="Kilometraje Actual"
@@ -365,7 +367,6 @@ function MovilesRegistro() {
                 value={editFormData.fecha_service}
                 onChange={handleEditChange}
               />
-              <label>Estado:</label>
               <select
                 name="estado_id"
                 value={editFormData.estado_id || ""}
@@ -377,10 +378,10 @@ function MovilesRegistro() {
                   </option>
                 ))}
               </select>
-              <button type="submit">Guardar</button>
-              <button type="button" onClick={() => setEditData(null)}>
-                Cancelar
-              </button>
+              <div className="form-buttons">
+                <button className="submit-btn" type="submit">Guardar</button>
+                <button className="cancel-btn" type="button" onClick={() => setEditData(null)}>Cancelar</button>
+              </div>
             </form>
           </div>
         </div>
@@ -388,53 +389,54 @@ function MovilesRegistro() {
 
       {isAddModalOpen && (
         <div className="modal-overlay">
-          <div className="modal">
-            <h2>Agregar Móvil</h2>
-            <form className="moviles-registro-agregar-form" onSubmit={handleSubmit}>
-              <label>Interno:</label>
+          <div className="modal-content">
+            <h3>Agregar Móvil</h3>
+            <form className="form-container" onSubmit={handleSubmit}>
               <input
                 type="text"
                 name="interno"
+                placeholder="Codigo interno"
                 value={formData.interno}
                 onChange={handleChangeFormData}
                 required
               />
-              <label>Marca:</label>
               <input
                 type="text"
                 name="marca"
+                placeholder="Marca"
                 value={formData.marca}
                 onChange={handleChangeFormData}
                 required
               />
-              <label>Modelo:</label>
               <input
                 type="text"
                 name="modelo"
+                placeholder="Modelo"
                 value={formData.modelo}
                 onChange={handleChangeFormData}
                 required
               />
-              <label>Dominio:</label>
               <input
                 type="text"
                 name="dominio"
+                placeholder="Dominio"
                 value={formData.dominio}
                 onChange={handleChangeFormData}
                 required
               />
-              <label>VIN:</label>
               <input
                 type="text"
                 name="vin"
+                placeholder="VIN"
                 value={formData.vin}
                 onChange={handleChangeFormData}
                 required
               />
-              <label>Kilometraje:</label>
               <input
                 type="number"
                 name="kilometraje_inicial"
+                placeholder="Kilometraje Inicial"
+                min={0}
                 value={formData.kilometraje_inicial}
                 onChange={handleChangeFormData}
                 required
@@ -447,7 +449,6 @@ function MovilesRegistro() {
                 onChange={handleChangeFormData}
                 required
               />
-              <label>Estado:</label>
               <select
                 name="estado_id"
                 value={formData.estado_id}
@@ -461,9 +462,9 @@ function MovilesRegistro() {
                   </option>
                 ))}
               </select>
-              <div className="form-buttons-agregar">
-                <button type="submit">Guardar</button>
-                <button type="button" onClick={() => setIsAddModalOpen(false)}>
+              <div className="form-buttons">
+                <button className="submit-btn" type="submit">Guardar</button>
+                <button className="cancel-btn" type="button" onClick={() => setIsAddModalOpen(false)}>
                   Cancelar
                 </button>
               </div>

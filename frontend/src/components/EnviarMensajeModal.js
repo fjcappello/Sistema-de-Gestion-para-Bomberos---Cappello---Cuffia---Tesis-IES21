@@ -164,12 +164,14 @@ function EnviarMensajeModal({ onClose, onSent }) {
             onChange={handleChange}
             required
           />
-          <button type="submit" className="submit-btn">
-            Enviar
-          </button>
-          <button type="button" className="close-modal-btn" onClick={onClose}>
-            Cancelar
-          </button>
+          <div className="form-buttons">
+            <button type="submit" className="submit-btn">
+              Enviar
+            </button>
+            <button type="button" className="cancel-btn" onClick={onClose}>
+              Cancelar
+            </button>
+          </div>
         </form>
       </div>
     </div>

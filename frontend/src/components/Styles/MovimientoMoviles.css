@@ -2,23 +2,6 @@
   height: 120px;
 }
 
-.submit-btn {
-  display: block;
-  width: 100%;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 0.6rem;
-  font-size: 1rem;
-  border-radius: 4px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.submit-btn:hover {
-  background-color: #45a049;
-}
 
 .moviles-movimientos-filtros {
   display: flex;

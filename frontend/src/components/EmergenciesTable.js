@@ -483,19 +483,12 @@ function EmergenciesTable() {
       {isAddModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3
-              style={{
-                margin: "0 0 1rem 0",
-                padding: "1.5rem 1.5rem 0",
-                color: "#333",
-                fontSize: "1.25rem",
-              }}
-            >
+            <h3>
               Agregar Nuevo Reporte
             </h3>
 
             <form onSubmit={handleAddSubmit} className="form-container">
-              <div style={{ display: "flex", gap: "0.75rem" }}>
+              <div >
                 <input
                   type="text"
                   name="nombre_denunciante"
@@ -598,7 +591,7 @@ function EmergenciesTable() {
                 required
               />
               <div className="form-buttons">
-                <button type="submit" className="confirm-btn">
+                <button type="submit" className="submit-btn">
                   Guardar Reporte
                 </button>
                 <button
