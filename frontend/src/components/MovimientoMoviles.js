@@ -551,6 +551,7 @@ function MovimientoMoviles() {
             <form className="form-container" onSubmit={handleRegistrarRetorno}>
               <input
                 type="number"
+                min={0}
                 name="kilometraje_final"
                 placeholder="Kilometraje final"
                 value={formRetorno.kilometraje_final}

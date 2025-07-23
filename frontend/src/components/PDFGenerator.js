@@ -21,7 +21,6 @@ function PDFGenerator({ partData, onClose }) {
       });
 
     // Obtener bitácora
-    console.log("API_URL:", process.env.REACT_APP_API_URL);
     const fetchBitacora = async () => {
       setLoading(true);
       try {

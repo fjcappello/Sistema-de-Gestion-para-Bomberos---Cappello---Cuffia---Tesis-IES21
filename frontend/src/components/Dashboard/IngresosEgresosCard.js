@@ -123,7 +123,7 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
 
       {isModalOpen && (
         <Modal>
-          <h4>Registrar Movimiento</h4>
+          <h3>Registrar Movimiento</h3>
           <select
             className="persona-select"
             value={selectedId}
@@ -184,9 +184,9 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
           <br />
           <br />
           <div className="modal-buttons">
-            <button onClick={() => handleRegistro(1)}>Marcar Ingreso</button>
-            <button onClick={() => handleRegistro(2)}>Marcar Egreso</button>
-            <button
+            <button className="submit-btn" onClick={() => handleRegistro(1)}>Marcar Ingreso</button>
+            <button className="cancel-btn" onClick={() => handleRegistro(2)}>Marcar Egreso</button>
+            <button className="cancel-btn"
               onClick={() => {
                 setFormData({
                   nombre: "",

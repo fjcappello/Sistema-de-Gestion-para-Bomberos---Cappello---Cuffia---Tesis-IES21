@@ -203,12 +203,12 @@ function MovimientosPersonas() {
       </aside>
       <main className="movimientos-main-content">
         {vistaActiva === "registrar" && (
-          <>
+          <div className="table-container">
             <h2 className="table-title">Registrar Ingreso / Egreso</h2>
             <div className="movimientos-form">
-              <div className="form-group-fluent">
+              <div className="form-container">
                 <label htmlFor="personalSelect" className="form-label-fluent">Seleccionar Personal (Opcional)</label>
-                <select id="personalSelect" value={selectedId} onChange={handleSelectChange} className="form-control-fluent">
+                <select  value={selectedId} onChange={handleSelectChange}>
                   <option value="">Ingreso Manual...</option>
                   {personal.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -216,10 +216,8 @@ function MovimientosPersonas() {
                     </option>
                   ))}
                 </select>
-              </div>
-
-              <div className="form-group-fluent">
-                <label htmlFor="nombreInput" className="form-label-fluent">Nombre</label>
+              
+                <label htmlFor="nombreInput">Nombre</label>
                 <input
                   id="nombreInput"
                   type="text"
@@ -228,12 +226,10 @@ function MovimientosPersonas() {
                   value={formData.nombre}
                   onChange={handleInputChange}
                   disabled={!!selectedId}
-                  className="form-control-fluent"
                   required={!selectedId}
                 />
-              </div>
-              <div className="form-group-fluent">
-                <label htmlFor="apellidoInput" className="form-label-fluent">Apellido</label>
+
+                <label htmlFor="apellidoInput">Apellido</label>
                 <input
                   id="apellidoInput"
                   type="text"
@@ -242,12 +238,10 @@ function MovimientosPersonas() {
                   value={formData.apellido}
                   onChange={handleInputChange}
                   disabled={!!selectedId}
-                  className="form-control-fluent"
                   required={!selectedId}
                 />
-              </div>
-              <div className="form-group-fluent">
-                <label htmlFor="dniInput" className="form-label-fluent">DNI</label>
+    
+                <label htmlFor="dniInput">DNI</label>
                 <input
                   id="dniInput"
                   type="text"
@@ -256,30 +250,19 @@ function MovimientosPersonas() {
                   value={formData.dni}
                   onChange={handleInputChange}
                   disabled={!!selectedId}
-                  className="form-control-fluent"
                   required={!selectedId}
                 />
-              </div>
 
-              <div className="movimientos-form-actions">
-                <button
-                  className="btn-fluent ingreso"
-                  onClick={() => registrarMovimiento(1)}
-                >
-                  Marcar Ingreso
-                </button>
-                <button
-                  className="btn-fluent egreso"
-                  onClick={() => registrarMovimiento(2)}
-                >
-                  Marcar Egreso
-                </button>
+              <div className="form-buttons">
+                <button className="submit-btn" onClick={() => registrarMovimiento(1)}>Marcar Ingreso</button>
+                <button className="cancel-btn"onClick={() => registrarMovimiento(2)}>Marcar Egreso</button>
               </div>
             </div>
-          </>
+            </div>
+          </div>
         )}
         {vistaActiva === "historial" && (
-          <>
+          <div className="table-container">
             <h2 className="table-title">Historial de asistencia</h2>
             <div className="filtros">
               <input
@@ -302,9 +285,7 @@ function MovimientosPersonas() {
                 <option value="Ingreso">Ingreso</option>
                 <option value="Egreso">Egreso</option>
               </select>
-              <button className="btn-fluent" onClick={aplicarFiltros}> {/* Botón Fluent */}
-                Filtrar
-              </button>
+              <button onClick={aplicarFiltros}>Aplicar filtros</button>
             </div>
             <table className="table-fluent movimientos-table">
               <thead>
@@ -339,7 +320,7 @@ function MovimientosPersonas() {
                       {["Administrador", "Jefatura"].includes(usuario?.rol) && (
                         <td>
                           <button
-                            className="btn-fluent eliminar" // Clase Fluent
+                            className="edit-btn"
                             onClick={() => eliminarMovimientoLocal(m.id)}
                           >
                             Eliminar
@@ -375,7 +356,7 @@ function MovimientosPersonas() {
                 Siguiente
               </button>
             </div>
-          </>
+          </div>
         )}
       </main>
     </div>

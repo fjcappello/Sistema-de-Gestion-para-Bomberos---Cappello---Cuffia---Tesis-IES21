@@ -103,6 +103,19 @@ function EmergenciesTable() {
     const { name, value } = e.target;
     setFilters({ ...filters, [name]: value });
   };
+  const handleCleanFilters = () => {
+  const resetFilters = {
+    jefeDotacion: "",
+    tipoAsistencia: "",
+    startDate: "",
+    endDate: "",
+    denunciante: "",
+  };
+  setFilters(resetFilters);
+  setFilteredEmergencies(emergencies);
+  setCurrentPage(1);
+};
+
 
   const handleApplyFilters = () => {
     const filtered = emergencies.filter((emergencia) => {
@@ -386,6 +399,9 @@ function EmergenciesTable() {
           <button onClick={handleApplyFilters} className="filter-btn">
             Aplicar Filtros
           </button>
+          <button onClick={handleCleanFilters} className="filter-btn">
+            Limpiar filtros
+          </button>
         </div>
 
 
@@ -519,6 +535,7 @@ function EmergenciesTable() {
 
               <input
                 type="number"
+                min={0}
                 name="documento_denunciante"
                 placeholder="Documento de identidad"
                 value={formData.documento_denunciante}
