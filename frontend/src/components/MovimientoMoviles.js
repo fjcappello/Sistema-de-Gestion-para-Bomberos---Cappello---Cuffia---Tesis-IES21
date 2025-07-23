@@ -577,7 +577,7 @@ function MovimientoMoviles() {
         <div className="modal-overlay">
           <div className="modal-content">
             <h3>Novedades</h3>
-            <p>{novedadSeleccionada}</p>
+            <div className="bitacora-content">{novedadSeleccionada}</div>
             <div className="form-buttons">
               <button className="cancel-btn"
               onClick={() => {
