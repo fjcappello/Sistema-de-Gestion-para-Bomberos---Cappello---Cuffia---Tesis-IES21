@@ -34,7 +34,7 @@ const obtenerPersonal = (req, res) => {
 // Obtener nombres de personal
 const obtenerNombres = (req, res) => {
   const query = `
-    SELECT legajo AS id, nombre, apellido, CONCAT(nombre, " ", apellido) AS nombre_completo
+    SELECT legajo AS id, nombre, apellido, CONCAT(nombre, " ", apellido) AS nombre_completo, email
     FROM personal
     ORDER BY nombre ASC
   `;
