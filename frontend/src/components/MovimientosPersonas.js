@@ -102,15 +102,13 @@ function MovimientosPersonas() {
         return;
       }
 
-      const personaKey =
-        selectedId || `${formData.nombre}-${formData.apellido}-${formData.dni}`;
       const movimientosPersona = movimientos
         .filter((m) => {
-          if (selectedId) return m.dni === personaKey;
+          if (selectedId) return m.dni === formData.dni;
           return (
+            m.dni === formData.dni &&
             m.nombre === formData.nombre &&
-            m.apellido === formData.apellido &&
-            m.dni === formData.dni
+            m.apellido === formData.apellido
           );
         })
         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
