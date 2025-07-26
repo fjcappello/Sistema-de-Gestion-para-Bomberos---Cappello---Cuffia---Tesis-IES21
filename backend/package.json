@@ -4,7 +4,7 @@
   "description": "Sistema de Gestión de Bomberos",
   "main": "backend/server.js",
   "scripts": {
-    "start-backend": "node backend/server.js",
+    "start-backend": "nodemon backend/server.js",
     "start-frontend": "cd frontend && npm start",
     "dev": "concurrently \"npm run start-backend\" \"npm run start-frontend\""
   },
@@ -18,7 +18,8 @@
     "mysql2": "^3.14.1"
   },
   "devDependencies": {
-    "concurrently": "^9.1.2"
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.10"
   },
   "keywords": [],
   "author": "Franco Cappello y Facundo Cuffia",

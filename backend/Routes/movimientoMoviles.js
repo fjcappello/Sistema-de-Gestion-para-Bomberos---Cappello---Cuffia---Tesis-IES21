@@ -12,7 +12,7 @@ const {
 router.post("/moviles_salida", registrarSalida);
 
 // Registrar retorno
-router.put("/moviles_retorno/:id", registrarRetorno);
+router.put("/moviles_retorno", registrarRetorno);
 
 // Obtener móviles en salida
 router.get("/moviles_en_salida", obtenerMovilesEnSalida);

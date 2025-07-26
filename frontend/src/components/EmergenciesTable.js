@@ -116,7 +116,6 @@ function EmergenciesTable() {
   setCurrentPage(1);
 };
 
-
   const handleApplyFilters = () => {
     const filtered = emergencies.filter((emergencia) => {
       const matchesDenunciante =
@@ -189,9 +188,9 @@ function EmergenciesTable() {
       return;
     }
     try {
-      const id_personal = 1;
+      const legajo = usuario?.legajo
       const response = await api.post("/bitacora", {
-        id_personal: id_personal,
+        legajo: legajo,
         reporte: bitacoraText,
         parte_id: selectedPartId,
       });
@@ -275,7 +274,11 @@ function EmergenciesTable() {
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("/partesemergencias", formData);
+      const datos = {
+        ...formData,
+        legajo: usuario?.legajo
+      }
+      const response = await api.post("/partesemergencias", datos);
       if (response.data.success) {
         alert("Emergencia agregada correctamente");
         setIsAddModalOpen(false);
@@ -301,12 +304,16 @@ function EmergenciesTable() {
 
   // Función para borrado
   const handleDelete = async () => {
+    const datos = {
+      id: deleteParteId,
+      legajo: usuario?.legajo
+    };
     if (!deleteParteId) {
       setDeleteError("Por favor, ingrese un ID válido.");
       return;
     }
     try {
-      const response = await api.delete(`/eliminarEmergencia/${deleteParteId}`);
+      const response = await api.delete(`/eliminarEmergencia`, {data:datos});
       if (response.data.success) {
         alert("Reporte eliminado correctamente");
         setIsDeleteModalOpen(false);
@@ -491,10 +498,6 @@ function EmergenciesTable() {
         </button>
       </div>
 
-      
-
-
-
       {/* Modal para Agregar Reporte */}
       {isAddModalOpen && (
         <div className="modal-overlay">
@@ -664,7 +667,7 @@ function EmergenciesTable() {
               rows={8}
               style={{ width: "100%", marginBottom: "1rem", resize: "none" }}
             />
-            <div class="modal-buttons">
+            <div className="modal-buttons">
               <button onClick={handleConfirmBitacora} className="confirm-btn">
                 Confirmar
               </button>

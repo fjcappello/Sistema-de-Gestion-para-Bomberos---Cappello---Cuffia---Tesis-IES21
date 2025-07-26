@@ -3,7 +3,7 @@ const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 // Registrar salida de un móvil
 const registrarSalida = (req, res) => {
-  const { movil_id, chofer_id, destino, jefe_dotacion, dotacion } = req.body;
+  const { movil_id, chofer_id, destino, jefe_dotacion, dotacion, legajo} = req.body;
 
   db.query(
     "SELECT kilometraje_actual FROM moviles WHERE id = ?",
@@ -47,7 +47,7 @@ const registrarSalida = (req, res) => {
               }
               res.json({ success: "Salida registrada", movimiento_id });
               registrarLog(
-                jefe_dotacion,
+                legajo,
                 `Registró salida de móvil ID ${movil_id} hacia "${destino}"`
               );
             });
@@ -65,8 +65,7 @@ const registrarSalida = (req, res) => {
 };
 
 const registrarRetorno = (req, res) => {
-  const { id } = req.params;
-  const { kilometraje_final, novedades } = req.body;
+  const { id, legajo, kilometraje_final, novedades } = req.body;
   const fecha_retorno = new Date();
 
   // Validar que el kilometraje_final no sea menor al km_salida
@@ -127,14 +126,9 @@ const registrarRetorno = (req, res) => {
                       .status(500)
                       .json({ error: "Error al actualizar kilometraje" });
                   }
-
-                  console.log(
-                    "✔ Retorno registrado con éxito para movimiento ID:",
-                    id
-                  );
                   res.json({ success: "Retorno registrado" });
                   registrarLog(
-                    null,
+                    legajo,
                     `Registró retorno del móvil ID ${movil_id}, movimiento ID ${id}`
                   );
                 }

@@ -87,7 +87,11 @@ function MovilesRegistro() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await api.post("/moviles_agregar", formData);
+      const data = {
+        ...formData,
+        legajo: usuario?.legajo
+      };
+      await api.post("/moviles_agregar", data);
       alert("Móvil agregado correctamente");
       setIsAddModalOpen(false);
       fetchMoviles();
@@ -187,7 +191,12 @@ function MovilesRegistro() {
     }
 
     try {
-      await api.put(`/moviles_editar/${editData.id}`, cambios);
+      const data = {
+        ...cambios,
+        id: editData.id,
+        legajo: usuario?.legajo
+      }
+      await api.put(`/moviles_editar`, data);
       alert("Móvil editado correctamente");
       setEditData(null);
       fetchMoviles();
