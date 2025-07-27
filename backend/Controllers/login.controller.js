@@ -56,6 +56,7 @@ const loginUsuario = function (req, res) {
         }
         return res.json({
           success: true,
+          legajo: legajo,
           nombreCompleto: nombre_completo,
           primerIngreso: primer_ingreso,
           token,
@@ -65,7 +66,7 @@ const loginUsuario = function (req, res) {
     } else {
       return res.json({
         success: false,
-        error: "Legajo o contraseña incorrectos",
+        message: "Legajo o contraseña incorrectos",
       });
     }
   });

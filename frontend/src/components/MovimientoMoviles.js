@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../api";
+import { useUsuario } from "../context/UserContext";
 import * as XLSX from "xlsx";
 import "./Styles/MovimientoMoviles.css";
 import "./Styles/Tablas.css";
@@ -31,6 +32,7 @@ function MovimientoMoviles() {
     fechaHasta: "",
   });
   
+  const { usuario } = useUsuario();
   const [mostrarModalSalida, setMostrarModalSalida] = useState(false);
   const [mostrarModalRetorno, setMostrarModalRetorno] = useState(false);
   const [moviles, setMoviles] = useState([]);
@@ -185,7 +187,11 @@ function MovimientoMoviles() {
     }
 
     try {
-      await api.post("/moviles_salida", { ...formSalida });
+      const data = {
+        ...formSalida,
+        legajo: usuario?.legajo
+      };
+      await api.post("/moviles_salida", data);
       cargarMovimientos();
       setMostrarModalSalida(false);
       setFormSalida({
@@ -206,11 +212,12 @@ function MovimientoMoviles() {
   // Se verifica que el kilometraje final sea mayor al de salida
   const registrarRetorno = async () => {
     try {
-      await api.put(
-        `/moviles_retorno/${movimientoSeleccionado.id}`,
-        formRetorno
-      );
-
+      const data = {
+        id: movimientoSeleccionado.id,
+        ...formRetorno,
+        legajo: usuario?.legajo
+      };
+      await api.put(`/moviles_retorno`, data);
       cargarMovimientos();
       setMostrarModalRetorno(false);
       setFormRetorno({ kilometraje_final: "", novedades: "" });

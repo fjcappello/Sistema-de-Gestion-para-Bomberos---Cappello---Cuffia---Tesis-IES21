@@ -99,6 +99,7 @@ function MovimientosPersonas() {
         alert(
           "Por favor complete todos los campos antes de registrar el movimiento."
         );
+
         return;
       }
 
@@ -130,6 +131,7 @@ function MovimientosPersonas() {
         apellido: formData.apellido,
         dni: formData.dni,
         estado_id,
+        legajo: usuario?.legajo
       };
       await api.post("/movimientos_cuartel", payload);
       fetchMovimientos();
@@ -142,12 +144,13 @@ function MovimientosPersonas() {
 
   // Elimina un movimiento de la interfaz, no lo borra de la base de datos
   // Se utiliza para ocultar movimientos erroneos 
-
   const eliminarMovimientoLocal = async (id) => {
     try {
-      await api.put(
-        `/movimientos_cuartel/${id}/ocultar`
-      );
+      const data = {
+        id: id,
+        legajo: usuario?.legajo
+      };
+      await api.put(`/movimientos_cuartel/ocultar`, data);
       fetchMovimientos();
     } catch (error) {
       console.error("Error al ocultar movimiento:", error);

@@ -13,6 +13,6 @@ router.get("/movimientos_cuartel", obtenerMovimientos);
 router.post("/movimientos_cuartel", registrarMovimiento);
 
 // PUT ocultar movimiento
-router.put("/movimientos_cuartel/:id/ocultar", ocultarMovimiento);
+router.put("/movimientos_cuartel/ocultar", ocultarMovimiento);
 
 module.exports = router;

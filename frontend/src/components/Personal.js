@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import api from "../api";
 import "./Styles/PersonalTable.css";
 import "./Styles/Tablas.css";
 import axios from "axios";
@@ -133,6 +132,7 @@ function PersonalTable() {
     setFormData({ ...formData, [name]: value });
   };
 
+  //Agregar personal
   const handleAddSubmit = async (e) => {
     e.preventDefault();
 
@@ -149,22 +149,21 @@ function PersonalTable() {
     }
 
     formData.situacion_id = 1; // Establecemos como Activo por defecto
+    const data = {
+      ...formData,
+      legajoOperador: usuario?.legajo
+    }
+    
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/personal",
-        formData
-      );
+      const response = await axios.post("http://localhost:3001/personal", data);
       if (response.data.success) {
         alert("Personal agregado correctamente");
         setIsAddModalOpen(false);
         clearFormData();
         fetchPersonal();
       } else {
-        alert(
-          "Error al agregar personal: " +
-            (response.data.error || "Operación fallida")
-        );
+        alert("Error al agregar personal: " +(response.data.error || "Operación fallida"));
       }
     } catch (error) {
       console.error("Error al intentar agregar personal:", error);
@@ -174,6 +173,7 @@ function PersonalTable() {
     }
   };
 
+  //Editar personal
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     const dataToUpdate = {};
@@ -203,11 +203,12 @@ function PersonalTable() {
     }
 
     try {
-      const response = await axios.put(
-        `http://localhost:3001/personal/${formData.legajo}`,
-        dataToUpdate
-      );
-
+      const data = {
+        ...dataToUpdate,
+        legajo: formData.legajo,
+        legajoOperador: usuario?.legajo
+      }
+      const response = await axios.put(`http://localhost:3001/personal`, data);
       if (response.data.success) {
         alert("Datos actualizados correctamente");
         setIsEditModalOpen(false);
@@ -218,11 +219,11 @@ function PersonalTable() {
         );
       }
     } catch (error) {
-      console.error("Error al intentar actualizar:", error);
       alert("Error en el servidor al intentar actualizar datos.");
     }
   };
 
+  //Borrar personal
   const handleDelete = async () => {
     if (!deleteLegajo) {
       setDeleteError("Por favor, ingrese un número de legajo válido.");
@@ -230,9 +231,12 @@ function PersonalTable() {
     }
 
     try {
-      const response = await axios.delete(
-        `http://localhost:3001/personal/${deleteLegajo}`
-      );
+      const datos = {
+        legajo: deleteLegajo,
+        legajoOperador: usuario?.legajo
+      };
+
+      const response = await axios.delete(`http://localhost:3001/personal`, {data:datos});
       if (response.data.success) {
         alert("Personal eliminado correctamente");
         setIsDeleteModalOpen(false);
@@ -609,12 +613,11 @@ function PersonalTable() {
                 required
                 max={new Date().toISOString().split("T")[0]}
               />
-              
-            </form>
-            <div className="form-buttons">
-              <button type="submit" className="submit-btn">Agregar Personal</button>
-              <button className="cancel-btn" onClick={() => setIsAddModalOpen(false)}>Cerrar</button>
+              <div className="form-buttons">
+                <button type="submit" className="submit-btn">Agregar Personal</button>
+                <button className="cancel-btn" onClick={() => setIsAddModalOpen(false)}>Cerrar</button>
             </div>
+            </form>
           </div>
         </div>
       )}

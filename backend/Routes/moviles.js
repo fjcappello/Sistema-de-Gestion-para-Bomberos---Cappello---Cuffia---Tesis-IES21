@@ -19,7 +19,7 @@ router.post("/moviles_agregar", addMovil);
 router.put("/moviles_actualizar/:interno", updateMovil);
 
 // Edit movil
-router.put("/moviles_editar/:id", editMovil);
+router.put("/moviles_editar", editMovil);
 
 // Get estados moviles
 router.get("/estados_moviles", getEstadosMoviles);

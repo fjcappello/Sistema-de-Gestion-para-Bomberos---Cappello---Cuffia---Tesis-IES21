@@ -63,6 +63,7 @@ const crearPersonal = (req, res) => {
     situacion_id,
     fecha_revision_medica,
     id_rol,
+    legajoOperador
   } = req.body;
 
   const personalQuery = `
@@ -103,8 +104,8 @@ const crearPersonal = (req, res) => {
           return;
         }
 
-        registrarLog(
-          legajo,
+         registrarLog(
+          legajoOperador,
           `Alta de personal: se dio de alta a ${nombre} ${apellido} (Legajo ${legajo})`
         );
         res.json({ success: "Personal y login creados correctamente" });
@@ -115,8 +116,7 @@ const crearPersonal = (req, res) => {
 
 // Actualizar datos de personal
 const actualizarPersonal = (req, res) => {
-  const { legajo } = req.params;
-  const { jerarquia_id, situacion_id, fecha_revision_medica } = req.body;
+  const {legajo, jerarquia_id, situacion_id, fecha_revision_medica, legajoOperador } = req.body;
 
   const fields = [];
   const values = [];
@@ -153,7 +153,7 @@ const actualizarPersonal = (req, res) => {
       res.status(404).json({ error: "Personal no encontrado" });
     } else {
       registrarLog(
-        legajo,
+        legajoOperador,
         `Modificación de personal: se actualizaron datos del legajo ${legajo}`
       );
       res.json({ success: true });
@@ -163,7 +163,7 @@ const actualizarPersonal = (req, res) => {
 
 // Eliminar personal
 const eliminarPersonal = (req, res) => {
-  const { legajo } = req.params;
+  const { legajo, legajoOperador } = req.body;
   const query = `DELETE FROM personal WHERE legajo = ?`;
 
   db.query(query, [legajo], async (err, result) => {
@@ -175,7 +175,7 @@ const eliminarPersonal = (req, res) => {
     } else if (result.affectedRows === 0) {
       res.status(404).json({ error: "Personal no encontrado" });
     } else {
-      registrarLog(legajo, `Baja de personal: se eliminó el legajo ${legajo}`);
+      registrarLog(legajoOperador, `Baja de personal: se eliminó el legajo ${legajo}`);
       res.json({ success: "Personal eliminado correctamente" });
     }
   });
