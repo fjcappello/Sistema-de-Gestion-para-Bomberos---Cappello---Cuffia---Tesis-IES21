@@ -50,7 +50,7 @@ const obtenerPartes = (req, res) => {
   }
 
   query += ` AND p.activo = 1`;
-  query += ` ORDER BY p.fecha DESC`;
+  query += ` ORDER BY fecha DESC`;
 
   db.query(query, params, (err, results) => {
     if (err) {

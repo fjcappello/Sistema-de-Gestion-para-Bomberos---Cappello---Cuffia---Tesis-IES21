@@ -153,7 +153,6 @@ function PersonalTable() {
       ...formData,
       legajoOperador: usuario?.legajo
     }
-    
 
     try {
       const response = await axios.post("http://localhost:3001/personal", data);

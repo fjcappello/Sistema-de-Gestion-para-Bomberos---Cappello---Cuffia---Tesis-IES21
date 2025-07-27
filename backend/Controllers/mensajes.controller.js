@@ -1,5 +1,4 @@
 const db = require("../DB/db.js");
-const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
 // Obtener mensajes recibidos
 const obtenerMensajesRecibidos = (req, res) => {
@@ -17,7 +16,7 @@ const obtenerMensajesRecibidos = (req, res) => {
       console.error("Error al obtener mensajes recibidos:", err);
       res.status(500).json({ error: "Error en el servidor" });
     } else {
-      res.json(results);
+      res.status(200).json(results);
     }
   });
 };
@@ -26,7 +25,12 @@ const obtenerMensajesRecibidos = (req, res) => {
 const obtenerMensajesEnviados = (req, res) => {
   const legajo = req.params.legajo;
   const query = `
-    SELECT m.id, CONCAT(p.nombre, ' ', p.apellido) AS destinatarios, m.asunto, m.cuerpo, m.fecha_envio
+    SELECT 
+      m.id,
+      GROUP_CONCAT(CONCAT(p.nombre, ' ', p.apellido) SEPARATOR ', ') AS destinatarios,
+      m.asunto,
+      m.cuerpo,
+      m.fecha_envio
     FROM mensajes m
     JOIN mensaje_destinatarios md ON m.id = md.mensaje_id
     JOIN personal p ON md.destinatario_id = p.legajo
@@ -43,6 +47,7 @@ const obtenerMensajesEnviados = (req, res) => {
     }
   });
 };
+
 
 // Enviar mensaje
 const enviarMensaje = (req, res) => {
@@ -72,11 +77,7 @@ const enviarMensaje = (req, res) => {
 
       try {
         await Promise.all(destinatarioQueries);
-        registrarLog(
-          remitente_id,
-          `Envío de mensaje: asunto "${asunto}" enviado a ${destinatarios.length} destinatario(s)`
-        );
-        res.json({ success: true, message: "Mensaje enviado" });
+        res.status(200).json({ success: true, message: "Mensaje enviado" });
       } catch (err) {
         console.error("Error al insertar destinatarios:", err);
         res.status(500).json({ error: "Error en el servidor" });
@@ -97,11 +98,7 @@ const marcarMensajeLeido = async (req, res) => {
       console.error("Error al marcar mensaje como leído:", err);
       res.status(500).json({ error: "Error en el servidor" });
     } else {
-      registrarLog(
-        destinatario_id,
-        `Lectura de mensaje: mensaje ID ${id} marcado como leído`
-      );
-      res.json({ success: true });
+      res.status(200).json({ success: true });
     }
   });
 };

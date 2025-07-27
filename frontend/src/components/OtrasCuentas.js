@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
 import "./Styles/OtrasCuentas.css";
+import { useUsuario } from "../context/UserContext";
 
 function OtrasCuentas() {
+  const { usuario } = useUsuario();
   const [usuarios, setUsuarios] = useState([]);
   const [seleccionado, setSeleccionado] = useState("");
   const [nombreUsuario, setNombreUsuario] = useState("");
@@ -42,10 +44,12 @@ function OtrasCuentas() {
   }, [seleccionado, usuarios]);
 
   // Permite restablecer la contraseña del usuario seleccionado
-
   const manejarRestablecerPassword = () => {
-    api
-      .put("/restablecer-cuenta", { legajo: seleccionado })
+    const data = {
+        legajo: seleccionado,
+        legajoOperador: usuario?.legajo
+      }
+    api.put("/restablecer-cuenta", data)
       .then(() => {
         setMensajePassword("✅ Contraseña restablecida correctamente.");
         setTimeout(() => setMensajePassword(""), 3000);
@@ -56,21 +60,16 @@ function OtrasCuentas() {
   };
 
   // Actualiza el permiso del usuario seleccionado
-
   const manejarActualizarPermiso = () => {
-    api
-      .put("/cambiar-permisos", {
+    const data = {
         legajo: seleccionado,
         id_rol: permisoSeleccionado,
-      })
-      .then(() => {
+        legajoOperador: usuario?.legajo
+      }
+    api.put("/cambiar-permisos", data).then(() => {
         setMensajePermiso("✅ Permiso actualizado correctamente.");
         setTimeout(() => setMensajePermiso(""), 3000);
-
-        api
-          .get("/usuarios")
-          .then((res) => setUsuarios(res.data))
-          .catch((error) => console.error("Error recargando usuarios:", error));
+        api.get("/usuarios").then((res) => setUsuarios(res.data)).catch((error) => console.error("Error recargando usuarios:", error));
       })
       .catch((error) => console.error("Error actualizando permiso:", error));
   };

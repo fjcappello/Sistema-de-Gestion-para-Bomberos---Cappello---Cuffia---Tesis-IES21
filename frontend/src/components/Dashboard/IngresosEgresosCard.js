@@ -3,9 +3,11 @@ import api from "../../api";
 import "../Styles/Dashboard.css";
 import Modal from "./ModalCards";
 
-// Componente para registrar ingresos y egresos de personas al cuartel (en caso de ser externo pueden agregarlo manualmente)
-// También muestra los últimos 4 movimientos registrados
+// Para registrar ingresos y egresos de personas al cuartel (en caso de ser externo pueden agregarlo manualmente)
 function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
+
+  const [personal, setPersonal] = useState([]);
+  const [selectedId, setSelectedId] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
     nombre: "",
@@ -13,8 +15,7 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
     dni: "",
     estado_id: "",
   });
-  const [personal, setPersonal] = useState([]);
-  const [selectedId, setSelectedId] = useState("");
+ 
 
   useEffect(() => {
     const fetchPersonal = async () => {

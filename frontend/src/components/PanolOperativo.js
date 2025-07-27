@@ -143,7 +143,20 @@ function PanolOperativo() {
     setPaginaActual(1);
   };
 
-  const crearElemento = async () => {
+
+
+  const exportarAExcel = () => {
+  const hoja = XLSX.utils.json_to_sheet(elementosFiltrados);
+  const libro = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(libro, hoja, 'Pañol Operativo');
+  const ahora = new Date();
+  const fechaFormateada = ahora.toISOString().slice(0, 19).replace(/[:T]/g, '-'); // ej: 2025-05-10-14-30-00
+  const nombreArchivo = `PañolOperativo_${fechaFormateada}.xlsx`;
+  XLSX.writeFile(libro, nombreArchivo);
+  };
+
+  //Funcion para crear el objeto
+    const crearElemento = async () => {
     try {
       const response = await api.post('/agregar-elementoPanol', {
         elemento: formulario.elemento,
@@ -153,7 +166,8 @@ function PanolOperativo() {
         f_vencimiento: formulario.f_vencimiento,
         id_asignacion: formulario.asignacion,
         f_asignacion: formulario.f_asignacion,
-        id_estado: formulario.estado
+        id_estado: formulario.estado,
+        legajo: usuario?.legajo
       });
       alert(`Se ha agregado el elemento exitosamente. Código: ${response.data.id_insertado}`);
       if (response.status === 200) {
@@ -177,20 +191,9 @@ function PanolOperativo() {
     }
   };
 
-  const exportarAExcel = () => {
-  const hoja = XLSX.utils.json_to_sheet(elementosFiltrados);
-  const libro = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(libro, hoja, 'Pañol Operativo');
-  const ahora = new Date();
-  const fechaFormateada = ahora.toISOString().slice(0, 19).replace(/[:T]/g, '-'); // ej: 2025-05-10-14-30-00
-  const nombreArchivo = `PañolOperativo_${fechaFormateada}.xlsx`;
-  XLSX.writeFile(libro, nombreArchivo);
-  };
-
-
   //Funcion para manejar el envio del formulario
   const handleEditarElemento = (e) => {
-    e.preventDefault(); // Evita el comportamiento por defecto del formulario
+    e.preventDefault(); 
 
     const form = e.target.closest("form");
 
@@ -234,14 +237,13 @@ function PanolOperativo() {
       formData.append("id_asignacion", formulario.asignacion);
       formData.append("f_asignacion", formulario.f_asignacion);
       formData.append("id_estado", formulario.estado);
+      formData.append("legajo", usuario?.legajo);
 
       // Solo incluir imagen si el estado es BAJA (id 3) y hay imagen cargada
       if (parseInt(formulario.estado) === 3 && ImagenContenido) {
         formData.append("foto", ImagenContenido);
       }
-      const response = await api.put(
-        `/cambiar-estadosPanol`,
-        formData,
+      const response = await api.put(`/cambiar-estadosPanol`, formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",

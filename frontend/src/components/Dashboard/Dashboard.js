@@ -7,6 +7,8 @@ import IngresosEgresosCard from "./IngresosEgresosCard";
 import ClimaCard from "./ClimaCard";
 import MovilesCard from "./MovilesCard";
 import EstadisticasCard from "./EstadisticasCard";
+import { data } from "react-router-dom";
+
 
 function Dashboard() {
   const { usuario } = useUsuario();
@@ -38,18 +40,18 @@ function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleRegistrar = async ({ nombre, apellido, dni, estado_id }) => {
+  const handleRegistrar = async ({ nombre, apellido, dni, estado_id,  }) => {
     try {
-      await api.post("/movimientos_cuartel", {
+      const data = {
         id_personal: null,
         nombre,
         apellido,
         dni,
         estado_id,
-      });
-      const response = await api.get(
-        "/movimientos_cuartel"
-      );
+        legajoOperador: usuario?.legajo
+      }
+      await api.post("/movimientos_cuartel", data);
+      const response = await api.get("/movimientos_cuartel");
       setMovimientos(response.data);
     } catch (error) {
       console.error("Error al registrar movimiento:", error);

@@ -21,7 +21,6 @@ function EnviarMensajeModal({ onClose, onSent }) {
     api
       .get("/personal_nombres")
       .then((res) => {
-        console.log("Usuarios recibidos:", res.data);
         setUsuarios(res.data);
       })
       .catch((err) => console.error("Error al obtener usuarios", err));
