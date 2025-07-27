@@ -1,8 +1,9 @@
 const db = require("../DB/db.js");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
+// Registrar salida de un móvil
 const registrarSalida = (req, res) => {
-  const { movil_id, chofer_id, destino, jefe_dotacion, dotacion } = req.body;
+  const { movil_id, chofer_id, destino, jefe_dotacion, dotacion, legajo} = req.body;
 
   db.query(
     "SELECT kilometraje_actual FROM moviles WHERE id = ?",
@@ -46,7 +47,7 @@ const registrarSalida = (req, res) => {
               }
               res.json({ success: "Salida registrada", movimiento_id });
               registrarLog(
-                jefe_dotacion,
+                legajo,
                 `Registró salida de móvil ID ${movil_id} hacia "${destino}"`
               );
             });
@@ -64,8 +65,7 @@ const registrarSalida = (req, res) => {
 };
 
 const registrarRetorno = (req, res) => {
-  const { id } = req.params;
-  const { kilometraje_final, novedades } = req.body;
+  const { id, legajo, kilometraje_final, novedades } = req.body;
   const fecha_retorno = new Date();
 
   // Validar que el kilometraje_final no sea menor al km_salida
@@ -80,13 +80,12 @@ const registrarRetorno = (req, res) => {
       }
       const km_salida = rows[0].km_salida;
       if (kilometraje_final < km_salida) {
-        return res
-          .status(400)
-          .json({
-            error: "El kilometraje final no puede ser menor al de salida",
-          });
+        return res.status(400).json({
+          error: "El kilometraje final no puede ser menor al de salida",
+        });
       }
 
+      // Actualizar el movimiento con la fecha de retorno y el kilometraje final
       const updateMovimiento = `
       UPDATE moviles_movimientos
       SET fecha_retorno = ?, kilometraje_final = ?, novedades = ?
@@ -127,14 +126,9 @@ const registrarRetorno = (req, res) => {
                       .status(500)
                       .json({ error: "Error al actualizar kilometraje" });
                   }
-
-                  console.log(
-                    "✔ Retorno registrado con éxito para movimiento ID:",
-                    id
-                  );
                   res.json({ success: "Retorno registrado" });
                   registrarLog(
-                    null,
+                    legajo,
                     `Registró retorno del móvil ID ${movil_id}, movimiento ID ${id}`
                   );
                 }

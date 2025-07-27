@@ -41,6 +41,8 @@ function OtrasCuentas() {
     }
   }, [seleccionado, usuarios]);
 
+  // Permite restablecer la contraseña del usuario seleccionado
+
   const manejarRestablecerPassword = () => {
     api
       .put("/restablecer-cuenta", { legajo: seleccionado })
@@ -52,6 +54,8 @@ function OtrasCuentas() {
         console.error("Error restableciendo contraseña:", error)
       );
   };
+
+  // Actualiza el permiso del usuario seleccionado
 
   const manejarActualizarPermiso = () => {
     api

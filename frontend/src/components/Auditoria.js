@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import api from "../api";
-import "./Styles/Configuracion.css"; // Conservamos el estilo actual
+import "./Styles/Configuracion.css";
+
+// Componente Auditoria que muestra el historial de auditoría con filtros y paginación, permite la exportación a Excel de los datos
 
 function Auditoria() {
   const [bitacora, setBitacora] = useState([]);

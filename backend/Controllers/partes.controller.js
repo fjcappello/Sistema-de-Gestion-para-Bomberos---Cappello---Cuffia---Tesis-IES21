@@ -1,7 +1,7 @@
 const db = require("../DB/db.js");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
-// Obtener todos los partes con filtros
+// Obtener todos los partes con posibilidad de filtrado por jefe de dotación, tipo de asistencia, fechas y denunciante
 const obtenerPartes = (req, res) => {
   const { jefeDotacion, tipoAsistencia, startDate, endDate, denunciante } =
     req.query;
@@ -104,9 +104,11 @@ const crearParte = async (req, res) => {
     jefe_dotacion,
     parte_escrito,
     fecha,
+    legajo
   } = req.body;
 
   try {
+    //Creador de ID de partes.
     const [rows] = await db.promise().query(`
       SELECT IFNULL(MAX(CAST(SUBSTRING_INDEX(numero_parte, '/', 1) AS UNSIGNED)), 0) + 1 AS next_parte 
       FROM partes
@@ -131,9 +133,10 @@ const crearParte = async (req, res) => {
         numeroParte,
       ]
     );
-
+    //CAMBIAR ESTO PARA QUE DIGA QUIÉN CREO LA EMERGENCIA EN EL SISTEMA
     registrarLog(
-      jefe_dotacion,
+      legajo
+      ,
       `Alta de parte de emergencia: se registró el parte ${numeroParte} denunciado por ${nombre_denunciante} ${apellido_denunciante}`
     );
 
@@ -152,7 +155,7 @@ const crearParte = async (req, res) => {
 
 // Eliminar parte por ID
 const eliminarParte = (req, res) => {
-  const { id } = req.params;
+  const { id, legajo } = req.body;
   const query = "UPDATE partes SET activo = 0 WHERE id = ?";
   db.query(query, [id], async (err, result) => {
     if (err) {
@@ -164,7 +167,7 @@ const eliminarParte = (req, res) => {
       res.status(404).json({ error: "Reporte no encontrado" });
     } else {
       registrarLog(
-        0,
+        legajo,
         `Eliminación de parte de emergencia: se eliminó el parte con ID ${id}`
       );
       res.json({ success: "Reporte eliminado correctamente" });
@@ -227,15 +230,15 @@ const obtenerReporteResumen = (req, res) => {
 
 // Crear bitácora asociada a una emergencia
 const crearBitacora = (req, res) => {
-  const { id_personal, reporte, parte_id } = req.body;
-  if (!id_personal || !reporte || !parte_id) {
+  const { legajo, reporte, parte_id } = req.body;
+  if (!legajo || !reporte || !parte_id) {
     return res
       .status(400)
       .json({ success: false, error: "Faltan datos requeridos" });
   }
   const insertQuery =
     "INSERT INTO bitacora (id_personal, reporte) VALUES (?, ?)";
-  db.query(insertQuery, [id_personal, reporte], (err, result) => {
+  db.query(insertQuery, [legajo, reporte], (err, result) => {
     if (err) {
       console.error("Error al crear bitácora:", err);
       return res
@@ -252,8 +255,11 @@ const crearBitacora = (req, res) => {
           .status(500)
           .json({ success: false, error: "Error al actualizar parte" });
       }
-      if (id_personal) {
-        registrarLog(id_personal, `Creó una bitácora asociada al parte ID ${parte_id}`);
+      if (legajo) {
+        registrarLog(
+          legajo,
+          `Creó una bitácora asociada al parte ID ${parte_id}`
+        );
       }
       res.json({
         success: true,

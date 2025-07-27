@@ -7,7 +7,12 @@ import { useUsuario } from "../context/UserContext";
 
 function BandejaEntrada() {
   const [mensajes, setMensajes] = useState([]);
-  const [filtros, setFiltros] = useState({
+  const [filtrosInput, setFiltrosInput] = useState({
+    remitente: "",
+    asunto: "",
+    fecha: "",
+  });
+  const [filtrosAplicados, setFiltrosAplicados] = useState({
     remitente: "",
     asunto: "",
     fecha: "",
@@ -25,7 +30,6 @@ function BandejaEntrada() {
       api
         .get(`/mensajes/recibidos/${legajo}`)
         .then((res) => {
-          console.log("Mensajes recibidos:", res.data);
           setMensajes(res.data);
         })
         .catch((err) => console.error("Error al obtener mensajes", err));
@@ -49,12 +53,13 @@ function BandejaEntrada() {
     }
   };
 
+
   const mensajesFiltrados = Array.isArray(mensajes)
     ? mensajes.filter(
         (msg) =>
-          msg.remitente.toLowerCase().includes(filtros.remitente.toLowerCase()) &&
-          msg.asunto.toLowerCase().includes(filtros.asunto.toLowerCase()) &&
-          msg.fecha_envio.includes(filtros.fecha)
+          msg.remitente.toLowerCase().includes(filtrosAplicados.remitente.toLowerCase()) &&
+          msg.asunto.toLowerCase().includes(filtrosAplicados.asunto.toLowerCase()) &&
+          msg.fecha_envio.includes(filtrosAplicados.fecha)
       )
     : [];
 
@@ -63,7 +68,7 @@ function BandejaEntrada() {
     : 0;
 
   const handleRowClick = (msg) => {
-    setMensajeActivoId(msg.id);
+    setMensajeActivoId((activo) => (activo === msg.id ? null : msg.id));
     if (!msg.leido) {
       marcarComoLeido(msg.id);
     }
@@ -71,7 +76,24 @@ function BandejaEntrada() {
 
   const indiceInicial = (paginaActual - 1) * mensajesPorPagina;
   const indiceFinal = indiceInicial + mensajesPorPagina;
+  const totalPaginas = Math.ceil(mensajesFiltrados.length / mensajesPorPagina);
   const mensajesPaginados = mensajesFiltrados.slice(indiceInicial, indiceFinal);
+
+  // Aplica los filtros ingresados
+  const aplicarFiltros = () => {
+    setFiltrosAplicados(filtrosInput);
+    setPaginaActual(1); 
+  };
+
+  // Limpia filtros y muestra todo
+  const limpiarFiltros = () => {
+    const filtrosVacios = { remitente: "", asunto: "", fecha: "" };
+    setFiltrosInput(filtrosVacios);
+    setFiltrosAplicados(filtrosVacios);
+    setPaginaActual(1);
+  };
+
+  
 
   return (
     <div className="bandeja-layout">
@@ -113,26 +135,28 @@ function BandejaEntrada() {
               <input
                 type="text"
                 placeholder="Filtrar por remitente"
-                value={filtros.remitente}
+                value={filtrosInput.remitente}
                 onChange={(e) =>
-                  setFiltros({ ...filtros, remitente: e.target.value })
+                  setFiltrosInput({ ...filtrosInput, remitente: e.target.value })
                 }
               />
               <input
                 type="text"
                 placeholder="Filtrar por asunto"
-                value={filtros.asunto}
+                value={filtrosInput.asunto}
                 onChange={(e) =>
-                  setFiltros({ ...filtros, asunto: e.target.value })
+                  setFiltrosInput({ ...filtrosInput, asunto: e.target.value })
                 }
               />
               <input
                 type="date"
-                value={filtros.fecha}
+                value={filtrosInput.fecha}
                 onChange={(e) =>
-                  setFiltros({ ...filtros, fecha: e.target.value })
+                  setFiltrosInput({ ...filtrosInput, fecha: e.target.value })
                 }
               />
+              <button onClick={aplicarFiltros}>Aplicar filtros</button>
+              <button onClick={limpiarFiltros}>Limpiar filtros</button>
             </div>
 
             {mensajesPaginados.length === 0 ? (
@@ -152,6 +176,7 @@ function BandejaEntrada() {
                       <tr
                         onClick={() => handleRowClick(msg)}
                         className={msg.leido ? "" : "no-leido"}
+                        style={{ cursor: "pointer" }}
                       >
                         <td>{msg.remitente || msg.remitente_id}</td>
                         <td>{new Date(msg.fecha_envio).toLocaleString()}</td>
@@ -174,7 +199,7 @@ function BandejaEntrada() {
               >
                 Anterior
               </button>
-              <span>Página {paginaActual}</span>
+              <span>Página {paginaActual} de {totalPaginas}</span>
               <button
                 onClick={() =>
                   setPaginaActual((prev) =>

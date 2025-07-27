@@ -7,11 +7,21 @@ function BandejaSalida({ onClose }) {
   const { usuario } = useUsuario();
   const legajo = usuario?.legajo;
   const [mensajes, setMensajes] = useState([]);
+  
+  // Estado para los filtros visibles en inputs
   const [filtros, setFiltros] = useState({
     destinatarios: "",
     asunto: "",
     fecha: "",
   });
+  
+  // Estado para los filtros aplicados a la lista
+  const [filtrosAplicados, setFiltrosAplicados] = useState({
+    destinatarios: "",
+    asunto: "",
+    fecha: "",
+  });
+
   const [mensajeActivoId, setMensajeActivoId] = useState(null);
   const [paginaActual, setPaginaActual] = useState(1);
   const mensajesPorPagina = 5;
@@ -27,21 +37,37 @@ function BandejaSalida({ onClose }) {
     }
   }, [legajo]);
 
+  // Filtramos usando solo los filtros aplicados (no los del input)
   const mensajesFiltrados = mensajes.filter(
     (msg) =>
       msg.destinatarios
         .toLowerCase()
-        .includes(filtros.destinatarios.toLowerCase()) &&
-      msg.asunto.toLowerCase().includes(filtros.asunto.toLowerCase()) &&
-      msg.fecha_envio.includes(filtros.fecha)
+        .includes(filtrosAplicados.destinatarios.toLowerCase()) &&
+      msg.asunto.toLowerCase().includes(filtrosAplicados.asunto.toLowerCase()) &&
+      msg.fecha_envio.includes(filtrosAplicados.fecha)
   );
 
   const indiceInicial = (paginaActual - 1) * mensajesPorPagina;
   const indiceFinal = indiceInicial + mensajesPorPagina;
+  const totalPaginas = Math.ceil(mensajesFiltrados.length / mensajesPorPagina);
   const mensajesPaginados = mensajesFiltrados.slice(indiceInicial, indiceFinal);
 
   const handleRowClick = (msg) => {
     setMensajeActivoId(mensajeActivoId === msg.id ? null : msg.id);
+  };
+
+  // Aplica los filtros que están en los inputs a la lista
+  const aplicarFiltros = () => {
+    setFiltrosAplicados(filtros);
+    setPaginaActual(1);
+  };
+
+  // Limpia filtros y muestra todos los mensajes
+  const limpiarFiltros = () => {
+    const filtrosVacios = { destinatarios: "", asunto: "", fecha: "" };
+    setFiltros(filtrosVacios);
+    setFiltrosAplicados(filtrosVacios);
+    setPaginaActual(1);
   };
 
   return (
@@ -68,8 +94,8 @@ function BandejaSalida({ onClose }) {
           value={filtros.fecha}
           onChange={(e) => setFiltros({ ...filtros, fecha: e.target.value })}
         />
-
-        <button>Limpiar Filtros</button>
+        <button onClick={aplicarFiltros}>Aplicar Filtros</button>
+        <button onClick={limpiarFiltros}>Limpiar Filtros</button>
       </div>
 
       {mensajesPaginados.length === 0 ? (
@@ -118,7 +144,7 @@ function BandejaSalida({ onClose }) {
         >
           Anterior
         </button>
-        <span>Página {paginaActual}</span>
+        <span>Página {paginaActual} de {totalPaginas}</span>
         <button
           onClick={() =>
             setPaginaActual((prev) =>

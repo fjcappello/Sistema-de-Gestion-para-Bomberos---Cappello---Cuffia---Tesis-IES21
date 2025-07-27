@@ -1,8 +1,8 @@
-const db = require('../DB/db.js');
+const db = require("../DB/db.js");
 
-// Personal que más y menos asistió
+// Ruta para obtener el ranking de asistencias del personal, permitiendo filtrar por fecha, legajo, nombre y orden
 const obtenerRankingAsistencias = (req, res) => {
-  const { desde, hasta, legajo, nombre, orden = 'desc', limite } = req.query;
+  const { desde, hasta, legajo, nombre, orden = "desc", limite } = req.query;
   let queryParams = [];
   let query = `
     SELECT p.legajo, CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo, COUNT(*) AS cantidad
@@ -30,7 +30,7 @@ const obtenerRankingAsistencias = (req, res) => {
 
   query += ` GROUP BY p.legajo, p.nombre, p.apellido`;
 
-  if (orden && orden.toLowerCase() === 'asc') {
+  if (orden && orden.toLowerCase() === "asc") {
     query += ` ORDER BY cantidad ASC`;
   } else {
     query += ` ORDER BY cantidad DESC`;
@@ -43,52 +43,56 @@ const obtenerRankingAsistencias = (req, res) => {
 
   db.query(query, queryParams, (err, results) => {
     if (err) {
-      console.error('Error al obtener ranking de asistencias:', err);
-      return res.status(500).json({ error: 'Error al obtener ranking de asistencias', detalle: err.message });
+      console.error("Error al obtener ranking de asistencias:", err);
+      return res.status(500).json({
+        error: "Error al obtener ranking de asistencias",
+        detalle: err.message,
+      });
     }
     res.json(results);
   });
 };
 
-// Personal con más y menos horas en el cuartel
+// Ruta para obtener el ranking de horas que permaneció el personal en la institucion, permitiendo filtrar por fecha, legajo, nombre y orden
 const obtenerRankingHoras = (req, res) => {
-  const { desde, hasta, legajo, nombre, orden = 'desc', limite } = req.query;
+  const { desde, hasta, legajo, nombre, orden = "desc", limite } = req.query;
   let queryParams = [];
-  let conditions = ["m1.estado_id = 1", "m1.visible = 1", "m1.id_personal IS NOT NULL"];
+  let conditions = [
+    "m1.estado_id = 1",
+    "m1.visible = 1",
+    "m1.id_personal IS NOT NULL",
+  ];
 
-  // Subquery conditions for finding the corresponding exit (sq_m2)
-  // Ensure sq_m2 is visible, otherwise we might pick up a non-visible exit record
-  let subQueryConditions = ["sq_m2.id_personal = m1.id_personal", "sq_m2.timestamp > m1.timestamp", "sq_m2.estado_id = 2", "sq_m2.visible = 1"];
+  let subQueryConditions = [
+    "sq_m2.id_personal = m1.id_personal",
+    "sq_m2.timestamp > m1.timestamp",
+    "sq_m2.estado_id = 2",
+    "sq_m2.visible = 1",
+  ];
 
   if (desde) {
-      conditions.push("DATE(m1.timestamp) >= ?");
-      queryParams.push(desde);
+    conditions.push("DATE(m1.timestamp) >= ?");
+    queryParams.push(desde);
   }
   if (hasta) {
-      // Entry must be before or on 'hasta'
-      conditions.push("DATE(m1.timestamp) <= ?");
-      queryParams.push(hasta);
-      // Exit (sq_m2) must also be before or on 'hasta' (or up to end of 'hasta' day for accurate duration within the period)
-      // This ensures that if an entry is on 'hasta', its exit on the same day is considered.
-      // And if an entry is before 'hasta', its exit after 'hasta' is effectively capped at 'hasta' for duration calculation (implicitly by not finding a valid egreso for SUM)
-      // However, the explicit condition below makes sure the selected egreso is within the period.
-      subQueryConditions.push("DATE(sq_m2.timestamp) <= ?");
-      queryParams.push(hasta); // Parameter for subQueryConditions
+    conditions.push("DATE(m1.timestamp) <= ?");
+    queryParams.push(hasta);
+    subQueryConditions.push("DATE(sq_m2.timestamp) <= ?");
+    queryParams.push(hasta);
   }
   if (legajo) {
-      conditions.push("m1.id_personal = ?"); // Refers to p.legajo via JOIN
-      queryParams.push(legajo);
+    conditions.push("m1.id_personal = ?");
+    queryParams.push(legajo);
   }
   if (nombre) {
-      conditions.push("CONCAT(p.nombre, ' ', p.apellido) LIKE ?");
-      queryParams.push(`%${nombre}%`);
+    conditions.push("CONCAT(p.nombre, ' ', p.apellido) LIKE ?");
+    queryParams.push(`%${nombre}%`);
   }
 
-  // Construct the part of the subquery that selects the MIN(sq_m2.timestamp)
   const egresoSubQuery = `(
       SELECT MIN(sq_m2.timestamp)
       FROM movimientos_cuartel sq_m2
-      WHERE ${subQueryConditions.join(' AND ')}
+      WHERE ${subQueryConditions.join(" AND ")}
   )`;
 
   let query = `
@@ -100,33 +104,38 @@ const obtenerRankingHoras = (req, res) => {
           ) / 60 AS horas_totales
       FROM movimientos_cuartel m1
       JOIN personal p ON m1.id_personal = p.legajo
-      WHERE ${conditions.join(' AND ')}
+      WHERE ${conditions.join(" AND ")}
       GROUP BY p.legajo, p.nombre, p.apellido
       HAVING horas_totales IS NOT NULL
-  `; // Added space before HAVING
+  `;
 
-  // Validate orden parameter
-  const validOrder = ['asc', 'desc'].includes(orden.toLowerCase()) ? orden.toLowerCase() : 'desc';
+  const validOrder = ["asc", "desc"].includes(orden.toLowerCase())
+    ? orden.toLowerCase()
+    : "desc";
   query += ` ORDER BY horas_totales ${validOrder}`;
 
   if (limite && !isNaN(parseInt(limite))) {
-      query += ` LIMIT ?`;
-      queryParams.push(parseInt(limite));
+    query += ` LIMIT ?`;
+    queryParams.push(parseInt(limite));
   }
 
-  // Execute the query
   db.query(query, queryParams, (err, results) => {
-      if (err) {
-        console.error('Error en obtenerRankingHoras:', err);
-        return res.status(500).json({ error: 'Error al obtener ranking de horas', detalle: err.message });
-      }
-      // Ensure horas_totales is a number
-      const processedResults = results.map(r => ({...r, horas_totales: parseFloat(r.horas_totales) || 0 }));
-      res.json(processedResults);
+    if (err) {
+      console.error("Error en obtenerRankingHoras:", err);
+      return res.status(500).json({
+        error: "Error al obtener ranking de horas",
+        detalle: err.message,
+      });
+    }
+    const processedResults = results.map((r) => ({
+      ...r,
+      horas_totales: parseFloat(r.horas_totales) || 0,
+    }));
+    res.json(processedResults);
   });
 };
 
-// Asistencia por día
+// Ruta para obtener la asistencia del personal por día, permitiendo filtrar por fecha, legajo y nombre
 const obtenerAsistenciaPorDia = (req, res) => {
   const { desde, hasta, legajo, nombre } = req.query;
   let queryParams = [];
@@ -158,14 +167,17 @@ const obtenerAsistenciaPorDia = (req, res) => {
 
   db.query(query, queryParams, (err, results) => {
     if (err) {
-      console.error('Error en obtenerAsistenciaPorDia:', err);
-      return res.status(500).json({ error: 'Error al obtener asistencia por día', detalle: err.message });
+      console.error("Error en obtenerAsistenciaPorDia:", err);
+      return res.status(500).json({
+        error: "Error al obtener asistencia por día",
+        detalle: err.message,
+      });
     }
     res.json(results);
   });
 };
 
-// Asistencia por mes
+// Ruta para obtener la asistencia del personal por mes, permitiendo filtrar por fecha, legajo y nombre
 const obtenerAsistenciaPorMes = (req, res) => {
   const { desde, hasta, legajo, nombre } = req.query;
   let queryParams = [];
@@ -197,21 +209,20 @@ const obtenerAsistenciaPorMes = (req, res) => {
 
   db.query(query, queryParams, (err, results) => {
     if (err) {
-      console.error('Error en obtenerAsistenciaPorMes:', err);
-      return res.status(500).json({ error: 'Error al obtener asistencia por mes', detalle: err.message });
+      console.error("Error en obtenerAsistenciaPorMes:", err);
+      return res.status(500).json({
+        error: "Error al obtener asistencia por mes",
+        detalle: err.message,
+      });
     }
     res.json(results);
   });
 };
 
-// Asistencia por jerarquía
+// Ruta para obtener la asistencia del personal por jerarquía, permitiendo filtrar por fecha, legajo y nombre
 const obtenerAsistenciaPorJerarquia = (req, res) => {
   const { desde, hasta, legajo, nombre } = req.query;
   let queryParams = [];
-  // Assuming p.jerarquia stores the name or p.jerarquia_id links to a jerarquias table
-  // Based on original query: SELECT p.jerarquia, ... GROUP BY p.jerarquia
-  // New requirement: JOIN jerarquias j ON p.jerarquia_id = j.id. Select j.jerarquia AS jerarquia_nombre
-  // This implies 'personal' table has 'jerarquia_id' and 'jerarquias' table has 'id' and 'jerarquia' (name)
   let query = `
     SELECT j.jerarquia AS jerarquia_nombre, COUNT(*) AS cantidad
     FROM movimientos_cuartel m
@@ -229,7 +240,7 @@ const obtenerAsistenciaPorJerarquia = (req, res) => {
     queryParams.push(hasta);
   }
   if (legajo) {
-    query += ` AND m.id_personal = ?`; // This refers to p.legajo via the JOIN m.id_personal = p.legajo
+    query += ` AND m.id_personal = ?`;
     queryParams.push(legajo);
   }
   if (nombre) {
@@ -237,13 +248,15 @@ const obtenerAsistenciaPorJerarquia = (req, res) => {
     queryParams.push(`%${nombre}%`);
   }
 
-  // Group by j.id (primary key of jerarquias) and j.jerarquia (name for select)
   query += ` GROUP BY j.id, j.jerarquia ORDER BY cantidad DESC`;
 
   db.query(query, queryParams, (err, results) => {
     if (err) {
-      console.error('Error en obtenerAsistenciaPorJerarquia:', err);
-      return res.status(500).json({ error: 'Error al obtener asistencia por jerarquía', detalle: err.message });
+      console.error("Error en obtenerAsistenciaPorJerarquia:", err);
+      return res.status(500).json({
+        error: "Error al obtener asistencia por jerarquía",
+        detalle: err.message,
+      });
     }
     res.json(results);
   });

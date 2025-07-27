@@ -21,7 +21,6 @@ function PDFGenerator({ partData, onClose }) {
       });
 
     // Obtener bitácora
-    console.log("API_URL:", process.env.REACT_APP_API_URL);
     const fetchBitacora = async () => {
       setLoading(true);
       try {
@@ -49,7 +48,7 @@ function PDFGenerator({ partData, onClose }) {
     const margin = 15;
     const logoHeight = 30;
     const logoWidth = 30;
-    const headerY = 25; // Posición vertical base para alineación
+    const headerY = 25;
 
     // Logo - Centrado verticalmente con texto
     if (logoDataURI) {
@@ -98,11 +97,10 @@ function PDFGenerator({ partData, onClose }) {
       },
     });
 
+    let currentY = doc.lastAutoTable.finalY + 15;
+
     // Bitácora con manejo multipágina
     if (bitacoraContent) {
-      let currentY = doc.lastAutoTable.finalY + 15;
-
-      // Verificar espacio para el título
       if (currentY > doc.internal.pageSize.getHeight() - 50) {
         doc.addPage();
         currentY = 20;
@@ -120,7 +118,6 @@ function PDFGenerator({ partData, onClose }) {
       const maxWidth = pageWidth - margin * 2;
       const lines = doc.splitTextToSize(bitacoraContent, maxWidth);
 
-      // Imprimir línea por línea con control de páginas
       for (let i = 0; i < lines.length; i++) {
         if (currentY > doc.internal.pageSize.getHeight() - 20) {
           doc.addPage();
@@ -129,10 +126,14 @@ function PDFGenerator({ partData, onClose }) {
         doc.text(lines[i], margin, currentY);
         currentY += lineHeight;
       }
+
+      currentY += 20;
     }
 
     // Firma en nueva página si es necesario
-    let signatureY = doc.lastAutoTable.finalY + (bitacoraContent ? 50 : 30);
+    let signatureY = bitacoraContent
+      ? currentY + 10
+      : doc.lastAutoTable.finalY + 30;
     if (signatureY > doc.internal.pageSize.getHeight() - 30) {
       doc.addPage();
       signatureY = 20;
@@ -150,7 +151,7 @@ function PDFGenerator({ partData, onClose }) {
 
     // Pie de página
     const footerText = `Generado por ${
-      usuario?.nombreCompleto || "Sistema"
+      usuario?.nombreCompleto || "Sistema" // Se usa el nombre del usuario almacenado en el contexto de lo contrario, colocamos "Sistema"
     } el ${new Date().toLocaleDateString()}`;
     doc.setFontSize(9);
     doc.text(footerText, margin, doc.internal.pageSize.getHeight() - 10);

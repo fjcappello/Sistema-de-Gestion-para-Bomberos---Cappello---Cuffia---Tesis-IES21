@@ -106,6 +106,7 @@ const recuperarMarcas = function recuperarMarcas(req, res) {
   });
 };
 
+// Recuperar asignaciones de lugar
 const recuperarAsignaciones = function recuperarAsignaciones(req, res) {
   const query = `SELECT * FROM lugar_asignacion`;
   db.query(query, (error, results) => {
@@ -155,12 +156,10 @@ const agregarElemento = function agregarElemento(req, res) {
     !id_asignacion ||
     !id_estado
   ) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "Faltan datos: elemento, id_tipo, id_marca, f_incorporacion, id_asignacion o id_estado",
-      });
+    return res.status(400).json({
+      error:
+        "Faltan datos: elemento, id_tipo, id_marca, f_incorporacion, id_asignacion o id_estado",
+    });
   }
   //Verificacion y control de campos opcionales
   f_vencimiento = f_vencimiento || null;
@@ -184,14 +183,15 @@ const agregarElemento = function agregarElemento(req, res) {
         .json({ error: "Error al intentar crear un elemento" });
     }
     if (results.affectedRows === 0) {
-      return res
-        .status(400)
-        .json({
-          message: "No se pudo agregar correctamente el nuevo elemento.",
-        });
+      return res.status(400).json({
+        message: "No se pudo agregar correctamente el nuevo elemento.",
+      });
     }
     if (req.query.usuario_id) {
-      registrarLog(req.query.usuario_id, `Agregó un nuevo elemento al pañol: ${elemento}`);
+      registrarLog(
+        req.query.usuario_id,
+        `Agregó un nuevo elemento al pañol: ${elemento}`
+      );
     }
     return res.status(200).json({
       message: "Elemento agregado correctamente",
@@ -227,7 +227,10 @@ const editarElemento = (req, res) => {
       return res.status(404).json({ message: "Elemento no encontrado" });
     }
     if (req.query.usuario_id) {
-      registrarLog(req.query.usuario_id, `Editó el elemento del pañol ID ${id_elemento}`);
+      registrarLog(
+        req.query.usuario_id,
+        `Editó el elemento del pañol ID ${id_elemento}`
+      );
     }
     return res
       .status(200)

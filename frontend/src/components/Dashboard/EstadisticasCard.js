@@ -14,7 +14,7 @@ ChartJS.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function EstadisticasCard() {
   const [data, setData] = useState([]);
-  const [periodo, setPeriodo] = useState('30'); // valores: 30, 180, 365
+  const [periodo, setPeriodo] = useState('30'); // Se situa por defecto en los ultimos 30 días, seleccionable desde el menu desplegable
 
   const fetchEstadisticas = async () => {
     try {

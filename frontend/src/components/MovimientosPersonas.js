@@ -25,6 +25,7 @@ function MovimientosPersonas() {
   const ITEMS_PER_PAGE = 5;
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Carga de personal y movimientos, si se deja vacio habilita el ingreso manual
   const fetchPersonal = async () => {
     try {
       const response = await api.get(
@@ -90,24 +91,25 @@ function MovimientosPersonas() {
     }
   };
 
+  // Registro de movimiento, verifica si la ultima accion fue un ingreso o egreso
+  // para evitar duplicados
   const registrarMovimiento = async (estado_id) => {
     try {
       if (!formData.nombre || !formData.apellido || !formData.dni) {
         alert(
           "Por favor complete todos los campos antes de registrar el movimiento."
         );
+
         return;
       }
 
-      const personaKey =
-        selectedId || `${formData.nombre}-${formData.apellido}-${formData.dni}`;
       const movimientosPersona = movimientos
         .filter((m) => {
-          if (selectedId) return m.dni === personaKey;
+          if (selectedId) return m.dni === formData.dni;
           return (
+            m.dni === formData.dni &&
             m.nombre === formData.nombre &&
-            m.apellido === formData.apellido &&
-            m.dni === formData.dni
+            m.apellido === formData.apellido
           );
         })
         .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
@@ -129,6 +131,7 @@ function MovimientosPersonas() {
         apellido: formData.apellido,
         dni: formData.dni,
         estado_id,
+        legajo: usuario?.legajo
       };
       await api.post("/movimientos_cuartel", payload);
       fetchMovimientos();
@@ -139,16 +142,22 @@ function MovimientosPersonas() {
     }
   };
 
+  // Elimina un movimiento de la interfaz, no lo borra de la base de datos
+  // Se utiliza para ocultar movimientos erroneos 
   const eliminarMovimientoLocal = async (id) => {
     try {
-      await api.put(
-        `/movimientos_cuartel/${id}/ocultar`
-      );
+      const data = {
+        id: id,
+        legajo: usuario?.legajo
+      };
+      await api.put(`/movimientos_cuartel/ocultar`, data);
       fetchMovimientos();
     } catch (error) {
       console.error("Error al ocultar movimiento:", error);
     }
   };
+
+  // Filtros
 
   const aplicarFiltros = () => {
     setFiltrosAplicados({
@@ -195,12 +204,12 @@ function MovimientosPersonas() {
       </aside>
       <main className="movimientos-main-content">
         {vistaActiva === "registrar" && (
-          <>
+          <div className="table-container">
             <h2 className="table-title">Registrar Ingreso / Egreso</h2>
             <div className="movimientos-form">
-              <div className="form-group-fluent">
+              <div className="form-container">
                 <label htmlFor="personalSelect" className="form-label-fluent">Seleccionar Personal (Opcional)</label>
-                <select id="personalSelect" value={selectedId} onChange={handleSelectChange} className="form-control-fluent">
+                <select  value={selectedId} onChange={handleSelectChange}>
                   <option value="">Ingreso Manual...</option>
                   {personal.map((p) => (
                     <option key={p.id} value={p.id}>
@@ -208,10 +217,8 @@ function MovimientosPersonas() {
                     </option>
                   ))}
                 </select>
-              </div>
-
-              <div className="form-group-fluent">
-                <label htmlFor="nombreInput" className="form-label-fluent">Nombre</label>
+              
+                <label htmlFor="nombreInput">Nombre</label>
                 <input
                   id="nombreInput"
                   type="text"
@@ -220,12 +227,10 @@ function MovimientosPersonas() {
                   value={formData.nombre}
                   onChange={handleInputChange}
                   disabled={!!selectedId}
-                  className="form-control-fluent"
                   required={!selectedId}
                 />
-              </div>
-              <div className="form-group-fluent">
-                <label htmlFor="apellidoInput" className="form-label-fluent">Apellido</label>
+
+                <label htmlFor="apellidoInput">Apellido</label>
                 <input
                   id="apellidoInput"
                   type="text"
@@ -234,12 +239,10 @@ function MovimientosPersonas() {
                   value={formData.apellido}
                   onChange={handleInputChange}
                   disabled={!!selectedId}
-                  className="form-control-fluent"
                   required={!selectedId}
                 />
-              </div>
-              <div className="form-group-fluent">
-                <label htmlFor="dniInput" className="form-label-fluent">DNI</label>
+    
+                <label htmlFor="dniInput">DNI</label>
                 <input
                   id="dniInput"
                   type="text"
@@ -248,30 +251,19 @@ function MovimientosPersonas() {
                   value={formData.dni}
                   onChange={handleInputChange}
                   disabled={!!selectedId}
-                  className="form-control-fluent"
                   required={!selectedId}
                 />
-              </div>
 
-              <div className="movimientos-form-actions">
-                <button
-                  className="btn-fluent ingreso"
-                  onClick={() => registrarMovimiento(1)}
-                >
-                  Marcar Ingreso
-                </button>
-                <button
-                  className="btn-fluent egreso"
-                  onClick={() => registrarMovimiento(2)}
-                >
-                  Marcar Egreso
-                </button>
+              <div className="form-buttons">
+                <button className="submit-btn" onClick={() => registrarMovimiento(1)}>Marcar Ingreso</button>
+                <button className="cancel-btn"onClick={() => registrarMovimiento(2)}>Marcar Egreso</button>
               </div>
             </div>
-          </>
+            </div>
+          </div>
         )}
         {vistaActiva === "historial" && (
-          <>
+          <div className="table-container">
             <h2 className="table-title">Historial de asistencia</h2>
             <div className="filtros">
               <input
@@ -294,9 +286,7 @@ function MovimientosPersonas() {
                 <option value="Ingreso">Ingreso</option>
                 <option value="Egreso">Egreso</option>
               </select>
-              <button className="btn-fluent" onClick={aplicarFiltros}> {/* Botón Fluent */}
-                Filtrar
-              </button>
+              <button onClick={aplicarFiltros}>Aplicar filtros</button>
             </div>
             <table className="table-fluent movimientos-table">
               <thead>
@@ -331,7 +321,7 @@ function MovimientosPersonas() {
                       {["Administrador", "Jefatura"].includes(usuario?.rol) && (
                         <td>
                           <button
-                            className="btn-fluent eliminar" // Clase Fluent
+                            className="edit-btn"
                             onClick={() => eliminarMovimientoLocal(m.id)}
                           >
                             Eliminar
@@ -367,7 +357,7 @@ function MovimientosPersonas() {
                 Siguiente
               </button>
             </div>
-          </>
+          </div>
         )}
       </main>
     </div>

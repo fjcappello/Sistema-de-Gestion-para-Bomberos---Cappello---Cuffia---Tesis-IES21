@@ -3,6 +3,8 @@ import api from "../../api";
 import "../Styles/Dashboard.css";
 import Modal from "./ModalCards";
 
+// Componente para registrar ingresos y egresos de personas al cuartel (en caso de ser externo pueden agregarlo manualmente)
+// También muestra los últimos 4 movimientos registrados
 function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -58,7 +60,7 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
       return;
     }
     const usuario = JSON.parse(localStorage.getItem("usuario"));
-    // Lógica para evitar registros incorrectos (nueva lógica)
+    // Lógica para evitar registros incorrectos
     const registros = movimientos.filter((m) => m.dni === formData.dni);
     const ultimoEstado = registros.length > 0 ? registros[0].estado : null;
 
@@ -67,7 +69,7 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
       return;
     }
 
-    if (estado_id === 2 && (ultimoEstado !== "Ingreso")) {
+    if (estado_id === 2 && ultimoEstado !== "Ingreso") {
       alert("No se puede marcar egreso sin haber ingresado previamente.");
       return;
     }
@@ -121,7 +123,7 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
 
       {isModalOpen && (
         <Modal>
-          <h4>Registrar Movimiento</h4>
+          <h3>Registrar Movimiento</h3>
           <select
             className="persona-select"
             value={selectedId}
@@ -182,9 +184,9 @@ function IngresosEgresosCard({ movimientos = [], onRegistrar }) {
           <br />
           <br />
           <div className="modal-buttons">
-            <button onClick={() => handleRegistro(1)}>Marcar Ingreso</button>
-            <button onClick={() => handleRegistro(2)}>Marcar Egreso</button>
-            <button
+            <button className="submit-btn" onClick={() => handleRegistro(1)}>Marcar Ingreso</button>
+            <button className="cancel-btn" onClick={() => handleRegistro(2)}>Marcar Egreso</button>
+            <button className="cancel-btn"
               onClick={() => {
                 setFormData({
                   nombre: "",

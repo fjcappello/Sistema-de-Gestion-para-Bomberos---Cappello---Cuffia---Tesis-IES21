@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; 
 import api from "../../api";
 import "../Styles/Dashboard.css";
 
-function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
+function MovilesCard() {
   const [movimientos, setMovimientos] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const cargarUltimosMovimientos = async () => {
       try {
         const response = await api.get("/moviles_movimientos");
-        const datos = response.data.slice(-4).reverse(); // últimos 4 movimientos
+        const datos = response.data.slice(0, 4);
         setMovimientos(datos);
       } catch (error) {
         console.error("Error al cargar movimientos recientes:", error);
@@ -19,9 +21,13 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
     cargarUltimosMovimientos();
   }, []);
 
+  const irAGestionMoviles = () => {
+    navigate("/reportes/movimientos-moviles");
+  };
+
   return (
-    <div className="moviles-card">
-      <h3 className="moviles-card-titulo">Movimientos de Moviles</h3>
+    <div className="ingresos-egresos-card">
+      <h3>Movimientos de Moviles</h3>
       <table className="moviles-card-tabla">
         <thead>
           <tr>
@@ -57,9 +63,9 @@ function MovilesCard({ abrirModalSalida, abrirModalRetorno }) {
         </tbody>
       </table>
       <div style={{ marginTop: "10px" }}>
-        <a href="/reportes/movimientos-moviles" className="btn btn-moviles-card">
+        <button onClick={irAGestionMoviles}>
           Ir a gestión de móviles
-        </a>
+        </button>
       </div>
     </div>
   );

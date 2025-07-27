@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
-import api from "../api";
 import "./Styles/PersonalTable.css";
 import "./Styles/Tablas.css";
-import axios from 'axios';
+import axios from "axios";
 import { useUsuario } from "../context/UserContext";
 
 const ITEMS_PER_PAGE = 5;
@@ -43,7 +42,7 @@ function PersonalTable() {
     situacion: "",
     vencida: false,
   });
-  
+
   const [filtrosAplicados, setFiltrosAplicados] = useState({
     legajo: "",
     nombreApellido: "",
@@ -58,16 +57,16 @@ function PersonalTable() {
   // Función para manejar cambios en los filtros
   const handleFilterChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFiltrosTemp(prev => ({
+    setFiltrosTemp((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
   // Función para aplicar los filtros
   const aplicarFiltros = () => {
     setFiltrosAplicados({ ...filtrosTemp });
-    setCurrentPage(1); // Resetear a la primera página
+    setCurrentPage(1);
   };
 
   // Función para limpiar los filtros
@@ -92,7 +91,7 @@ function PersonalTable() {
       situacion: "",
       vencida: false,
     });
-    setCurrentPage(1); // Resetear a la primera página
+    setCurrentPage(1);
   };
 
   const fetchPersonal = async () => {
@@ -133,6 +132,7 @@ function PersonalTable() {
     setFormData({ ...formData, [name]: value });
   };
 
+  //Agregar personal
   const handleAddSubmit = async (e) => {
     e.preventDefault();
 
@@ -148,23 +148,22 @@ function PersonalTable() {
       return;
     }
 
-    formData.situacion_id = 1; // Establecer valor fijo de 'Activo'
+    formData.situacion_id = 1; // Establecemos como Activo por defecto
+    const data = {
+      ...formData,
+      legajoOperador: usuario?.legajo
+    }
+    
 
     try {
-      const response = await axios.post(
-        "http://localhost:3001/personal",
-        formData
-      );
+      const response = await axios.post("http://localhost:3001/personal", data);
       if (response.data.success) {
         alert("Personal agregado correctamente");
         setIsAddModalOpen(false);
         clearFormData();
         fetchPersonal();
       } else {
-        alert(
-          "Error al agregar personal: " +
-            (response.data.error || "Operación fallida")
-        );
+        alert("Error al agregar personal: " +(response.data.error || "Operación fallida"));
       }
     } catch (error) {
       console.error("Error al intentar agregar personal:", error);
@@ -174,6 +173,7 @@ function PersonalTable() {
     }
   };
 
+  //Editar personal
   const handleEditSubmit = async (e) => {
     e.preventDefault();
     const dataToUpdate = {};
@@ -203,11 +203,12 @@ function PersonalTable() {
     }
 
     try {
-      const response = await axios.put(
-        `http://localhost:3001/personal/${formData.legajo}`,
-        dataToUpdate
-      );
-
+      const data = {
+        ...dataToUpdate,
+        legajo: formData.legajo,
+        legajoOperador: usuario?.legajo
+      }
+      const response = await axios.put(`http://localhost:3001/personal`, data);
       if (response.data.success) {
         alert("Datos actualizados correctamente");
         setIsEditModalOpen(false);
@@ -218,11 +219,11 @@ function PersonalTable() {
         );
       }
     } catch (error) {
-      console.error("Error al intentar actualizar:", error);
       alert("Error en el servidor al intentar actualizar datos.");
     }
   };
 
+  //Borrar personal
   const handleDelete = async () => {
     if (!deleteLegajo) {
       setDeleteError("Por favor, ingrese un número de legajo válido.");
@@ -230,9 +231,12 @@ function PersonalTable() {
     }
 
     try {
-      const response = await axios.delete(
-        `http://localhost:3001/personal/${deleteLegajo}`
-      );
+      const datos = {
+        legajo: deleteLegajo,
+        legajoOperador: usuario?.legajo
+      };
+
+      const response = await axios.delete(`http://localhost:3001/personal`, {data:datos});
       if (response.data.success) {
         alert("Personal eliminado correctamente");
         setIsDeleteModalOpen(false);
@@ -291,7 +295,8 @@ function PersonalTable() {
   // Filtrado usando filtrosAplicados
   const personalFiltrado = personal.filter((p) => {
     const coincideLegajo =
-      filtrosAplicados.legajo === "" || p.legajo.toString().includes(filtrosAplicados.legajo);
+      filtrosAplicados.legajo === "" ||
+      p.legajo.toString().includes(filtrosAplicados.legajo);
     const coincideNombreApellido =
       filtrosAplicados.nombreApellido === "" ||
       p.nombre_completo
@@ -307,9 +312,11 @@ function PersonalTable() {
       filtrosAplicados.ingresoHasta === "" ||
       new Date(p.fecha_ingreso) <= new Date(filtrosAplicados.ingresoHasta);
     const coincideJerarquia =
-      filtrosAplicados.jerarquia === "" || p.jerarquia === filtrosAplicados.jerarquia;
+      filtrosAplicados.jerarquia === "" ||
+      p.jerarquia === filtrosAplicados.jerarquia;
     const coincideSituacion =
-      filtrosAplicados.situacion === "" || p.situacion === filtrosAplicados.situacion;
+      filtrosAplicados.situacion === "" ||
+      p.situacion === filtrosAplicados.situacion;
     const coincideVencida =
       !filtrosAplicados.vencida || isExpired(p.fecha_revision_medica);
     return (
@@ -338,19 +345,19 @@ function PersonalTable() {
 
       <div className="botonera_tablas">
         {["Administrador", "Jefatura"].includes(usuario?.rol) && (
-        <>
-          <button className="add-report-btn" onClick={openAddModal}>
-            Agregar Nuevo Personal
-          </button>
-          {
-          <button
-            className="delete-report-btn"
-            onClick={() => setIsDeleteModalOpen(true)}
-          >
-            Eliminar Personal
-          </button>
-          }
-        </>
+          <>
+            <button className="add-report-btn" onClick={openAddModal}>
+              Agregar Nuevo Personal
+            </button>
+            {
+              <button
+                className="delete-report-btn"
+                onClick={() => setIsDeleteModalOpen(true)}
+              >
+                Eliminar Personal
+              </button>
+            }
+          </>
         )}
       </div>
 
@@ -441,16 +448,24 @@ function PersonalTable() {
             <th>Jerarquía</th>
             <th>Situación</th>
             <th>Fecha Revisión Médica</th>
-            {["Administrador", "Jefatura"].includes(usuario?.rol) && <th>Acciones</th>}
+            {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+              <th>Acciones</th>
+            )}
           </tr>
-        </thead>  
+        </thead>
         <tbody>
           {currentPersonal.length > 0 ? (
             currentPersonal.map((rrhh) => (
               <tr
                 key={rrhh.legajo}
-                className={isExpired(rrhh.fecha_revision_medica) ? "vencida" : ""}
-                title={isExpired(rrhh.fecha_revision_medica) ? "Ficha médica vencida" : ""}
+                className={
+                  isExpired(rrhh.fecha_revision_medica) ? "vencida" : ""
+                }
+                title={
+                  isExpired(rrhh.fecha_revision_medica)
+                    ? "Ficha médica vencida"
+                    : ""
+                }
               >
                 <td>{rrhh.legajo}</td>
                 <td>{rrhh.nombre_completo}</td>
@@ -474,22 +489,28 @@ function PersonalTable() {
                     </span>
                   )}
                 </td>
-            {["Administrador", "Jefatura"].includes(usuario?.rol) && (
-              <td>
-                <button
-                  className="edit-btn"
-                  title="Editar esta persona"
-                  onClick={() => openEditModal(rrhh)}
-                >
-                  Editar
-                </button>
-              </td>
-            )}
+                {["Administrador", "Jefatura"].includes(usuario?.rol) && (
+                  <td>
+                    <button
+                      className="edit-btn"
+                      title="Editar esta persona"
+                      onClick={() => openEditModal(rrhh)}
+                    >
+                      Editar
+                    </button>
+                  </td>
+                )}
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan={["Administrador", "Jefatura"].includes(usuario?.rol) ? "9" : "8"}>
+              <td
+                colSpan={
+                  ["Administrador", "Jefatura"].includes(usuario?.rol)
+                    ? "9"
+                    : "8"
+                }
+              >
                 No hay datos de personal disponibles
               </td>
             </tr>
@@ -522,7 +543,6 @@ function PersonalTable() {
             <form onSubmit={handleAddSubmit} className="form-container">
               <input
                 type="number"
-                className="filtro-input"
                 name="legajo"
                 placeholder="Legajo"
                 value={formData.legajo}
@@ -532,7 +552,6 @@ function PersonalTable() {
               />
               <input
                 type="text"
-                className="filtro-input"
                 name="nombre"
                 placeholder="Nombre"
                 value={formData.nombre}
@@ -541,7 +560,6 @@ function PersonalTable() {
               />
               <input
                 type="text"
-                className="filtro-input"
                 name="apellido"
                 placeholder="Apellido"
                 value={formData.apellido}
@@ -550,7 +568,6 @@ function PersonalTable() {
               />
               <input
                 type="number"
-                className="filtro-input"
                 name="documento"
                 placeholder="Documento"
                 value={formData.documento}
@@ -562,7 +579,6 @@ function PersonalTable() {
               <label>Fecha de Nacimiento:</label>
               <input
                 type="date"
-                className="filtro-input"
                 name="nacimiento"
                 value={formData.nacimiento}
                 onChange={handleInputChange}
@@ -571,15 +587,12 @@ function PersonalTable() {
               <label>Fecha de Ingreso:</label>
               <input
                 type="date"
-                className="filtro-input"
                 name="fecha_ingreso"
                 value={formData.fecha_ingreso}
                 onChange={handleInputChange}
                 required
               />
-              <label>Jerarquía:</label>
               <select
-                className="filtro-select"
                 name="jerarquia_id"
                 value={formData.jerarquia_id}
                 onChange={handleInputChange}
@@ -594,23 +607,17 @@ function PersonalTable() {
               <label>Fecha Revisión Médica:</label>
               <input
                 type="date"
-                className="filtro-input"
                 name="fecha_revision_medica"
                 value={formData.fecha_revision_medica}
                 onChange={handleInputChange}
                 required
                 max={new Date().toISOString().split("T")[0]}
               />
-              <button type="submit" className="submit-btn">
-                Agregar Personal
-              </button>
+              <div className="form-buttons">
+                <button type="submit" className="submit-btn">Agregar Personal</button>
+                <button className="cancel-btn" onClick={() => setIsAddModalOpen(false)}>Cerrar</button>
+            </div>
             </form>
-            <button
-              className="close-modal-btn"
-              onClick={() => setIsAddModalOpen(false)}
-            >
-              Cerrar
-            </button>
           </div>
         </div>
       )}
@@ -620,9 +627,7 @@ function PersonalTable() {
           <div className="modal-content">
             <h3>Editar Personal</h3>
             <form onSubmit={handleEditSubmit} className="form-container">
-              <label>Jerarquía:</label>
               <select
-                className="filtro-select"
                 name="jerarquia_id"
                 value={formData.jerarquia_id}
                 onChange={handleInputChange}
@@ -634,9 +639,7 @@ function PersonalTable() {
                   </option>
                 ))}
               </select>
-              <label>Situación:</label>
               <select
-                className="filtro-select"
                 name="situacion_id"
                 value={formData.situacion_id}
                 onChange={handleInputChange}
@@ -657,19 +660,12 @@ function PersonalTable() {
                 onChange={handleInputChange}
                 max={new Date().toISOString().split("T")[0]}
               />
-              <button type="submit" className="submit-btn">
-                Guardar Cambios
-              </button>
+              <div className="form-buttons">
+                <button type="submit" className="submit-btn">Guardar Cambios</button>
+              <button className="cancel-btn" onClick={() => {clearFormData(); setIsEditModalOpen(false);}}>Cerrar</button>
+              </div>
+              
             </form>
-            <button
-              className="close-modal-btn"
-              onClick={() => {
-                clearFormData();
-                setIsEditModalOpen(false);
-              }}
-            >
-              Cerrar
-            </button>
           </div>
         </div>
       )}
@@ -679,7 +675,8 @@ function PersonalTable() {
           <div className="modal-content">
             <h3>Eliminar Personal</h3>
             <input
-              type="text"
+              type="number"
+              min={1}
               className="filtro-input"
               placeholder="Ingrese el legajo"
               value={deleteLegajo}
@@ -689,34 +686,38 @@ function PersonalTable() {
               }}
               required
             />
-            <button
-              className="confirm-delete-btn"
+            <div className="form-buttons">
+              <button
+              className="cancel-btn"
               onClick={() => setConfirmDelete(true)}
             >
               Eliminar
             </button>
             <button
-              className="close-modal-btn"
+              className="cancel-btn"
               onClick={() => setIsDeleteModalOpen(false)}
             >
               Cancelar
             </button>
+            </div>
           </div>
 
           {confirmDelete && (
             <div className="confirm-overlay">
               <div className="confirm-content">
                 <p>¿Está seguro? Esta acción no se puede deshacer.</p>
-                {deleteError && <p className="error-message">{deleteError}</p>}
-                <button className="confirm-delete-btn" onClick={handleDelete}>
+                <div className="form-buttons">
+                  {deleteError && <p className="error-message">{deleteError}</p>}
+                <button className="submit-btn" onClick={handleDelete}>
                   Confirmar
                 </button>
                 <button
-                  className="close-modal-btn"
+                  className="cancel-btn"
                   onClick={() => setConfirmDelete(false)}
                 >
                   Cancelar
                 </button>
+                </div>
               </div>
             </div>
           )}

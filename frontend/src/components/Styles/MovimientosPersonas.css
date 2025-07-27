@@ -1,5 +1,3 @@
-/* frontend/src/components/Styles/MovimientosPersonas.css - ESTILO FLUENT DESIGN */
-
 /* Layout específico para MovimientosPersonas */
 .movimientos-layout {
   padding-top: 2rem;
@@ -55,51 +53,7 @@
   /* No necesita padding-left, el gap del .movimientos-layout ya da separación */
 }
 
-/* Estilos para el contenido dentro de .movimientos-main-content */
 
-
-
-/* Formulario de Registrar Movimiento */
-.movimientos-form {
-  background-color: var(--color-fluent-surface);
-  padding: var(--spacing-lg); /* 20px */
-  border-radius: var(--border-radius-large); /* 6px */
-  margin-bottom: var(--spacing-xl); /* 24px */
-  box-shadow: var(--box-shadow-sm);
-  display: grid; /* Usar grid para mejor alineación */
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Columnas responsivas */
-  gap: var(--spacing-md); /* 16px de espacio */
-}
-/* Los inputs y selects usarán .form-control-fluent desde global.css */
-.movimientos-form select.form-control-fluent,
-.movimientos-form input.form-control-fluent {
-  width: 100%; /* Ocupar todo el ancho de la celda del grid */
-}
-/* Botones de Ingreso/Egreso */
-.movimientos-form .btn-fluent { /* Aplicar a botones de ingreso/egreso */
-  /* Estilos base de .btn-fluent ya están en global.css */
-  height: var(--fluent-control-height-large); /* Botones más grandes */
-  font-weight: var(--font-weight-semibold);
-  grid-column: span 1; /* Ocupar una celda */
-}
-.movimientos-form .btn-fluent.ingreso { /* Clase específica para ingreso */
-  background-color: var(--color-success); /* Usar variable de éxito si existe, o definir un verde Fluent */
-  border-color: var(--color-success);
-  color: var(--color-fluent-text-on-accent);
-}
-.movimientos-form .btn-fluent.ingreso:hover {
-  background-color: var(--color-success-darker);
-  border-color: var(--color-success-darker);
-}
-.movimientos-form .btn-fluent.egreso { /* Clase específica para egreso */
-  background-color: var(--color-fluent-text-error); /* Usar variable de error o rojo Fluent */
-  border-color: var(--color-fluent-text-error);
-  color: var(--color-fluent-text-on-accent);
-}
-.movimientos-form .btn-fluent.egreso:hover {
-  background-color: #A80000; /* Más oscuro */
-  border-color: #A80000;
-}
 
 /* Contenedor para los botones de acción en el formulario si se necesita agruparlos */
 .movimientos-form-actions {
@@ -110,49 +64,6 @@
     margin-top: var(--spacing-sm);
 }
 
-
-/* Contenedor de Filtros para el Historial */
-.filter-container { /* Re-estilizar como Fluent */
-  background-color: var(--color-fluent-surface);
-  padding: var(--spacing-md); /* 16px */
-  border-radius: var(--border-radius-medium); /* 4px */
-  margin-bottom: var(--spacing-lg); /* 20px */
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-md); /* 16px */
-  align-items: flex-end; /* Alinear al fondo */
-  /* box-shadow: var(--box-shadow-xs); */ /* Sombra muy sutil si es necesario */
-  border: 1px solid var(--color-fluent-border-light);
-}
-.filter-container .form-control-fluent { /* Aplicar a inputs y selects de filtro */
-  flex-grow: 1;
-  min-width: 180px; /* Ancho mínimo para filtros */
-}
-.filter-container .btn-fluent { /* Botón de filtrar */
-  height: var(--fluent-control-height);
-}
-
-
-/* Tabla de Movimientos */
-/* Usar .table-fluent de global.css */
-/* Si se necesitan ajustes específicos: */
-/* .movimientos-table { ... } */
-/* .movimientos-table th, .movimientos-table td { ... } */
-
-.movimientos-table .btn-fluent.eliminar {
-  /* Estilo para botón de eliminar en tabla */
-  background-color: transparent;
-  color: var(--color-fluent-text-error);
-  border: 1px solid transparent;
-  padding: var(--spacing-xs) var(--spacing-sm); /* Más pequeño */
-  height: auto;
-}
-.movimientos-table .btn-fluent.eliminar:hover {
-  background-color: rgba(168, 0, 0, 0.1); /* Fondo rojo muy sutil */
-  border-color: transparent;
-}
-
-
 /* Paginación */
 .pagination {
     display: flex;
@@ -162,9 +73,6 @@
     align-items: center;
 }
 
-.pagination button:disabled {
-  /* Estilos de :disabled de .btn-fluent ya se aplican */
-}
 .pagination span {
   color: var(--color-fluent-text-secondary);
 }

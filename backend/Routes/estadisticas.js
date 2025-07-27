@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../DB/db.js");
 
+
 router.get("/estadisticas", (req, res) => {
   const dias = parseInt(req.query.dias) || 30;
 

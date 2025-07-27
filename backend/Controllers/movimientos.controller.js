@@ -1,7 +1,7 @@
 const db = require("../DB/db.js");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
-// Obtener movimientos visibles
+// Obtener movimientos visibles (no se muestran a los que se le aplico soft delete)
 const obtenerMovimientos = (req, res) => {
   const query = `
     SELECT m.id, m.timestamp, m.nombre, m.apellido, m.dni, e.descripcion AS estado
@@ -21,7 +21,7 @@ const obtenerMovimientos = (req, res) => {
 
 // Registrar nuevo movimiento
 const registrarMovimiento = (req, res) => {
-  const { id_personal, nombre, apellido, dni, estado_id } = req.body;
+  const { id_personal, nombre, apellido, dni, estado_id, legajo } = req.body;
 
   const query = `
     INSERT INTO movimientos_cuartel (id_personal, nombre, apellido, dni, estado_id)
@@ -38,7 +38,7 @@ const registrarMovimiento = (req, res) => {
       }
 
       registrarLog(
-        id_personal || 0,
+        legajo || 0,
         `Registro de movimiento: se registró un ${
           estado_id === 1 ? "ingreso" : "egreso"
         } para ${nombre} ${apellido} (${dni})`
@@ -51,7 +51,7 @@ const registrarMovimiento = (req, res) => {
 
 // Ocultar un movimiento (soft delete)
 const ocultarMovimiento = (req, res) => {
-  const { id } = req.params;
+  const { id, legajo } = req.body;
   const query = "UPDATE movimientos_cuartel SET visible = 0 WHERE id = ?";
 
   db.query(query, [id], async (err, result) => {
@@ -61,7 +61,7 @@ const ocultarMovimiento = (req, res) => {
     }
 
     registrarLog(
-      0,
+      legajo || 0,
       `Ocultamiento de movimiento: se ocultó el movimiento ID ${id}`
     );
 

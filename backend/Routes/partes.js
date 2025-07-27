@@ -14,7 +14,7 @@ const {
 router.get("/partesemergencias", obtenerPartes);
 router.get("/partesemergencias/:id", obtenerPartePorId);
 router.post("/partesemergencias", crearParte);
-router.delete("/eliminarEmergencia/:id", eliminarParte);
+router.delete("/eliminarEmergencia", eliminarParte);
 
 router.get("/tipos_asistencia", obtenerTiposAsistencia);
 router.get("/reportes", obtenerReporteResumen);

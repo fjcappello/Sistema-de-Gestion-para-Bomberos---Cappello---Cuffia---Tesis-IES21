@@ -31,6 +31,7 @@ const addMovil = (req, res) => {
     kilometraje_inicial,
     fecha_service,
     estado_id,
+    legajo
   } = req.body;
   const query = `
     INSERT INTO moviles (interno, marca, modelo, dominio, vin, kilometraje_inicial, kilometraje_actual, fecha_service, estado_id)
@@ -53,13 +54,11 @@ const addMovil = (req, res) => {
       console.error("Error al agregar móvil:", err);
       res.status(500).json({ error: "Error al agregar móvil" });
     } else {
-      res.json({
+      res.status(200).json({
         success: "Móvil agregado correctamente",
         id: result.insertId,
       });
-      if (req.body.usuario_id) {
-        registrarLog(req.body.usuario_id, `Agregó el móvil ${interno}`);
-      }
+      registrarLog(legajo, `Agregó el móvil ${interno}`);
     }
   });
 };
@@ -121,9 +120,52 @@ const getEstadosMoviles = (req, res) => {
   });
 };
 
-// Editar campos específicos de un móvil
 const editMovil = (req, res) => {
-  const { id } = req.params;
+  const { id, legajo, kilometraje_actual, fecha_service, estado_id } = req.body;
+
+  if (!id) {
+    return res.status(400).json({ error: "Falta el ID del móvil" });
+  }
+  const campos = [];
+  const valores = [];
+
+  if (kilometraje_actual !== undefined) {
+    campos.push("kilometraje_actual = ?");
+    valores.push(kilometraje_actual);
+  }
+  if (fecha_service !== undefined) {
+    campos.push("fecha_service = ?");
+    valores.push(fecha_service);
+  }
+  if (estado_id !== undefined) {
+    campos.push("estado_id = ?");
+    valores.push(estado_id);
+  }
+
+  if (campos.length === 0) {
+    return res.status(400).json({ error: "No se enviaron campos para modificar" });
+  }
+
+  valores.push(id);
+  const query = `UPDATE moviles SET ${campos.join(", ")} WHERE id = ?`;
+
+  db.query(query, valores, (err) => {
+    if (err) {
+      console.error("Error al actualizar móvil:", err);
+      return res.status(500).json({ error: "Error al actualizar el móvil" });
+    }
+    if(Number(estado_id) === 3){
+      registrarLog(legajo, `Dió de baja definitiva el móvil ID ${id}`);
+      return res.status(200).json({ success: "Móvil dado de baja correctamente" });
+    }
+    registrarLog(legajo, `Editó el móvil ID ${id}`);
+    return res.status(200).json({ success: "Móvil actualizado correctamente" });
+  });
+};
+
+/*/ Editar campos específicos de un móvil
+const editMovil = (req, res) => {
+  const { id } = req.body;
   const campos = [];
   const valores = [];
 
@@ -160,7 +202,7 @@ const editMovil = (req, res) => {
       }
     }
   });
-};
+};*/
 
 module.exports = {
   getMoviles,

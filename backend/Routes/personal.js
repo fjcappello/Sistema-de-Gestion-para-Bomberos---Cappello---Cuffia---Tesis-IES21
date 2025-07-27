@@ -13,8 +13,8 @@ const {
 router.get("/personal", obtenerPersonal);
 router.get("/personal_nombres", obtenerNombres);
 router.post("/personal", crearPersonal);
-router.put("/personal/:legajo", actualizarPersonal);
-router.delete("/personal/:legajo", eliminarPersonal);
+router.put("/personal", actualizarPersonal);
+router.delete("/personal", eliminarPersonal);
 
 router.get("/jerarquias", obtenerJerarquias);
 router.get("/situaciones", obtenerSituaciones);

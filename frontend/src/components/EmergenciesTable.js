@@ -9,7 +9,7 @@ const ITEMS_PER_PAGE = 5;
 
 function EmergenciesTable() {
   // Estados para datos
-  // Usuario
+
   const { usuario } = useUsuario();
   const [emergencies, setEmergencies] = useState([]);
   const [filteredEmergencies, setFilteredEmergencies] = useState([]);
@@ -55,12 +55,11 @@ function EmergenciesTable() {
 
   // Determinar si una emergencia está activa
   const isEmergenciaActiva = (emergencia) => {
-    // Ajusta estas condiciones según los valores reales de tu backend
     return (
       emergencia.estado === "Activo" ||
       emergencia.estado === "En curso" ||
       emergencia.estado === "1"
-    ); // Ejemplo si usas números
+    ); 
   };
 
   // Obtener datos iniciales
@@ -104,6 +103,18 @@ function EmergenciesTable() {
     const { name, value } = e.target;
     setFilters({ ...filters, [name]: value });
   };
+  const handleCleanFilters = () => {
+  const resetFilters = {
+    jefeDotacion: "",
+    tipoAsistencia: "",
+    startDate: "",
+    endDate: "",
+    denunciante: "",
+  };
+  setFilters(resetFilters);
+  setFilteredEmergencies(emergencies);
+  setCurrentPage(1);
+};
 
   const handleApplyFilters = () => {
     const filtered = emergencies.filter((emergencia) => {
@@ -177,9 +188,9 @@ function EmergenciesTable() {
       return;
     }
     try {
-      const id_personal = 1;
+      const legajo = usuario?.legajo
       const response = await api.post("/bitacora", {
-        id_personal: id_personal,
+        legajo: legajo,
         reporte: bitacoraText,
         parte_id: selectedPartId,
       });
@@ -259,11 +270,15 @@ function EmergenciesTable() {
     );
   };
 
-  // Función para manejar agregar emergencia
+  // Función para agregar emergencia
   const handleAddSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("/partesemergencias", formData);
+      const datos = {
+        ...formData,
+        legajo: usuario?.legajo
+      }
+      const response = await api.post("/partesemergencias", datos);
       if (response.data.success) {
         alert("Emergencia agregada correctamente");
         setIsAddModalOpen(false);
@@ -287,14 +302,18 @@ function EmergenciesTable() {
     }
   };
 
-  // Función para manejar borrado
+  // Función para borrado
   const handleDelete = async () => {
+    const datos = {
+      id: deleteParteId,
+      legajo: usuario?.legajo
+    };
     if (!deleteParteId) {
       setDeleteError("Por favor, ingrese un ID válido.");
       return;
     }
     try {
-      const response = await api.delete(`/eliminarEmergencia/${deleteParteId}`);
+      const response = await api.delete(`/eliminarEmergencia`, {data:datos});
       if (response.data.success) {
         alert("Reporte eliminado correctamente");
         setIsDeleteModalOpen(false);
@@ -387,6 +406,9 @@ function EmergenciesTable() {
           <button onClick={handleApplyFilters} className="filter-btn">
             Aplicar Filtros
           </button>
+          <button onClick={handleCleanFilters} className="filter-btn">
+            Limpiar filtros
+          </button>
         </div>
 
 
@@ -476,27 +498,16 @@ function EmergenciesTable() {
         </button>
       </div>
 
-      
-
-
-
       {/* Modal para Agregar Reporte */}
       {isAddModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h3
-              style={{
-                margin: "0 0 1rem 0",
-                padding: "1.5rem 1.5rem 0",
-                color: "#333",
-                fontSize: "1.25rem",
-              }}
-            >
+            <h3>
               Agregar Nuevo Reporte
             </h3>
 
             <form onSubmit={handleAddSubmit} className="form-container">
-              <div style={{ display: "flex", gap: "0.75rem" }}>
+              <div >
                 <input
                   type="text"
                   name="nombre_denunciante"
@@ -527,6 +538,7 @@ function EmergenciesTable() {
 
               <input
                 type="number"
+                min={0}
                 name="documento_denunciante"
                 placeholder="Documento de identidad"
                 value={formData.documento_denunciante}
@@ -599,7 +611,7 @@ function EmergenciesTable() {
                 required
               />
               <div className="form-buttons">
-                <button type="submit" className="confirm-btn">
+                <button type="submit" className="submit-btn">
                   Guardar Reporte
                 </button>
                 <button
@@ -655,7 +667,7 @@ function EmergenciesTable() {
               rows={8}
               style={{ width: "100%", marginBottom: "1rem", resize: "none" }}
             />
-            <div class="modal-buttons">
+            <div className="modal-buttons">
               <button onClick={handleConfirmBitacora} className="confirm-btn">
                 Confirmar
               </button>
