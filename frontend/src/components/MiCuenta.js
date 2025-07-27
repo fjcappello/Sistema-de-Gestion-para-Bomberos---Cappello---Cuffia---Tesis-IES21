@@ -1,5 +1,5 @@
 // MiCuenta.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import api from "../api";
 import { useUsuario } from "../context/UserContext";
 import "./Styles/Configuracion.css"; 
@@ -26,6 +26,36 @@ function MiCuenta() {
   const [mensaje, setMensaje] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+
+  const [email, setEmail] = useState("");
+  const [emailRegistrado, setEmailRegistrado] = useState("");
+
+  const cargarDatos = async () => {
+    try {
+      const res = await api.get(`/personal/notificaciones/${usuario.legajo}`);
+      setEmail(res.data.email || "");
+      setEmailRegistrado(res.data.email || "");
+    } catch (err) {
+      console.error("Error al cargar datos del usuario:", err);
+    }
+  };
+
+  useEffect(() => {
+    cargarDatos();
+  }, [usuario]);
+
+  const guardarNotificaciones = async () => {
+    try {
+      await api.put(`/personal/notificaciones/${usuario.legajo}`, {
+        email,
+      });
+      alert("✅ Preferencias actualizadas correctamente.");
+      cargarDatos();
+    } catch (err) {
+      console.error("Error al actualizar preferencias:", err);
+      alert("❌ No se pudieron guardar los cambios.");
+    }
+  };
 
   // Función para verificar criterios de contraseña segura
   const verificarCriterios = (password) => {
@@ -149,6 +179,48 @@ function MiCuenta() {
         </ul>
         {mensaje && <p className="mensaje-ok">{mensaje}</p>}
         {error && <p className="mensaje-error">{error}</p>}
+
+        <hr style={{ margin: "2rem 0" }} />
+        <h3>Preferencias de notificación</h3>
+        <div className="configuracion-filtros">
+          <input
+            type="email"
+            className="form-control-fluent"
+            placeholder="Correo electrónico"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <button className="add-report-btn" onClick={guardarNotificaciones}>
+            Guardar preferencias
+          </button>
+          {emailRegistrado && emailRegistrado.trim() !== "" ? (
+            <>
+              <p style={{ fontStyle: "italic", color: "#555" }}>
+                📧 Mail registrado: <strong>{emailRegistrado}</strong>, las notificaciones se encuentran activadas.
+              </p>
+              <button
+                className="add-report-btn"
+                style={{ backgroundColor: "#999", marginTop: "0.5rem" }}
+                onClick={async () => {
+                  const confirmar = window.confirm("¿Estás seguro de que deseas desactivar las notificaciones?");
+                  if (!confirmar) return;
+
+                  await api.put(`/personal/notificaciones/${usuario.legajo}`, {
+                    email: "",
+                  });
+                  alert("✅ Notificaciones desactivadas correctamente.");
+                  cargarDatos();
+                }}
+              >
+                Desactivar notificaciones
+              </button>
+            </>
+          ) : (
+            <p style={{ fontStyle: "italic", color: "#555" }}>
+              📧 Ningún mail registrado, las notificaciones se encuentran desactivadas.
+            </p>
+          )}
+        </div>
       </main>
     </div>
   );
