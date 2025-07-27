@@ -144,9 +144,7 @@ const obtenerRankingHoras = (req, res) => {
   if (hasta) {
     conditions.push("DATE(m1.timestamp) <= ?");
     queryParamsMain.push(hasta);
-    subQueryConditions.push("DATE(sq_m2.timestamp) <= ?");
-    queryParamsSub.push(hasta);
-  }
+     }
   if (legajo) {
     conditions.push("m1.id_personal = ?");
     queryParamsMain.push(legajo);
@@ -173,7 +171,6 @@ const obtenerRankingHoras = (req, res) => {
     JOIN personal p ON m1.id_personal = p.legajo
     WHERE ${conditions.join(" AND ")}
     GROUP BY p.legajo, p.nombre, p.apellido
-    HAVING horas_totales IS NOT NULL
   `;
 
   const validOrder = ["asc", "desc"].includes(orden.toLowerCase())
