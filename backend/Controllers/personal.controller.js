@@ -13,8 +13,7 @@ const obtenerPersonal = (req, res) => {
       j.jerarquia AS jerarquia,
       s.nombre AS situacion,
       p.fecha_revision_medica,
-      p.email,
-      p.notificaciones
+      p.email
     FROM personal p
     LEFT JOIN jerarquias j ON p.jerarquia_id = j.id
     LEFT JOIN situaciones s ON p.situacion_id = s.id
