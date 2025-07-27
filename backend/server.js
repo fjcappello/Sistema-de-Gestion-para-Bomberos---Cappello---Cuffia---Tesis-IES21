@@ -35,10 +35,10 @@ app.use(require("./Routes/movimientos"));
 app.use(require("./Routes/logSeguridad"));
 app.use(require("./Routes/moviles"));
 app.use(require("./Routes/movimientoMoviles"));
-app.use(require("./Routes/estadisticas"));
+app.use("/estadisticas", require("./Routes/estadisticas"));
 app.use(require("./Routes/otrasCuentas"));
 app.use(require("./Routes/panolOperativo"));
-app.use(require("./Routes/estadisticasAsistencias"));
+app.use("/estadisticas/asistencias", require("./Routes/estadisticasAsistencias"));
 
 const { logoutUsuario } = require("./Controllers/login.controller");
 app.post("/logout", logoutUsuario);
