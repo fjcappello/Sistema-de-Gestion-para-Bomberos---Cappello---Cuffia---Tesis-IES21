@@ -12,7 +12,9 @@ const obtenerPersonal = (req, res) => {
       DATE_FORMAT(p.fecha_ingreso, '%d-%m-%Y') AS fecha_ingreso,
       j.jerarquia AS jerarquia,
       s.nombre AS situacion,
-      p.fecha_revision_medica
+      p.fecha_revision_medica,
+      p.email,
+      p.notificaciones
     FROM personal p
     LEFT JOIN jerarquias j ON p.jerarquia_id = j.id
     LEFT JOIN situaciones s ON p.situacion_id = s.id
@@ -34,7 +36,7 @@ const obtenerPersonal = (req, res) => {
 // Obtener nombres de personal
 const obtenerNombres = (req, res) => {
   const query = `
-    SELECT legajo AS id, nombre, apellido, CONCAT(nombre, " ", apellido) AS nombre_completo
+    SELECT legajo AS id, nombre, apellido, CONCAT(nombre, " ", apellido) AS nombre_completo, email
     FROM personal
     ORDER BY nombre ASC
   `;
@@ -81,7 +83,7 @@ const crearPersonal = (req, res) => {
       jerarquia_id,
       situacion_id,
       fecha_revision_medica,
-      id_rol || 1
+      id_rol || 1,
     ],
     (err) => {
       if (err) {
@@ -209,6 +211,56 @@ const obtenerSituaciones = (req, res) => {
   });
 };
 
+// Actualizar preferencias de notificaciones y mail
+
+const actualizarPreferenciasNotificacion = (req, res) => {
+  const { legajo } = req.params;
+  const { email } = req.body;
+
+  const query = `
+    UPDATE personal
+    SET email = ?
+    WHERE legajo = ?
+  `;
+  db.query(query, [email, legajo], (err, result) => {
+    if (err) {
+      console.error("Error al actualizar preferencias:", err);
+      res
+        .status(500)
+        .json({ error: "Error en el servidor al actualizar preferencias" });
+    } else if (result.affectedRows === 0) {
+      res.status(404).json({ error: "Personal no encontrado" });
+    } else {
+      registrarLog(
+        legajo,
+        `Se actualizaron las preferencias de notificación y email del legajo ${legajo}`
+      );
+      res.json({ success: true });
+    }
+  });
+};
+
+const obtenerPersonalPorLegajo = (req, res) => {
+  const { legajo } = req.params;
+  const query = `
+    SELECT legajo, nombre, apellido, email
+    FROM personal
+    WHERE legajo = ?
+  `;
+  db.query(query, [legajo], (err, results) => {
+    if (err) {
+      console.error("Error al obtener datos del personal:", err);
+      return res
+        .status(500)
+        .json({ error: "Error en el servidor al obtener datos del personal" });
+    }
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Personal no encontrado" });
+    }
+    res.json(results[0]);
+  });
+};
+
 module.exports = {
   obtenerPersonal,
   obtenerNombres,
@@ -217,4 +269,6 @@ module.exports = {
   eliminarPersonal,
   obtenerJerarquias,
   obtenerSituaciones,
+  actualizarPreferenciasNotificacion,
+  obtenerPersonalPorLegajo,
 };

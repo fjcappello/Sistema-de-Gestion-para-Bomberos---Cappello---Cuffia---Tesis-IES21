@@ -5,8 +5,10 @@ import "chart.js/auto";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "./Styles/ReportsPage.css";
+import { useUsuario } from "../context/UserContext";
 
 function ReportsPage() {
+  const { usuario } = useUsuario();
   const [filters, setFilters] = useState({
     jefeDotacion: "",
     tipoAsistencia: "",
@@ -26,12 +28,56 @@ function ReportsPage() {
   });
   const [logoDataURI, setLogoDataURI] = useState("");
   const chartRef = useRef(null);
+  const [chartTipoHora, setChartTipoHora] = useState({ labels: [], datasets: [] });
+  const [chartBombero, setChartBombero] = useState({ labels: [], datasets: [] });
 
   useEffect(() => {
     fetchJefesDotacion();
     loadLogo();
     fetchReports();
+    fetchTipoHora();
+    fetchBombero();
   }, []);
+  const fetchTipoHora = async () => {
+    try {
+      const response = await api.get("/estadisticas/por_tipo_y_hora");
+      const agrupado = {};
+
+      response.data.forEach(({ tipo_asistencia, hora, cantidad }) => {
+        if (!agrupado[tipo_asistencia]) agrupado[tipo_asistencia] = Array(24).fill(0);
+        agrupado[tipo_asistencia][hora] = cantidad;
+      });
+
+      const datasets = Object.entries(agrupado).map(([tipo, data], i) => ({
+        label: tipo,
+        data,
+        backgroundColor: `hsl(${i * 60}, 70%, 60%)`,
+      }));
+
+      setChartTipoHora({
+        labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+        datasets,
+      });
+    } catch (err) {
+      console.error("Error al obtener tipo/hora:", err);
+    }
+  };
+
+  const fetchBombero = async () => {
+    try {
+      const response = await api.get("/estadisticas/por_bombero");
+      setChartBombero({
+        labels: response.data.map((d) => d.nombre_completo),
+        datasets: [{
+          label: "Servicios",
+          data: response.data.map((d) => d.cantidad),
+          backgroundColor: "#4CAF50",
+        }]
+      });
+    } catch (err) {
+      console.error("Error al obtener por bombero:", err);
+    }
+  };
 
   useEffect(() => {
     fetchReports();
@@ -60,7 +106,7 @@ function ReportsPage() {
 
   const fetchReports = async () => {
     try {
-      const response = await api.get("/estadisticas_filtros", {
+      const response = await api.get("/estadisticas/estadisticas_filtros", {
         params: {
           jefe_dotacion: appliedFilters.jefeDotacion,
           tipo_asistencia: appliedFilters.tipoAsistencia,
@@ -146,6 +192,24 @@ function ReportsPage() {
       doc.addImage(chartImage, "PNG", 10, 90, 180, 80);
     }
 
+    if (chartTipoHora.datasets.length > 0) {
+      const canvasTipoHora = document.querySelectorAll("canvas")[1];
+      const imageTipoHora = canvasTipoHora.toDataURL("image/png");
+      doc.addPage();
+      doc.setFontSize(14);
+      doc.text("Intervenciones por Tipo y Hora", pageWidth / 2, 20, { align: "center" });
+      doc.addImage(imageTipoHora, "PNG", 10, 30, 180, 80);
+    }
+
+    if (chartBombero.datasets.length > 0) {
+      const canvasBombero = document.querySelectorAll("canvas")[2];
+      const imageBombero = canvasBombero.toDataURL("image/png");
+      doc.addPage();
+      doc.setFontSize(14);
+      doc.text("Intervenciones por Bombero", pageWidth / 2, 20, { align: "center" });
+      doc.addImage(imageBombero, "PNG", 10, 30, 180, 100);
+    }
+
     doc.setFontSize(14);
     doc.text("Análisis de Datos:", 10, 180);
     doc.setFontSize(12);
@@ -161,7 +225,7 @@ function ReportsPage() {
       ? `${usuario.nombre} ${usuario.apellido}`
       : "usuario desconocido";
     doc.text(
-      `Impreso el ${printDate} por ${nombreUsuario}`,
+      `Impreso el ${printDate} por ${usuario?.nombreCompleto || "Sistema"}`,
       10,
       doc.internal.pageSize.getHeight() - 10
     );
@@ -241,6 +305,24 @@ function ReportsPage() {
         <h3>Intervenciones por Tipo</h3>
         {chartData.labels.length > 0 ? (
           <Bar ref={chartRef} data={chartData} options={{ responsive: true }} />
+        ) : (
+          <p>No hay datos disponibles para mostrar.</p>
+        )}
+      </div>
+
+      <div className="chart-container">
+        <h3>Intervenciones por Tipo y Hora</h3>
+        {chartTipoHora.labels.length > 0 ? (
+          <Bar data={chartTipoHora} options={{ responsive: true }} />
+        ) : (
+          <p>No hay datos disponibles para mostrar.</p>
+        )}
+      </div>
+
+      <div className="chart-container">
+        <h3>Intervenciones por Bombero</h3>
+        {chartBombero.labels.length > 0 ? (
+          <Bar data={chartBombero} options={{ responsive: true, indexAxis: 'y' }} />
         ) : (
           <p>No hay datos disponibles para mostrar.</p>
         )}

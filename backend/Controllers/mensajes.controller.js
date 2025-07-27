@@ -1,3 +1,4 @@
+const { enviarCorreo } = require("../Middlewares/email");
 const db = require("../DB/db.js");
 const { registrarLog } = require("../Middlewares/logSeguridadLogger.js");
 
@@ -72,13 +73,53 @@ const enviarMensaje = (req, res) => {
 
       try {
         await Promise.all(destinatarioQueries);
+
+        const envioCorreos = destinatarios.map(async (destinatario_id) => {
+          try {
+            const [results] = await db
+              .promise()
+              .query(
+                "SELECT email, nombre, apellido FROM personal WHERE legajo = ?",
+                [destinatario_id]
+              );
+            if (results.length > 0 && results[0].email) {
+              const { email, nombre, apellido } = results[0];
+              const cuerpoCorreo = `
+Hola ${nombre} ${apellido},
+
+Has recibido un nuevo mensaje en el sistema SIGB.
+
+Asunto: ${asunto}
+
+Mensaje:
+${cuerpo}
+
+Por favor, ingresá al sistema para verlo y responder.
+
+Este mensaje fue generado automáticamente por el sistema SIGB, por favor no responderlo.`;
+              await enviarCorreo(
+                email,
+                `Nuevo mensaje: ${asunto}`,
+                cuerpoCorreo
+              );
+            }
+          } catch (error) {
+            console.error(
+              `Error al enviar correo a destinatario ${destinatario_id}:`,
+              error
+            );
+          }
+        });
+
+        await Promise.all(envioCorreos);
+
         registrarLog(
           remitente_id,
           `Envío de mensaje: asunto "${asunto}" enviado a ${destinatarios.length} destinatario(s)`
         );
         res.json({ success: true, message: "Mensaje enviado" });
       } catch (err) {
-        console.error("Error al insertar destinatarios:", err);
+        console.error("Error al insertar destinatarios o enviar correos:", err);
         res.status(500).json({ error: "Error en el servidor" });
       }
     }

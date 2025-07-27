@@ -54,37 +54,37 @@ function EstadisticaAsistencia() {
     console.log('Solicitando estadísticas con filtros:', params);
 
     // Top 5 Asistencias
-    api.get('/ranking-asistencias', { params: { ...params, orden: 'desc', limite: 5 } })
+    api.get('/estadisticas/asistencias/ranking-asistencias', { params: { ...params, orden: 'desc', limite: 5 } })
       .then(res => setRanking(res.data))
-      .catch(err => console.error('Error en /ranking-asistencias (Top 5)', err));
+      .catch(err => console.error('Error en /estadisticas/asistencias/ranking-asistencias (Top 5)', err));
 
     // Bottom 5 Asistencias
-    api.get('/ranking-asistencias', { params: { ...params, orden: 'asc', limite: 5 } })
+    api.get('/estadisticas/asistencias/ranking-asistencias', { params: { ...params, orden: 'asc', limite: 5 } })
       .then(res => setRankingAsistenciasMenos(res.data))
-      .catch(err => console.error('Error en /ranking-asistencias (Bottom 5)', err));
+      .catch(err => console.error('Error en /estadisticas/asistencias/ranking-asistencias (Bottom 5)', err));
 
     // Top 5 Horas
-    api.get('/ranking-horas', { params: { ...params, orden: 'desc', limite: 5 } })
+    api.get('/estadisticas/asistencias/ranking-horas', { params: { ...params, orden: 'desc', limite: 5 } })
       .then(res => setHoras(res.data))
-      .catch(err => console.error('Error en /ranking-horas (Top 5)', err));
+      .catch(err => console.error('Error en /estadisticas/asistencias/ranking-horas (Top 5)', err));
 
     // Bottom 5 Horas
-    api.get('/ranking-horas', { params: { ...params, orden: 'asc', limite: 5 } })
+    api.get('/estadisticas/asistencias/ranking-horas', { params: { ...params, orden: 'asc', limite: 5 } })
       .then(res => setRankingHorasMenos(res.data))
-      .catch(err => console.error('Error en /ranking-horas (Bottom 5)', err));
+      .catch(err => console.error('Error en /estadisticas/asistencias/ranking-horas (Bottom 5)', err));
 
-    api.get('/asistencia-dia', { params })
+    api.get('/estadisticas/asistencias/asistencia-dia', { params })
       .then(res => setPorDia(res.data))
-      .catch(err => console.error('Error en /asistencia-dia', err));
+      .catch(err => console.error('Error en /estadisticas/asistencias/asistencia-dia', err));
 
-    api.get('/asistencia-mes', { params })
+    api.get('/estadisticas/asistencias/asistencia-mes', { params })
       .then(res => setPorMes(res.data))
-      .catch(err => console.error('Error en /asistencia-mes', err));
+      .catch(err => console.error('Error en /estadisticas/asistencias/asistencia-mes', err));
 
     // Nueva llamada para Asistencia por Jerarquía
-    // api.get('/asistencia-jerarquia', { params })
+    // api.get('/estadisticas/asistencias/asistencia-jerarquia', { params })
     //   .then(res => setAsistenciaPorJerarquia(res.data))
-    //   .catch(err => console.error('Error en /asistencia-jerarquia', err));
+    //   .catch(err => console.error('Error en /estadisticas/asistencias/asistencia-jerarquia', err));
   };
 
   useEffect(() => {
@@ -145,136 +145,32 @@ function EstadisticaAsistencia() {
         y += 5;
       }
 
-      pdf.setFontSize(14);
-      pdf.text('Ranking de Asistencias', margin, y);
-      y += 8;
-      pdf.setFontSize(10);
-      pdf.text('Lista de personal ordenada por cantidad de asistencias.', margin, y);
-      y += 8;
+      // Capturar gráficos del DOM e insertarlos en el PDF
+      const chartIds = [
+        'chart-ranking-asistencias',
+        'chart-horas-cuartel',
+        'chart-ranking-menos-asistencias',
+        'chart-ranking-menos-horas',
+        'chart-asistencia-dia',
+        'chart-asistencia-mes'
+      ];
 
-      ranking.forEach(item => {
-        if (y > 270) {
-          pdf.addPage();
-          y = margin;
-        }
-        pdf.text(`${item.nombre_completo}: ${item.cantidad} asistencias`, margin + 5, y);
-        y += 6;
-      });
+      const charts = chartIds.map(id => document.getElementById(id));
+      let chartY = y;
 
-      y += 10;
-      pdf.setFontSize(14);
-      pdf.text('Ranking por Horas en el Cuartel', margin, y);
-      y += 8;
-      pdf.setFontSize(10);
-      pdf.text('Lista de personal ordenada por horas totales trabajadas.', margin, y);
-      y += 8;
-
-      horas.forEach(item => {
-        if (y > 270) {
-          pdf.addPage();
-          y = margin;
-        }
-        const horasValor = Number(item.horas_totales);
-        // Usa nombre_completo si está disponible, sino usa nombre (como fallback por si acaso)
-        const nombreParaHoras = item.nombre_completo || item.nombre;
-        pdf.text(`${nombreParaHoras}: ${isNaN(horasValor) ? '0.00' : horasValor.toFixed(2)} horas`, margin + 5, y);
-        y += 6;
-      });
-
-      // PDF - Bottom 5 Asistencias
-      y += 10;
-      if (y > 260) { pdf.addPage(); y = margin; } 
-      pdf.setFontSize(14);
-      pdf.text('Personal con Menos Asistencias', margin, y);
-      y += 8;
-      pdf.setFontSize(10);
-      pdf.text('Lista de personal con menos asistencias.', margin, y);
-      y += 8;
-      rankingAsistenciasMenos.forEach(item => {
-        if (y > 270) { pdf.addPage(); y = margin; }
-        pdf.text(`${item.nombre_completo}: ${item.cantidad} asistencias`, margin + 5, y);
-        y += 6;
-      });
-
-      // PDF - Bottom 5 Horas
-      y += 10;
-      if (y > 260) { pdf.addPage(); y = margin; } 
-      pdf.setFontSize(14);
-      pdf.text('Personal con Menos Horas en el Cuartel', margin, y);
-      y += 8;
-      pdf.setFontSize(10);
-      pdf.text('Lista de personal con menos horas totales trabajadas.', margin, y);
-      y += 8;
-      rankingHorasMenos.forEach(item => {
-        if (y > 270) { pdf.addPage(); y = margin; }
-        const horasValor = Number(item.horas_totales);
-        pdf.text(`${item.nombre_completo}: ${isNaN(horasValor) ? '0.00' : horasValor.toFixed(2)} horas`, margin + 5, y);
-        y += 6;
-      });
-
-      y += 10;
-      if (y > 260) { pdf.addPage(); y = margin; } 
-      pdf.setFontSize(14);
-      pdf.text('Asistencia por Día', margin, y);
-      y += 8;
-      pdf.setFontSize(10);
-      pdf.text('Cantidad de ingresos por día en el período seleccionado.', margin, y);
-      y += 8;
-
-      porDia.forEach(item => {
-        if (y > 270) {
-          pdf.addPage();
-          y = margin;
-        }
-        pdf.text(`${item.dia}: ${item.cantidad} ingresos`, margin + 5, y);
-        y += 6;
-      });
-
-      y += 10;
-      pdf.setFontSize(14);
-      pdf.text('Asistencia por Mes', margin, y);
-      y += 8;
-      pdf.setFontSize(10);
-      pdf.text('Cantidad de ingresos por mes en el período seleccionado.', margin, y);
-      y += 8;
-
-      porMes.forEach(item => {
-        if (y > 270) {
-          pdf.addPage();
-          y = margin;
-        }
-        pdf.text(`${item.mes}: ${item.cantidad} ingresos`, margin + 5, y);
-        y += 6;
-      });
-
-      // PDF - Asistencia por Jerarquía
-      if (y > 250) { 
-          pdf.addPage();
-          y = margin;
-      }
-      y += 10;
-      pdf.setFontSize(14);
-      pdf.text('Asistencia por Jerarquía', margin, y);
-      y += 8;
-      pdf.setFontSize(10);
-      pdf.text('Distribución de asistencias según la jerarquía del personal.', margin, y);
-      y += 8;
-
-      if (asistenciaPorJerarquia.length > 0) {
-        asistenciaPorJerarquia.forEach(item => {
-          if (y > 270) { 
+      charts.forEach((chart, index) => {
+        if (chart) {
+          const chartImage = chart.toDataURL('image/png');
+          if (chartY > 240) {
             pdf.addPage();
-            y = margin;
+            chartY = margin;
           }
-          pdf.text(`${item.jerarquia_nombre}: ${item.cantidad} asistencias`, margin + 5, y);
-          y += 6;
-        });
-      } else {
-        pdf.text('No hay datos disponibles.', margin + 5, y);
-        y += 6;
-      }
+          pdf.addImage(chartImage, 'PNG', margin, chartY, pageWidth - margin * 2, 60);
+          chartY += 70;
+        }
+      });
 
-      const footerText = `Generado por: ${usuario?.nombre || 'Usuario'} - Fecha: ${new Date().toLocaleDateString()}`;
+      const footerText = `Generado por: ${usuario?.nombreCompleto || 'Usuario'} - Fecha: ${new Date().toLocaleDateString()}`;
       pdf.setFontSize(8);
       pdf.text(footerText, pageWidth / 2, 290, { align: 'center' });
 
@@ -307,11 +203,11 @@ function EstadisticaAsistencia() {
   };
 
   const horasData = {
-    labels: horas.map(item => item.nombre),
+    labels: horas.map(item => item.nombre_completo || item.nombre || `Legajo ${item.legajo}`),
     datasets: [
       {
         label: 'Horas Totales',
-        data: horas.map(item => item.horas_totales),
+        data: horas.map(item => parseFloat(item.horas_totales) || 0),
         backgroundColor: '#4CAF50',
       },
     ],
@@ -332,7 +228,7 @@ function EstadisticaAsistencia() {
 
   const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sabado'];
   const porDiaData = {
-    labels: porDia.map(item => diasSemana[new Date(item.dia).getDay()]),
+    labels: porDia.map(item => new Date(item.dia).toLocaleDateString('es-AR')),
     datasets: [
       {
         label: 'Ingresos',
@@ -525,44 +421,34 @@ function EstadisticaAsistencia() {
 
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Ranking de Asistencias</h3>
-        <Bar data={rankingData} options={rankingOptions} />
+        <Bar id="chart-ranking-asistencias" data={rankingData} options={rankingOptions} />
       </div>
 
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Ranking por Horas en el Cuartel</h3>
-        <Bar data={horasData} options={horasOptions} />
+        <Bar id="chart-horas-cuartel" data={horasData} options={horasOptions} />
       </div>
 
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Personal con Menos Asistencias</h3>
-        <Bar data={rankingAsistenciasMenosData} options={rankingAsistenciasMenosOptions} />
+        <Bar id="chart-ranking-menos-asistencias" data={rankingAsistenciasMenosData} options={rankingAsistenciasMenosOptions} />
       </div>
 
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Personal con Menos Horas en el Cuartel</h3>
-        <Bar data={rankingHorasMenosData} options={rankingHorasMenosOptions} />
+        <Bar id="chart-ranking-menos-horas" data={rankingHorasMenosData} options={rankingHorasMenosOptions} />
       </div>
 
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Asistencia por Día</h3>
-        <Line data={porDiaData} options={porDiaOptions} />
+        <Line id="chart-asistencia-dia" data={porDiaData} options={porDiaOptions} />
       </div>
 
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Asistencia por Mes</h3>
-        <Bar data={porMesData} options={porMesOptions} />
+        <Bar id="chart-asistencia-mes" data={porMesData} options={porMesOptions} />
       </div>
 
-      {/*
-      <div className="asistencia-section">
-        <h3 className="asistencia-subtitle">Asistencia por Jerarquía</h3>
-        {asistenciaPorJerarquia.length > 0 ? (
-          <Pie data={jerarquiaChartData} options={jerarquiaChartOptions} />
-        ) : (
-          <p>No hay datos de asistencia por jerarquía para los filtros seleccionados.</p>
-        )}
-      </div>
-      */}
     </div>
   );
 }

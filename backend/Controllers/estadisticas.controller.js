@@ -1,9 +1,6 @@
-const express = require("express");
-const router = express.Router();
-const db = require("../db");
+const db = require("../DB/db.js");
 
-// GET para obtener el conteo de asistencia en los ultimos 'n' días (por defecto usamos 30 días)
-router.get("/estadisticas", (req, res) => {
+exports.obtenerEstadisticas = (req, res) => {
   const dias = parseInt(req.query.dias) || 30;
 
   const query = `
@@ -21,12 +18,10 @@ router.get("/estadisticas", (req, res) => {
 
     res.json(results);
   });
-});
+};
 
-// GET que permite aplicar filtros para las estadisicas, fecha desde hasta, tipo de asistencia y jefe de dotación
-router.get("/estadisticas_filtros", (req, res) => {
-  const { fecha_desde, fecha_hasta, tipo_asistencia, jefe_dotacion } =
-    req.query;
+exports.obtenerEstadisticasFiltradas = (req, res) => {
+  const { fecha_desde, fecha_hasta, tipo_asistencia, jefe_dotacion } = req.query;
 
   let condiciones = [];
   let valores = [];
@@ -51,8 +46,7 @@ router.get("/estadisticas_filtros", (req, res) => {
     valores.push(jefe_dotacion);
   }
 
-  const whereClause =
-    condiciones.length > 0 ? "WHERE " + condiciones.join(" AND ") : "";
+  const whereClause = condiciones.length > 0 ? "WHERE " + condiciones.join(" AND ") : "";
 
   const query = `
     SELECT tipo_asistencia, COUNT(*) AS cantidad
@@ -64,13 +58,46 @@ router.get("/estadisticas_filtros", (req, res) => {
   db.query(query, valores, (err, results) => {
     if (err) {
       console.error("Error al obtener estadísticas filtradas:", err);
-      return res
-        .status(500)
-        .json({ error: "Error al obtener estadísticas filtradas" });
+      return res.status(500).json({ error: "Error al obtener estadísticas filtradas" });
     }
 
     res.json(results);
   });
-});
+};
 
-module.exports = router;
+exports.obtenerPorTipoYHora = (req, res) => {
+  const query = `
+    SELECT tipo_asistencia, HOUR(fecha) AS hora, COUNT(*) AS cantidad
+    FROM partes
+    GROUP BY tipo_asistencia, HOUR(fecha)
+    ORDER BY tipo_asistencia, hora
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error al obtener estadísticas por hora:", err);
+      return res.status(500).json({ error: "Error al obtener estadísticas por hora" });
+    }
+
+    res.json(results);
+  });
+};
+
+exports.obtenerPorBombero = (req, res) => {
+  const query = `
+    SELECT CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo, COUNT(*) AS cantidad
+    FROM partes AS e
+    JOIN personal AS p ON e.jefe_dotacion = p.legajo
+    GROUP BY e.jefe_dotacion
+    ORDER BY cantidad DESC
+  `;
+
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error al obtener estadísticas por bombero:", err);
+      return res.status(500).json({ error: "Error al obtener estadísticas por bombero" });
+    }
+
+    res.json(results);
+  });
+};
