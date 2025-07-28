@@ -36,14 +36,7 @@ const registrarMovimiento = (req, res) => {
         console.error("Error al registrar movimiento:", err);
         return res.status(500).json({ error: "Error al registrar movimiento" });
       }
-
-      registrarLog(
-        legajoOperador,
-        `Registro de movimiento: se registró un ${
-          estado_id === 1 ? "ingreso" : "egreso"
-        } para ${nombre} ${apellido} (${dni})`
-      );
-
+      registrarLog(legajoOperador,`Registro de movimiento: se registró un ${estado_id === 1 ? "ingreso" : "egreso"} para ${nombre} ${apellido} (${dni})`);
       res.json({ success: true, id: result.insertId });
     }
   );

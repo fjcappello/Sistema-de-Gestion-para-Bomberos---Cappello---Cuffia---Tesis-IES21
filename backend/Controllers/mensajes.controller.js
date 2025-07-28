@@ -1,6 +1,7 @@
-const db = require("../db");
-const enviarCorreo = require("../utils/mailer");
-const registrarLog = require("../utils/registrarLog");
+const db = require('../DB/db.js');
+const mailer = require('../Middlewares/email.js');
+
+const registrarLog = require("../Middlewares/logSeguridadLogger.js");
 
 // Obtener mensajes recibidos
 const obtenerMensajesRecibidos = async (req, res) => {

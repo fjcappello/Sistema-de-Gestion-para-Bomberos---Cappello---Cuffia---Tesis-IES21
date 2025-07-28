@@ -19,6 +19,7 @@ function PanolOperativo() {
   const [fechaIncorpoHasta, setFechaIncorpoHasta] = useState('');
   const [fechaVenciDesde, setFechaVenciDesde] = useState('');
   const [fechaVenciHasta, setFechaVenciHasta] = useState('');
+  const [filtrosAplicados, setFiltrosAplicados] = useState(false);
 
   //HOOKS para Paginar
   const [paginaActual, setPaginaActual] = useState(1);
@@ -46,7 +47,6 @@ function PanolOperativo() {
   //HOOKS para visualizar foto de baja
   const [modalFotoAbierto, setModalFotoAbierto] = useState(false);
   const [fotoUrl, setFotoUrl] = useState('');
-
 
   useEffect(() => {
     api.get("/recuperar-elementosPanol")
@@ -78,7 +78,14 @@ function PanolOperativo() {
       .catch(error => console.error('Error cargando elementos:', error));
   }, []);
 
+  const aplicarFiltros = () => {
+    setFiltrosAplicados(true);
+    setPaginaActual(1);
+  };
+
   const elementosFiltrados = useMemo(() => {
+    if (!filtrosAplicados) return elementos;
+    
     return elementos.filter(el => {
       const textoMatch =
         el.id_elemento.toString().includes(textoFiltro.toLowerCase()) ||
@@ -113,7 +120,8 @@ function PanolOperativo() {
     fechaIncorpoDesde,
     fechaIncorpoHasta,
     fechaVenciDesde,
-    fechaVenciHasta
+    fechaVenciHasta,
+    filtrosAplicados
   ]);
 
   const totalPaginas = Math.ceil(elementosFiltrados.length / elementosPorPagina);
@@ -141,22 +149,20 @@ function PanolOperativo() {
     setFechaVenciDesde('');
     setFechaVenciHasta('');
     setPaginaActual(1);
+    setFiltrosAplicados(false);
   };
-
-
 
   const exportarAExcel = () => {
-  const hoja = XLSX.utils.json_to_sheet(elementosFiltrados);
-  const libro = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(libro, hoja, 'Pañol Operativo');
-  const ahora = new Date();
-  const fechaFormateada = ahora.toISOString().slice(0, 19).replace(/[:T]/g, '-'); // ej: 2025-05-10-14-30-00
-  const nombreArchivo = `PañolOperativo_${fechaFormateada}.xlsx`;
-  XLSX.writeFile(libro, nombreArchivo);
+    const hoja = XLSX.utils.json_to_sheet(elementosFiltrados);
+    const libro = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(libro, hoja, 'Pañol Operativo');
+    const ahora = new Date();
+    const fechaFormateada = ahora.toISOString().slice(0, 19).replace(/[:T]/g, '-');
+    const nombreArchivo = `PañolOperativo_${fechaFormateada}.xlsx`;
+    XLSX.writeFile(libro, nombreArchivo);
   };
 
-  //Funcion para crear el objeto
-    const crearElemento = async () => {
+  const crearElemento = async () => {
     try {
       const response = await api.post('/agregar-elementoPanol', {
         elemento: formulario.elemento,
@@ -191,12 +197,9 @@ function PanolOperativo() {
     }
   };
 
-  //Funcion para manejar el envio del formulario
   const handleEditarElemento = (e) => {
     e.preventDefault(); 
-
     const form = e.target.closest("form");
-
     const formulario = {
       id_elemento: elementoEditar.id_elemento,
       asignacion: form.id_asignacion.value,
@@ -204,7 +207,6 @@ function PanolOperativo() {
       estado: form.id_estado.value,
     };
 
-    // Validación: si el estado es BAJA (3) y no hay imagen cargada
     if (parseInt(formulario.estado) === 3 && !ImagenContenido) {
       alert("Debe subir una imagen para dar de baja el elemento.");
       return;
@@ -213,7 +215,6 @@ function PanolOperativo() {
     editarElemento(formulario, ImagenContenido);
   };
 
-  //Función para activar/desactivar input de imagen según estado
   const activadorImagenes = (valor) => {
     const estadoSeleccionado = Number(valor);
     if (estadoSeleccionado === 3) {
@@ -228,18 +229,15 @@ function PanolOperativo() {
     }
   };
 
-  //Función para guardar cambios en un elemento
   const editarElemento = async (formulario, ImagenContenido) => {
     try {
       const formData = new FormData();
-
       formData.append("id_elemento", formulario.id_elemento);
       formData.append("id_asignacion", formulario.asignacion);
       formData.append("f_asignacion", formulario.f_asignacion);
       formData.append("id_estado", formulario.estado);
       formData.append("legajo", usuario?.legajo);
 
-      // Solo incluir imagen si el estado es BAJA (id 3) y hay imagen cargada
       if (parseInt(formulario.estado) === 3 && ImagenContenido) {
         formData.append("foto", ImagenContenido);
       }
@@ -264,7 +262,6 @@ function PanolOperativo() {
     }
   };
 
-  //Funcion para cerrar modal de edicion
   const cerrarModalEditar = () => {
     setImagenContenido(""); 
     setImagenActiva(true); 
@@ -273,8 +270,6 @@ function PanolOperativo() {
     if (inputFile) inputFile.value = ""; 
     setModalEditarAbierto(false);
   };
-
-  
 
   return (
     <div className="table-container">
@@ -295,18 +290,12 @@ function PanolOperativo() {
           type="text"
           placeholder="Elemento o código"
           value={textoFiltro}
-          onChange={(e) => {
-            setTextoFiltro(e.target.value);
-            setPaginaActual(1);
-          }}
+          onChange={(e) => setTextoFiltro(e.target.value)}
         />
 
         <select
           value={tipoSeleccionado}
-          onChange={(e) => {
-            setTipoSeleccionado(e.target.value);
-            setPaginaActual(1);
-          }}
+          onChange={(e) => setTipoSeleccionado(e.target.value)}
         >
           <option value="">Selecciona Tipo</option>
           {tipos.map((tipo) => (
@@ -318,10 +307,7 @@ function PanolOperativo() {
 
         <select
           value={estadoSeleccionado}
-          onChange={(e) => {
-            setEstadoSeleccionado(e.target.value);
-            setPaginaActual(1);
-          }}
+          onChange={(e) => setEstadoSeleccionado(e.target.value)}
         >
           <option value="">Selecciona Estado</option>
           {estados.map((estado) => (
@@ -331,48 +317,35 @@ function PanolOperativo() {
           ))}
         </select>
 
-        
-          <label>Incorporación desde:
-            <input
-              type="date"
-              value={fechaIncorpoDesde}
-              onChange={(e) => {
-                setFechaIncorpoDesde(e.target.value);
-                setPaginaActual(1);
-              }}
-            />
-          </label>
-          <label> hasta:
-            <input
-              type="date"
-              value={fechaIncorpoHasta}
-              onChange={(e) => {
-                setFechaIncorpoHasta(e.target.value);
-                setPaginaActual(1);
-              }}
-            />
-          </label>
-          <label>Vencimiento desde: 
-            <input
-              type="date"
-              value={fechaVenciDesde}
-              onChange={(e) => {
-                setFechaVenciDesde(e.target.value);
-                setPaginaActual(1);
-              }}
-            />
-          </label>
-          <label> hasta:
-            <input
-              type="date"
-              value={fechaVenciHasta}
-              onChange={(e) => {
-                setFechaVenciHasta(e.target.value);
-                setPaginaActual(1);
-              }}
-            />
-          </label>
-        <button className="filtros-button" onClick={limpiarFiltros}>Aplicar filtros</button>
+        <label>Incorporación desde:
+          <input
+            type="date"
+            value={fechaIncorpoDesde}
+            onChange={(e) => setFechaIncorpoDesde(e.target.value)}
+          />
+        </label>
+        <label> hasta:
+          <input
+            type="date"
+            value={fechaIncorpoHasta}
+            onChange={(e) => setFechaIncorpoHasta(e.target.value)}
+          />
+        </label>
+        <label>Vencimiento desde: 
+          <input
+            type="date"
+            value={fechaVenciDesde}
+            onChange={(e) => setFechaVenciDesde(e.target.value)}
+          />
+        </label>
+        <label> hasta:
+          <input
+            type="date"
+            value={fechaVenciHasta}
+            onChange={(e) => setFechaVenciHasta(e.target.value)}
+          />
+        </label>
+        <button className="filtros-button" onClick={aplicarFiltros}>Aplicar filtros</button>
         <button className="filtros-button" onClick={limpiarFiltros}>Limpiar filtros</button>
       </div>
 
@@ -411,7 +384,6 @@ function PanolOperativo() {
                 <td>
                   <div className='botonera_accion_tabla'>
                     <button className="edit-btn" onClick={() => {setElementoEditar(el); setModalEditarAbierto(true);}} disabled={el.estado === "Baja"}>Modificar</button>
-                    {/*REVISAR LO DE LA API DE LAS FOTOS*/}
                     <button className="edit-btn" disabled={el.estado !== "Baja"} onClick={() => {setFotoUrl(`${process.env.REACT_APP_API_URL}/${el.foto}`);setModalFotoAbierto(true);}}>Ver foto</button> 
                   </div>
                 </td>
@@ -536,7 +508,6 @@ function PanolOperativo() {
         </div>
       )}
 
-      {/* Modal Editar */}
       {modalEditarAbierto && elementoEditar && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -558,7 +529,6 @@ function PanolOperativo() {
                   </option>
                 ))}
               </select>
-
 
               <p>Fecha de asignación:</p>
               <input type="date" name="f_asignacion" required defaultValue={elementoEditar.f_asignacion} />
@@ -585,7 +555,6 @@ function PanolOperativo() {
         </div>
       )}
 
-      {/* Modal Foto de Baja */}
       {modalFotoAbierto && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -602,9 +571,5 @@ function PanolOperativo() {
     </div>
   );
 }
- 
-
-
 
 export default PanolOperativo;
-

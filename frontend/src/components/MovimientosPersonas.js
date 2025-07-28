@@ -125,15 +125,15 @@ function MovimientosPersonas() {
         return;
       }
 
-      const payload = {
-        id_personal: selectedId || null,
+      const data = {
+        id_personal: selectedId,
         nombre: formData.nombre,
         apellido: formData.apellido,
         dni: formData.dni,
         estado_id,
-        legajo: usuario?.legajo
+        legajoOperador: usuario?.legajo
       };
-      await api.post("/movimientos_cuartel", payload);
+      await api.post("/movimientos_cuartel", data);
       fetchMovimientos();
       setSelectedId("");
       setFormData({ nombre: "", apellido: "", dni: "" });
