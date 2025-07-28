@@ -21,7 +21,7 @@ const obtenerMovimientos = (req, res) => {
 
 // Registrar nuevo movimiento
 const registrarMovimiento = (req, res) => {
-  const { id_personal, nombre, apellido, dni, estado_id, legajo } = req.body;
+  const { id_personal, nombre, apellido, dni, estado_id, legajoOperador } = req.body;
 
   const query = `
     INSERT INTO movimientos_cuartel (id_personal, nombre, apellido, dni, estado_id)
@@ -38,7 +38,7 @@ const registrarMovimiento = (req, res) => {
       }
 
       registrarLog(
-        legajo || 0,
+        legajoOperador,
         `Registro de movimiento: se registró un ${
           estado_id === 1 ? "ingreso" : "egreso"
         } para ${nombre} ${apellido} (${dni})`

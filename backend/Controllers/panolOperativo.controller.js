@@ -136,6 +136,7 @@ const agregarElemento = function agregarElemento(req, res) {
     id_asignacion,
     f_asignacion,
     id_estado,
+    legajo
   } = req.body;
   const query = `INSERT INTO panol (
                         elemento, 
@@ -147,7 +148,7 @@ const agregarElemento = function agregarElemento(req, res) {
                         f_asignacion, 
                         id_estado
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
-  //Verificaciond e datos
+  //Verificacion de datos
   if (
     !elemento ||
     !id_tipo ||
@@ -187,12 +188,7 @@ const agregarElemento = function agregarElemento(req, res) {
         message: "No se pudo agregar correctamente el nuevo elemento.",
       });
     }
-    if (req.query.usuario_id) {
-      registrarLog(
-        req.query.usuario_id,
-        `Agregó un nuevo elemento al pañol: ${elemento}`
-      );
-    }
+    registrarLog(legajo,`Agregó un nuevo elemento al pañol: ${elemento}`)
     return res.status(200).json({
       message: "Elemento agregado correctamente",
       id_insertado: results.insertId,
@@ -202,12 +198,14 @@ const agregarElemento = function agregarElemento(req, res) {
 
 // Editar un elemento del pañol
 const editarElemento = (req, res) => {
-  const { id_elemento, id_asignacion, f_asignacion, id_estado } = req.body;
+  const { id_elemento, id_asignacion, f_asignacion, id_estado, legajo } = req.body;
+  
   if (!id_elemento || !id_asignacion || !id_estado) {
     return res.status(400).json({ error: "Faltan datos requeridos" });
   }
+  const fechaAsignacion = f_asignacion === "" ? null : f_asignacion;
   let query = `UPDATE panol SET id_asignacion = ?, f_asignacion = ?, id_estado = ?`;
-  const parametros = [id_asignacion, f_asignacion, id_estado];
+  const parametros = [id_asignacion, fechaAsignacion, id_estado];
   // Si hay imagen cargada Y el estado es 3 (BAJA), se agrega foto
   if (req.file && parseInt(id_estado) === 3) {
     const foto = cargaDeFoto(req.file);
@@ -219,22 +217,19 @@ const editarElemento = (req, res) => {
   db.query(query, parametros, (error, results) => {
     if (error) {
       console.error("Error al editar el elemento:", error);
-      return res
-        .status(500)
-        .json({ error: "Error en la edición del elemento" });
+      return res.status(500).json({ error: "Error en la edición del elemento" });
     }
     if (results.affectedRows === 0) {
       return res.status(404).json({ message: "Elemento no encontrado" });
+    }  
+    if(id_estado == 3){
+      registrarLog(legajo, `Dió de baja el elemento del pañol ID ${id_elemento}`);
+      return res.status(200).json({ message: "Elemento dado de baja correctamente" });
     }
-    if (req.query.usuario_id) {
-      registrarLog(
-        req.query.usuario_id,
-        `Editó el elemento del pañol ID ${id_elemento}`
-      );
+    else{
+      registrarLog(legajo, `Editó el elemento del pañol ID ${id_elemento}`);
+      return res.status(200).json({ message: "Elemento actualizado correctamente" });
     }
-    return res
-      .status(200)
-      .json({ message: "Elemento actualizado correctamente" });
   });
 };
 

@@ -103,6 +103,7 @@ function EmergenciesTable() {
     const { name, value } = e.target;
     setFilters({ ...filters, [name]: value });
   };
+  
   const handleCleanFilters = () => {
   const resetFilters = {
     jefeDotacion: "",
@@ -634,6 +635,7 @@ function EmergenciesTable() {
             <h3>Eliminar Reporte</h3>
             <input
               type="number"
+              min={0}
               placeholder="Ingrese el ID del parte a eliminar"
               value={deleteParteId}
               onChange={(e) => setDeleteParteId(e.target.value)}

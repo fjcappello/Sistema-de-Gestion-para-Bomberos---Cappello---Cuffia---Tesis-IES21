@@ -36,7 +36,7 @@ const recuperarPermisos = function recuperarPermisos(req, res) {
 
 //Función para restablecer el login de una cuenta a su estado default
 const restablecerCuenta = function restablecerCuenta(req, res) {
-  const { legajo } = req.body;
+  const { legajo, legajoOperador } = req.body;
   if (!legajo) {
     return res.status(400).json({ error: "Falta el legajo." });
   }
@@ -54,17 +54,15 @@ const restablecerCuenta = function restablecerCuenta(req, res) {
     if (results.affectedRows === 0) {
       return res.status(404).json({ error: "Legajo no encontrado." });
     }
-    res
-      .status(200)
-      .json({ message: "Contraseña restablecida correctamente." });
-    registrarLog(legajo, "Restableció la cuenta del usuario");
+    registrarLog(legajoOperador, `Restableció la cuenta del usuario ${legajo}`);
+    res.status(200).json({ message: "Contraseña restablecida correctamente." });
   });
 };
 
 //Función para cambiar los permisos de la cuenta
 const cambiarPermisosCuenta = function cambiarPermisosCuenta(req, res) {
   const query = "UPDATE personal SET id_rol = ? WHERE legajo = ?;";
-  const { legajo, id_rol } = req.body;
+  const { legajo, id_rol, legajoOperador } = req.body;
 
   if (!legajo || !id_rol) {
     return res.status(400).json({ error: "Faltan datos requeridos." });
@@ -80,7 +78,7 @@ const cambiarPermisosCuenta = function cambiarPermisosCuenta(req, res) {
     res
       .status(200)
       .json({ message: "Permisos actualizados correctamente." });
-    registrarLog(legajo, `Cambió los permisos del usuario al rol ID ${id_rol}`);
+    registrarLog(legajoOperador, `Cambió los permisos del usuario al rol ID ${id_rol}`);
   });
 };
 
