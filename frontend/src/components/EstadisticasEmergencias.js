@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import api from "../api";
-import { Bar } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 import "chart.js/auto";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
@@ -28,51 +28,31 @@ function ReportsPage() {
   });
   const [logoDataURI, setLogoDataURI] = useState("");
   const chartRef = useRef(null);
-  const [chartTipoHora, setChartTipoHora] = useState({ labels: [], datasets: [] });
-  const [chartBombero, setChartBombero] = useState({ labels: [], datasets: [] });
+  const [chartPie, setChartPie] = useState({ labels: [], datasets: [] });
+  const [chartBombero, setChartBombero] = useState({
+    labels: [],
+    datasets: [],
+  });
 
   useEffect(() => {
     fetchJefesDotacion();
     loadLogo();
     fetchReports();
-    fetchTipoHora();
     fetchBombero();
   }, []);
-  const fetchTipoHora = async () => {
-    try {
-      const response = await api.get("/estadisticas/por_tipo_y_hora");
-      const agrupado = {};
-
-      response.data.forEach(({ tipo_asistencia, hora, cantidad }) => {
-        if (!agrupado[tipo_asistencia]) agrupado[tipo_asistencia] = Array(24).fill(0);
-        agrupado[tipo_asistencia][hora] = cantidad;
-      });
-
-      const datasets = Object.entries(agrupado).map(([tipo, data], i) => ({
-        label: tipo,
-        data,
-        backgroundColor: `hsl(${i * 60}, 70%, 60%)`,
-      }));
-
-      setChartTipoHora({
-        labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-        datasets,
-      });
-    } catch (err) {
-      console.error("Error al obtener tipo/hora:", err);
-    }
-  };
 
   const fetchBombero = async () => {
     try {
       const response = await api.get("/estadisticas/por_bombero");
       setChartBombero({
         labels: response.data.map((d) => d.nombre_completo),
-        datasets: [{
-          label: "Servicios",
-          data: response.data.map((d) => d.cantidad),
-          backgroundColor: "#4CAF50",
-        }]
+        datasets: [
+          {
+            label: "Servicios",
+            data: response.data.map((d) => d.cantidad),
+            backgroundColor: "#4CAF50",
+          },
+        ],
       });
     } catch (err) {
       console.error("Error al obtener por bombero:", err);
@@ -82,6 +62,24 @@ function ReportsPage() {
   useEffect(() => {
     fetchReports();
   }, [appliedFilters]);
+
+  useEffect(() => {
+    if (chartData.labels.length > 0 && chartData.datasets[0].data.length > 0) {
+      const total = chartData.datasets[0].data.reduce((a, b) => a + b, 0);
+      setChartPie({
+        labels: chartData.labels,
+        datasets: [
+          {
+            label: "Porcentaje de Intervenciones",
+            data: chartData.datasets[0].data.map((v) =>
+              ((v / total) * 100).toFixed(2)
+            ),
+            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+          },
+        ],
+      });
+    }
+  }, [chartData]);
 
   const fetchJefesDotacion = async () => {
     try {
@@ -183,8 +181,16 @@ function ReportsPage() {
       10,
       65
     );
-    doc.text(`Fecha Desde: ${appliedFilters.startDate || "Sin especificar"}`, 10, 75);
-    doc.text(`Fecha Hasta: ${appliedFilters.endDate || "Sin especificar"}`, 10, 85);
+    doc.text(
+      `Fecha Desde: ${appliedFilters.startDate || "Sin especificar"}`,
+      10,
+      75
+    );
+    doc.text(
+      `Fecha Hasta: ${appliedFilters.endDate || "Sin especificar"}`,
+      10,
+      85
+    );
 
     if (chartRef.current) {
       const chartCanvas = chartRef.current.canvas;
@@ -192,13 +198,15 @@ function ReportsPage() {
       doc.addImage(chartImage, "PNG", 10, 90, 180, 80);
     }
 
-    if (chartTipoHora.datasets.length > 0) {
-      const canvasTipoHora = document.querySelectorAll("canvas")[1];
-      const imageTipoHora = canvasTipoHora.toDataURL("image/png");
+    if (chartPie.datasets.length > 0) {
+      const canvasPie = document.querySelectorAll("canvas")[1];
+      const imagePie = canvasPie.toDataURL("image/png");
       doc.addPage();
       doc.setFontSize(14);
-      doc.text("Intervenciones por Tipo y Hora", pageWidth / 2, 20, { align: "center" });
-      doc.addImage(imageTipoHora, "PNG", 10, 30, 180, 80);
+      doc.text("Intervenciones por Tipo (%)", pageWidth / 2, 20, {
+        align: "center",
+      });
+      doc.addImage(imagePie, "PNG", 10, 30, 180, 80);
     }
 
     if (chartBombero.datasets.length > 0) {
@@ -206,7 +214,9 @@ function ReportsPage() {
       const imageBombero = canvasBombero.toDataURL("image/png");
       doc.addPage();
       doc.setFontSize(14);
-      doc.text("Intervenciones por Bombero", pageWidth / 2, 20, { align: "center" });
+      doc.text("Intervenciones por Bombero", pageWidth / 2, 20, {
+        align: "center",
+      });
       doc.addImage(imageBombero, "PNG", 10, 30, 180, 100);
     }
 
@@ -311,9 +321,14 @@ function ReportsPage() {
       </div>
 
       <div className="chart-container">
-        <h3>Intervenciones por Tipo y Hora</h3>
-        {chartTipoHora.labels.length > 0 ? (
-          <Bar data={chartTipoHora} options={{ responsive: true }} />
+        <h3>Intervenciones por Tipo (Expresado en %) </h3>
+        {chartPie.labels.length > 0 ? (
+          <div style={{ width: "450px", height: "450px", margin: "0 auto" }}>
+            <Pie
+              data={chartPie}
+              options={{ responsive: true, maintainAspectRatio: false }}
+            />
+          </div>
         ) : (
           <p>No hay datos disponibles para mostrar.</p>
         )}
@@ -322,7 +337,10 @@ function ReportsPage() {
       <div className="chart-container">
         <h3>Intervenciones por Bombero</h3>
         {chartBombero.labels.length > 0 ? (
-          <Bar data={chartBombero} options={{ responsive: true, indexAxis: 'y' }} />
+          <Bar
+            data={chartBombero}
+            options={{ responsive: true, indexAxis: "y" }}
+          />
         ) : (
           <p>No hay datos disponibles para mostrar.</p>
         )}

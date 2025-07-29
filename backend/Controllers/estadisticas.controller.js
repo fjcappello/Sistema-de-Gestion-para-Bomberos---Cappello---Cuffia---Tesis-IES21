@@ -1,103 +1,123 @@
-const db = require("../DB/db.js");
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { Bar, Pie } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+} from "chart.js";
 
-exports.obtenerEstadisticas = (req, res) => {
-  const dias = parseInt(req.query.dias) || 30;
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement
+);
 
-  const query = `
-    SELECT tipo_asistencia, COUNT(*) AS cantidad
-    FROM partes
-    WHERE fecha >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
-    GROUP BY tipo_asistencia
-  `;
+const EstadisticasEmergencias = () => {
+  const [chartData, setChartData] = useState({ labels: [], datasets: [] });
+  const [chartPorBombero, setChartPorBombero] = useState({ labels: [], datasets: [] });
+  const [chartPie, setChartPie] = useState({ labels: [], datasets: [] });
 
-  db.query(query, [dias], (err, results) => {
-    if (err) {
-      console.error("Error al obtener estadísticas:", err);
-      return res.status(500).json({ error: "Error al obtener estadísticas" });
+  const fetchReports = async () => {
+    try {
+      const response = await axios.get("/api/estadisticas");
+      const data = response.data;
+
+      setChartData({
+        labels: data.map((item) => item.tipo_asistencia),
+        datasets: [
+          {
+            label: "Cantidad de Intervenciones",
+            data: data.map((item) => item.cantidad),
+            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Error fetching reports:", error);
     }
+  };
 
-    res.json(results);
-  });
+  const fetchPorBombero = async () => {
+    try {
+      const response = await axios.get("/api/estadisticas/porBombero");
+      const data = response.data;
+
+      setChartPorBombero({
+        labels: data.map((item) => item.nombre_completo),
+        datasets: [
+          {
+            label: "Cantidad de Intervenciones",
+            data: data.map((item) => item.cantidad),
+            backgroundColor: "#36A2EB",
+          },
+        ],
+      });
+    } catch (error) {
+      console.error("Error fetching por bombero:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports();
+    fetchPorBombero();
+  }, []);
+
+  useEffect(() => {
+    if (chartData.labels.length > 0 && chartData.datasets[0].data.length > 0) {
+      const total = chartData.datasets[0].data.reduce((a, b) => a + b, 0);
+      setChartPie({
+        labels: chartData.labels,
+        datasets: [
+          {
+            label: "Porcentaje de Intervenciones",
+            data: chartData.datasets[0].data.map(v => ((v / total) * 100).toFixed(2)),
+            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+          },
+        ],
+      });
+    }
+  }, [chartData]);
+
+  return (
+    <div>
+      <div className="chart-container">
+        <h3>Intervenciones por Tipo</h3>
+        {chartData.labels.length > 0 ? (
+          <Bar data={chartData} options={{ responsive: true }} />
+        ) : (
+          <p>No hay datos disponibles para mostrar.</p>
+        )}
+      </div>
+
+      <div className="chart-container">
+        <h3>Intervenciones por Bombero</h3>
+        {chartPorBombero.labels.length > 0 ? (
+          <Bar data={chartPorBombero} options={{ responsive: true }} />
+        ) : (
+          <p>No hay datos disponibles para mostrar.</p>
+        )}
+      </div>
+
+      <div className="chart-container">
+        <h3>Intervenciones por Tipo (%)</h3>
+        {chartPie.labels.length > 0 ? (
+          <Pie data={chartPie} options={{ responsive: true }} />
+        ) : (
+          <p>No hay datos disponibles para mostrar.</p>
+        )}
+      </div>
+    </div>
+  );
 };
 
-exports.obtenerEstadisticasFiltradas = (req, res) => {
-  const { fecha_desde, fecha_hasta, tipo_asistencia, jefe_dotacion } = req.query;
-
-  let condiciones = [];
-  let valores = [];
-
-  if (fecha_desde) {
-    condiciones.push("fecha >= ?");
-    valores.push(fecha_desde);
-  }
-
-  if (fecha_hasta) {
-    condiciones.push("fecha <= ?");
-    valores.push(fecha_hasta);
-  }
-
-  if (tipo_asistencia) {
-    condiciones.push("tipo_asistencia = ?");
-    valores.push(tipo_asistencia);
-  }
-
-  if (jefe_dotacion) {
-    condiciones.push("jefe_dotacion = ?");
-    valores.push(jefe_dotacion);
-  }
-
-  const whereClause = condiciones.length > 0 ? "WHERE " + condiciones.join(" AND ") : "";
-
-  const query = `
-    SELECT tipo_asistencia, COUNT(*) AS cantidad
-    FROM partes
-    ${whereClause}
-    GROUP BY tipo_asistencia
-  `;
-
-  db.query(query, valores, (err, results) => {
-    if (err) {
-      console.error("Error al obtener estadísticas filtradas:", err);
-      return res.status(500).json({ error: "Error al obtener estadísticas filtradas" });
-    }
-
-    res.json(results);
-  });
-};
-
-exports.obtenerPorTipoYHora = (req, res) => {
-  const query = `
-    SELECT tipo_asistencia, HOUR(fecha) AS hora, COUNT(*) AS cantidad
-    FROM partes
-    GROUP BY tipo_asistencia, HOUR(fecha)
-    ORDER BY tipo_asistencia, hora
-  `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error al obtener estadísticas por hora:", err);
-      return res.status(500).json({ error: "Error al obtener estadísticas por hora" });
-    }
-
-    res.json(results);
-  });
-};
-
-exports.obtenerPorBombero = (req, res) => {
-  const query = `
-    SELECT CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo, COUNT(*) AS cantidad
-    FROM partes AS e
-    JOIN personal AS p ON e.jefe_dotacion = p.legajo
-    GROUP BY e.jefe_dotacion
-    ORDER BY cantidad DESC
-  `;
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error("Error al obtener estadísticas por bombero:", err);
-      return res.status(500).json({ error: "Error al obtener estadísticas por bombero" });
-    }
-
-    res.json(results);
-  });
-};
+export default EstadisticasEmergencias;
