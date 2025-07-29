@@ -285,50 +285,75 @@ function PersonalTable() {
     setIsEditModalOpen(true);
   };
 
+  //Controlar vigencia de ficha medica
   const isExpired = (date) => {
     const oneYearAgo = new Date();
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
     return new Date(date) < oneYearAgo;
   };
 
-  // Filtrado usando filtrosAplicados
-  const personalFiltrado = personal.filter((p) => {
-    const coincideLegajo =
-      filtrosAplicados.legajo === "" ||
-      p.legajo.toString().includes(filtrosAplicados.legajo);
-    const coincideNombreApellido =
-      filtrosAplicados.nombreApellido === "" ||
-      p.nombre_completo
-        .toLowerCase()
-        .includes(filtrosAplicados.nombreApellido.toLowerCase());
-    const coincideDocumento =
-      filtrosAplicados.documento === "" ||
-      p.documento.toString().includes(filtrosAplicados.documento);
-    const coincideIngresoDesde =
-      filtrosAplicados.ingresoDesde === "" ||
-      new Date(p.fecha_ingreso) >= new Date(filtrosAplicados.ingresoDesde);
-    const coincideIngresoHasta =
-      filtrosAplicados.ingresoHasta === "" ||
-      new Date(p.fecha_ingreso) <= new Date(filtrosAplicados.ingresoHasta);
-    const coincideJerarquia =
-      filtrosAplicados.jerarquia === "" ||
-      p.jerarquia === filtrosAplicados.jerarquia;
-    const coincideSituacion =
-      filtrosAplicados.situacion === "" ||
-      p.situacion === filtrosAplicados.situacion;
-    const coincideVencida =
-      !filtrosAplicados.vencida || isExpired(p.fecha_revision_medica);
-    return (
-      coincideLegajo &&
-      coincideNombreApellido &&
-      coincideDocumento &&
-      coincideIngresoDesde &&
-      coincideIngresoHasta &&
-      coincideJerarquia &&
-      coincideSituacion &&
-      coincideVencida
-    );
-  });
+  // Filtrado según campos ingresados
+const personalFiltrado = personal.filter((p) => {
+  const coincideLegajo =
+    filtrosAplicados.legajo === "" ||
+    p.legajo.toString().includes(filtrosAplicados.legajo);
+
+  const coincideNombreApellido =
+    filtrosAplicados.nombreApellido === "" ||
+    p.nombre_completo.toLowerCase().includes(filtrosAplicados.nombreApellido.toLowerCase());
+
+  const coincideDocumento =
+    filtrosAplicados.documento === "" ||
+    p.documento.toString().includes(filtrosAplicados.documento);
+
+  // --- Filtrado por fechas de ingreso corregido ---
+  const parseDate = (dateStr, isEndOfDay = false) => {
+    if (!dateStr) return null;
+    // Para fechas en formato dd-mm-yyyy
+    if (dateStr.includes('-')) {
+      const [day, month, year] = dateStr.split('-').map(Number);
+      return isEndOfDay 
+        ? new Date(year, month - 1, day, 23, 59, 59) // Fin del día (para filtro hasta)
+        : new Date(year, month - 1, day); // Comienzo del día (para registro y filtro desde)
+    }
+    // Para fechas en formato ISO (desde la base de datos)
+    return new Date(dateStr);
+  };
+
+  const ingreso = parseDate(p.fecha_ingreso); // Sin hora (se considera inicio del día)
+  
+  const desde = filtrosAplicados.ingresoDesde 
+    ? new Date(filtrosAplicados.ingresoDesde) // Inicio del día
+    : null;
+  
+  const hasta = filtrosAplicados.ingresoHasta 
+    ? parseDate(filtrosAplicados.ingresoHasta, true) // Fin del día
+    : null;
+
+  const coincideIngreso =
+    (!desde || (ingreso && ingreso >= desde)) &&
+    (!hasta || (ingreso && ingreso <= hasta));
+
+  const coincideJerarquia =
+    filtrosAplicados.jerarquia === "" || p.jerarquia === filtrosAplicados.jerarquia;
+
+  const coincideSituacion =
+    filtrosAplicados.situacion === "" || p.situacion === filtrosAplicados.situacion;
+
+  const coincideVencida =
+    !filtrosAplicados.vencida || isExpired(p.fecha_revision_medica);
+
+  return (
+    coincideLegajo &&
+    coincideNombreApellido &&
+    coincideDocumento &&
+    coincideIngreso &&
+    coincideJerarquia &&
+    coincideSituacion &&
+    coincideVencida
+  );
+});
+
 
   const totalPagesFiltered = Math.ceil(
     personalFiltrado.length / ITEMS_PER_PAGE

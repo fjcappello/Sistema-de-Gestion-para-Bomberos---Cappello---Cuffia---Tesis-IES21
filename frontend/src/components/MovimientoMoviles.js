@@ -240,13 +240,11 @@ function MovimientoMoviles() {
   };
 
   const movimientosFiltrados = movimientos.filter((m) => {
-    const coincideInterno =
-      filtrosAplicados.interno === "" || m.interno === filtrosAplicados.interno;
-    const fechaSalida = new Date(m.fecha_salida);
-    const desde = filtrosAplicados.fechaDesde ? new Date(filtrosAplicados.fechaDesde) : null;
-    const hasta = filtrosAplicados.fechaHasta ? new Date(filtrosAplicados.fechaHasta) : null;
-    const coincideFecha =
-      (!desde || fechaSalida >= desde) && (!hasta || fechaSalida <= hasta);
+    const coincideInterno = filtrosAplicados.interno === "" || m.interno === filtrosAplicados.interno;
+    const fechaSalida = new Date(m.fecha_salida.replace(" ", "T"));
+    const desde = filtrosAplicados.fechaDesde? new Date(filtrosAplicados.fechaDesde + "T00:00:00"): null;
+    const hasta = filtrosAplicados.fechaHasta? new Date(filtrosAplicados.fechaHasta + "T23:59:59"): null;
+    const coincideFecha = (!desde || fechaSalida >= desde) && (!hasta || fechaSalida <= hasta);
     return coincideInterno && coincideFecha;
   });
 

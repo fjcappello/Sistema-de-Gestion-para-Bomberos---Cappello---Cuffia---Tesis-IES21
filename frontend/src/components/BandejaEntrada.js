@@ -27,9 +27,7 @@ function BandejaEntrada() {
 
   const fetchMensajes = () => {
     if (legajo) {
-      api
-        .get(`/mensajes/recibidos/${legajo}`)
-        .then((res) => {
+      api.get(`/mensajes/recibidos/${legajo}`).then((res) => {
           setMensajes(res.data);
         })
         .catch((err) => console.error("Error al obtener mensajes", err));
