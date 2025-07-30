@@ -186,7 +186,7 @@ function MiCuenta() {
           <input
             type="email"
             className="form-control-fluent"
-            placeholder="Correo electrónico"
+            placeholder="Ingrese su correo electrónico"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />

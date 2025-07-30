@@ -134,42 +134,46 @@ function PersonalTable() {
 
   //Agregar personal
   const handleAddSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const legajoVal = parseInt(formData.legajo, 10);
-    if (isNaN(legajoVal) || legajoVal <= 0) {
-      alert("El legajo debe ser un número positivo mayor a 0.");
-      return;
+  const legajoVal = parseInt(formData.legajo, 10);
+  if (isNaN(legajoVal) || legajoVal <= 0) {
+    alert("El legajo debe ser un número positivo mayor a 0.");
+    return;
+  }
+
+  const documentoVal = parseInt(formData.documento, 10);
+  if (isNaN(documentoVal) || documentoVal < 1 || documentoVal > 99999999) {
+    alert("El documento debe ser un número entre 1 y 99,999,999.");
+    return;
+  }
+
+  formData.situacion_id = 1;
+  const data = {
+    ...formData,
+    legajoOperador: usuario?.legajo
+  }
+
+  try {
+    const response = await axios.post("http://localhost:3001/personal", data);
+    if (response.data.success) {
+      alert("Personal agregado correctamente");
+      setIsAddModalOpen(false);
+      clearFormData();
+      fetchPersonal();
+    } else {
+      alert("Error al agregar personal: " + (response.data.message || "Operación fallida"));
     }
-
-    const documentoVal = parseInt(formData.documento, 10);
-    if (isNaN(documentoVal) || documentoVal < 1 || documentoVal > 99999999) {
-      alert("El documento debe ser un número entre 1 y 99,999,999.");
-      return;
-    }
-
-    formData.situacion_id = 1; // Establecemos como Activo por defecto
-    const data = {
-      ...formData,
-      legajoOperador: usuario?.legajo
-    }
-
-    try {
-      const response = await axios.post("http://localhost:3001/personal", data);
-      if (response.data.success) {
-        alert("Personal agregado correctamente");
-        setIsAddModalOpen(false);
-        clearFormData();
-        fetchPersonal();
-      } else {
-        alert("Error al agregar personal: " +(response.data.error || "Operación fallida"));
-      }
     } catch (error) {
+    // Si axios recibió un error HTTP (4xx, 5xx), entra acá
+    if (error.response && error.response.data) {
+      alert("Error al agregar personal: " + (error.response.data.message || "Operación fallida"));
+    } else {
+      // Error de conexión o inesperado
       console.error("Error al intentar agregar personal:", error);
-      alert(
-        "Error en el servidor al intentar agregar personal. Verifique la conexión."
-      );
+      alert("Error en el servidor al intentar agregar personal. Verifique la conexión.");
     }
+  }
   };
 
   //Editar personal
@@ -292,68 +296,78 @@ function PersonalTable() {
     return new Date(date) < oneYearAgo;
   };
 
-  // Filtrado según campos ingresados
-const personalFiltrado = personal.filter((p) => {
-  const coincideLegajo =
-    filtrosAplicados.legajo === "" ||
-    p.legajo.toString().includes(filtrosAplicados.legajo);
+  //Filtrado según campos ingresados
+  const personalFiltrado = personal.filter((p) => {
+    const coincideLegajo =
+      filtrosAplicados.legajo === "" ||
+      p.legajo.toString().includes(filtrosAplicados.legajo);
 
-  const coincideNombreApellido =
-    filtrosAplicados.nombreApellido === "" ||
-    p.nombre_completo.toLowerCase().includes(filtrosAplicados.nombreApellido.toLowerCase());
+    const coincideNombreApellido =
+      filtrosAplicados.nombreApellido === "" ||
+      p.nombre_completo.toLowerCase().includes(filtrosAplicados.nombreApellido.toLowerCase());
 
-  const coincideDocumento =
-    filtrosAplicados.documento === "" ||
-    p.documento.toString().includes(filtrosAplicados.documento);
+    const coincideDocumento =
+      filtrosAplicados.documento === "" ||
+      p.documento.toString().includes(filtrosAplicados.documento);
 
-  // --- Filtrado por fechas de ingreso corregido ---
-  const parseDate = (dateStr, isEndOfDay = false) => {
-    if (!dateStr) return null;
-    // Para fechas en formato dd-mm-yyyy
-    if (dateStr.includes('-')) {
-      const [day, month, year] = dateStr.split('-').map(Number);
-      return isEndOfDay 
-        ? new Date(year, month - 1, day, 23, 59, 59) // Fin del día (para filtro hasta)
-        : new Date(year, month - 1, day); // Comienzo del día (para registro y filtro desde)
-    }
-    // Para fechas en formato ISO (desde la base de datos)
-    return new Date(dateStr);
-  };
+    const parseDate = (dateStr, isEndOfDay = false) => {
+      if (!dateStr) return null;
 
-  const ingreso = parseDate(p.fecha_ingreso); // Sin hora (se considera inicio del día)
-  
-  const desde = filtrosAplicados.ingresoDesde 
-    ? new Date(filtrosAplicados.ingresoDesde) // Inicio del día
-    : null;
-  
-  const hasta = filtrosAplicados.ingresoHasta 
-    ? parseDate(filtrosAplicados.ingresoHasta, true) // Fin del día
-    : null;
+      //Detecta formato ISO yyyy-mm-dd
+      const isoMatch = dateStr.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (isoMatch) {
+        const [_, year, month, day] = isoMatch.map(Number);
+        return isEndOfDay
+          ? new Date(year, month - 1, day, 23, 59, 59, 999)
+          : new Date(year, month - 1, day, 0, 0, 0, 0);
+      }
 
-  const coincideIngreso =
-    (!desde || (ingreso && ingreso >= desde)) &&
-    (!hasta || (ingreso && ingreso <= hasta));
+      //Para dd-mm-yyyy
+      const parts = dateStr.split("-");
+      if (parts.length === 3) {
+        const [day, month, year] = parts.map(Number);
+        return isEndOfDay
+          ? new Date(year, month - 1, day, 23, 59, 59, 999)
+          : new Date(year, month - 1, day, 0, 0, 0, 0);
+      }
 
-  const coincideJerarquia =
-    filtrosAplicados.jerarquia === "" || p.jerarquia === filtrosAplicados.jerarquia;
+      // Fallback
+      return new Date(dateStr);
+    };
 
-  const coincideSituacion =
-    filtrosAplicados.situacion === "" || p.situacion === filtrosAplicados.situacion;
+    const ingreso = parseDate(p.fecha_ingreso); 
 
-  const coincideVencida =
-    !filtrosAplicados.vencida || isExpired(p.fecha_revision_medica);
+    const desde = filtrosAplicados.ingresoDesde
+      ? parseDate(filtrosAplicados.ingresoDesde)
+      : null;
 
-  return (
-    coincideLegajo &&
-    coincideNombreApellido &&
-    coincideDocumento &&
-    coincideIngreso &&
-    coincideJerarquia &&
-    coincideSituacion &&
-    coincideVencida
-  );
-});
+    const hasta = filtrosAplicados.ingresoHasta
+      ? parseDate(filtrosAplicados.ingresoHasta, true)
+      : null;
 
+    const coincideIngreso =
+      (!desde || (ingreso && ingreso >= desde)) &&
+      (!hasta || (ingreso && ingreso <= hasta));
+
+    const coincideJerarquia =
+      filtrosAplicados.jerarquia === "" || p.jerarquia === filtrosAplicados.jerarquia;
+
+    const coincideSituacion =
+      filtrosAplicados.situacion === "" || p.situacion === filtrosAplicados.situacion;
+
+    const coincideVencida =
+      !filtrosAplicados.vencida || isExpired(p.fecha_revision_medica);
+
+    return (
+      coincideLegajo &&
+      coincideNombreApellido &&
+      coincideDocumento &&
+      coincideIngreso &&
+      coincideJerarquia &&
+      coincideSituacion &&
+      coincideVencida
+    );
+  });
 
   const totalPagesFiltered = Math.ceil(
     personalFiltrado.length / ITEMS_PER_PAGE

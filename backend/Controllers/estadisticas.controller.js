@@ -83,6 +83,17 @@ exports.obtenerPorTipoYHora = (req, res) => {
   });
 };
 
+exports.obtenerTiposDeIncidente = (req, res) => {
+  const query = `SELECT DISTINCT tipo_asistencia FROM partes WHERE tipo_asistencia IS NOT NULL AND tipo_asistencia <> '' ORDER BY tipo_asistencia`
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error("Error al obtener los tipos de incidentes", err);
+      return res.status(500).json({ error: "Error al obtener los tipos de incidentes" });
+    }
+    res.status(200).json(results);
+  });
+}
+
 exports.obtenerPorBombero = (req, res) => {
   const query = `
     SELECT CONCAT(p.nombre, ' ', p.apellido) AS nombre_completo, COUNT(*) AS cantidad

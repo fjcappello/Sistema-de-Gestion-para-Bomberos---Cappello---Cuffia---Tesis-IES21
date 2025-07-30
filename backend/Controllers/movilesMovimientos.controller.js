@@ -165,11 +165,21 @@ const obtenerMovilesEnSalida = (req, res) => {
 
 const obtenerMovimientos = (req, res) => {
   const query = `
-    SELECT mm.*, m.interno, CONCAT(p.nombre, ' ', p.apellido) AS chofer
-    FROM moviles_movimientos mm
-    JOIN moviles m ON mm.movil_id = m.id
-    JOIN personal p ON mm.chofer_id = p.legajo
-    ORDER BY mm.fecha_salida DESC
+    SELECT 
+  mm.*, 
+  m.interno, 
+  CONCAT(p.nombre, ' ', p.apellido) AS chofer,
+  (
+    SELECT GROUP_CONCAT(CONCAT(dp.nombre, ' ', dp.apellido) SEPARATOR ', ')
+    FROM moviles_dotacion md
+    JOIN personal dp ON md.personal_id = dp.legajo
+    WHERE md.movimiento_id = mm.id
+  ) AS dotacion
+FROM moviles_movimientos mm
+JOIN moviles m ON mm.movil_id = m.id
+JOIN personal p ON mm.chofer_id = p.legajo
+ORDER BY mm.fecha_salida DESC;
+
   `;
 
   db.query(query, (err, results) => {

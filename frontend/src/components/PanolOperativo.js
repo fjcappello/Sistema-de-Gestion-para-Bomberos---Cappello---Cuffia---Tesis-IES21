@@ -153,7 +153,8 @@ function PanolOperativo() {
   };
 
   const exportarAExcel = () => {
-    const hoja = XLSX.utils.json_to_sheet(elementosFiltrados);
+    const elementosSinFoto = elementosFiltrados.map(({ foto, ...resto }) => resto);
+    const hoja = XLSX.utils.json_to_sheet(elementosSinFoto);
     const libro = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(libro, hoja, 'Pañol Operativo');
     const ahora = new Date();
@@ -488,11 +489,13 @@ function PanolOperativo() {
                 required
               >
                 <option value="">Seleccione un estado</option>
-                {estados.map((estado) => (
-                  <option key={estado.id_estado} value={estado.id_estado}>
-                    {estado.estado}
-                  </option>
-                ))}
+                {estados
+                  .filter((estado) => estado.id_estado !== 3) // Excluye el estado con ID 3 (Baja)
+                  .map((estado) => (
+                    <option key={estado.id_estado} value={estado.id_estado}>
+                      {estado.estado}
+                    </option>
+                  ))}
               </select>
 
               <div className="form-buttons">

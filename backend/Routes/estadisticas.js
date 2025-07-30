@@ -14,4 +14,7 @@ router.get("/por_tipo_y_hora", EstadisticasController.obtenerPorTipoYHora);
 // Servicios por bombero
 router.get("/por_bombero", EstadisticasController.obtenerPorBombero);
 
+// Servicios por bombero
+router.get("/por_incidente", EstadisticasController.obtenerTiposDeIncidente);
+
 module.exports = router;

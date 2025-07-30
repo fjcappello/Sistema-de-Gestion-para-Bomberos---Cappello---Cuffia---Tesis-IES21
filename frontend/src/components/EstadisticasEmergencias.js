@@ -1,11 +1,20 @@
 import React, { useState, useEffect, useRef } from "react";
 import api from "../api";
-import { Bar } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 import "chart.js/auto";
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import "./Styles/ReportsPage.css";
 import { useUsuario } from "../context/UserContext";
+
+const generateColors = (count) => {
+  const colors = [];
+  for (let i = 0; i < count; i++) {
+    const hue = (i * 137.508) % 360;
+    colors.push(`hsl(${hue}, 70%, 60%)`);
+  }
+  return colors;
+};
 
 function ReportsPage() {
   const { usuario } = useUsuario();
@@ -28,60 +37,72 @@ function ReportsPage() {
   });
   const [logoDataURI, setLogoDataURI] = useState("");
   const chartRef = useRef(null);
-  const [chartTipoHora, setChartTipoHora] = useState({ labels: [], datasets: [] });
-  const [chartBombero, setChartBombero] = useState({ labels: [], datasets: [] });
+  const [chartPie, setChartPie] = useState({ labels: [], datasets: [] });
+  const [chartBombero, setChartBombero] = useState({
+    labels: [],
+    datasets: [],
+  });
+  const [tiposAsistencia, setTiposAsistencia] = useState([]);
+
 
   useEffect(() => {
     fetchJefesDotacion();
+    fetchTiposAsistencia();
     loadLogo();
     fetchReports();
-    fetchTipoHora();
     fetchBombero();
   }, []);
-  const fetchTipoHora = async () => {
-    try {
-      const response = await api.get("/estadisticas/por_tipo_y_hora");
-      const agrupado = {};
 
-      response.data.forEach(({ tipo_asistencia, hora, cantidad }) => {
-        if (!agrupado[tipo_asistencia]) agrupado[tipo_asistencia] = Array(24).fill(0);
-        agrupado[tipo_asistencia][hora] = cantidad;
+
+  useEffect(() => {
+    fetchReports();
+  }, [appliedFilters]);
+
+  useEffect(() => {
+    if (chartData.labels.length > 0 && chartData.datasets[0].data.length > 0) {
+      const total = chartData.datasets[0].data.reduce((a, b) => a + b, 0);
+      setChartPie({
+        labels: chartData.labels,
+        datasets: [
+          {
+            label: "Porcentaje de Intervenciones",
+            data: chartData.datasets[0].data.map((v) =>
+              ((v / total) * 100).toFixed(2)
+            ),
+            backgroundColor: generateColors(chartData.labels.length),
+          },
+        ],
       });
-
-      const datasets = Object.entries(agrupado).map(([tipo, data], i) => ({
-        label: tipo,
-        data,
-        backgroundColor: `hsl(${i * 60}, 70%, 60%)`,
-      }));
-
-      setChartTipoHora({
-        labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-        datasets,
-      });
-    } catch (err) {
-      console.error("Error al obtener tipo/hora:", err);
     }
-  };
+  }, [chartData]);
+
+  const fetchTiposAsistencia = async () => {
+  try {
+    const response = await api.get("/estadisticas/por_incidente");
+    const tipos = response.data.map((t) => t.tipo_asistencia);
+    setTiposAsistencia(tipos);
+  } catch (error) {
+    console.error("Error al cargar tipos de asistencia:", error);
+  }
+};
 
   const fetchBombero = async () => {
     try {
       const response = await api.get("/estadisticas/por_bombero");
       setChartBombero({
         labels: response.data.map((d) => d.nombre_completo),
-        datasets: [{
-          label: "Servicios",
-          data: response.data.map((d) => d.cantidad),
-          backgroundColor: "#4CAF50",
-        }]
+        datasets: [
+          {
+            label: "Servicios",
+            data: response.data.map((d) => d.cantidad),
+            backgroundColor: "#4CAF50",
+          },
+        ],
       });
     } catch (err) {
       console.error("Error al obtener por bombero:", err);
     }
   };
-
-  useEffect(() => {
-    fetchReports();
-  }, [appliedFilters]);
 
   const fetchJefesDotacion = async () => {
     try {
@@ -122,7 +143,7 @@ function ReportsPage() {
           {
             label: "Intervenciones",
             data: data.map((item) => item.cantidad),
-            backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+            backgroundColor: generateColors(data.length),
           },
         ],
       });
@@ -160,29 +181,21 @@ function ReportsPage() {
     const pageWidth = doc.internal.pageSize.getWidth();
 
     if (logoDataURI) {
-      const logoWidth = 30;
-      const logoHeight = 30;
-      doc.addImage(logoDataURI, "PNG", 10, 10, logoWidth, logoHeight);
+      doc.addImage(logoDataURI, "PNG", 10, 10, 30, 30);
     }
 
     doc.setFontSize(18);
-    const title = "Bomberos Santa Maria de Punilla";
-    doc.text(title, pageWidth / 2, 20, { align: "center" });
+    doc.text("Bomberos Santa Maria de Punilla", pageWidth / 2, 20, { align: "center" });
 
     doc.setFontSize(14);
-    const subtitle = "Estadistica de Emergencias";
-    doc.text(subtitle, pageWidth / 2, 30, { align: "center" });
+    doc.text("Estadistica de Emergencias", pageWidth / 2, 30, { align: "center" });
 
     doc.setFontSize(12);
     const jefeSeleccionado =
-      jefesDotacion.find((j) => j.id.toString() === appliedFilters.jefeDotacion)
-        ?.nombre_completo || "Todos";
+      jefesDotacion.find((j) => j.id.toString() === appliedFilters.jefeDotacion)?.nombre_completo || "Todos";
+
     doc.text(`Jefe de Dotación: ${jefeSeleccionado}`, 10, 55);
-    doc.text(
-      `Tipo de Asistencia: ${appliedFilters.tipoAsistencia || "Todos"}`,
-      10,
-      65
-    );
+    doc.text(`Tipo de Asistencia: ${appliedFilters.tipoAsistencia || "Todos"}`, 10, 65);
     doc.text(`Fecha Desde: ${appliedFilters.startDate || "Sin especificar"}`, 10, 75);
     doc.text(`Fecha Hasta: ${appliedFilters.endDate || "Sin especificar"}`, 10, 85);
 
@@ -192,13 +205,16 @@ function ReportsPage() {
       doc.addImage(chartImage, "PNG", 10, 90, 180, 80);
     }
 
-    if (chartTipoHora.datasets.length > 0) {
-      const canvasTipoHora = document.querySelectorAll("canvas")[1];
-      const imageTipoHora = canvasTipoHora.toDataURL("image/png");
+    if (chartPie.datasets.length > 0) {
+      const canvasPie = document.querySelectorAll("canvas")[1];
+      const imagePie = canvasPie.toDataURL("image/png");
+      const imgProps = doc.getImageProperties(imagePie);
+      const pdfWidth = 150;
+      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
       doc.addPage();
       doc.setFontSize(14);
-      doc.text("Intervenciones por Tipo y Hora", pageWidth / 2, 20, { align: "center" });
-      doc.addImage(imageTipoHora, "PNG", 10, 30, 180, 80);
+      doc.text("Intervenciones por Tipo (%)", pageWidth / 2, 20, { align: "center" });
+      doc.addImage(imagePie, "PNG", (pageWidth - pdfWidth) / 2, 30, pdfWidth, pdfHeight);
     }
 
     if (chartBombero.datasets.length > 0) {
@@ -219,21 +235,14 @@ function ReportsPage() {
     });
 
     const printDate = new Date().toLocaleString();
-    doc.setFontSize(10);
-    const usuario = JSON.parse(localStorage.getItem("usuario"));
-    const nombreUsuario = usuario?.nombre
+    const nombreUsuario = usuario
       ? `${usuario.nombre} ${usuario.apellido}`
-      : "usuario desconocido";
-    doc.text(
-      `Impreso el ${printDate} por ${usuario?.nombreCompleto || "Sistema"}`,
-      10,
-      doc.internal.pageSize.getHeight() - 10
-    );
+      : "Sistema";
 
-    const formattedDate = new Date()
-      .toLocaleString("es-AR")
-      .replace(/[/,:]/g, "-")
-      .replace(" ", "_");
+    doc.setFontSize(10);
+    doc.text(`Impreso el ${printDate} por ${nombreUsuario}`, 10, doc.internal.pageSize.getHeight() - 10);
+
+    const formattedDate = new Date().toLocaleString("es-AR").replace(/[/,:]/g, "-").replace(" ", "_");
     doc.save(`Estadisticas_Emergencias_${formattedDate}.pdf`);
   };
 
@@ -247,14 +256,8 @@ function ReportsPage() {
       </div>
 
       <div className="filtros">
-        <select
-          name="jefeDotacion"
-          onChange={handleFilterChange}
-          value={filters.jefeDotacion}
-        >
-          <option value="" disabled hidden>
-            Jefe de Dotación
-          </option>
+        <select name="jefeDotacion" onChange={handleFilterChange} value={filters.jefeDotacion}>
+          <option value="" disabled hidden>Jefe de Dotación</option>
           <option value="">Todos</option>
           {jefesDotacion.map((jefe) => (
             <option key={jefe.id} value={jefe.id}>
@@ -263,42 +266,19 @@ function ReportsPage() {
           ))}
         </select>
 
-        <select
-          name="tipoAsistencia"
-          onChange={handleFilterChange}
-          value={filters.tipoAsistencia}
-        >
-          <option value="" disabled hidden>
-            Tipo de Asistencia
-          </option>
+        <select name="tipoAsistencia" onChange={handleFilterChange} value={filters.tipoAsistencia}>
+          <option value="" disabled hidden>Tipo de Asistencia</option>
           <option value="">Todos</option>
-          <option value="Incendio">Incendio</option>
-          <option value="Accidente">Accidente</option>
-          <option value="Rescate">Rescate</option>
+          {tiposAsistencia.map((tipo) => (
+            <option key={tipo} value={tipo}>{tipo}</option>
+          ))}
         </select>
 
-        <input
-          type="date"
-          name="startDate"
-          onChange={handleFilterChange}
-          value={filters.startDate}
-          placeholder="Fecha Desde"
-        />
+        <input type="date" name="startDate" onChange={handleFilterChange} value={filters.startDate} />
+        <input type="date" name="endDate" onChange={handleFilterChange} value={filters.endDate} />
 
-        <input
-          type="date"
-          name="endDate"
-          onChange={handleFilterChange}
-          value={filters.endDate}
-          placeholder="Fecha Hasta"
-        />
-
-        <button onClick={aplicarFiltros} className="filter-btn">
-          Aplicar Filtros
-        </button>
-        <button onClick={limpiarFiltros} className="filter-btn">
-          Limpiar filtros
-        </button>
+        <button onClick={aplicarFiltros} className="filter-btn">Aplicar Filtros</button>
+        <button onClick={limpiarFiltros} className="filter-btn">Limpiar filtros</button>
       </div>
 
       <div className="chart-container">
@@ -311,9 +291,11 @@ function ReportsPage() {
       </div>
 
       <div className="chart-container">
-        <h3>Intervenciones por Tipo y Hora</h3>
-        {chartTipoHora.labels.length > 0 ? (
-          <Bar data={chartTipoHora} options={{ responsive: true }} />
+        <h3>Intervenciones por Tipo (Expresado en %)</h3>
+        {chartPie.labels.length > 0 ? (
+          <div style={{ width: "450px", height: "400px", margin: "0 auto" }}>
+            <Pie data={chartPie} options={{ responsive: true, maintainAspectRatio: false }} />
+          </div>
         ) : (
           <p>No hay datos disponibles para mostrar.</p>
         )}
@@ -322,7 +304,7 @@ function ReportsPage() {
       <div className="chart-container">
         <h3>Intervenciones por Bombero</h3>
         {chartBombero.labels.length > 0 ? (
-          <Bar data={chartBombero} options={{ responsive: true, indexAxis: 'y' }} />
+          <Bar data={chartBombero} options={{ responsive: true, indexAxis: "y" }} />
         ) : (
           <p>No hay datos disponibles para mostrar.</p>
         )}

@@ -259,16 +259,9 @@ function MovimientoMoviles() {
   const exportarAExcel = () => {
     const data = movimientosFiltrados.map((m) => {
       const jefe = personal.find((p) => p.legajo === m.jefe_dotacion);
-      const dotacionCompleta =
-        Array.isArray(m.dotacion) && m.dotacion.length > 0
-          ? m.dotacion
-              .map((id) => {
-                const p = personal.find((pers) => pers.legajo === id);
-                return p ? p.nombre_completo : `Legajo ${id}`;
-              })
-              .join(", ")
-          : "Sin dotación acompañante";
 
+      const dotacionCompleta = m.dotacion?.trim() ? m.dotacion : "Sin dotación acompañante";
+      
       return {
         Interno: m.interno,
         "Fecha salida": formatFecha(m.fecha_salida),

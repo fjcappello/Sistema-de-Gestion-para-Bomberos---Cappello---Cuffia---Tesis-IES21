@@ -7,7 +7,7 @@ const obtenerPartes = (req, res) => {
     req.query;
 
   let query = `
-    SELECT DISTINCT
+    SELECT
       p.id AS parte_id,
       p.numero_parte,
       p.nombre_denunciante,
@@ -50,7 +50,7 @@ const obtenerPartes = (req, res) => {
   }
 
   query += ` AND p.activo = 1`;
-  query += ` ORDER BY fecha DESC`;
+  query += ` ORDER BY p.fecha DESC`;
 
   db.query(query, params, (err, results) => {
     if (err) {

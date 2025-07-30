@@ -10,7 +10,7 @@ function ClimaCard() {
   const lat = -31.2611;
   const lon = -64.4639;
 
-  /*Funcion que obtiene los datos del clima desde la API de OpenWeatherMap, la posicion se situa en la jurisdiccion del comitente */
+  //Funcion que obtiene los datos del clima desde la API de OpenWeatherMap, la posicion se situa en la jurisdiccion del comitente 
   const obtenerClima = async () => {
     try {
       const response = await api.get(

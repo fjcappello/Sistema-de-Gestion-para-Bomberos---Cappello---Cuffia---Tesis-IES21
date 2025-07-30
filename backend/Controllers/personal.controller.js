@@ -65,52 +65,62 @@ const crearPersonal = (req, res) => {
     legajoOperador
   } = req.body;
 
-  const personalQuery = `
-    INSERT INTO personal (legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica, id_rol)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
+  // Verificar si el legajo ya existe en login
+  const verificarLoginQuery = `SELECT legajo FROM login WHERE legajo = ?`;
 
-  db.query(
-    personalQuery,
-    [
-      legajo,
-      nombre,
-      apellido,
-      documento,
-      nacimiento,
-      fecha_ingreso,
-      jerarquia_id,
-      situacion_id,
-      fecha_revision_medica,
-      id_rol || 1,
-    ],
-    (err) => {
-      if (err) {
-        console.error("Error al agregar personal:", err);
-        res
-          .status(500)
-          .json({ error: "Error en el servidor al agregar personal" });
-        return;
-      }
+  db.query(verificarLoginQuery, [legajo], (err, results) => {
+    if (err) {
+      console.error("Error al verificar login:", err);
+      return res.status(500).json({ success: false, message: "Error en el servidor al verificar login" });
+    }
 
-      const loginQuery = `INSERT INTO login (legajo, contraseña) VALUES (?, ?)`;
-      db.query(loginQuery, [legajo, documento], async (err) => {
+    if (results.length > 0) {
+      return res.status(400).json({ success: false, message: `El legajo ${legajo} ya está registrado en el sistema` });
+    }
+
+    // Insertar nuevo personal
+    const personalQuery = `
+      INSERT INTO personal (legajo, nombre, apellido, documento, nacimiento, fecha_ingreso, jerarquia_id, situacion_id, fecha_revision_medica, id_rol)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+    db.query(
+      personalQuery,
+      [
+        legajo,
+        nombre,
+        apellido,
+        documento,
+        nacimiento,
+        fecha_ingreso,
+        jerarquia_id,
+        situacion_id,
+        fecha_revision_medica,
+        id_rol || 1,
+      ],
+      (err) => {
         if (err) {
-          console.error("Error al crear login:", err);
-          res
-            .status(500)
-            .json({ error: "Error en el servidor al crear login" });
-          return;
+          console.error("Error al agregar personal:", err);
+          return res.status(500).json({ success: false, message: "Error en el servidor al agregar personal" });
         }
 
-         registrarLog(
-          legajoOperador,
-          `Alta de personal: se dio de alta a ${nombre} ${apellido} (Legajo ${legajo})`
-        );
-        res.json({ success: "Personal y login creados correctamente" });
-      });
-    }
-  );
+        // Crear login para el personal
+        const loginQuery = `INSERT INTO login (legajo, contraseña) VALUES (?, ?)`;
+        db.query(loginQuery, [legajo, documento], (err) => {
+          if (err) {
+            console.error("Error al crear login:", err);
+            return res.status(500).json({ success: false, message: "Error en el servidor al crear login" });
+          }
+
+          registrarLog(
+            legajoOperador,
+            `Alta de personal: se dio de alta a ${nombre} ${apellido} (Legajo ${legajo})`
+          );
+
+          return res.json({ success: true, message: "Personal y login creados correctamente" });
+        });
+      }
+    );
+  });
 };
 
 // Actualizar datos de personal

@@ -80,11 +80,6 @@ function EstadisticaAsistencia() {
     api.get('/estadisticas/asistencias/asistencia-mes', { params })
       .then(res => setPorMes(res.data))
       .catch(err => console.error('Error en /estadisticas/asistencias/asistencia-mes', err));
-
-    // Nueva llamada para Asistencia por Jerarquía
-    // api.get('/estadisticas/asistencias/asistencia-jerarquia', { params })
-    //   .then(res => setAsistenciaPorJerarquia(res.data))
-    //   .catch(err => console.error('Error en /estadisticas/asistencias/asistencia-jerarquia', err));
   };
 
   useEffect(() => {
@@ -417,7 +412,6 @@ function EstadisticaAsistencia() {
       <div className='contenedor_graficos'>
 
       </div>
-
 
       <div className="asistencia-section">
         <h3 className="asistencia-subtitle">Ranking de Asistencias</h3>
