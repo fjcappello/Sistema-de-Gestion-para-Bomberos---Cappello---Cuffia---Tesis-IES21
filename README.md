@@ -12,7 +12,7 @@
 ## Academic Information
 
 **Degree Program:** Systems Analysis & Software Development  
-**Educational Institution:** Universidad IES 21 (Colegio Universitario IES 21)  
+**Educational Institution:** Colegio Universitario IES 
 **Location:** Córdoba, Argentina
 
 ### Thesis Defense Details
